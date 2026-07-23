@@ -28,7 +28,9 @@
 #include <Project/Project.h>
 
 #include "EarlyStoppingConfig.h"
+#include "Libs/Optimize/Domain/MeshDomain.h"
 #include "Libs/Optimize/Domain/Surface.h"
+#include "MeshUtils.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
@@ -44,6 +46,25 @@
 namespace py = pybind11;
 
 namespace shapeworks {
+
+//! Number of voxels across the largest dimension when rasterizing a mesh for registration.  Fixing
+//! the grid size rather than the spacing keeps this working whatever units the data is stored in.
+static constexpr double kRegistrationGridSize = 128.0;
+
+//! Width of the retained band around the surface, in voxels, when it is not set explicitly
+static constexpr double kRegistrationBandVoxels = 4.0;
+
+//! A transferred particle further than this fraction of the shape's size from the surface is
+//! considered mislanded, whatever units the data is in
+static constexpr double kTransferFarFraction = 0.05;
+
+//! Warn that a registration may have failed once this fraction of a shape's particles are mislanded.
+//! Keyed off a fraction rather than the single worst particle so a stray outlier is not a false alarm.
+static constexpr double kTransferFarFractionThreshold = 0.25;
+
+//! Share of the reported progress reserved for the registrations, which dominate the wall clock in
+//! registration based initialization but run no particle iterations of their own
+static constexpr double kTransferProgressShare = 0.85;
 
 #ifdef _WIN32
 static std::string find_in_path(std::string file) {
@@ -111,6 +132,13 @@ bool Optimize::Run() {
   current_particle_iterations_ = 0;
   m_iteration_count = 0;
   m_split_number = 0;
+
+  if (m_initialization_mode == InitializationMode::Registration && m_use_shape_statistics_after > 0) {
+    // registration seeds every shape at the final particle count, so there is nothing left for the
+    // multiscale loop to split up to
+    SW_WARN("Multiscale optimization is not used with registration based initialization; ignoring it");
+    m_use_shape_statistics_after = -1;
+  }
 
   ComputeTotalIterations();
 
@@ -515,6 +543,11 @@ void Optimize::Initialize() {
     SW_LOG("------------------------------");
   }
 
+  if (m_initialization_mode == InitializationMode::Registration) {
+    InitializeFromRegistration();
+    return;
+  }
+
   if (m_procrustes_interval != 0) {  // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
@@ -700,6 +733,325 @@ void Optimize::Initialize() {
   this->WriteCuttingPlanePoints();
   if (m_verbosity_level > 0) {
     SW_LOG("Finished initialization");
+  }
+}
+
+//---------------------------------------------------------------------------
+Mesh Optimize::GetDomainSurface(int domain) {
+  auto* particle_domain = m_sampler->GetParticleSystem()->GetDomain(domain);
+
+  if (auto* mesh_domain = dynamic_cast<MeshDomain*>(particle_domain)) {
+    return Mesh(mesh_domain->get_surface()->get_polydata());
+  }
+
+  // an image domain keeps only a narrow band of its distance transform, so read the groomed input
+  // back from disk to recover the full surface
+  if (domain >= static_cast<int>(m_domain_paths.size()) || m_domain_paths[domain].empty()) {
+    throw std::runtime_error(
+        "Registration based initialization needs the path of each groomed input, but none was given for domain " +
+        std::to_string(domain));
+  }
+  return Image(m_domain_paths[domain]).toMesh(0.0);
+}
+
+//---------------------------------------------------------------------------
+Image Optimize::GetRegistrationImage(int domain) {
+  auto* particle_domain = m_sampler->GetParticleSystem()->GetDomain(domain);
+
+  if (particle_domain->GetDomainType() == DomainType::Image) {
+    if (domain >= static_cast<int>(m_domain_paths.size()) || m_domain_paths[domain].empty()) {
+      throw std::runtime_error(
+          "Registration based initialization needs the path of each groomed input, but none was given for domain " +
+          std::to_string(domain));
+    }
+    // the groomed input is already a distance transform, so take its resolution as given
+    Image dt(m_domain_paths[domain]);
+    const auto spacing = dt.spacing();
+    const double largest_spacing = std::max({spacing[0], spacing[1], spacing[2]});
+    return ImageRegistration::make_registration_image(dt, GetRegistrationBand(largest_spacing));
+  }
+
+  // A mesh carries no resolution of its own, so pick one from how large it actually is.  Assuming a
+  // spacing (and a band) in millimeters would break on data stored in other units, where a fixed
+  // spacing yields either an unusable grid or one too coarse to register.
+  Mesh mesh = GetDomainSurface(domain);
+  auto region = mesh.boundingBox();
+  const auto extent = region.size();
+  const double largest_extent = std::max({extent[0], extent[1], extent[2]});
+  const double spacing = largest_extent / kRegistrationGridSize;
+  const double band = GetRegistrationBand(spacing);
+
+  // pad far enough that the whole band around the surface stays inside the grid
+  region.pad(band * 2.0);
+  return ImageRegistration::make_registration_image(mesh.toDistanceTransform(region, Point3({spacing, spacing, spacing})),
+                                                    band);
+}
+
+//---------------------------------------------------------------------------
+double Optimize::GetRegistrationBand(double spacing) const {
+  if (m_registration_band > 0.0) {
+    return m_registration_band;
+  }
+  // default to a band a few voxels wide, which keeps the metric focused near the surface without
+  // making it so thin that it spans less than a voxel
+  return kRegistrationBandVoxels * spacing;
+}
+
+//---------------------------------------------------------------------------
+int Optimize::ResolveRegistrationReference() {
+  const int num_subjects = GetNumberOfSubjects();
+  if (num_subjects < 1) {
+    throw std::runtime_error("No shapes to initialize");
+  }
+
+  if (m_registration_reference >= 0) {
+    if (m_registration_reference >= num_subjects) {
+      throw std::runtime_error("Requested registration reference " + std::to_string(m_registration_reference) +
+                               " is out of range, there are only " + std::to_string(num_subjects) + " shapes");
+    }
+    return m_registration_reference;
+  }
+
+  if (num_subjects == 1) {
+    return 0;
+  }
+
+  // combine each subject's domains into one mesh so that the template is representative of the whole
+  // anatomy rather than of a single domain
+  PrintStartMessage("Choosing a registration reference...");
+  std::vector<Mesh> meshes;
+  for (int s = 0; s < num_subjects; s++) {
+    Mesh mesh = GetDomainSurface(s * m_domains_per_shape);
+    for (int d = 1; d < static_cast<int>(m_domains_per_shape); d++) {
+      mesh += GetDomainSurface(s * m_domains_per_shape + d);
+    }
+    meshes.push_back(mesh);
+  }
+
+  const int reference = MeshUtils::findReferenceMesh(meshes);
+  if (reference < 0 || reference >= num_subjects) {
+    throw std::runtime_error("Could not choose a registration reference");
+  }
+  PrintDoneMessage();
+  return reference;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SpreadParticlesOnReference(int reference_shape) {
+  auto* system = m_sampler->GetParticleSystem();
+  const int first_domain = reference_shape * m_domains_per_shape;
+
+  // only the reference carries particles for the moment, so the correspondence matrices cannot keep
+  // a consistent layout; they are brought back once every shape has been populated
+  m_sampler->SetCorrespondenceMatricesSuspended(true);
+
+  // seed a single particle on each of the reference's domains
+  for (int d = 0; d < static_cast<int>(m_domains_per_shape); d++) {
+    const int domain = first_domain + d;
+    if (system->GetNumberOfParticles(domain) == 0) {
+      auto* particle_domain = system->GetDomain(domain);
+      system->AddPosition(particle_domain->GetValidLocationNear(particle_domain->GetZeroCrossingPoint()), domain);
+    }
+  }
+  system->SynchronizePositions();
+
+  // allocate everything without optimizing, so that turning correspondence off below sticks; Execute
+  // forces it back on the first time it runs
+  m_sampler->Initialize();
+
+  // only one shape carries particles at this point, so there is no correspondence to establish yet
+  m_sampler->SetCorrespondenceOff();
+
+  // report progress against the reference rather than the first shape, which is still empty
+  m_progress_domain_offset = first_domain;
+
+  const double epsilon = m_spacing;
+
+  auto needs_split = [&]() {
+    for (int d = 0; d < static_cast<int>(m_domains_per_shape); d++) {
+      if (system->GetNumberOfParticles(first_domain + d) < m_number_of_particles[d]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  while (needs_split() && !m_aborted) {
+    OptimizerStop();
+
+    for (int d = 0; d < static_cast<int>(m_domains_per_shape); d++) {
+      const int domain = first_domain + d;
+      if (system->GetNumberOfParticles(domain) < m_number_of_particles[d]) {
+        system->SplitAllParticlesInDomain(epsilon, domain);
+      }
+    }
+    system->SynchronizePositions();
+
+    m_split_number++;
+    if (m_verbosity_level > 0) {
+      std::string counts;
+      for (int d = 0; d < static_cast<int>(m_domains_per_shape); d++) {
+        counts += " " + std::to_string(system->GetNumberOfParticles(first_domain + d));
+      }
+      SW_LOG("Reference split {}, particle count:{}", m_split_number, counts);
+    }
+
+    m_energy_a.clear();
+    m_energy_b.clear();
+    m_total_energy.clear();
+    m_str_energy = "split" + std::to_string(m_split_number) + "pts_init";
+
+    m_sampler->GetOptimizer()->set_maximum_number_of_iterations(m_iterations_per_split);
+    m_sampler->GetOptimizer()->set_number_of_iterations(0);
+    m_sampler->Execute();
+  }
+
+  m_progress_domain_offset = 0;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::TransferParticlesFromReference(int reference_shape) {
+  auto* system = m_sampler->GetParticleSystem();
+  const int num_subjects = GetNumberOfSubjects();
+
+  for (int d = 0; d < static_cast<int>(m_domains_per_shape) && !m_aborted; d++) {
+    const int reference_domain = reference_shape * m_domains_per_shape + d;
+
+    std::vector<Point3> reference_points;
+    for (auto k = 0; k < system->GetNumberOfParticles(reference_domain); k++) {
+      reference_points.push_back(system->GetPosition(k, reference_domain));
+    }
+
+    Image reference_image = GetRegistrationImage(reference_domain);
+
+    for (int s = 0; s < num_subjects && !m_aborted; s++) {
+      if (s == reference_shape) {
+        continue;
+      }
+      const int domain = s * m_domains_per_shape + d;
+
+      UpdateProgress(fmt::format("Registering shape {} of {}", s + 1, num_subjects));
+
+      ImageRegistration registration;
+      registration.set_transform_type(m_registration_transform_type);
+      registration.set_gradient_step(m_registration_gradient_step);
+      registration.set_update_field_variance(m_registration_flow_sigma);
+      registration.run(reference_image, GetRegistrationImage(domain));
+
+      auto transferred = registration.transform_points(reference_points);
+
+      // AddPositionList applies the domain constraints, which pulls each point onto the surface
+      system->AddPositionList(transferred, domain);
+
+      ReportTransferQuality(domain, reference_points, transferred);
+
+      // registrations do not run particle iterations, so charge each one its share of the budget
+      // reserved for them; without this the bar would sit still through the longest phase
+      current_particle_iterations_ += m_transfer_iteration_weight;
+      UpdateProgress(fmt::format("Registered shape {} of {}", s + 1, num_subjects));
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
+                                     const std::vector<Point3>& transferred) {
+  if (transferred.empty()) {
+    return;
+  }
+
+  auto* system = m_sampler->GetParticleSystem();
+
+  // Judge the transfer against the size of the shape rather than an absolute distance, so the same
+  // thresholds work whatever units and resolution the data is in.  Take that size from the domain
+  // itself, not from the particles: particles that have collapsed together would otherwise shrink
+  // the scale in step with the distances being judged, and always look acceptable.
+  const auto* particle_domain = system->GetDomain(domain);
+  const double shape_scale = particle_domain->GetLowerBound().EuclideanDistanceTo(particle_domain->GetUpperBound());
+
+  // A particle beyond this fraction of the shape's size is clearly in the wrong place
+  const double far_distance = kTransferFarFraction * shape_scale;
+
+  double total_snap = 0.0;
+  double worst_snap = 0.0;
+  int far = 0;
+  int unmoved = 0;
+
+  for (size_t i = 0; i < transferred.size(); i++) {
+    // how far the point had to travel to reach the surface is how far off the surface it landed
+    const double snap = transferred[i].EuclideanDistanceTo(system->GetPosition(i, domain));
+    total_snap += snap;
+    worst_snap = std::max(worst_snap, snap);
+    if (shape_scale > 0.0 && snap > far_distance) {
+      far++;
+    }
+
+    // a point outside the displacement field is returned unchanged rather than reported as an error,
+    // so an unmoved point means the field did not cover it
+    if (transferred[i] == reference_points[i]) {
+      unmoved++;
+    }
+  }
+
+  const double mean_snap = total_snap / transferred.size();
+  const double far_fraction = static_cast<double>(far) / transferred.size();
+  // a registration that failed leaves many particles far from the surface, not just one outlier
+  const bool suspect = far_fraction > kTransferFarFractionThreshold || unmoved > 0;
+
+  const std::string name = domain < static_cast<int>(m_filenames.size()) ? m_filenames[domain] : std::to_string(domain);
+
+  if (m_verbosity_level > 0 || suspect) {
+    SW_LOG("{}: transferred particles landed {:.3g} from the surface on average (worst {:.3g})", name, mean_snap,
+           worst_snap);
+  }
+
+  if (unmoved > 0) {
+    SW_WARN("{}: {} of {} transferred particles fell outside the registration field and did not move", name, unmoved,
+            transferred.size());
+  }
+
+  if (far_fraction > kTransferFarFractionThreshold) {
+    SW_WARN("{}: {:.0f}% of transferred particles landed far from the surface, the registration may have failed", name,
+            100.0 * far_fraction);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::InitializeFromRegistration() {
+  m_registration_reference_chosen = ResolveRegistrationReference();
+
+  const std::string name = m_registration_reference_chosen * m_domains_per_shape < m_filenames.size()
+                               ? m_filenames[m_registration_reference_chosen * m_domains_per_shape]
+                               : std::to_string(m_registration_reference_chosen);
+  SW_LOG("Spreading particles on reference shape {} ({})", m_registration_reference_chosen, name);
+
+  SpreadParticlesOnReference(m_registration_reference_chosen);
+
+  // each shape is populated with a full set below, so the matrices can track them again
+  m_sampler->SetCorrespondenceMatricesSuspended(false);
+
+  if (!m_aborted) {
+    TransferParticlesFromReference(m_registration_reference_chosen);
+  }
+
+  // Only now does every shape hold its particles.  The matrices size themselves from the first
+  // shape's domains, so they cannot be brought up to date any earlier: while particles were being
+  // spread, only the reference (which is usually not the first shape) had any.
+  auto* system = m_sampler->GetParticleSystem();
+  system->ResyncObservers();
+  system->SynchronizePositions();
+
+  // every shape now carries a full set of corresponding particles
+  m_sampler->SetCorrespondenceOn();
+
+  this->WritePointFiles();
+  this->WritePointFilesWithFeatures();
+  this->WriteTransformFile();
+  this->WriteTransformFiles();
+  this->WriteCuttingPlanePoints();
+
+  if (m_verbosity_level > 0) {
+    SW_LOG("Finished registration based initialization");
   }
 }
 
@@ -1625,6 +1977,13 @@ void Optimize::UpdateProject() {
     return;
   }
 
+  if (m_initialization_mode == InitializationMode::Registration && m_registration_reference_chosen >= 0) {
+    // record which shape was used as the template, so the run can be understood and reproduced
+    auto params = project_->get_parameters(Parameters::OPTIMIZE_PARAMS);
+    params.set("initialization_reference_chosen", m_registration_reference_chosen);
+    project_->set_parameters(Parameters::OPTIMIZE_PARAMS, params);
+  }
+
   auto transforms = GetProcrustesTransforms();
   auto& subjects = project_->get_subjects();
 
@@ -1794,6 +2153,37 @@ void Optimize::SetInitialPoints(std::vector<std::vector<itk::Point<double>>> ini
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetDomainPaths(const std::vector<std::string>& paths) { m_domain_paths = paths; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetInitializationMode(InitializationMode mode) { m_initialization_mode = mode; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationReference(int shape_index) { m_registration_reference = shape_index; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationTransformType(ImageRegistration::TransformType type) {
+  m_registration_transform_type = type;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationGradientStep(double step) { m_registration_gradient_step = step; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationFlowSigma(double sigma) { m_registration_flow_sigma = sigma; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationBand(double band) { m_registration_band = band; }
+
+//---------------------------------------------------------------------------
+int Optimize::GetNumberOfSubjects() const {
+  if (m_domains_per_shape < 1) {
+    return 0;
+  }
+  return m_num_shapes / static_cast<int>(m_domains_per_shape);
+}
+
+//---------------------------------------------------------------------------
 int Optimize::GetNumShapes() { return this->m_num_shapes; }
 
 //---------------------------------------------------------------------------
@@ -1882,7 +2272,7 @@ void Optimize::SetIterationCallback() {
     this->m_iteration_count++;
 
     for (int d = 0; d < m_domains_per_shape; d++) {
-      current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
+      current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(m_progress_domain_offset + d);
     }
 
     if (this->GetShowVisualizer()) {
@@ -2133,6 +2523,20 @@ void Optimize::ComputeTotalIterations() {
     }
   }
 
+  // Registering the reference to every other shape runs no particle iterations at all, yet it
+  // dominates the wall clock.  Reserve a share of the budget for it so that the reported progress
+  // keeps moving, and charge each registration an equal part of that share as it finishes.
+  m_transfer_iteration_weight = 0;
+  if (m_initialization_mode == InitializationMode::Registration) {
+    const int transfers = std::max(0, GetNumberOfSubjects() - 1) * static_cast<int>(m_domains_per_shape);
+    if (transfers > 0) {
+      const double share = kTransferProgressShare / (1.0 - kTransferProgressShare);
+      const auto budget = static_cast<int64_t>(total_particle_iterations_ * share);
+      m_transfer_iteration_weight = static_cast<int>(budget / transfers);
+      total_particle_iterations_ += m_transfer_iteration_weight * transfers;
+    }
+  }
+
   m_total_iterations = (number_of_splits * m_iterations_per_split) + m_optimization_iterations;
 
   if (this->m_verbosity_level > 0) {
@@ -2141,12 +2545,16 @@ void Optimize::ComputeTotalIterations() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::UpdateProgress() {
+void Optimize::UpdateProgress() { UpdateProgress(""); }
+
+//---------------------------------------------------------------------------
+void Optimize::UpdateProgress(const std::string& stage) {
   auto now = std::chrono::system_clock::now();
 
   bool final = current_particle_iterations_ == total_particle_iterations_;
 
-  if (final || (now - m_last_update_time) > std::chrono::milliseconds(100)) {
+  // a named stage reports whenever it is reached, since those are infrequent by nature
+  if (final || !stage.empty() || (now - m_last_update_time) > std::chrono::milliseconds(100)) {
     m_last_update_time = now;
     std::chrono::duration<double> elapsed_seconds =
         std::chrono::duration_cast<std::chrono::seconds>(now - m_start_time);
@@ -2157,18 +2565,22 @@ void Optimize::UpdateProgress() {
     int seconds = static_cast<int>(seconds_remaining - (hours * 3600) - (minutes * 60));
 
     std::string message;
-    if (m_optimizing) {
-      message = "Optimizing";
+    if (!stage.empty()) {
+      message = stage;
     } else {
-      message = "Initializing";
+      if (m_optimizing) {
+        message = "Optimizing";
+      } else {
+        message = "Initializing";
+      }
+
+      int stage_num_iterations = m_sampler->GetOptimizer()->get_number_of_iterations();
+      int stage_total_iterations = m_sampler->GetOptimizer()->get_maximum_number_of_iterations();
+      int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+
+      message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
+                            stage_total_iterations);
     }
-
-    int stage_num_iterations = m_sampler->GetOptimizer()->get_number_of_iterations();
-    int stage_total_iterations = m_sampler->GetOptimizer()->get_maximum_number_of_iterations();
-    int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
-
-    message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
-                          stage_total_iterations);
 
     if ((now - m_last_remaining_update_time) > std::chrono::seconds(1)) {
       m_remaining_time_message = fmt::format("({:02d}:{:02d}:{:02d} remaining)", hours, minutes, seconds);

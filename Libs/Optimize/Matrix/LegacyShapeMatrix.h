@@ -59,6 +59,9 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const int VDimension = 3;
     const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
     const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
@@ -92,6 +95,9 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const int VDimension = 3;
     const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
     const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);

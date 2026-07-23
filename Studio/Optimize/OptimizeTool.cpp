@@ -80,6 +80,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   connect(ui_->use_geodesics_from_landmarks, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesic_distance, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->sampling_scale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->registration_initialization, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
 
   ui_->number_of_particles->setToolTip("Number of correspondence points to generate");
   ui_->initial_relative_weighting->setToolTip("Relative weighting of correspondence term during initialization");
@@ -101,6 +102,16 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->multiscale->setToolTip("Use multiscale optimization mode");
   ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
   ui_->use_landmarks->setToolTip("Use landmarks as initial particles");
+  ui_->registration_initialization->setToolTip(
+      "Spread particles over a single automatically chosen reference shape, then carry them onto every "
+      "other shape by deformably registering the reference to it, instead of splitting particles on all "
+      "shapes at once. Cannot be combined with landmarks or fixed subjects");
+  ui_->registration_transform_type->setToolTip(
+      "Registration stages to run when transferring particles. SyN runs rigid, then affine, then "
+      "symmetric normalization");
+  ui_->registration_band->setToolTip(
+      "Half-width, in physical units, of the band around the surface that registration considers. "
+      "Should span several voxels of the groomed inputs");
   ui_->narrow_band->setToolTip(
       "Narrow band around distance transforms.  "
       "This value should only be changed if an error occurs "
@@ -136,6 +147,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->geodesics_to_landmarks_weight->setValidator(double_validator);
   ui_->shared_boundary_weight->setValidator(double_validator);
   ui_->sampling_scale_value->setValidator(double_validator);
+  ui_->registration_band->setValidator(double_validator);
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -151,6 +163,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->narrow_band);
   line_edits_.push_back(ui_->shared_boundary_weight);
   line_edits_.push_back(ui_->sampling_scale_value);
+  line_edits_.push_back(ui_->registration_band);
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -351,6 +364,10 @@ void OptimizeTool::load_params() {
   ui_->multiscale->setChecked(params.get_use_multiscale());
   ui_->multiscale_particles->setText(QString::number(params.get_multiscale_particles()));
   ui_->use_landmarks->setChecked(params.get_use_landmarks());
+  ui_->registration_initialization->setChecked(params.get_initialization_mode() == "registration");
+  ui_->registration_transform_type->setCurrentText(
+      QString::fromStdString(params.get_registration_transform_type()));
+  ui_->registration_band->setText(QString::number(params.get_registration_band()));
   ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
   ui_->shared_boundary->setChecked(params.get_shared_boundary());
   ui_->shared_boundary_weight->setText(QString::number(params.get_shared_boundary_weight()));
@@ -397,6 +414,9 @@ void OptimizeTool::store_params() {
   params.set_use_multiscale(ui_->multiscale->isChecked());
   params.set_multiscale_particles(ui_->multiscale_particles->text().toDouble());
   params.set_use_landmarks(ui_->use_landmarks->isChecked());
+  params.set_initialization_mode(ui_->registration_initialization->isChecked() ? "registration" : "split");
+  params.set_registration_transform_type(ui_->registration_transform_type->currentText().toStdString());
+  params.set_registration_band(ui_->registration_band->text().toDouble());
 
   // always use preference value
   params.set_geodesic_cache_multiplier(preferences_.get_geodesic_cache_multiplier());
@@ -449,6 +469,14 @@ void OptimizeTool::update_ui_elements() {
 
   ui_->sampling_auto_scale->setEnabled(ui_->sampling_scale->isChecked());
   ui_->sampling_scale_value->setEnabled(ui_->sampling_scale->isChecked());
+
+  const bool registration = ui_->registration_initialization->isChecked();
+  ui_->registration_transform_type->setEnabled(registration);
+  ui_->registration_band->setEnabled(registration);
+  // registration seeds every shape at the final particle count, so these have nothing left to do
+  ui_->multiscale->setEnabled(!registration);
+  ui_->multiscale_particles->setEnabled(!registration && ui_->multiscale->isChecked());
+  ui_->use_landmarks->setEnabled(!registration);
 }
 
 //---------------------------------------------------------------------------
@@ -568,7 +596,10 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->multiscale_particles, ui_->shared_boundary);
   QWidget::setTabOrder(ui_->shared_boundary, ui_->shared_boundary_weight);
   QWidget::setTabOrder(ui_->shared_boundary_weight, ui_->use_landmarks);
-  QWidget::setTabOrder(ui_->use_landmarks, ui_->procrustes);
+  QWidget::setTabOrder(ui_->use_landmarks, ui_->registration_initialization);
+  QWidget::setTabOrder(ui_->registration_initialization, ui_->registration_transform_type);
+  QWidget::setTabOrder(ui_->registration_transform_type, ui_->registration_band);
+  QWidget::setTabOrder(ui_->registration_band, ui_->procrustes);
   QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_interval);
   QWidget::setTabOrder(ui_->procrustes_interval, ui_->procrustes_scaling);
   QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);

@@ -320,6 +320,52 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
   }      // if end
 }
 
+void ParticleSystem::ResyncObservers() {
+  for (unsigned int d = 0; d < GetNumberOfDomains(); d++) {
+    const auto count = GetNumberOfParticles(d);
+    if (count == 0) {
+      continue;
+    }
+    // observers size themselves from the particle counts when a position is added, so announcing the
+    // last position of each domain is enough to bring them up to date
+    ParticlePositionAddEvent e;
+    e.SetDomainIndex(d);
+    e.SetPositionIndex(count - 1);
+    InvokeEvent(e);
+  }
+}
+
+void ParticleSystem::SplitAllParticlesInDomain(double epsilon, unsigned int domain) {
+  std::vector<PointType> positions;
+  for (auto k = 0; k < GetPositions(domain)->GetSize(); k++) {
+    positions.push_back(GetPositions(domain)->Get(k));
+  }
+
+  std::vector<double> zeros(positions.size() * 2, 0.0);
+  GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(zeros);
+
+  std::uniform_real_distribution<double> distribution(-1000., 1000.);
+
+  for (const auto& position : positions) {
+    // generate a random unit vector and offset the particle along it, then pull the result back onto
+    // the surface
+    vnl_vector_fixed<double, 3> random;
+    for (int i = 0; i < 3; i++) {
+      random[i] = distribution(m_rand);
+    }
+    random /= random.magnitude();
+
+    auto transformed_vector = TransformVector(random, GetInversePrefixTransform(domain) * GetInverseTransform(domain));
+    PointType new_position = GetDomain(domain)->GetPositionAfterSplit(position, transformed_vector, random, epsilon);
+
+    if (!m_DomainFlags[domain] && !GetDomain(domain)->GetConstraints()->isAnyViolated(new_position)) {
+      GetDomain(domain)->ApplyConstraints(new_position, -1);
+    }
+
+    AddPosition(new_position, domain);
+  }
+}
+
 double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom) {
   std::vector<PointType> list;
   for (auto k = 0; k < GetPositions(dom)->GetSize(); k++) {

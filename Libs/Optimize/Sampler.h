@@ -146,6 +146,18 @@ class Sampler {
 
   bool GetSamplingOn() const { return m_LinkingFunction->get_a_on(); }
 
+  /** Stop the correspondence matrices from tracking particle changes.  They index themselves
+      assuming every shape holds the same number of particles, so they cannot be kept up to date
+      while particles are being spread over a single reference shape.  Resume and then call
+      SynchronizePositions() once every shape has been populated. */
+  void SetCorrespondenceMatricesSuspended(bool suspended) {
+    m_LegacyShapeMatrix->set_suspended(suspended);
+    m_LinearRegressionShapeMatrix->set_suspended(suspended);
+    m_MixedEffectsShapeMatrix->set_suspended(suspended);
+    m_GeneralShapeMatrix->set_suspended(suspended);
+    m_GeneralShapeGradMatrix->set_suspended(suspended);
+  }
+
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode);
 

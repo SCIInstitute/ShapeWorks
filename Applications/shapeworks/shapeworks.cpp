@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(CompareImage::getCommand());
   shapeworks.addCommand(SetRegion::getCommand());
   shapeworks.addCommand(Isolate::getCommand());
+  shapeworks.addCommand(TransferParticles::getCommand());
 
   // Particle System Commands
   shapeworks.addCommand(ReadParticleSystem::getCommand());

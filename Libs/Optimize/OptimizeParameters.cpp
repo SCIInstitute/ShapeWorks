@@ -43,6 +43,12 @@ const std::string narrow_band = "narrow_band";
 const std::string verbosity = "verbosity";
 const std::string mesh_ffc_mode = "mesh_ffc_mode";
 const std::string use_landmarks = "use_landmarks";
+const std::string initialization_mode = "initialization_mode";
+const std::string initialization_reference = "initialization_reference";
+const std::string registration_transform_type = "registration_transform_type";
+const std::string registration_grad_step = "registration_grad_step";
+const std::string registration_flow_sigma = "registration_flow_sigma";
+const std::string registration_band = "registration_band";
 const std::string use_fixed_subjects = "use_fixed_subjects";
 const std::string fixed_subjects_column = "fixed_subjects_column";
 const std::string fixed_subjects_choice = "fixed_subjects_choice";
@@ -97,6 +103,12 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::verbosity,
                                          Keys::mesh_ffc_mode,
                                          Keys::use_landmarks,
+                                         Keys::initialization_mode,
+                                         Keys::initialization_reference,
+                                         Keys::registration_transform_type,
+                                         Keys::registration_grad_step,
+                                         Keys::registration_flow_sigma,
+                                         Keys::registration_band,
                                          Keys::use_fixed_subjects,
                                          Keys::fixed_subjects_column,
                                          Keys::fixed_subjects_choice,
@@ -319,6 +331,83 @@ std::string OptimizeParameters::get_output_prefix() {
 }
 
 //---------------------------------------------------------------------------
+int OptimizeParameters::resolve_registration_reference() {
+  int requested = get_initialization_reference();
+  auto subjects = project_->get_subjects();
+
+  if (requested < 0) {
+    // grooming already picked a representative shape when it aligned the cohort, so reuse that
+    // choice rather than paying for the search a second time.  Groom records it per domain, so ask
+    // the first domain and fall back to the project wide parameters.
+    const std::string key = "alignment_reference_chosen";
+    auto domain_names = project_->get_domain_names();
+    if (!domain_names.empty()) {
+      requested = project_->get_parameters(Parameters::GROOM_PARAMS, domain_names[0]).get(key, -1);
+    }
+    if (requested < 0) {
+      requested = project_->get_parameters(Parameters::GROOM_PARAMS).get(key, -1);
+    }
+  }
+
+  if (requested < 0 || requested >= static_cast<int>(subjects.size()) || subjects[requested]->is_excluded()) {
+    return -1;  // no usable choice, let the optimizer find one
+  }
+
+  // the optimizer only ever sees the subjects that were not excluded, so shift the index to match
+  int shape_index = 0;
+  for (int i = 0; i < requested; i++) {
+    if (!subjects[i]->is_excluded()) {
+      shape_index++;
+    }
+  }
+  return shape_index;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::apply_initialization_parameters(Optimize* optimize) {
+  const auto mode = get_initialization_mode();
+
+  if (mode == "split") {
+    return;
+  }
+  if (mode != "registration") {
+    throw std::invalid_argument("Unknown initialization mode: \"" + mode + "\", expected \"split\" or \"registration\"");
+  }
+
+  // these all supply their own initial particles, so they cannot also be seeded by registration
+  if (project_->get_fixed_subjects_present()) {
+    throw std::invalid_argument("Registration based initialization cannot be used with fixed subjects");
+  }
+  if (get_use_landmarks()) {
+    throw std::invalid_argument("Registration based initialization cannot be used with landmark initial points");
+  }
+  for (const auto& domain_type : project_->get_groomed_domain_types()) {
+    if (domain_type == DomainType::Contour) {
+      throw std::invalid_argument("Registration based initialization does not support contour domains");
+    }
+  }
+
+  optimize->SetInitializationMode(Optimize::InitializationMode::Registration);
+  optimize->SetRegistrationReference(resolve_registration_reference());
+
+  const auto transform_type = get_registration_transform_type();
+  if (transform_type == "Rigid") {
+    optimize->SetRegistrationTransformType(ImageRegistration::TransformType::Rigid);
+  } else if (transform_type == "Affine") {
+    optimize->SetRegistrationTransformType(ImageRegistration::TransformType::Affine);
+  } else if (transform_type == "SyN") {
+    optimize->SetRegistrationTransformType(ImageRegistration::TransformType::SyN);
+  } else {
+    throw std::invalid_argument("Unknown registration transform type: \"" + transform_type +
+                                "\", expected \"Rigid\", \"Affine\" or \"SyN\"");
+  }
+
+  optimize->SetRegistrationGradientStep(get_registration_grad_step());
+  optimize->SetRegistrationFlowSigma(get_registration_flow_sigma());
+  optimize->SetRegistrationBand(get_registration_band());
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> OptimizeParameters::get_initial_points() {
   int domains_per_shape = project_->get_number_of_domains_per_subject();
 
@@ -422,6 +511,54 @@ bool OptimizeParameters::get_use_landmarks() { return params_.get(Keys::use_land
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_landmarks(bool value) { params_.set(Keys::use_landmarks, value); }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_initialization_mode() {
+  return params_.get(Keys::initialization_mode, std::string("split"));
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_initialization_mode(std::string value) { params_.set(Keys::initialization_mode, value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_initialization_reference() { return params_.get(Keys::initialization_reference, -1); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_initialization_reference(int value) {
+  params_.set(Keys::initialization_reference, value);
+}
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_registration_transform_type() {
+  return params_.get(Keys::registration_transform_type, std::string("SyN"));
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_transform_type(std::string value) {
+  params_.set(Keys::registration_transform_type, value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_registration_grad_step() { return params_.get(Keys::registration_grad_step, 0.25); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_grad_step(double value) {
+  params_.set(Keys::registration_grad_step, value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_registration_flow_sigma() { return params_.get(Keys::registration_flow_sigma, 3.0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_flow_sigma(double value) {
+  params_.set(Keys::registration_flow_sigma, value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_registration_band() { return params_.get(Keys::registration_band, 0.0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_band(double value) { params_.set(Keys::registration_band, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_fixed_subjects() { return params_.get(Keys::use_fixed_subjects, false); }
@@ -1011,7 +1148,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetKeepCheckpoints(get_keep_checkpoints() ? 1 : 0);
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
+  // registration based initialization reads image domains back from disk, so keep the full paths too
+  optimize->SetDomainPaths(filenames);
   optimize->SetOutputTransformFile("transform");
+
+  apply_initialization_parameters(optimize);
 
   return true;
 }

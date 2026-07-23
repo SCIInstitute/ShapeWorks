@@ -59,6 +59,13 @@ class Observer : public itk::DataObject {
   virtual void PositionAddEventCallback(Object*, const itk::EventObject&) {}
   virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {}
 
+  /** Stop this observer from reacting to events.  The correspondence matrices lay themselves out
+      assuming every shape holds the same number of particles, which is not true while particles are
+      still being spread over a single reference shape.  Suspending them until every shape has been
+      populated avoids that, and a later SynchronizePositions() brings them back up to date. */
+  void set_suspended(bool suspended) { suspended_ = suspended; }
+  bool is_suspended() const { return suspended_; }
+
  protected:
   Observer() {}
   virtual ~Observer(){};
@@ -68,6 +75,8 @@ class Observer : public itk::DataObject {
  private:
   Observer(const Self&);  // purposely not implemented
   void operator=(const Self&);     // purposely not implemented
+
+  bool suspended_ = false;
 };
 
 }  // namespace shapeworks

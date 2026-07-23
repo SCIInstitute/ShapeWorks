@@ -24,6 +24,9 @@ class OptimizeParameters {
   //! Return whether the project supplied any optimize parameters (otherwise defaults are used).
   bool has_optimize_parameters();
 
+  //! Apply the initialization settings, if registration based initialization was requested
+  void apply_initialization_parameters(Optimize* optimize);
+
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 
@@ -92,6 +95,33 @@ class OptimizeParameters {
 
   bool get_use_landmarks();
   void set_use_landmarks(bool value);
+
+  //! "split" spreads particles on every shape at once, "registration" spreads them on one reference
+  //! shape and carries them onto the others by deformable registration
+  std::string get_initialization_mode();
+  void set_initialization_mode(std::string value);
+
+  //! index of the shape used as the registration template, or -1 to choose it automatically
+  int get_initialization_reference();
+  void set_initialization_reference(int value);
+
+  //! which registration stages to run: "Rigid", "Affine" or "SyN"
+  std::string get_registration_transform_type();
+  void set_registration_transform_type(std::string value);
+
+  double get_registration_grad_step();
+  void set_registration_grad_step(double value);
+
+  double get_registration_flow_sigma();
+  void set_registration_flow_sigma(double value);
+
+  //! half-width of the retained band around the surface, or 0 to scale it from the data resolution
+  double get_registration_band();
+  void set_registration_band(double value);
+
+  //! Resolve which shape should be the registration template, mapping a project subject index onto
+  //! the shape index the optimizer uses.  Returns -1 to let the optimizer choose for itself.
+  int resolve_registration_reference();
 
   bool get_use_fixed_subjects();
   void set_use_fixed_subjects(bool value);

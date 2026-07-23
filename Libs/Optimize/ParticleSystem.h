@@ -138,6 +138,18 @@ class ParticleSystem : public itk::DataObject {
   void SplitAllParticles(double epsilon);
   void SplitParticle(double epsilon, unsigned int idx, unsigned int d = 0);
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
+
+  /** Doubles the number of particles in a single domain.  Unlike
+      AdvancedAllParticleSplitting, which splits one domain across every shape at once and therefore
+      requires all shapes to hold the same number of particles, this splits one domain on its own.
+      It is used to spread particles over a single reference shape. */
+  void SplitAllParticlesInDomain(double epsilon, unsigned int domain);
+
+  /** Re-announce the current particle count of every domain, so that observers which were not
+      listening while the positions were added (the correspondence matrices are suspended while
+      particles are spread over a single reference shape) resize themselves to match.  Without this
+      they keep their original size and later position updates index out of bounds. */
+  void ResyncObservers();
   // Debug function
   void PrintParticleSystem();
 

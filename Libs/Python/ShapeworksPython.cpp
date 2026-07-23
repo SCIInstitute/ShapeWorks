@@ -32,6 +32,7 @@ using namespace pybind11::literals;
 
 #include "EigenUtils.h"
 #include "Image.h"
+#include "ImageRegistration.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
@@ -790,6 +791,79 @@ PYBIND11_MODULE(shapeworks_py, m) {
                   "computes a warp transform from the source to the target landmarks (in the given files) using every "
                   "stride points",
                   "source_landmarks"_a, "target_landmarks"_a, "stride"_a = 1);
+
+  // ImageRegistration
+  py::class_<ImageRegistration> image_registration(m, "ImageRegistration");
+
+  // ImageRegistration::TransformType
+  py::enum_<ImageRegistration::TransformType>(image_registration, "TransformType")
+      .value("Rigid", ImageRegistration::TransformType::Rigid)
+      .value("Affine", ImageRegistration::TransformType::Affine)
+      .value("SyN", ImageRegistration::TransformType::SyN)
+      .export_values();
+
+  image_registration
+
+      .def(py::init<>())
+
+      .def("set_transform_type", &ImageRegistration::set_transform_type,
+           "sets which registration stages to run: Rigid, Affine or SyN", "type"_a)
+
+      .def("set_gradient_step", &ImageRegistration::set_gradient_step, "sets the SyN gradient step size", "step"_a)
+
+      .def("set_update_field_variance", &ImageRegistration::set_update_field_variance,
+           "sets the variance used to smooth the SyN update field", "variance"_a)
+
+      .def("set_total_field_variance", &ImageRegistration::set_total_field_variance,
+           "sets the variance used to smooth the SyN total field", "variance"_a)
+
+      .def("set_iterations", &ImageRegistration::set_iterations,
+           "sets the per-level iteration counts, coarsest level first", "iterations"_a)
+
+      .def("set_shrink_factors", &ImageRegistration::set_shrink_factors,
+           "sets the shrink factors per level, coarsest level first", "shrink_factors"_a)
+
+      .def("set_smoothing_sigmas", &ImageRegistration::set_smoothing_sigmas,
+           "sets the smoothing sigmas (in physical units) per level, coarsest level first", "sigmas"_a)
+
+      .def("set_correlation_radius", &ImageRegistration::set_correlation_radius,
+           "sets the neighborhood radius of the correlation metric used by the SyN stage", "radius"_a)
+
+      .def("run", &ImageRegistration::run,
+           "registers the moving image to the fixed image; the resulting transform maps points from fixed space into "
+           "moving space, so pass the shape holding the particles as the fixed image",
+           "fixed"_a, "moving"_a)
+
+      .def(
+          "transform_points",
+          [](const ImageRegistration& registration, const std::vector<std::vector<double>>& points) {
+            std::vector<Point3> input;
+            input.reserve(points.size());
+            for (const auto& point : points) {
+              if (point.size() != 3) {
+                throw std::invalid_argument("each point must have three coordinates");
+              }
+              input.push_back(Point3({point[0], point[1], point[2]}));
+            }
+
+            std::vector<std::vector<double>> output;
+            output.reserve(input.size());
+            for (const auto& point : registration.transform_points(input)) {
+              output.push_back({point[0], point[1], point[2]});
+            }
+            return output;
+          },
+          "maps points from fixed image space into moving image space", "points"_a)
+
+      .def("warped_moving", &ImageRegistration::warped_moving,
+           "returns the moving image resampled onto the fixed image grid")
+
+      .def_static("make_registration_image", &ImageRegistration::make_registration_image,
+                  "clamps a distance transform to a band around the surface and rescales it to [0,1], which keeps the "
+                  "similarity metric focused on the region near the surface",
+                  "dt"_a, "band"_a = 5.0)
+
+      ;
 
   // Mesh
   py::class_<Mesh> mesh(m, "Mesh");

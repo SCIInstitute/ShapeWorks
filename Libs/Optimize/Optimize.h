@@ -16,6 +16,7 @@
 #include <Eigen/Eigen>
 
 // shapeworks
+#include <Image/ImageRegistration.h>
 #include <Project/Project.h>
 
 #include "Libs/Optimize/Domain/DomainType.h"
@@ -52,6 +53,13 @@ class Optimize {
   using ImageType = itk::Image<float, 3>;
   using VectorType = VectorFunction::VectorType;
   using MatrixType = Eigen::MatrixXd;
+
+  //! How the initial particle correspondence is established
+  enum class InitializationMode {
+    Split,       //!< particles are split and optimized on every shape at once (the historical behavior)
+    Registration //!< particles are spread over a single reference shape, then carried onto the other
+                 //!< shapes by deformably registering the reference to each of them
+  };
 
   //! Constructor
   Optimize();
@@ -226,6 +234,35 @@ class Optimize {
   //! Set initial particle positions (e.g. for fixed subjects)
   void SetInitialPoints(std::vector<std::vector<itk::Point<double>>> initial_points);
 
+  //! Set the full path of each domain's groomed input, indexed by global domain number.  Image
+  //! domains discard their image once it has been converted to a narrow band, so the path is needed
+  //! to recover the distance transform for registration based initialization.
+  void SetDomainPaths(const std::vector<std::string>& paths);
+
+  //! Set how the initial correspondence is established (default Split)
+  void SetInitializationMode(InitializationMode mode);
+  InitializationMode GetInitializationMode() const { return m_initialization_mode; }
+
+  //! Set the shape used as the registration template, or -1 to choose the most representative shape
+  //! automatically.  Only used when the initialization mode is Registration.
+  void SetRegistrationReference(int shape_index);
+
+  //! Return the shape used as the registration template.  Valid once initialization has run.
+  int GetRegistrationReference() const { return m_registration_reference_chosen; }
+
+  //! Set which registration stages to run when transferring particles (default SyN)
+  void SetRegistrationTransformType(ImageRegistration::TransformType type);
+
+  //! Set the SyN gradient step used when transferring particles
+  void SetRegistrationGradientStep(double step);
+
+  //! Set the variance used to smooth the SyN update field when transferring particles
+  void SetRegistrationFlowSigma(double sigma);
+
+  //! Set the half-width of the distance transform band retained for registration, or 0 to scale it
+  //! automatically from the resolution of the data
+  void SetRegistrationBand(double band);
+
   //! Get number of shapes
   int GetNumShapes();
   //! Set attribute scales (TODO: details)
@@ -314,6 +351,9 @@ class Optimize {
 
   void UpdateProgress();
 
+  //! Report progress with an explicit stage message, for phases that run no particle iterations
+  void UpdateProgress(const std::string& stage);
+
   //! Return the estimated total number of particle-iterations used for progress reporting
   int GetTotalParticleIterations() const { return total_particle_iterations_; }
 
@@ -338,6 +378,36 @@ class Optimize {
   void AddSinglePoint();
   void Initialize();
   void RunOptimize();
+
+  //! Establish the initial correspondence by spreading particles over a single reference shape and
+  //! then registering that shape to each of the others
+  void InitializeFromRegistration();
+
+  //! Pick the shape used as the registration template, honoring an explicitly requested one
+  int ResolveRegistrationReference();
+
+  //! Split and optimize particles on the reference shape alone, until it holds the requested counts
+  void SpreadParticlesOnReference(int reference_shape);
+
+  //! Register the reference to every other shape and carry its particles across
+  void TransferParticlesFromReference(int reference_shape);
+
+  //! Log how well a shape's transferred particles landed on its surface
+  void ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
+                             const std::vector<Point3>& transferred);
+
+  //! Build the image used to register the given domain.  Mesh domains are rasterized to a distance
+  //! transform; image domains are read back from their groomed path.
+  Image GetRegistrationImage(int domain);
+
+  //! Return the band to retain around the surface, defaulting to a few voxels of the given spacing
+  double GetRegistrationBand(double spacing) const;
+
+  //! Return the surface of the given domain, reading it back from disk for image domains
+  Mesh GetDomainSurface(int domain);
+
+  //! Return the number of shapes (subjects), as opposed to the total number of domains
+  int GetNumberOfSubjects() const;
 
   void ComputeEnergyAfterIteration();
 
@@ -446,7 +516,20 @@ class Optimize {
   double m_spacing = 0;
 
   std::vector<std::string> m_filenames;
+  std::vector<std::string> m_domain_paths;
   int m_num_shapes = 0;
+
+  // Registration based initialization
+  InitializationMode m_initialization_mode = InitializationMode::Split;
+  int m_registration_reference = -1;         // -1 means choose automatically
+  int m_registration_reference_chosen = -1;  // the shape actually used
+  ImageRegistration::TransformType m_registration_transform_type = ImageRegistration::TransformType::SyN;
+  double m_registration_gradient_step = 0.25;
+  double m_registration_flow_sigma = 3.0;
+  double m_registration_band = 0.0;  // 0 means scale it from the data
+
+  // progress budget charged for each registration, since they run no particle iterations
+  int m_transfer_iteration_weight = 0;
 
   std::vector<double> m_energy_a;
   std::vector<double> m_energy_b;
@@ -472,6 +555,10 @@ class Optimize {
 
   int current_particle_iterations_ = 0;
   int total_particle_iterations_ = 0;
+
+  // Progress accrues over one shape's domains.  This shifts that accounting onto the reference while
+  // it is the only shape holding particles.
+  int m_progress_domain_offset = 0;
 
   std::function<void(void)> iteration_callback_;
   bool show_visualizer_ = false;
