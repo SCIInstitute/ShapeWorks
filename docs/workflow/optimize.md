@@ -109,6 +109,14 @@ deformable stage with a starting point it cannot recover from. Transferred parti
 projected back onto the target surface, and the optimization step then refines both their spacing and
 their correspondence as usual.
 
+**Reusing registrations between runs.** A registration depends only on the pair of shapes and the
+registration settings, never on the particle count, iteration counts or weightings. Computed
+transforms are therefore cached in a `registration_cache` directory beside the project, so that the
+optimization parameters can be changed and the model rebuilt without paying for the registrations a
+second time. Regrooming an input invalidates its entries automatically. Set the `registration_cache`
+parameter to `false` to turn this off. The cache holds a displacement field per pair of shapes, on the
+order of tens of megabytes each, so delete the directory when finished with a cohort.
+
 Notes and limitations:
 
 - It cannot be combined with fixed subjects or with landmark initial particles, since those also

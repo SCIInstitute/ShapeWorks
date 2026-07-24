@@ -1,11 +1,14 @@
 #include "ImageRegistration.h"
 
+#include "ShapeworksUtils.h"
+
 #include <itkANTSNeighborhoodCorrelationImageToImageMetricv4.h>
 #include <itkAffineTransform.h>
 #include <itkCenteredTransformInitializer.h>
 #include <itkConjugateGradientLineSearchOptimizerv4.h>
 #include <itkDisplacementFieldTransform.h>
 #include <itkDisplacementFieldTransformParametersAdaptor.h>
+#include <itkHDF5TransformIOFactory.h>
 #include <itkImageRegionIterator.h>
 #include <itkImageRegistrationMethodv4.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -13,6 +16,11 @@
 #include <itkRegistrationParameterScalesFromPhysicalShift.h>
 #include <itkResampleImageFilter.h>
 #include <itkShrinkImageFilter.h>
+#include <itkCastImageFilter.h>
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+#include <itkTransformFileReader.h>
+#include <itkTransformFileWriter.h>
 #include <itkSyNImageRegistrationMethod.h>
 #include <itkVersorRigid3DTransform.h>
 
@@ -490,6 +498,115 @@ ImageRegistration::CompositeTransformType::Pointer ImageRegistration::get_transf
     throw std::runtime_error("get_transform called before run()");
   }
   return impl_->composite;
+}
+
+//---------------------------------------------------------------------------
+/// The displacement field is far larger than everything else combined, so it is kept beside the
+/// linear transforms as an image of floats rather than inside the transform file as raw doubles.
+/// Float carries the field to well under a micron, which is far finer than it is accurate.
+static std::string displacement_field_path(const std::string& filename) { return filename + ".field.nrrd"; }
+
+
+//---------------------------------------------------------------------------
+void ImageRegistration::save_transform(const std::string& filename) const {
+  if (!impl_->composite) {
+    throw std::runtime_error("save_transform called before run()");
+  }
+
+  itk::HDF5TransformIOFactory::RegisterOneFactory();
+
+  using StoredFieldType = itk::Image<itk::Vector<float, 3>, 3>;
+
+  auto linear = CompositeTransformType::New();
+  StoredFieldType::Pointer stored_field;
+
+  for (size_t i = 0; i < impl_->composite->GetNumberOfTransforms(); i++) {
+    auto transform = impl_->composite->GetNthTransform(i);
+    auto* field = dynamic_cast<DisplacementFieldTransformType*>(transform.GetPointer());
+    if (!field) {
+      linear->AddTransform(transform);
+      continue;
+    }
+    // only the forward field is needed to carry points across; the inverse would double the size
+    using CastType = itk::CastImageFilter<DisplacementFieldTransformType::DisplacementFieldType, StoredFieldType>;
+    // stored at full resolution: the field carries real detail, and halving it costs a sixth of the
+    // registration's own accuracy, which is the opposite of the point
+    auto cast = CastType::New();
+    cast->SetInput(field->GetDisplacementField());
+    cast->Update();
+    stored_field = cast->GetOutput();
+  }
+
+  try {
+    auto writer = itk::TransformFileWriterTemplate<double>::New();
+    writer->SetFileName(filename);
+    writer->SetInput(linear);
+    writer->Update();
+
+    if (stored_field) {
+      auto field_writer = itk::ImageFileWriter<StoredFieldType>::New();
+      field_writer->SetFileName(displacement_field_path(filename));
+      field_writer->SetInput(stored_field);
+      field_writer->UseCompressionOn();
+      field_writer->Update();
+    }
+  } catch (const itk::ExceptionObject& e) {
+    throw std::runtime_error(std::string("unable to write transform \"") + filename + "\": " + e.what());
+  }
+}
+
+//---------------------------------------------------------------------------
+bool ImageRegistration::load_transform(const std::string& filename) {
+  itk::HDF5TransformIOFactory::RegisterOneFactory();
+
+  using StoredFieldType = itk::Image<itk::Vector<float, 3>, 3>;
+
+  auto composite = CompositeTransformType::New();
+  try {
+    auto reader = itk::TransformFileReaderTemplate<double>::New();
+    reader->SetFileName(filename);
+    reader->Update();
+
+    for (const auto& transform : *reader->GetTransformList()) {
+      auto* casted = dynamic_cast<CompositeTransformType::TransformType*>(transform.GetPointer());
+      if (!casted) {
+        return false;
+      }
+      // a composite reads back as its individual transforms, in the order they were added
+      if (auto* nested = dynamic_cast<CompositeTransformType*>(casted)) {
+        for (size_t i = 0; i < nested->GetNumberOfTransforms(); i++) {
+          composite->AddTransform(nested->GetNthTransform(i));
+        }
+      } else {
+        composite->AddTransform(casted);
+      }
+    }
+
+    const auto field_file = displacement_field_path(filename);
+    if (ShapeWorksUtils::file_exists(field_file)) {
+      auto field_reader = itk::ImageFileReader<StoredFieldType>::New();
+      field_reader->SetFileName(field_file);
+      field_reader->Update();
+
+      using CastType = itk::CastImageFilter<StoredFieldType, DisplacementFieldTransformType::DisplacementFieldType>;
+      auto cast = CastType::New();
+      cast->SetInput(field_reader->GetOutput());
+      cast->Update();
+
+      auto field_transform = DisplacementFieldTransformType::New();
+      field_transform->SetDisplacementField(cast->GetOutput());
+      composite->AddTransform(field_transform);
+    }
+  } catch (const itk::ExceptionObject&) {
+    return false;  // a cache that cannot be read is simply not a cache hit
+  }
+
+  if (composite->GetNumberOfTransforms() == 0) {
+    return false;
+  }
+
+  impl_->composite = composite;
+  return true;
 }
 
 //---------------------------------------------------------------------------

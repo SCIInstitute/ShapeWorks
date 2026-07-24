@@ -1255,3 +1255,35 @@ TEST(ImageTests, registrationParticleTransferTest) {
   ASSERT_LT(after, before);
   ASSERT_LT(after, 0.25);  // measured ~0.03, well under the 1mm voxel size
 }
+
+TEST(ImageTests, registrationTransformCacheTest) {
+  Image reference_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  Image target_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd");
+
+  auto reference_particles = read_particles(std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles");
+
+  ImageRegistration registration;
+  registration.run(ImageRegistration::make_registration_image(reference_dt),
+                   ImageRegistration::make_registration_image(target_dt));
+  auto expected = registration.transform_points(reference_particles);
+
+  const std::string cache = std::string(TEST_DATA_DIR) + "/registration_cache_test.tfm";
+  registration.save_transform(cache);
+
+  // a saved transform must stand in for the registration exactly
+  ImageRegistration restored;
+  ASSERT_TRUE(restored.load_transform(cache));
+  auto actual = restored.transform_points(reference_particles);
+
+  ASSERT_EQ(actual.size(), expected.size());
+  for (size_t i = 0; i < actual.size(); i++) {
+    ASSERT_LT(actual[i].EuclideanDistanceTo(expected[i]), 1e-4);
+  }
+
+  // reading something that is not a transform is a miss, not a crash
+  ImageRegistration missing;
+  ASSERT_FALSE(missing.load_transform(std::string(TEST_DATA_DIR) + "/does_not_exist.tfm"));
+
+  std::remove(cache.c_str());
+  std::remove((cache + ".field.nrrd").c_str());
+}

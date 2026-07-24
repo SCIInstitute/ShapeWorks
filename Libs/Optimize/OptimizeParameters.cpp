@@ -49,6 +49,7 @@ const std::string registration_transform_type = "registration_transform_type";
 const std::string registration_grad_step = "registration_grad_step";
 const std::string registration_flow_sigma = "registration_flow_sigma";
 const std::string registration_band = "registration_band";
+const std::string registration_cache = "registration_cache";
 const std::string use_fixed_subjects = "use_fixed_subjects";
 const std::string fixed_subjects_column = "fixed_subjects_column";
 const std::string fixed_subjects_choice = "fixed_subjects_choice";
@@ -109,6 +110,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::registration_grad_step,
                                          Keys::registration_flow_sigma,
                                          Keys::registration_band,
+                                         Keys::registration_cache,
                                          Keys::use_fixed_subjects,
                                          Keys::fixed_subjects_column,
                                          Keys::fixed_subjects_choice,
@@ -405,6 +407,26 @@ void OptimizeParameters::apply_initialization_parameters(Optimize* optimize) {
   optimize->SetRegistrationGradientStep(get_registration_grad_step());
   optimize->SetRegistrationFlowSigma(get_registration_flow_sigma());
   optimize->SetRegistrationBand(get_registration_band());
+
+  if (get_registration_cache()) {
+    // Keep the cache beside the project, not under the particle output: that output path carries the
+    // optimize prefix, so a run with different parameters would look in a different place and pay
+    // for every registration again, which is the opposite of the point.
+    // note StringUtils::getPath is not usable here: it returns the whole string when there is no
+    // directory component, which would put the cache inside the project file itself
+    auto base = boost::filesystem::path(project_->get_filename()).parent_path();
+    if (base.empty()) {
+      base = ".";  // a project named without any directory sits in the working directory
+    }
+    const auto directory = (base / "registration_cache").string();
+    try {
+      boost::filesystem::create_directories(directory);
+      optimize->SetRegistrationCacheDir(directory);
+      SW_DEBUG("Caching registrations in {}", directory);
+    } catch (const std::exception& e) {
+      SW_WARN("Unable to create registration cache directory \"{}\": {}", directory, e.what());
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -559,6 +581,12 @@ double OptimizeParameters::get_registration_band() { return params_.get(Keys::re
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_registration_band(double value) { params_.set(Keys::registration_band, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_registration_cache() { return params_.get(Keys::registration_cache, true); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_cache(bool value) { params_.set(Keys::registration_cache, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_fixed_subjects() { return params_.get(Keys::use_fixed_subjects, false); }

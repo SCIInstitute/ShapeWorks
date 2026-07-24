@@ -92,6 +92,24 @@ class ImageRegistration {
   CompositeTransformType::Pointer get_transform() const;
 
   /**
+   * @brief Write the transform computed by run() so that it can be reused.
+   *
+   * The transform depends only on the two images and the registration settings, so a saved one can
+   * stand in for re-running the registration whenever those are unchanged.
+   */
+  void save_transform(const std::string& filename) const;
+
+  /**
+   * @brief Read a transform written by save_transform(), in place of running the registration.
+   *
+   * transform_points() and get_transform() work afterwards exactly as they would have after run().
+   * warped_moving() does not, since no images were supplied.
+   *
+   * @return whether the transform was read
+   */
+  bool load_transform(const std::string& filename);
+
+  /**
    * @brief Prepare a distance transform for registration by clamping and rescaling it.
    *
    * Values are clamped to +/- band and then mapped to [0,1].  This keeps the metric focused on the

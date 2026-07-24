@@ -858,6 +858,14 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def("warped_moving", &ImageRegistration::warped_moving,
            "returns the moving image resampled onto the fixed image grid")
 
+      .def("save_transform", &ImageRegistration::save_transform,
+           "writes the computed transform so that it can be reused in place of registering again",
+           "filename"_a)
+
+      .def("load_transform", &ImageRegistration::load_transform,
+           "reads a transform written by save_transform, in place of running the registration",
+           "filename"_a)
+
       .def_static("make_registration_image", &ImageRegistration::make_registration_image,
                   "clamps a distance transform to a band around the surface and rescales it to [0,1], which keeps the "
                   "similarity metric focused on the region near the surface",

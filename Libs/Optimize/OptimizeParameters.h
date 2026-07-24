@@ -119,6 +119,10 @@ class OptimizeParameters {
   double get_registration_band();
   void set_registration_band(double value);
 
+  //! whether to reuse registrations across runs; they do not depend on any optimization parameter
+  bool get_registration_cache();
+  void set_registration_cache(bool value);
+
   //! Resolve which shape should be the registration template, mapping a project subject index onto
   //! the shape index the optimizer uses.  Returns -1 to let the optimizer choose for itself.
   int resolve_registration_reference();

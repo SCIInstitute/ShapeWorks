@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
+
 #include "Profiling.h"
 
 #ifdef _WIN32
@@ -910,6 +912,38 @@ void Optimize::SpreadParticlesOnReference(int reference_shape) {
 }
 
 //---------------------------------------------------------------------------
+std::string Optimize::GetRegistrationCachePath(int reference_domain, int domain) const {
+  if (m_registration_cache_dir.empty()) {
+    return "";
+  }
+
+  auto describe = [&](int d) {
+    std::string description = d < static_cast<int>(m_domain_paths.size()) ? m_domain_paths[d] : std::to_string(d);
+    // a groomed input that has been rewritten must not read back as a hit
+    if (ShapeWorksUtils::file_exists(description)) {
+      try {
+        description += ":" + std::to_string(boost::filesystem::file_size(description));
+        description += ":" + std::to_string(boost::filesystem::last_write_time(description));
+      } catch (const std::exception&) {
+      }
+    }
+    return description;
+  };
+
+  // everything the transform depends on, and nothing that it does not
+  std::string key = describe(reference_domain) + "->" + describe(domain);
+  key += "|transform=" + std::to_string(static_cast<int>(m_registration_transform_type));
+  key += "|step=" + std::to_string(m_registration_gradient_step);
+  key += "|sigma=" + std::to_string(m_registration_flow_sigma);
+  key += "|band=" + std::to_string(m_registration_band);
+
+  const auto hash = std::hash<std::string>{}(key);
+  std::stringstream name;
+  name << m_registration_cache_dir << "/registration_" << std::hex << hash << ".tfm";
+  return name.str();
+}
+
+//---------------------------------------------------------------------------
 void Optimize::TransferParticlesFromReference(int reference_shape) {
   auto* system = m_sampler->GetParticleSystem();
   const int num_subjects = GetNumberOfSubjects();
@@ -936,7 +970,24 @@ void Optimize::TransferParticlesFromReference(int reference_shape) {
       registration.set_transform_type(m_registration_transform_type);
       registration.set_gradient_step(m_registration_gradient_step);
       registration.set_update_field_variance(m_registration_flow_sigma);
-      registration.run(reference_image, GetRegistrationImage(domain));
+
+      const auto cache_path = GetRegistrationCachePath(reference_domain, domain);
+      // check for the file first: asking the reader for one that is not there is a normal cache
+      // miss, but it makes the HDF5 layer print an alarming block of text
+      const bool cached =
+          !cache_path.empty() && ShapeWorksUtils::file_exists(cache_path) && registration.load_transform(cache_path);
+      if (cached) {
+        SW_DEBUG("Reusing cached registration: {}", cache_path);
+      } else {
+        registration.run(reference_image, GetRegistrationImage(domain));
+        if (!cache_path.empty()) {
+          try {
+            registration.save_transform(cache_path);
+          } catch (const std::exception& e) {
+            SW_WARN("Unable to cache registration: {}", e.what());
+          }
+        }
+      }
 
       auto transferred = registration.transform_points(reference_points);
 
@@ -2174,6 +2225,9 @@ void Optimize::SetRegistrationFlowSigma(double sigma) { m_registration_flow_sigm
 
 //---------------------------------------------------------------------------
 void Optimize::SetRegistrationBand(double band) { m_registration_band = band; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationCacheDir(const std::string& path) { m_registration_cache_dir = path; }
 
 //---------------------------------------------------------------------------
 int Optimize::GetNumberOfSubjects() const {

@@ -263,6 +263,15 @@ class Optimize {
   //! automatically from the resolution of the data
   void SetRegistrationBand(double band);
 
+  /**
+   * @brief Set where computed registration transforms are cached, or "" to not cache them.
+   *
+   * A transform depends only on the pair of shapes and the registration settings, none of which the
+   * optimization parameters affect.  Caching them lets the particle count, iterations and weightings
+   * be changed and the model rebuilt without paying for the registrations again.
+   */
+  void SetRegistrationCacheDir(const std::string& path);
+
   //! Get number of shapes
   int GetNumShapes();
   //! Set attribute scales (TODO: details)
@@ -396,6 +405,10 @@ class Optimize {
   void ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
                              const std::vector<Point3>& transferred);
 
+  //! Path a registration's transform is cached at, or "" when caching is off.  The name covers
+  //! everything the transform depends on, so a stale one is never mistaken for a hit.
+  std::string GetRegistrationCachePath(int reference_domain, int domain) const;
+
   //! Build the image used to register the given domain.  Mesh domains are rasterized to a distance
   //! transform; image domains are read back from their groomed path.
   Image GetRegistrationImage(int domain);
@@ -527,6 +540,7 @@ class Optimize {
   double m_registration_gradient_step = 0.25;
   double m_registration_flow_sigma = 3.0;
   double m_registration_band = 0.0;  // 0 means scale it from the data
+  std::string m_registration_cache_dir;
 
   // progress budget charged for each registration, since they run no particle iterations
   int m_transfer_iteration_weight = 0;
