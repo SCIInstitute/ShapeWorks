@@ -38,12 +38,18 @@ target_link_libraries(Particles PUBLIC
   Eigen3::Eigen
   )
 
-# Project is only used inside CorrespondenceEvaluation.cpp — keep PRIVATE so it
-# does not propagate to consumers of Particles (which was found to perturb VTK
-# static-init/link ordering in shapeworks_py and break .vtp reads).
-target_link_libraries(Particles PRIVATE
-  Project
-  )
+# NOTE: CorrespondenceEvaluation.cpp uses Project, but we deliberately do NOT
+# link Particles against Project here. Project pulls in xlnt, which bundles its
+# own copy of expat and exports the public XML_* symbols. Adding a Project ->
+# xlnt edge to this low-level library hoists xlnt ahead of VTK's/ITK's static
+# expat archives in every consumer's link line, corrupting expat's encoding
+# tables and segfaulting on the first .vtp read (broke OptimizeTests and
+# shapeworks_py's .vtp reads). Because CorrespondenceEvaluation is only
+# referenced by the shapeworks CLI and the Python module -- both of which
+# already link Project -- its object is only pulled from libParticles.a by
+# those targets, and its Project symbols resolve there. Targets that link
+# Particles but never reference CorrespondenceEvaluation (OptimizeTests, etc.)
+# never pull the object and keep their original, safe link order.
 
 # set
 set_target_properties(Particles PROPERTIES PUBLIC_HEADER
