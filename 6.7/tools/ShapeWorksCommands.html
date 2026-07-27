@@ -1766,6 +1766,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#correspondence-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      correspondence-quality
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4796,6 +4805,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#correspondence-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      correspondence-quality
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5791,6 +5809,20 @@
 <p><strong>--output=STRING:</strong> Path to output file.</p>
 <p><strong>--range=FLOAT:</strong> Standard deviation range for PCA [default: 3.0].</p>
 <p><strong>--steps=INT:</strong> Number of steps to use for PCA [default: 21].</p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#analyze-commands">Back to Analyze Commands</a></p>
+<h3 id="correspondence-quality">correspondence-quality</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  correspondence-quality [args]...
+</code></pre></div>
+<p><strong>Description:</strong> Evaluate per-subject correspondence quality by reconstructing each shape from its local particles (biharmonic mesh warp from the cohort L1-medoid template, matching Studio's median selection) and measuring distance to the groomed mesh. Reports per-subject and aggregate statistics.</p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--name=STRING:</strong> Path to project file (.swproj or .xlsx).</p>
+<p><strong>--output=STRING:</strong> Optional path to write per-subject CSV.</p>
+<p><strong>--output_meshes=STRING:</strong>  Optional directory; write reconstructed meshes with per-vertex distance field for visual inspection.</p>
+<p><strong>--method=CHOICE:</strong> Distance method [default: point-to-cell]. (choose from 'point-to-cell', 'point-to-point')</p>
+<p><strong>--worst=INT:</strong> Number of worst-ranked subjects to print [default: 5].</p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#analyze-commands">Back to Analyze Commands</a></p>
 <h2 id="deepssm-commands">DeepSSM Commands</h2>

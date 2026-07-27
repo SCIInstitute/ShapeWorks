@@ -4191,6 +4191,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#typedef-projecthandle" class="md-nav__link">
+    <span class="md-ellipsis">
+      typedef ProjectHandle
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#using-thinplatesplinetransform" class="md-nav__link">
     <span class="md-ellipsis">
       using ThinPlateSplineTransform
@@ -4203,15 +4212,6 @@
   <a href="#using-rbfssparsetransform" class="md-nav__link">
     <span class="md-ellipsis">
       using RBFSSparseTransform
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-projecthandle" class="md-nav__link">
-    <span class="md-ellipsis">
-      using ProjectHandle
     </span>
   </a>
   
@@ -5124,6 +5124,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-command_declare_92" class="md-nav__link">
+    <span class="md-ellipsis">
+      function COMMAND_DECLARE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-display_mode_to_string" class="md-nav__link">
     <span class="md-ellipsis">
       function display_mode_to_string
@@ -5989,7 +5998,23 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1CorrespondenceEvaluation.html">shapeworks::CorrespondenceEvaluation</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1CorrespondenceFunction.html">shapeworks::CorrespondenceFunction</a></strong> <br>Correspondence term.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1CorrespondenceQualityReport.html">shapeworks::CorrespondenceQualityReport</a></strong> <br>Full evaluation report.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1CorrespondenceQualityRow.html">shapeworks::CorrespondenceQualityRow</a></strong> <br>Per-subject-per-domain correspondence quality result row.</td>
+</tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1CorrespondenceQualityStats.html">shapeworks::CorrespondenceQualityStats</a></strong> <br>Aggregate summary statistics.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -6803,16 +6828,16 @@
 <td><strong><a href="namespaceshapeworks.html#using-imagetype">ImageType</a></strong></td>
 </tr>
 <tr>
+<td>typedef std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1Project.html">Project</a> &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#typedef-projecthandle">ProjectHandle</a></strong></td>
+</tr>
+<tr>
 <td>using <a href="../Classes/classitk_1_1ThinPlateSplineKernelTransform2.html">itk::ThinPlateSplineKernelTransform2</a>&lt; double, 3 &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#using-thinplatesplinetransform">ThinPlateSplineTransform</a></strong> <br>Transforms that can be used for <a href="">ReconstructSurface</a>.</td>
 </tr>
 <tr>
 <td>using <a href="../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.html">itk::CompactlySupportedRBFSparseKernelTransform</a>&lt; double, 3 &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#using-rbfssparsetransform">RBFSSparseTransform</a></strong></td>
-</tr>
-<tr>
-<td>using std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1Project.html">Project</a> &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-projecthandle">ProjectHandle</a></strong></td>
 </tr>
 <tr>
 <td>template &lt;typename T &gt; <br>using Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;</td>
@@ -7212,6 +7237,10 @@
 <tr>
 <td></td>
 <td><strong><a href="namespaceshapeworks.html#function-command-declare">COMMAND_DECLARE</a></strong>(AnalyzeCommand , <a href="../Classes/classshapeworks_1_1AnalyzeCommandGroup.html">AnalyzeCommandGroup</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="namespaceshapeworks.html#function-command-declare">COMMAND_DECLARE</a></strong>(CorrespondenceQualityCommand , <a href="../Classes/classshapeworks_1_1AnalyzeCommandGroup.html">AnalyzeCommandGroup</a> )</td>
 </tr>
 <tr>
 <td></td>
@@ -8048,15 +8077,15 @@
 <h3 id="using-imagetype">using ImageType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="typedef-projecthandle">typedef ProjectHandle</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectHandle</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="using-thinplatesplinetransform">using ThinPlateSplineTransform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ThinPlateSplineTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <p>Transforms that can be used for <a href="">ReconstructSurface</a>. </p>
 <h3 id="using-rbfssparsetransform">using RBFSSparseTransform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">RBFSSparseTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="using-projecthandle">using ProjectHandle</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-vnlmatrix">using VnlMatrix</h3>
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
@@ -8624,11 +8653,17 @@
 </code></pre></div>
 <h3 id="function-command_declare_90">function COMMAND_DECLARE</h3>
 <div class="highlight"><pre><span></span><code><span class="n">COMMAND_DECLARE</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CorrespondenceQualityCommand</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">AnalyzeCommandGroup</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-command_declare_91">function COMMAND_DECLARE</h3>
+<div class="highlight"><pre><span></span><code><span class="n">COMMAND_DECLARE</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ConvertProjectCommand</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">ProjectCommandGroup</span><span class="w"> </span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-command_declare_91">function COMMAND_DECLARE</h3>
+<h3 id="function-command_declare_92">function COMMAND_DECLARE</h3>
 <div class="highlight"><pre><span></span><code><span class="n">COMMAND_DECLARE</span><span class="p">(</span>
 <span class="w">    </span><span class="n">DeepSSMCommand</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">DeepSSMCommandGroup</span><span class="w"> </span>
@@ -9169,7 +9204,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2026-07-26 at 05:01:00 +0000</p>
+<p>Updated on 2026-07-27 at 05:53:15 +0000</p>
 
 
 
