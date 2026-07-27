@@ -44,6 +44,7 @@ using namespace pybind11::literals;
 #include "PythonAnalyze.h"
 #include "PythonGroom.h"
 #include "ReconstructSurface.h"
+#include "CorrespondenceEvaluation.h"
 #include "ShapeEvaluation.h"
 #include "Shapeworks.h"
 #include "ShapeworksUtils.h"
@@ -1312,6 +1313,43 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_static("ComputeFullSpecificity", &ShapeEvaluation::compute_full_specificity,
                   "Computes the specificity measure for a particle system, all modes", "particleSystem"_a,
                   "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false);
+
+  // CorrespondenceEvaluation
+  py::class_<CorrespondenceQualityRow>(m, "CorrespondenceQualityRow")
+      .def_readonly("subject", &CorrespondenceQualityRow::subject)
+      .def_readonly("domain", &CorrespondenceQualityRow::domain)
+      .def_readonly("mean_dist", &CorrespondenceQualityRow::mean_dist)
+      .def_readonly("max_dist", &CorrespondenceQualityRow::max_dist)
+      .def_readonly("bbox_diag", &CorrespondenceQualityRow::bbox_diag)
+      .def_readonly("norm_mean", &CorrespondenceQualityRow::norm_mean)
+      .def_readonly("norm_max", &CorrespondenceQualityRow::norm_max)
+      .def_readonly("is_template", &CorrespondenceQualityRow::is_template);
+
+  py::class_<CorrespondenceQualityStats>(m, "CorrespondenceQualityStats")
+      .def_readonly("mean", &CorrespondenceQualityStats::mean)
+      .def_readonly("median", &CorrespondenceQualityStats::median)
+      .def_readonly("p95", &CorrespondenceQualityStats::p95)
+      .def_readonly("max", &CorrespondenceQualityStats::max);
+
+  py::class_<CorrespondenceQualityReport>(m, "CorrespondenceQualityReport")
+      .def_readonly("rows", &CorrespondenceQualityReport::rows)
+      .def_readonly("template_subject", &CorrespondenceQualityReport::template_subject)
+      .def_readonly("num_evaluated", &CorrespondenceQualityReport::num_evaluated)
+      .def_readonly("num_template_rows", &CorrespondenceQualityReport::num_template_rows)
+      .def_readonly("agg_raw", &CorrespondenceQualityReport::agg_raw)
+      .def_readonly("agg_norm", &CorrespondenceQualityReport::agg_norm);
+
+  py::class_<CorrespondenceEvaluation> corresp_eval(m, "CorrespondenceEvaluation");
+
+  py::enum_<CorrespondenceEvaluation::DistanceMethod>(corresp_eval, "DistanceMethod")
+      .value("PointToCell", CorrespondenceEvaluation::DistanceMethod::PointToCell)
+      .value("PointToPoint", CorrespondenceEvaluation::DistanceMethod::PointToPoint)
+      .export_values();
+
+  corresp_eval.def_static(
+      "evaluate", &CorrespondenceEvaluation::evaluate,
+      "Evaluate per-subject correspondence quality (biharmonic mesh warp from L1-medoid template).",
+      "project"_a, "method"_a = CorrespondenceEvaluation::DistanceMethod::PointToCell, "output_meshes_dir"_a = "");
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
 

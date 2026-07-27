@@ -101,6 +101,7 @@ COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 COMMAND_DECLARE(AnalyzeCommand, AnalyzeCommandGroup);
+COMMAND_DECLARE(CorrespondenceQualityCommand, AnalyzeCommandGroup);
 COMMAND_DECLARE(ConvertProjectCommand, ProjectCommandGroup);
 COMMAND_DECLARE(DeepSSMCommand, DeepSSMCommandGroup);
 
