@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 // #include <numeric>
 #include <sstream>
 #include <string>
@@ -956,7 +957,10 @@ void Optimize::TransferParticlesFromReference(int reference_shape) {
       reference_points.push_back(system->GetPosition(k, reference_domain));
     }
 
-    Image reference_image = GetRegistrationImage(reference_domain);
+    // The reference image is only needed to run a registration, so it is built lazily on the first
+    // cache miss.  Rasterizing a large mesh takes several seconds, and when every transfer is a cache
+    // hit (e.g. re-running with different optimization parameters) it is never needed at all.
+    std::optional<Image> reference_image;
 
     for (int s = 0; s < num_subjects && !m_aborted; s++) {
       if (s == reference_shape) {
@@ -965,6 +969,7 @@ void Optimize::TransferParticlesFromReference(int reference_shape) {
       const int domain = s * m_domains_per_shape + d;
 
       UpdateProgress(fmt::format("Registering shape {} of {}", s + 1, num_subjects));
+      RefreshDuringTransfer();
 
       ImageRegistration registration;
       registration.set_transform_type(m_registration_transform_type);
@@ -979,7 +984,14 @@ void Optimize::TransferParticlesFromReference(int reference_shape) {
       if (cached) {
         SW_DEBUG("Reusing cached registration: {}", cache_path);
       } else {
-        registration.run(reference_image, GetRegistrationImage(domain));
+        if (!reference_image) {
+          // only now, on a genuine miss, is the reference image worth building
+          UpdateProgress(m_domains_per_shape > 1 ? fmt::format("Preparing registration (domain {})", d + 1)
+                                                 : std::string("Preparing registration"));
+          RefreshDuringTransfer();
+          reference_image = GetRegistrationImage(reference_domain);
+        }
+        registration.run(*reference_image, GetRegistrationImage(domain));
         if (!cache_path.empty()) {
           try {
             registration.save_transform(cache_path);
@@ -1000,6 +1012,9 @@ void Optimize::TransferParticlesFromReference(int reference_shape) {
       // reserved for them; without this the bar would sit still through the longest phase
       current_particle_iterations_ += m_transfer_iteration_weight;
       UpdateProgress(fmt::format("Registered shape {} of {}", s + 1, num_subjects));
+      // the shape now has its particles; let the GUI redraw them (and the status) between
+      // registrations rather than only when the whole phase ends
+      RefreshDuringTransfer();
     }
   }
 }

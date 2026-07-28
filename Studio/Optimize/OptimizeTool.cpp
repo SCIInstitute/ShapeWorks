@@ -111,7 +111,9 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "symmetric normalization");
   ui_->registration_band->setToolTip(
       "Half-width, in physical units, of the band around the surface that registration considers. "
-      "Should span several voxels of the groomed inputs");
+      "Leave empty to scale it automatically from the resolution of the groomed inputs (a few voxels), "
+      "which is the recommended default");
+  ui_->registration_band->setPlaceholderText("auto");
   ui_->narrow_band->setToolTip(
       "Narrow band around distance transforms.  "
       "This value should only be changed if an error occurs "
@@ -367,7 +369,10 @@ void OptimizeTool::load_params() {
   ui_->registration_initialization->setChecked(params.get_initialization_mode() == "registration");
   ui_->registration_transform_type->setCurrentText(
       QString::fromStdString(params.get_registration_transform_type()));
-  ui_->registration_band->setText(QString::number(params.get_registration_band()));
+  // a band of 0 means "scale automatically"; show that as an empty field with an "auto" placeholder
+  // rather than a literal 0, which reads as a zero-width band
+  const double band = params.get_registration_band();
+  ui_->registration_band->setText(band > 0.0 ? QString::number(band) : QString());
   ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
   ui_->shared_boundary->setChecked(params.get_shared_boundary());
   ui_->shared_boundary_weight->setText(QString::number(params.get_shared_boundary_weight()));
@@ -506,7 +511,10 @@ bool OptimizeTool::validate_inputs() {
     QString text = line_edit->text();
     int pos;
     QString ss;
-    if (QValidator::Acceptable != line_edit->validator()->validate(text, pos)) {
+    // an empty registration band is valid: it means "scale the band automatically from the data".
+    // The field's own validator still rejects non-numeric input, so this only accepts truly empty.
+    const bool empty_band_is_ok = line_edit == ui_->registration_band && text.isEmpty();
+    if (!empty_band_is_ok && QValidator::Acceptable != line_edit->validator()->validate(text, pos)) {
       ss = "QLineEdit {background-color: rgb(255,204,203);}";
       all_valid = false;
     }

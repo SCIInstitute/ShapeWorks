@@ -795,8 +795,8 @@ QWidget#optimize_panel {
                </item>
                <item row="25" column="2">
                 <widget class="QLineEdit" name="registration_band">
-                 <property name="text">
-                  <string>5.0</string>
+                 <property name="placeholderText">
+                  <string>auto</string>
                  </property>
                  <property name="minimumSize">
                   <size>

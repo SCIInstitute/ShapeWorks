@@ -401,6 +401,11 @@ class Optimize {
   //! Register the reference to every other shape and carry its particles across
   void TransferParticlesFromReference(int reference_shape);
 
+  //! Give the host a chance to refresh during the transfer phase, which runs no optimizer iterations
+  //! and so would otherwise not drive any of the normal per-iteration UI updates.  The base
+  //! implementation does nothing; Studio overrides it to redraw the particles and status.
+  virtual void RefreshDuringTransfer() {}
+
   //! Log how well a shape's transferred particles landed on its surface
   void ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
                              const std::vector<Point3>& transferred);
