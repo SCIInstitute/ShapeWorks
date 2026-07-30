@@ -45,6 +45,7 @@ const std::string mesh_ffc_mode = "mesh_ffc_mode";
 const std::string use_landmarks = "use_landmarks";
 const std::string initialization_mode = "initialization_mode";
 const std::string initialization_reference = "initialization_reference";
+const std::string initialization_reference_chosen = "initialization_reference_chosen";
 const std::string registration_transform_type = "registration_transform_type";
 const std::string registration_grad_step = "registration_grad_step";
 const std::string registration_flow_sigma = "registration_flow_sigma";
@@ -107,6 +108,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::use_landmarks,
                                          Keys::initialization_mode,
                                          Keys::initialization_reference,
+                                         Keys::initialization_reference_chosen,
                                          Keys::registration_transform_type,
                                          Keys::registration_grad_step,
                                          Keys::registration_flow_sigma,
