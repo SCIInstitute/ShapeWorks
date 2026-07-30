@@ -119,6 +119,10 @@ class OptimizeParameters {
   double get_registration_band();
   void set_registration_band(double value);
 
+  //! voxels across the largest dimension when rasterizing a mesh for registration (mesh domains only)
+  int get_registration_grid_size();
+  void set_registration_grid_size(int value);
+
   //! whether to reuse registrations across runs; they do not depend on any optimization parameter
   bool get_registration_cache();
   void set_registration_cache(bool value);

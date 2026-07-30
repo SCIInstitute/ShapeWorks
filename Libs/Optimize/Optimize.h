@@ -263,6 +263,11 @@ class Optimize {
   //! automatically from the resolution of the data
   void SetRegistrationBand(double band);
 
+  //! Set the number of voxels across the largest dimension used when rasterizing a mesh for
+  //! registration.  Lower is faster and coarser, higher is finer; only affects mesh domains (image
+  //! domains already have a resolution).  Defaults to 128.
+  void SetRegistrationGridSize(int voxels);
+
   /**
    * @brief Set where computed registration transforms are cached, or "" to not cache them.
    *
@@ -545,6 +550,7 @@ class Optimize {
   double m_registration_gradient_step = 0.25;
   double m_registration_flow_sigma = 3.0;
   double m_registration_band = 0.0;  // 0 means scale it from the data
+  double m_registration_grid_size = 128.0;  // voxels across the largest dimension when rasterizing a mesh
   std::string m_registration_cache_dir;
 
   // progress budget charged for each registration, since they run no particle iterations

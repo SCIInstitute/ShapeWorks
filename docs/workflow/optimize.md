@@ -129,6 +129,16 @@ Notes and limitations:
 - ShapeWorks reports how far the transferred particles landed from each target surface, and warns when
   a registration looks like it failed. Very small or very coarsely sampled inputs are the usual cause.
 
+**Tuning speed vs. detail (mesh inputs).** A mesh is rasterized to a distance transform before
+registering; `registration_grid_size` sets that resolution, in voxels across the largest dimension
+(default 128). Lowering it (e.g. 96 or 64) is markedly faster and coarser — useful for a quick pass
+or a large cohort — while raising it is finer at cubic cost in both time and the size of each cached
+transform. In practice 128 is a good default and gains above ~192 are small; this only affects mesh
+inputs, since image (distance-transform) inputs already have a resolution. The `registration_band`
+(the width of the surface collar the similarity metric sees) is scaled automatically from the shape
+size and does not shrink as the grid is raised; set it explicitly only to widen the context for
+cohorts whose shapes differ substantially.
+
 
 ## On Algorithmic Parameters
 

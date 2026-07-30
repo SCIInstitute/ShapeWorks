@@ -114,6 +114,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "Leave empty to scale it automatically from the resolution of the groomed inputs (a few voxels), "
       "which is the recommended default");
   ui_->registration_band->setPlaceholderText("auto");
+  ui_->registration_grid_size->setToolTip(
+      "Rasterization resolution for mesh registration: voxels across the largest dimension. Lower is "
+      "faster and coarser, higher is finer; 128 is the default. Above ~192 gives little benefit at "
+      "much higher time and cache cost. Ignored for image (distance-transform) inputs");
   ui_->narrow_band->setToolTip(
       "Narrow band around distance transforms.  "
       "This value should only be changed if an error occurs "
@@ -150,6 +154,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->shared_boundary_weight->setValidator(double_validator);
   ui_->sampling_scale_value->setValidator(double_validator);
   ui_->registration_band->setValidator(double_validator);
+  ui_->registration_grid_size->setValidator(new QIntValidator(16, 1024, this));
 
   line_edits_.push_back(ui_->number_of_particles);
   line_edits_.push_back(ui_->initial_relative_weighting);
@@ -166,6 +171,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   line_edits_.push_back(ui_->shared_boundary_weight);
   line_edits_.push_back(ui_->sampling_scale_value);
   line_edits_.push_back(ui_->registration_band);
+  line_edits_.push_back(ui_->registration_grid_size);
 
   for (QLineEdit* line_edit : line_edits_) {
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
@@ -373,6 +379,7 @@ void OptimizeTool::load_params() {
   // rather than a literal 0, which reads as a zero-width band
   const double band = params.get_registration_band();
   ui_->registration_band->setText(band > 0.0 ? QString::number(band) : QString());
+  ui_->registration_grid_size->setText(QString::number(params.get_registration_grid_size()));
   ui_->narrow_band->setText(QString::number(params.get_narrow_band()));
   ui_->shared_boundary->setChecked(params.get_shared_boundary());
   ui_->shared_boundary_weight->setText(QString::number(params.get_shared_boundary_weight()));
@@ -422,6 +429,7 @@ void OptimizeTool::store_params() {
   params.set_initialization_mode(ui_->registration_initialization->isChecked() ? "registration" : "split");
   params.set_registration_transform_type(ui_->registration_transform_type->currentText().toStdString());
   params.set_registration_band(ui_->registration_band->text().toDouble());
+  params.set_registration_grid_size(ui_->registration_grid_size->text().toInt());
 
   // always use preference value
   params.set_geodesic_cache_multiplier(preferences_.get_geodesic_cache_multiplier());
@@ -478,6 +486,7 @@ void OptimizeTool::update_ui_elements() {
   const bool registration = ui_->registration_initialization->isChecked();
   ui_->registration_transform_type->setEnabled(registration);
   ui_->registration_band->setEnabled(registration);
+  ui_->registration_grid_size->setEnabled(registration);
   // registration seeds every shape at the final particle count, so these have nothing left to do
   ui_->multiscale->setEnabled(!registration);
   ui_->multiscale_particles->setEnabled(!registration && ui_->multiscale->isChecked());
@@ -607,7 +616,8 @@ void OptimizeTool::setup_domain_boxes() {
   QWidget::setTabOrder(ui_->use_landmarks, ui_->registration_initialization);
   QWidget::setTabOrder(ui_->registration_initialization, ui_->registration_transform_type);
   QWidget::setTabOrder(ui_->registration_transform_type, ui_->registration_band);
-  QWidget::setTabOrder(ui_->registration_band, ui_->procrustes);
+  QWidget::setTabOrder(ui_->registration_band, ui_->registration_grid_size);
+  QWidget::setTabOrder(ui_->registration_grid_size, ui_->procrustes);
   QWidget::setTabOrder(ui_->procrustes, ui_->procrustes_interval);
   QWidget::setTabOrder(ui_->procrustes_interval, ui_->procrustes_scaling);
   QWidget::setTabOrder(ui_->procrustes_scaling, ui_->procrustes_rotation_translation);

@@ -50,11 +50,16 @@ namespace py = pybind11;
 
 namespace shapeworks {
 
-//! Number of voxels across the largest dimension when rasterizing a mesh for registration.  Fixing
-//! the grid size rather than the spacing keeps this working whatever units the data is stored in.
-static constexpr double kRegistrationGridSize = 128.0;
+//! Width of the retained band around the surface, as a fraction of the shape's largest dimension,
+//! when it is not set explicitly.  The band is what the similarity metric can actually see, so it
+//! must be a physical width independent of the rasterization grid: tying it to the grid would
+//! silently narrow it as the grid is raised and starve the metric of context on dissimilar shapes.
+//! ~5% of the shape size was the best compromise across similar and dissimilar pairs in testing --
+//! wide enough to bridge shape differences, not so wide that it loses surface detail.
+static constexpr double kRegistrationBandFraction = 0.05;
 
-//! Width of the retained band around the surface, in voxels, when it is not set explicitly
+//! Width of the image-domain band, in voxels of the (fixed) distance transform.  Image inputs already
+//! carry their own resolution, so there is no grid to decouple from.
 static constexpr double kRegistrationBandVoxels = 4.0;
 
 //! A transferred particle further than this fraction of the shape's size from the surface is
@@ -781,8 +786,11 @@ Image Optimize::GetRegistrationImage(int domain) {
   auto region = mesh.boundingBox();
   const auto extent = region.size();
   const double largest_extent = std::max({extent[0], extent[1], extent[2]});
-  const double spacing = largest_extent / kRegistrationGridSize;
-  const double band = GetRegistrationBand(spacing);
+  const double spacing = largest_extent / m_registration_grid_size;
+
+  // Band is a physical width derived from the shape's size, independent of the chosen grid, so the
+  // grid controls only resolution and the two do not confound each other.
+  const double band = m_registration_band > 0.0 ? m_registration_band : kRegistrationBandFraction * largest_extent;
 
   // pad far enough that the whole band around the surface stays inside the grid
   region.pad(band * 2.0);
@@ -937,6 +945,7 @@ std::string Optimize::GetRegistrationCachePath(int reference_domain, int domain)
   key += "|step=" + std::to_string(m_registration_gradient_step);
   key += "|sigma=" + std::to_string(m_registration_flow_sigma);
   key += "|band=" + std::to_string(m_registration_band);
+  key += "|grid=" + std::to_string(m_registration_grid_size);
 
   const auto hash = std::hash<std::string>{}(key);
   std::stringstream name;
@@ -2240,6 +2249,12 @@ void Optimize::SetRegistrationFlowSigma(double sigma) { m_registration_flow_sigm
 
 //---------------------------------------------------------------------------
 void Optimize::SetRegistrationBand(double band) { m_registration_band = band; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetRegistrationGridSize(int voxels) {
+  // a grid finer than the metric window is meaningless, so keep a small floor
+  m_registration_grid_size = std::max(16, voxels);
+}
 
 //---------------------------------------------------------------------------
 void Optimize::SetRegistrationCacheDir(const std::string& path) { m_registration_cache_dir = path; }

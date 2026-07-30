@@ -49,6 +49,7 @@ const std::string registration_transform_type = "registration_transform_type";
 const std::string registration_grad_step = "registration_grad_step";
 const std::string registration_flow_sigma = "registration_flow_sigma";
 const std::string registration_band = "registration_band";
+const std::string registration_grid_size = "registration_grid_size";
 const std::string registration_cache = "registration_cache";
 const std::string use_fixed_subjects = "use_fixed_subjects";
 const std::string fixed_subjects_column = "fixed_subjects_column";
@@ -110,6 +111,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::registration_grad_step,
                                          Keys::registration_flow_sigma,
                                          Keys::registration_band,
+                                         Keys::registration_grid_size,
                                          Keys::registration_cache,
                                          Keys::use_fixed_subjects,
                                          Keys::fixed_subjects_column,
@@ -407,6 +409,7 @@ void OptimizeParameters::apply_initialization_parameters(Optimize* optimize) {
   optimize->SetRegistrationGradientStep(get_registration_grad_step());
   optimize->SetRegistrationFlowSigma(get_registration_flow_sigma());
   optimize->SetRegistrationBand(get_registration_band());
+  optimize->SetRegistrationGridSize(get_registration_grid_size());
 
   if (get_registration_cache()) {
     // Keep the cache beside the project, not under the particle output: that output path carries the
@@ -581,6 +584,12 @@ double OptimizeParameters::get_registration_band() { return params_.get(Keys::re
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_registration_band(double value) { params_.set(Keys::registration_band, value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_registration_grid_size() { return params_.get(Keys::registration_grid_size, 128); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_registration_grid_size(int value) { params_.set(Keys::registration_grid_size, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_registration_cache() { return params_.get(Keys::registration_cache, true); }

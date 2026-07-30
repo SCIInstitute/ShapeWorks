@@ -1043,8 +1043,17 @@ TEST(OptimizeTests, registration_initialization_parameters) {
     Optimize app;
     OptimizeParameters params(project);
     ASSERT_EQ(params.get_initialization_mode(), "split");
+    ASSERT_EQ(params.get_registration_grid_size(), 128);  // default preserved
     ASSERT_TRUE(params.set_up_optimize(&app));
     ASSERT_EQ(app.GetInitializationMode(), Optimize::InitializationMode::Split);
+  }
+
+  // the grid size round-trips through the project
+  {
+    OptimizeParameters params(project);
+    params.set_registration_grid_size(96);
+    ASSERT_EQ(params.get_registration_grid_size(), 96);
+    params.set_registration_grid_size(128);  // restore for the checks below
   }
 
   // asking for registration in the project turns it on for the optimizer

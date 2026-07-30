@@ -815,23 +815,56 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
+               <!-- Row 26: Registration grid size -->
+               <item row="26" column="1">
+                <widget class="QLabel" name="registration_grid_label">
+                 <property name="text">
+                  <string>Grid:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="26" column="2">
+                <widget class="QLineEdit" name="registration_grid_size">
+                 <property name="text">
+                  <string>128</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
                <!-- Divider: after Geodesic/Options group -->
-               <item row="26" column="0" colspan="4">
+               <item row="27" column="0" colspan="4">
                 <widget class="Line" name="line_opt_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <!-- Row 27: Procrustes (combined checkbox + interval) -->
-               <item row="27" column="0">
+               <!-- Row 28: Procrustes (combined checkbox + interval) -->
+               <item row="28" column="0">
                 <widget class="QCheckBox" name="procrustes">
                  <property name="text">
                   <string>Procrustes</string>
                  </property>
                 </widget>
                </item>
-               <item row="27" column="1">
+               <item row="28" column="1">
                 <widget class="QLabel" name="procrustes_interval_label">
                  <property name="text">
                   <string>Interval:</string>
@@ -841,7 +874,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-              <item row="27" column="2">
+              <item row="28" column="2">
                 <widget class="QLineEdit" name="procrustes_interval">
                  <property name="text">
                   <string>10</string>
@@ -863,8 +896,8 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <!-- Row 28: Procrustes sub-options (Scaling + Rot/Trans) -->
-               <item row="28" column="0" colspan="3">
+               <!-- Row 29: Procrustes sub-options (Scaling + Rot/Trans) -->
+               <item row="29" column="0" colspan="3">
                 <widget class="QWidget" name="procrustes_sub_widget" native="true">
                  <layout class="QHBoxLayout" name="procrustes_sub_layout">
                   <property name="leftMargin">
@@ -910,15 +943,15 @@ QWidget#optimize_panel {
                 </widget>
                </item>
                <!-- Divider: after Procrustes group -->
-               <item row="29" column="0" colspan="4">
+               <item row="30" column="0" colspan="4">
                 <widget class="Line" name="line_opt_3">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <!-- Row 30: Sampling Scale (combined checkbox + multiplier) -->
-               <item row="30" column="0">
+               <!-- Row 31: Sampling Scale (combined checkbox + multiplier) -->
+               <item row="31" column="0">
                 <widget class="QCheckBox" name="sampling_scale">
                  <property name="text">
                   <string>Sampling Scale</string>
@@ -928,7 +961,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <item row="30" column="1">
+               <item row="31" column="1">
                 <widget class="QLabel" name="sampling_scale_label">
                  <property name="text">
                   <string>Multiplier:</string>
@@ -938,7 +971,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-              <item row="30" column="2">
+              <item row="31" column="2">
                 <widget class="QLineEdit" name="sampling_scale_value">
                  <property name="text">
                   <string>1.0</string>
@@ -960,8 +993,8 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <!-- Row 31: Auto Scale (sub-checkbox) -->
-               <item row="31" column="0" colspan="3">
+               <!-- Row 32: Auto Scale (sub-checkbox) -->
+               <item row="32" column="0" colspan="3">
                 <widget class="QWidget" name="sampling_auto_scale_sub_widget" native="true">
                  <layout class="QHBoxLayout" name="sampling_auto_scale_sub_layout">
                   <property name="leftMargin">
@@ -1002,8 +1035,8 @@ QWidget#optimize_panel {
                  </layout>
                 </widget>
                </item>
-               <!-- Row 32: Disentangled SSM (checkbox only, hidden) -->
-               <item row="32" column="0">
+               <!-- Row 33: Disentangled SSM (checkbox only, hidden) -->
+               <item row="33" column="0">
                 <widget class="QCheckBox" name="use_disentangled_ssm">
                  <property name="text">
                   <string>Disentangled SSM</string>
@@ -1118,6 +1151,7 @@ QWidget#optimize_panel {
   <tabstop>registration_initialization</tabstop>
   <tabstop>registration_transform_type</tabstop>
   <tabstop>registration_band</tabstop>
+  <tabstop>registration_grid_size</tabstop>
   <tabstop>narrow_band</tabstop>
   <tabstop>sampling_scale</tabstop>
   <tabstop>sampling_scale_value</tabstop>
