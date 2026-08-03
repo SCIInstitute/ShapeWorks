@@ -1049,7 +1049,7 @@ void Optimize::ReportTransferQuality(int domain, const std::vector<Point3>& refe
 
   double total_snap = 0.0;
   double worst_snap = 0.0;
-  int far = 0;
+  int far_count = 0;
   int unmoved = 0;
 
   for (size_t i = 0; i < transferred.size(); i++) {
@@ -1058,7 +1058,7 @@ void Optimize::ReportTransferQuality(int domain, const std::vector<Point3>& refe
     total_snap += snap;
     worst_snap = std::max(worst_snap, snap);
     if (shape_scale > 0.0 && snap > far_distance) {
-      far++;
+      far_count++;
     }
 
     // a point outside the displacement field is returned unchanged rather than reported as an error,
@@ -1069,7 +1069,7 @@ void Optimize::ReportTransferQuality(int domain, const std::vector<Point3>& refe
   }
 
   const double mean_snap = total_snap / transferred.size();
-  const double far_fraction = static_cast<double>(far) / transferred.size();
+  const double far_fraction = static_cast<double>(far_count) / transferred.size();
   // a registration that failed leaves many particles far from the surface, not just one outlier
   const bool suspect = far_fraction > kTransferFarFractionThreshold || unmoved > 0;
 
