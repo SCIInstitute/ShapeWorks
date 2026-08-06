@@ -1543,7 +1543,8 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
   update_group_boxes();
   update_regression_combo();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
-  ui_->mesh_warp_sample_spinbox->setMaximum(session_->get_num_shapes() - 1);
+  // the mesh warp template is chosen from the non-excluded shapes
+  ui_->mesh_warp_sample_spinbox->setMaximum(static_cast<int>(session_->get_non_excluded_shapes().size()) - 1);
 }
 
 //---------------------------------------------------------------------------
@@ -2013,13 +2014,14 @@ void AnalysisTool::initialize_mesh_warper() {
 
     auto params = session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
 
+    auto shapes = session_->get_non_excluded_shapes();
+
+    // the stored index refers to the non-excluded shapes, so it can go stale when shapes are excluded
     int template_shape = params.get(MESH_WARP_TEMPLATE_INDEX, -1);
-    if (template_shape < 0 || template_shape >= session_->get_num_shapes()) {
+    if (template_shape < 0 || template_shape >= shapes.size()) {
       template_shape = stats_.compute_median_shape(-32);  //-32 = both groups
       ui_->mesh_warp_sample_spinbox->setValue(template_shape);
     }
-
-    auto shapes = session_->get_non_excluded_shapes();
 
     if (template_shape < 0 || template_shape >= shapes.size()) {
       SW_ERROR("Unable to set reference mesh, invalid template shape");

@@ -476,7 +476,7 @@ mkdocs-get-deps==0.2.0
     # via mkdocs
 mkdocs-jupyter==0.25.1
     # via -r requirements.in
-mkdocs-material==9.6.20
+mkdocs-material==9.7.7
     # via
     #   -r requirements.in
     #   mkdocs-jupyter
@@ -673,7 +673,7 @@ pygments==2.20.0
     #   mkdocs-material
     #   nbconvert
     #   rich
-pymdown-extensions==10.21.3
+pymdown-extensions==11.0
     # via
     #   -r requirements.in
     #   mkdocs-material
