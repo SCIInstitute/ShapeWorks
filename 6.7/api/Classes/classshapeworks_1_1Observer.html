@@ -4709,6 +4709,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-set_suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function set_suspended
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_suspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function is_suspended
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4904,6 +4926,14 @@
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1Observer.html#function-positionremoveeventcallback">PositionRemoveEventCallback</a></strong>(Object * , const itk::EventObject &amp; )</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Observer.html#function-set-suspended">set_suspended</a></strong>(bool suspended)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Observer.html#function-is-suspended">is_suspended</a></strong>() const</td>
+</tr>
 </tbody>
 </table>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -5016,6 +5046,15 @@
 <span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1GenericContainerArray.html#function-positionremoveeventcallback">shapeworks::GenericContainerArray::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1GenericContainerArray.html#function-positionremoveeventcallback">shapeworks::GenericContainerArray::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1LegacyShapeMatrix.html#function-positionremoveeventcallback">shapeworks::LegacyShapeMatrix::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1LinearRegressionShapeMatrix.html#function-positionremoveeventcallback">shapeworks::LinearRegressionShapeMatrix::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1MixedEffectsShapeMatrix.html#function-positionremoveeventcallback">shapeworks::MixedEffectsShapeMatrix::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1ShapeGradientMatrix.html#function-positionremoveeventcallback">shapeworks::ShapeGradientMatrix::PositionRemoveEventCallback</a>, <a href="classshapeworks_1_1ShapeMatrix.html#function-positionremoveeventcallback">shapeworks::ShapeMatrix::PositionRemoveEventCallback</a></p>
+<h3 id="function-set_suspended">function set_suspended</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_suspended</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">suspended</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Stop this observer from reacting to events. The correspondence matrices lay themselves out assuming every shape holds the same number of particles, which is not true while particles are still being spread over a single reference shape. Suspending them until every shape has been populated avoids that, and a later SynchronizePositions() brings them back up to date. </p>
+<h3 id="function-is_suspended">function is_suspended</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_suspended</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-observer">function Observer</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Observer</span><span class="p">()</span>
@@ -5034,7 +5073,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">DefinedCallbacksStruct</span><span class="w"> </span><span class="n">m_DefinedCallbacks</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:25 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:13 +0000</p>
 
 
 

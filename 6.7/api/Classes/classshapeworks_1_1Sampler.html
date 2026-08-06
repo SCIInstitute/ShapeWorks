@@ -4952,6 +4952,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setcorrespondencematricessuspended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function SetCorrespondenceMatricesSuspended
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setcorrespondencemode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5740,6 +5751,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Sampler.html#function-setcorrespondencematricessuspended">SetCorrespondenceMatricesSuspended</a></strong>(bool suspended)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Sampler.html#function-setcorrespondencemode">SetCorrespondenceMode</a></strong>(shapeworks::CorrespondenceMode mode)</td>
 </tr>
 <tr>
@@ -6116,6 +6131,12 @@
 <h3 id="function-getsamplingon">function GetSamplingOn</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
+<h3 id="function-setcorrespondencematricessuspended">function SetCorrespondenceMatricesSuspended</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceMatricesSuspended</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">suspended</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Stop the correspondence matrices from tracking particle changes. They index themselves assuming every shape holds the same number of particles, so they cannot be kept up to date while particles are being spread over a single reference shape. Resume and then call SynchronizePositions() once every shape has been populated. </p>
 <h3 id="function-setcorrespondencemode">function SetCorrespondenceMode</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceMode</span><span class="p">(</span>
 <span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span>
@@ -6316,7 +6337,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:25 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:13 +0000</p>
 
 
 

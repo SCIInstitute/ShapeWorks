@@ -4875,6 +4875,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-splitallparticlesindomain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function SplitAllParticlesInDomain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-resyncobservers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function ResyncObservers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-printparticlesystem" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5819,6 +5841,14 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-splitallparticlesindomain">SplitAllParticlesInDomain</a></strong>(double epsilon, unsigned int domain)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-resyncobservers">ResyncObservers</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1ParticleSystem.html#function-printparticlesystem">PrintParticleSystem</a></strong>()</td>
 </tr>
 <tr>
@@ -6263,6 +6293,17 @@
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom_to_process</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-splitallparticlesindomain">function SplitAllParticlesInDomain</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SplitAllParticlesInDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Doubles the number of particles in a single domain. Unlike AdvancedAllParticleSplitting, which splits one domain across every shape at once and therefore requires all shapes to hold the same number of particles, this splits one domain on its own. It is used to spread particles over a single reference shape. </p>
+<h3 id="function-resyncobservers">function ResyncObservers</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ResyncObservers</span><span class="p">()</span>
+</code></pre></div>
+<p>Re-announce the current particle count of every domain, so that observers which were not listening while the positions were added (the correspondence matrices are suspended while particles are spread over a single reference shape) resize themselves to match. Without this they keep their original size and later position updates index out of bounds. </p>
 <h3 id="function-printparticlesystem">function PrintParticleSystem</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintParticleSystem</span><span class="p">()</span>
 </code></pre></div>
@@ -6622,7 +6663,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:25 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:13 +0000</p>
 
 
 

@@ -914,6 +914,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Particles Initialization &amp; Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registration-based-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Based Initialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -4806,6 +4823,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Particles Initialization &amp; Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registration-based-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registration Based Initialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -4997,6 +5031,68 @@
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_torus_optimize.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <p><strong>The first particle:</strong> The particle system is initialized with a single particle on each shape. The first particle is found by raster-scanning the signed distance map and finding the first zero crossing. The particle system can also be initialized using user-defined sparse corresponding landmarks across all shapes.</p>
+<h3 id="registration-based-initialization">Registration Based Initialization</h3>
+<p>The splitting scheme described above spreads and optimizes particles on every shape at once. As an
+alternative, particles can be spread over a <strong>single reference shape</strong> and then carried onto every
+other shape by deformably registering the reference to it. Each shape then starts the optimization
+already holding a full set of corresponding particles, so no splitting is needed.</p>
+<p><strong>This is not a general replacement for splitting.</strong> It exists for anatomy complex enough that
+splitting fails to converge to a usable correspondence — highly convoluted surfaces, or shapes with
+many separate lobes or appendages. Registering one shape to another costs far more than splitting
+does, so on anatomy where splitting already works, this is slower with nothing to show for it. Reach
+for it when a split-based model comes out poorly, not by default.</p>
+<p>In Studio, tick <strong>Registration Initialization</strong> in the Optimize panel. Outside Studio, set
+<code>initialization_mode</code> to <code>registration</code> in the project file's <code>optimize</code> parameters, alongside
+<code>number_of_particles</code> and the rest:</p>
+<div class="highlight"><pre><span></span><code>&quot;optimize&quot;: {
+    &quot;number_of_particles&quot;: &quot;128&quot;,
+    &quot;initialization_mode&quot;: &quot;registration&quot;,
+    ...
+}
+</code></pre></div>
+<p>or from Python:</p>
+<div class="highlight"><pre><span></span><code><span class="n">params</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">(</span><span class="s2">&quot;optimize&quot;</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;initialization_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;registration&quot;</span><span class="p">)</span>
+<span class="n">project</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="s2">&quot;optimize&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</code></pre></div>
+<p>The reference shape is chosen automatically. If grooming already picked an alignment reference, that
+choice is reused; otherwise the most representative shape (the medoid of the cohort) is found. To
+pick one yourself, set <code>initialization_reference</code> to its subject index.</p>
+<p>Registration runs the same sequence of stages as the ANTs <code>SyNRA</code> pipeline — rigid, then affine, then
+symmetric normalization (SyN) — over distance transforms of the two shapes, using the same
+multi-resolution schedule ANTs does. The linear stages deliberately run far longer and start coarser
+than the deformable one: their coarse levels are cheap, and an unconverged linear stage leaves the
+deformable stage with a starting point it cannot recover from. Transferred particles are
+projected back onto the target surface, and the optimization step then refines both their spacing and
+their correspondence as usual.</p>
+<p><strong>Reusing registrations between runs.</strong> A registration depends only on the pair of shapes and the
+registration settings, never on the particle count, iteration counts or weightings. Computed
+transforms are therefore cached in a <code>registration_cache</code> directory beside the project, so that the
+optimization parameters can be changed and the model rebuilt without paying for the registrations a
+second time. Regrooming an input invalidates its entries automatically. Set the <code>registration_cache</code>
+parameter to <code>false</code> to turn this off. The cache holds a displacement field per pair of shapes, on the
+order of tens of megabytes each, so delete the directory when finished with a cohort.</p>
+<p>Notes and limitations:</p>
+<ul>
+<li>It cannot be combined with fixed subjects or with landmark initial particles, since those also
+  supply the initial correspondence. Contour domains are not supported.</li>
+<li>Multiscale optimization does not apply, because every shape starts at the final particle count.</li>
+<li>Every shape inherits the reference's particle layout. For cohorts with large shape variation this
+  can produce a worse model than splitting; compare compactness and generalization before adopting it.</li>
+<li>Registration dominates the run time, taking far longer than splitting the same cohort would.  The
+  cost scales with the number of shapes and the size of the images, not with the particle count.</li>
+<li>ShapeWorks reports how far the transferred particles landed from each target surface, and warns when
+  a registration looks like it failed. Very small or very coarsely sampled inputs are the usual cause.</li>
+</ul>
+<p><strong>Tuning speed vs. detail (mesh inputs).</strong> A mesh is rasterized to a distance transform before
+registering; <code>registration_grid_size</code> sets that resolution, in voxels across the largest dimension
+(default 128). Lowering it (e.g. 96 or 64) is markedly faster and coarser — useful for a quick pass
+or a large cohort — while raising it is finer at cubic cost in both time and the size of each cached
+transform. In practice 128 is a good default and gains above ~192 are small; this only affects mesh
+inputs, since image (distance-transform) inputs already have a resolution. The <code>registration_band</code>
+(the width of the surface collar the similarity metric sees) is scaled automatically from the shape
+size and does not shrink as the grid is raised; set it explicitly only to widen the context for
+cohorts whose shapes differ substantially.</p>
 <h2 id="on-algorithmic-parameters">On Algorithmic Parameters</h2>
 <p>Optimizing the shape models entails several algorithmic parameters. Below, we highlight the most important ones that might need tuning depending on the dataset at hand. </p>
 <p><img alt="Optimization Parameters" src="../img/workflow/params_Q.png" /></p>

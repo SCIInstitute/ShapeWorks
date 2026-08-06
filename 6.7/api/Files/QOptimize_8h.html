@@ -4597,6 +4597,8 @@
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterateCallbackInternal</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RefreshDuringTransfer</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">IterateCallbackInternal</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="p">);</span>
 
@@ -4610,7 +4612,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:26 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:14 +0000</p>
 
 
 

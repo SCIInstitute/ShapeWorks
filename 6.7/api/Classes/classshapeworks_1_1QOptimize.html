@@ -4682,6 +4682,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-refreshduringtransfer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function RefreshDuringTransfer
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4782,6 +4793,10 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1QOptimize.html#function-iteratecallbackinternal">IterateCallbackInternal</a></strong>()</td>
 </tr>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1QOptimize.html#function-refreshduringtransfer">RefreshDuringTransfer</a></strong>() override</td>
+</tr>
 </tbody>
 </table>
 <h2 id="additional-inherited-members">Additional inherited members</h2>
@@ -4794,6 +4809,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>enum class</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#enum-initializationmode">InitializationMode</a></strong> { Split, Registration}<br>How the initial particle correspondence is established.</td>
+</tr>
 <tr>
 <td>using itk::Image&lt; float, 3 &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-imagetype">ImageType</a></strong></td>
@@ -5086,6 +5105,50 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialpoints">SetInitialPoints</a></strong>(std::vector&lt; std::vector&lt; itk::Point&lt; double &gt; &gt; &gt; initial_points)<br>Set initial particle positions (e.g. for fixed subjects)</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setdomainpaths">SetDomainPaths</a></strong>(const std::vector&lt; std::string &gt; &amp; paths)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitializationmode">SetInitializationMode</a></strong>(<a href="classshapeworks_1_1Optimize.html#enum-initializationmode">InitializationMode</a> mode)<br>Set how the initial correspondence is established (default Split)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Optimize.html#enum-initializationmode">InitializationMode</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getinitializationmode">GetInitializationMode</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationreference">SetRegistrationReference</a></strong>(int shape_index)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationreference">GetRegistrationReference</a></strong>() const<br>Return the shape used as the registration template. Valid once initialization has run.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationtransformtype">SetRegistrationTransformType</a></strong>(<a href="classshapeworks_1_1ImageRegistration.html#enum-transformtype">ImageRegistration::TransformType</a> type)<br>Set which registration stages to run when transferring particles (default SyN)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationgradientstep">SetRegistrationGradientStep</a></strong>(double step)<br>Set the SyN gradient step used when transferring particles.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationflowsigma">SetRegistrationFlowSigma</a></strong>(double sigma)<br>Set the variance used to smooth the SyN update field when transferring particles.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationband">SetRegistrationBand</a></strong>(double band)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationgridsize">SetRegistrationGridSize</a></strong>(int voxels)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setregistrationcachedir">SetRegistrationCacheDir</a></strong>(const std::string &amp; path)<br>Set where computed registration transforms are cached, or "" to not cache them.</td>
+</tr>
+<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumshapes">GetNumShapes</a></strong>()<br>Get number of shapes.</td>
 </tr>
@@ -5234,6 +5297,10 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>(const std::string &amp; stage)<br>Report progress with an explicit stage message, for phases that run no particle iterations.</td>
+</tr>
+<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-gettotalparticleiterations">GetTotalParticleIterations</a></strong>() const<br>Return the estimated total number of particle-iterations used for progress reporting.</td>
 </tr>
@@ -5291,6 +5358,46 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-runoptimize">RunOptimize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-initializefromregistration">InitializeFromRegistration</a></strong>()</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-resolveregistrationreference">ResolveRegistrationReference</a></strong>()<br>Pick the shape used as the registration template, honoring an explicitly requested one.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-spreadparticlesonreference">SpreadParticlesOnReference</a></strong>(int reference_shape)<br>Split and optimize particles on the reference shape alone, until it holds the requested counts.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-transferparticlesfromreference">TransferParticlesFromReference</a></strong>(int reference_shape)<br>Register the reference to every other shape and carry its particles across.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-reporttransferquality">ReportTransferQuality</a></strong>(int domain, const std::vector&lt; Point3 &gt; &amp; reference_points, const std::vector&lt; Point3 &gt; &amp; transferred)<br>Log how well a shape's transferred particles landed on its surface.</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationcachepath">GetRegistrationCachePath</a></strong>(int reference_domain, int domain) const</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Image.html">Image</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationimage">GetRegistrationImage</a></strong>(int domain)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationband">GetRegistrationBand</a></strong>(double spacing) const<br>Return the band to retain around the surface, defaulting to a few voxels of the given spacing.</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomainsurface">GetDomainSurface</a></strong>(int domain)<br>Return the surface of the given domain, reading it back from disk for image domains.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumberofsubjects">GetNumberOfSubjects</a></strong>() const<br>Return the number of shapes (subjects), as opposed to the total number of domains.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -5632,8 +5739,52 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-filenames">m_filenames</a></strong></td>
 </tr>
 <tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-domain-paths">m_domain_paths</a></strong></td>
+</tr>
+<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-num-shapes">m_num_shapes</a></strong></td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Optimize.html#enum-initializationmode">InitializationMode</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-initialization-mode">m_initialization_mode</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-reference">m_registration_reference</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-reference-chosen">m_registration_reference_chosen</a></strong></td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1ImageRegistration.html#enum-transformtype">ImageRegistration::TransformType</a></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-transform-type">m_registration_transform_type</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-gradient-step">m_registration_gradient_step</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-flow-sigma">m_registration_flow_sigma</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-band">m_registration_band</a></strong></td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-grid-size">m_registration_grid_size</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-registration-cache-dir">m_registration_cache_dir</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-transfer-iteration-weight">m_transfer_iteration_weight</a></strong></td>
 </tr>
 <tr>
 <td>std::vector&lt; double &gt;</td>
@@ -5706,6 +5857,10 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-total-particle-iterations-">total_particle_iterations_</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-progress-domain-offset">m_progress_domain_offset</a></strong></td>
 </tr>
 <tr>
 <td>std::function&lt; void(void)&gt;</td>
@@ -5791,8 +5946,13 @@
 <h3 id="function-iteratecallbackinternal">function IterateCallbackInternal</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">IterateCallbackInternal</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-refreshduringtransfer">function RefreshDuringTransfer</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RefreshDuringTransfer</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-refreshduringtransfer">shapeworks::Optimize::RefreshDuringTransfer</a></p>
+<p>Registration based initialization runs no optimizer iterations, so reuse the per-iteration refresh to redraw particles and flush the status during the transfer phase. </p>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:25 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:13 +0000</p>
 
 
 

@@ -4702,6 +4702,14 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">get_a_on</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceMatricesSuspended</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">suspended</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m_LegacyShapeMatrix</span><span class="o">-&gt;</span><span class="n">set_suspended</span><span class="p">(</span><span class="n">suspended</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_LinearRegressionShapeMatrix</span><span class="o">-&gt;</span><span class="n">set_suspended</span><span class="p">(</span><span class="n">suspended</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="o">-&gt;</span><span class="n">set_suspended</span><span class="p">(</span><span class="n">suspended</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_GeneralShapeMatrix</span><span class="o">-&gt;</span><span class="n">set_suspended</span><span class="p">(</span><span class="n">suspended</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_GeneralShapeGradMatrix</span><span class="o">-&gt;</span><span class="n">set_suspended</span><span class="p">(</span><span class="n">suspended</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCorrespondenceMode</span><span class="p">(</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterGeneralShapeMatrices</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -4912,7 +4920,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-04 at 08:13:26 +0000</p>
+<p>Updated on 2026-08-06 at 14:20:14 +0000</p>
 
 
 

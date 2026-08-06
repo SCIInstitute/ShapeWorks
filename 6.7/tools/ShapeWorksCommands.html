@@ -2578,6 +2578,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#transfer-particles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transfer-particles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#translate-image" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6248,6 +6259,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#transfer-particles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transfer-particles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#translate-image" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7437,6 +7459,24 @@
 <p><strong>-h, --help:</strong> show this help message and exit</p>
 <p><strong>--featureimage=STRING:</strong>  Path of feature image for filter</p>
 <p><strong>--scaling=DOUBLE:</strong> Value of scale [default: 20].</p>
+<p><a href="#top">Back to Top</a></p>
+<p><a href="#image-commands">Back to Image Commands</a></p>
+<h3 id="transfer-particles">transfer-particles</h3>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks  transfer-particles [args]...
+</code></pre></div>
+<p><strong>Description:</strong> transfers a particle set from the current image, used as the registration reference, onto a target image by deformably registering the two</p>
+<p><strong>Options:</strong></p>
+<p><strong>-h, --help:</strong> show this help message and exit</p>
+<p><strong>--target=STRING:</strong> Distance transform of the target image.</p>
+<p><strong>--particles=STRING:</strong> Particle file holding the reference particles.</p>
+<p><strong>--output=STRING:</strong> Particle file to write the transferred particles to.</p>
+<p><strong>--transform=STRING:</strong> Registration stages to run: Rigid, Affine or SyN [default: SyN].</p>
+<p><strong>--band=DOUBLE:</strong> Half-width of the distance transform band retained for registration [default: 5].</p>
+<p><strong>--gradstep=DOUBLE:</strong> SyN gradient step size [default: 0.25].</p>
+<p><strong>--flowsigma=DOUBLE:</strong> Variance for smoothing the SyN update field [default: 3].</p>
+<p><strong>--totalsigma=DOUBLE:</strong> Variance for smoothing the SyN total field [default: 0].</p>
+<p><strong>--warped=STRING:</strong> Optional path to write the warped target image for inspection.</p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#image-commands">Back to Image Commands</a></p>
 <h3 id="translate-image">translate-image</h3>
