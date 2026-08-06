@@ -37,6 +37,7 @@
 #include <igl/AABB.h>
 #include <igl/remove_unreferenced.h>
 
+#include <numeric>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -1164,6 +1165,114 @@ vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyDat
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshUtils::extract_largest_edge_connected_component(vtkSmartPointer<vtkPolyData> mesh) {
+  const vtkIdType num_cells = mesh->GetNumberOfCells();
+  if (num_cells == 0) {
+    return mesh;
+  }
+
+  // Group the faces with a union-find, joining any two that share an edge.
+  std::vector<vtkIdType> parent(num_cells);
+  std::iota(parent.begin(), parent.end(), 0);
+
+  auto find = [&parent](vtkIdType cell) {
+    while (parent[cell] != cell) {
+      parent[cell] = parent[parent[cell]];
+      cell = parent[cell];
+    }
+    return cell;
+  };
+
+  // The first face to claim an edge owns it; every later face sharing that edge joins its group.
+  // Hashed rather than ordered: repair_mesh runs this over every mesh in a project, and the meshes
+  // can carry hundreds of thousands of faces.
+  struct EdgeHash {
+    size_t operator()(const std::pair<vtkIdType, vtkIdType>& edge) const {
+      const size_t first = std::hash<vtkIdType>{}(edge.first);
+      const size_t second = std::hash<vtkIdType>{}(edge.second);
+      return first ^ (second + 0x9e3779b9 + (first << 6) + (first >> 2));
+    }
+  };
+  std::unordered_map<std::pair<vtkIdType, vtkIdType>, vtkIdType, EdgeHash> edge_owner;
+  edge_owner.reserve(num_cells * 3);
+  auto cell_points = vtkSmartPointer<vtkIdList>::New();
+
+  for (vtkIdType cell_id = 0; cell_id < num_cells; cell_id++) {
+    mesh->GetCellPoints(cell_id, cell_points);
+    const vtkIdType num_points = cell_points->GetNumberOfIds();
+    for (vtkIdType i = 0; i < num_points; i++) {
+      const vtkIdType a = cell_points->GetId(i);
+      const vtkIdType b = cell_points->GetId((i + 1) % num_points);
+      const auto edge = std::make_pair(std::min(a, b), std::max(a, b));
+      const auto result = edge_owner.insert({edge, cell_id});
+      if (!result.second) {
+        const vtkIdType root_a = find(result.first->second);
+        const vtkIdType root_b = find(cell_id);
+        if (root_a != root_b) {
+          parent[root_a] = root_b;
+        }
+      }
+    }
+  }
+
+  std::unordered_map<vtkIdType, vtkIdType> group_sizes;
+  for (vtkIdType cell_id = 0; cell_id < num_cells; cell_id++) {
+    group_sizes[find(cell_id)]++;
+  }
+
+  vtkIdType largest_group = 0;
+  vtkIdType largest_size = 0;
+  for (const auto& [root, size] : group_sizes) {
+    if (size > largest_size) {
+      largest_size = size;
+      largest_group = root;
+    }
+  }
+
+  if (largest_size == num_cells) {
+    // already a single piece, nothing to drop and no need to renumber
+    return mesh;
+  }
+
+  SW_DEBUG("Dropping {} of {} faces not connected by an edge to the main surface", num_cells - largest_size, num_cells);
+
+  auto result = vtkSmartPointer<vtkPolyData>::New();
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  if (mesh->GetPoints()) {
+    points->SetDataType(mesh->GetPoints()->GetDataType());
+  }
+  auto polys = vtkSmartPointer<vtkCellArray>::New();
+
+  // points are copied as they are first used, which also drops any the surviving faces do not
+  // reference: an unreferenced point is an empty row in the Laplacian downstream
+  std::vector<vtkIdType> point_map(mesh->GetNumberOfPoints(), -1);
+  std::vector<vtkIdType> new_ids;
+
+  for (vtkIdType cell_id = 0; cell_id < num_cells; cell_id++) {
+    if (find(cell_id) != largest_group) {
+      continue;
+    }
+    mesh->GetCellPoints(cell_id, cell_points);
+    if (cell_points->GetNumberOfIds() < 3) {
+      continue;
+    }
+    new_ids.clear();
+    for (vtkIdType i = 0; i < cell_points->GetNumberOfIds(); i++) {
+      const vtkIdType old_id = cell_points->GetId(i);
+      if (point_map[old_id] < 0) {
+        point_map[old_id] = points->InsertNextPoint(mesh->GetPoint(old_id));
+      }
+      new_ids.push_back(point_map[old_id]);
+    }
+    polys->InsertNextCell(static_cast<int>(new_ids.size()), new_ids.data());
+  }
+
+  result->SetPoints(points);
+  result->SetPolys(polys);
+  return result;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
   // Line-only / vertex-only polydata (e.g. contours) has no polygons to repair;
   // the triangulation and cleanup steps below would discard its cells.
@@ -1194,6 +1303,13 @@ vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData>
   auto recreated = MeshUtils::recreate_mesh(fixed.getVTKMesh());
 
   auto final = MeshUtils::remove_zero_area_triangles(recreated);
+
+  if (extract_largest) {
+    // Again, and only now that the mesh has stopped changing.  Removing the zero-area triangles
+    // above can strand a patch that touches the surface at a single vertex, which the connectivity
+    // filter at the top cannot see because it treats a shared corner as a connection.
+    final = MeshUtils::extract_largest_edge_connected_component(final);
+  }
 
   return final;
 }

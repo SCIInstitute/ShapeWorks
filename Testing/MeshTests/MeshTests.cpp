@@ -1096,6 +1096,58 @@ TEST(MeshTests, extractLargestComponentTest) {
   ASSERT_TRUE(multi_component == baseline);
 }
 
+TEST(MeshTests, extractLargestEdgeConnectedComponentTest) {
+  // Two triangles meeting at a single shared vertex.  They are one component to anything that
+  // walks the mesh by its points, but two to anything that walks it by its edges, which is what
+  // igl::biharmonic_coordinates does.
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(0, 0, 0);  // 0: the shared corner
+  points->InsertNextPoint(1, 0, 0);  // 1
+  points->InsertNextPoint(0, 1, 0);  // 2  -- big triangle: 0,1,2
+  points->InsertNextPoint(-1, 0, 0);
+  points->InsertNextPoint(0, -1, 0);  // scrap triangle: 0,3,4
+
+  auto polys = vtkSmartPointer<vtkCellArray>::New();
+  vtkIdType big[3] = {0, 1, 2};
+  vtkIdType scrap[3] = {0, 3, 4};
+  polys->InsertNextCell(3, big);
+  polys->InsertNextCell(3, scrap);
+
+  auto mesh = vtkSmartPointer<vtkPolyData>::New();
+  mesh->SetPoints(points);
+  mesh->SetPolys(polys);
+
+  auto result = MeshUtils::extract_largest_edge_connected_component(mesh);
+
+  // the scrap goes, and so do the two points only it referenced
+  ASSERT_EQ(result->GetNumberOfCells(), 1);
+  ASSERT_EQ(result->GetNumberOfPoints(), 3);
+}
+
+TEST(MeshTests, extractLargestEdgeConnectedComponentSingleComponentTest) {
+  // Two triangles sharing a whole edge are a single component and must come back untouched
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(0, 0, 0);
+  points->InsertNextPoint(1, 0, 0);
+  points->InsertNextPoint(0, 1, 0);
+  points->InsertNextPoint(1, 1, 0);
+
+  auto polys = vtkSmartPointer<vtkCellArray>::New();
+  vtkIdType lower[3] = {0, 1, 2};
+  vtkIdType upper[3] = {1, 3, 2};  // shares edge 1-2
+  polys->InsertNextCell(3, lower);
+  polys->InsertNextCell(3, upper);
+
+  auto mesh = vtkSmartPointer<vtkPolyData>::New();
+  mesh->SetPoints(points);
+  mesh->SetPolys(polys);
+
+  auto result = MeshUtils::extract_largest_edge_connected_component(mesh);
+
+  ASSERT_EQ(result->GetNumberOfPoints(), 4);
+  ASSERT_EQ(result->GetNumberOfCells(), 2);
+}
+
 TEST(MeshTests, extractLargestComponentSingleComponentTest) {
   // Test that extracting from a mesh with only one component preserves count
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
