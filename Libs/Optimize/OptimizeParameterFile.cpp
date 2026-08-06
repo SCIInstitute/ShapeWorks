@@ -492,6 +492,8 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
   inputsBuffer.str("");
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(imageFiles));
+  // registration based initialization reads image domains back from disk, so keep the full paths too
+  optimize->SetDomainPaths(imageFiles);
   return true;
 }
 
@@ -582,6 +584,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
   }
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(meshFiles));
+  // registration based initialization reads image domains back from disk, so keep the full paths too
+  optimize->SetDomainPaths(meshFiles);
 
   return true;
 }

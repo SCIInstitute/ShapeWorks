@@ -992,6 +992,50 @@ shapeworks  tp-levelset [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Image Commands](#image-commands)
+### transfer-particles
+
+
+**Usage:**
+
+```
+shapeworks  transfer-particles [args]...
+```  
+
+
+**Description:** transfers a particle set from the current image, used as the registration reference, onto a target image by deformably registering the two  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--target=STRING:** Distance transform of the target image.
+
+**--particles=STRING:** Particle file holding the reference particles.
+
+**--output=STRING:** Particle file to write the transferred particles to.
+
+**--transform=STRING:** Registration stages to run: Rigid, Affine or SyN [default: SyN].
+
+**--band=DOUBLE:** Half-width of the distance transform band retained for registration [default: 5].
+
+**--gradstep=DOUBLE:** SyN gradient step size [default: 0.25].
+
+**--flowsigma=DOUBLE:** Variance for smoothing the SyN update field [default: 3].
+
+**--totalsigma=DOUBLE:** Variance for smoothing the SyN total field [default: 0].
+
+**--warped=STRING:** Optional path to write the warped target image for inspection.  
+
+**Example:** transfer the particles of a reference shape onto a target shape
+
+```
+shapeworks read-image --name ref_dt.nrrd transfer-particles --target target_dt.nrrd --particles ref.particles --output target.particles
+```  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Image Commands](#image-commands)
 ### translate-image
 
 

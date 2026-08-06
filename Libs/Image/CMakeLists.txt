@@ -3,11 +3,13 @@ set(Image_sources
   Image.cpp
   VectorImage.cpp
   ImageUtils.cpp
+  ImageRegistration.cpp
   )
 set(Image_headers
   Image.h
   VectorImage.h
   ImageUtils.h
+  ImageRegistration.h
   )
 add_library(Image STATIC
   ${Image_sources}

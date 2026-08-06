@@ -98,6 +98,9 @@ class LinearRegressionShapeMatrix : public LegacyShapeMatrix {
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
     const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
@@ -124,6 +127,9 @@ class LinearRegressionShapeMatrix : public LegacyShapeMatrix {
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
 
     const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);

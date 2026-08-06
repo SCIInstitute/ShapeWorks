@@ -45,6 +45,7 @@ COMMAND_DECLARE(DivideImage, ImageCommand);
 COMMAND_DECLARE(ImageToMesh, ImageCommand);
 COMMAND_DECLARE(SetRegion, ImageCommand);
 COMMAND_DECLARE(Isolate, ImageCommand);
+COMMAND_DECLARE(TransferParticles, ImageCommand);
 
 // Particle System Commands
 COMMAND_DECLARE(ReadParticleSystem, ParticleSystemCommand);

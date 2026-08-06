@@ -1,6 +1,8 @@
 #include "Commands.h"
 #include "Image.h"
+#include "ImageRegistration.h"
 #include "ImageUtils.h"
+#include "ParticleFile.h"
 
 namespace shapeworks {
 
@@ -1381,6 +1383,91 @@ bool Isolate::execute(const optparse::Values &options, SharedCommandData &shared
   int minsize = static_cast<int>(options.get("minsize"));
 
   sharedData.image.isolate(minsize);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// TransferParticles
+///////////////////////////////////////////////////////////////////////////////
+void TransferParticles::buildParser()
+{
+  const std::string prog = "transfer-particles";
+  const std::string desc = "transfers a particle set from the current image, used as the registration reference, onto a target image by deformably registering the two";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--target").action("store").type("string").set_default("").help("Distance transform of the target image.");
+  parser.add_option("--particles").action("store").type("string").set_default("").help("Particle file holding the reference particles.");
+  parser.add_option("--output").action("store").type("string").set_default("").help("Particle file to write the transferred particles to.");
+  parser.add_option("--transform").action("store").type("string").set_default("SyN").help("Registration stages to run: Rigid, Affine or SyN [default: %default].");
+  parser.add_option("--band").action("store").type("double").set_default(5.0).help("Half-width of the distance transform band retained for registration [default: %default].");
+  parser.add_option("--gradstep").action("store").type("double").set_default(0.25).help("SyN gradient step size [default: %default].");
+  parser.add_option("--flowsigma").action("store").type("double").set_default(3.0).help("Variance for smoothing the SyN update field [default: %default].");
+  parser.add_option("--totalsigma").action("store").type("double").set_default(0.0).help("Variance for smoothing the SyN total field [default: %default].");
+  parser.add_option("--warped").action("store").type("string").set_default("").help("Optional path to write the warped target image for inspection.");
+
+  Command::buildParser();
+}
+
+bool TransferParticles::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  if (!sharedData.validImage())
+  {
+    std::cerr << "No image to operate on\n";
+    return false;
+  }
+
+  std::string target_name = static_cast<std::string>(options.get("target"));
+  std::string particles_name = static_cast<std::string>(options.get("particles"));
+  std::string output_name = static_cast<std::string>(options.get("output"));
+  std::string transform_name = static_cast<std::string>(options.get("transform"));
+  std::string warped_name = static_cast<std::string>(options.get("warped"));
+  double band = static_cast<double>(options.get("band"));
+
+  if (target_name == "" || particles_name == "" || output_name == "")
+  {
+    std::cerr << "Must specify --target, --particles and --output\n";
+    return false;
+  }
+
+  ImageRegistration::TransformType transform_type;
+  if (transform_name == "Rigid")
+  {
+    transform_type = ImageRegistration::TransformType::Rigid;
+  }
+  else if (transform_name == "Affine")
+  {
+    transform_type = ImageRegistration::TransformType::Affine;
+  }
+  else if (transform_name == "SyN")
+  {
+    transform_type = ImageRegistration::TransformType::SyN;
+  }
+  else
+  {
+    std::cerr << "Unknown transform type '" << transform_name << "', expected Rigid, Affine or SyN\n";
+    return false;
+  }
+
+  Image target(target_name);
+
+  ImageRegistration registration;
+  registration.set_transform_type(transform_type);
+  registration.set_gradient_step(static_cast<double>(options.get("gradstep")));
+  registration.set_update_field_variance(static_cast<double>(options.get("flowsigma")));
+  registration.set_total_field_variance(static_cast<double>(options.get("totalsigma")));
+
+  // the reference is the fixed image, so the resulting transform carries its particles onto the target
+  registration.run(ImageRegistration::make_registration_image(sharedData.image, band),
+                   ImageRegistration::make_registration_image(target, band));
+
+  auto particles = particles::read_particles_as_vector(particles_name);
+  particles::write_particles_from_vector(output_name, registration.transform_points(particles));
+
+  if (warped_name != "")
+  {
+    registration.warped_moving().write(warped_name);
+  }
+
   return true;
 }
 

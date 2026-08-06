@@ -31,6 +31,10 @@ class QOptimize : public QObject, public Optimize {
   virtual void SetIterationCallback() override;
   void IterateCallbackInternal();
 
+  //! Registration based initialization runs no optimizer iterations, so reuse the per-iteration
+  //! refresh to redraw particles and flush the status during the transfer phase.
+  void RefreshDuringTransfer() override { IterateCallbackInternal(); }
+
  Q_SIGNALS:
   void progress(int, QString);
 

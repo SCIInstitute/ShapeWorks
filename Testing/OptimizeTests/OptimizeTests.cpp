@@ -13,6 +13,7 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
+#include "StringUtils.h"
 
 using namespace shapeworks;
 
@@ -979,4 +980,135 @@ TEST(OptimizeTests, vtk_output) {
   // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
   ASSERT_LT(value, 100);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, registration_initialization) {
+  const std::vector<std::string> shapes = {"ellipsoid_00.DT.nrrd", "ellipsoid_01.DT.nrrd", "ellipsoid_02.DT.nrrd"};
+  const int num_particles = 32;
+
+  std::vector<std::string> paths;
+  for (const auto& shape : shapes) {
+    paths.push_back(std::string(TEST_DATA_DIR) + "/" + shape);
+  }
+
+  Optimize app;
+  app.SetDomainsPerShape(1);
+  app.SetNumberOfParticles({num_particles});
+  app.SetOptimizationIterations(50);
+  app.SetIterationsPerSplit(50);
+  app.SetFileOutputEnabled(false);
+  app.SetInitializationMode(Optimize::InitializationMode::Registration);
+
+  for (const auto& path : paths) {
+    app.AddImage(Image(path).getITKImage(), StringUtils::getFilename(path));
+  }
+  app.SetDomainPaths(paths);
+
+  ASSERT_TRUE(app.Run());
+
+  // a reference must have been chosen from the shapes provided
+  const int reference = app.GetRegistrationReference();
+  ASSERT_GE(reference, 0);
+  ASSERT_LT(reference, static_cast<int>(shapes.size()));
+
+  // every shape must end up with the full, matching set of particles
+  auto* system = app.GetSampler()->GetParticleSystem();
+  ASSERT_EQ(system->GetNumberOfDomains(), shapes.size());
+  for (unsigned int domain = 0; domain < system->GetNumberOfDomains(); domain++) {
+    ASSERT_EQ(system->GetNumberOfParticles(domain), num_particles);
+  }
+
+  // and those particles must lie on their own shape's surface
+  for (unsigned int domain = 0; domain < shapes.size(); domain++) {
+    Image dt(paths[domain]);
+    double worst = 0.0;
+    for (auto k = 0; k < system->GetNumberOfParticles(domain); k++) {
+      auto position = system->GetPosition(k, domain);
+      worst = std::max(worst, std::abs(static_cast<double>(dt.evaluate(Point({position[0], position[1], position[2]})))));
+    }
+    ASSERT_LT(worst, 1.0) << "domain " << domain << " has particles off its surface";
+  }
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, registration_initialization_parameters) {
+  prep_temp("/optimize/sphere", "registration_initialization_parameters");
+
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.swproj"));
+
+  // the historical behavior stays the default
+  {
+    Optimize app;
+    OptimizeParameters params(project);
+    ASSERT_EQ(params.get_initialization_mode(), "split");
+    ASSERT_EQ(params.get_registration_grid_size(), 128);  // default preserved
+    ASSERT_TRUE(params.set_up_optimize(&app));
+    ASSERT_EQ(app.GetInitializationMode(), Optimize::InitializationMode::Split);
+  }
+
+  // the grid size round-trips through the project
+  {
+    OptimizeParameters params(project);
+    params.set_registration_grid_size(96);
+    ASSERT_EQ(params.get_registration_grid_size(), 96);
+    params.set_registration_grid_size(128);  // restore for the checks below
+  }
+
+  // asking for registration in the project turns it on for the optimizer
+  {
+    Optimize app;
+    OptimizeParameters params(project);
+    params.set_initialization_mode("registration");
+    params.set_registration_transform_type("Affine");
+    params.set_registration_band(7.5);
+    ASSERT_TRUE(params.set_up_optimize(&app));
+    ASSERT_EQ(app.GetInitializationMode(), Optimize::InitializationMode::Registration);
+  }
+
+  // registration supplies the initial particles, so it cannot be combined with landmarks
+  {
+    Optimize app;
+    OptimizeParameters params(project);
+    params.set_initialization_mode("registration");
+    params.set_use_landmarks(true);
+    ASSERT_THROW(params.set_up_optimize(&app), std::invalid_argument);
+  }
+
+  // an unrecognized mode is rejected rather than silently falling back
+  {
+    Optimize app;
+    OptimizeParameters params(project);
+    params.set_initialization_mode("nonsense");
+    ASSERT_THROW(params.set_up_optimize(&app), std::invalid_argument);
+  }
+}
+
+//---------------------------------------------------------------------------
+// A single shape is its own registration reference, so no particles are ever transferred.  The
+// correspondence matrices are suspended while particles are spread over the reference, and nothing
+// else would size them afterwards, so this used to index out of bounds (see ResyncObservers).
+TEST(OptimizeTests, registration_initialization_single_shape) {
+  const std::string path = std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd";
+  const int num_particles = 16;
+
+  Optimize app;
+  app.SetDomainsPerShape(1);
+  app.SetNumberOfParticles({num_particles});
+  app.SetOptimizationIterations(10);
+  app.SetIterationsPerSplit(10);
+  app.SetFileOutputEnabled(false);
+  app.SetInitializationMode(Optimize::InitializationMode::Registration);
+  app.AddImage(Image(path).getITKImage(), StringUtils::getFilename(path));
+  app.SetDomainPaths({path});
+
+  ASSERT_TRUE(app.Run());
+
+  auto* system = app.GetSampler()->GetParticleSystem();
+  ASSERT_EQ(system->GetNumberOfDomains(), 1);
+  ASSERT_EQ(system->GetNumberOfParticles(0), num_particles);
+
+  // the single shape is the reference, so it must be the one chosen
+  ASSERT_EQ(app.GetRegistrationReference(), 0);
 }

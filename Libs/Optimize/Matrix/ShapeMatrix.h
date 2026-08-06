@@ -154,6 +154,9 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const int VDimension = 3;
 
     // update the size of matrix based on xyz, normals and number of attributes being used
@@ -175,6 +178,9 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     // update xyz, normals and number of attributes being used
     const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
     const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);

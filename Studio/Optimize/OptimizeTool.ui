@@ -733,23 +733,138 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
+               <!-- Row 24: Registration Initialization (combined checkbox + transform type) -->
+               <item row="24" column="0">
+                <widget class="QCheckBox" name="registration_initialization">
+                 <property name="text">
+                  <string>Registration Initialization</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="24" column="1">
+                <widget class="QLabel" name="registration_transform_label">
+                 <property name="text">
+                  <string>Transform:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="24" column="2">
+                <widget class="QComboBox" name="registration_transform_type">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Rigid</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Affine</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SyN</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <!-- Row 25: Registration band -->
+               <item row="25" column="1">
+                <widget class="QLabel" name="registration_band_label">
+                 <property name="text">
+                  <string>Band:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="25" column="2">
+                <widget class="QLineEdit" name="registration_band">
+                 <property name="placeholderText">
+                  <string>auto</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <!-- Row 26: Registration grid size -->
+               <item row="26" column="1">
+                <widget class="QLabel" name="registration_grid_label">
+                 <property name="text">
+                  <string>Grid:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="26" column="2">
+                <widget class="QLineEdit" name="registration_grid_size">
+                 <property name="text">
+                  <string>128</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
                <!-- Divider: after Geodesic/Options group -->
-               <item row="24" column="0" colspan="4">
+               <item row="27" column="0" colspan="4">
                 <widget class="Line" name="line_opt_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <!-- Row 25: Procrustes (combined checkbox + interval) -->
-               <item row="25" column="0">
+               <!-- Row 28: Procrustes (combined checkbox + interval) -->
+               <item row="28" column="0">
                 <widget class="QCheckBox" name="procrustes">
                  <property name="text">
                   <string>Procrustes</string>
                  </property>
                 </widget>
                </item>
-               <item row="25" column="1">
+               <item row="28" column="1">
                 <widget class="QLabel" name="procrustes_interval_label">
                  <property name="text">
                   <string>Interval:</string>
@@ -759,7 +874,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-              <item row="25" column="2">
+              <item row="28" column="2">
                 <widget class="QLineEdit" name="procrustes_interval">
                  <property name="text">
                   <string>10</string>
@@ -781,8 +896,8 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <!-- Row 26: Procrustes sub-options (Scaling + Rot/Trans) -->
-               <item row="26" column="0" colspan="3">
+               <!-- Row 29: Procrustes sub-options (Scaling + Rot/Trans) -->
+               <item row="29" column="0" colspan="3">
                 <widget class="QWidget" name="procrustes_sub_widget" native="true">
                  <layout class="QHBoxLayout" name="procrustes_sub_layout">
                   <property name="leftMargin">
@@ -828,15 +943,15 @@ QWidget#optimize_panel {
                 </widget>
                </item>
                <!-- Divider: after Procrustes group -->
-               <item row="27" column="0" colspan="4">
+               <item row="30" column="0" colspan="4">
                 <widget class="Line" name="line_opt_3">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <!-- Row 28: Sampling Scale (combined checkbox + multiplier) -->
-               <item row="28" column="0">
+               <!-- Row 31: Sampling Scale (combined checkbox + multiplier) -->
+               <item row="31" column="0">
                 <widget class="QCheckBox" name="sampling_scale">
                  <property name="text">
                   <string>Sampling Scale</string>
@@ -846,7 +961,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <item row="28" column="1">
+               <item row="31" column="1">
                 <widget class="QLabel" name="sampling_scale_label">
                  <property name="text">
                   <string>Multiplier:</string>
@@ -856,7 +971,7 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-              <item row="28" column="2">
+              <item row="31" column="2">
                 <widget class="QLineEdit" name="sampling_scale_value">
                  <property name="text">
                   <string>1.0</string>
@@ -878,8 +993,8 @@ QWidget#optimize_panel {
                  </property>
                 </widget>
                </item>
-               <!-- Row 29: Auto Scale (sub-checkbox) -->
-               <item row="29" column="0" colspan="3">
+               <!-- Row 32: Auto Scale (sub-checkbox) -->
+               <item row="32" column="0" colspan="3">
                 <widget class="QWidget" name="sampling_auto_scale_sub_widget" native="true">
                  <layout class="QHBoxLayout" name="sampling_auto_scale_sub_layout">
                   <property name="leftMargin">
@@ -920,8 +1035,8 @@ QWidget#optimize_panel {
                  </layout>
                 </widget>
                </item>
-               <!-- Row 30: Disentangled SSM (checkbox only, hidden) -->
-               <item row="30" column="0">
+               <!-- Row 33: Disentangled SSM (checkbox only, hidden) -->
+               <item row="33" column="0">
                 <widget class="QCheckBox" name="use_disentangled_ssm">
                  <property name="text">
                   <string>Disentangled SSM</string>
@@ -1033,6 +1148,10 @@ QWidget#optimize_panel {
   <tabstop>multiscale</tabstop>
   <tabstop>multiscale_particles</tabstop>
   <tabstop>use_landmarks</tabstop>
+  <tabstop>registration_initialization</tabstop>
+  <tabstop>registration_transform_type</tabstop>
+  <tabstop>registration_band</tabstop>
+  <tabstop>registration_grid_size</tabstop>
   <tabstop>narrow_band</tabstop>
   <tabstop>sampling_scale</tabstop>
   <tabstop>sampling_scale_value</tabstop>

@@ -108,6 +108,9 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const int VDimension = 3;
 
     const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
@@ -136,6 +139,9 @@ class MixedEffectsShapeMatrix : public LegacyShapeMatrix {
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
+    if (is_suspended()) {
+      return;
+    }
     const int VDimension = 3;
 
     const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);

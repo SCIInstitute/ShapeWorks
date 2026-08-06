@@ -1,4 +1,7 @@
+#include <fstream>
+
 #include "Image.h"
+#include "ImageRegistration.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "Testing.h"
@@ -1169,4 +1172,118 @@ TEST(ImageTests, evaluateTest) {
   EXPECT_TRUE(epsEqual(image.evaluate(pt3), -1.236827493, 1e-6));
   EXPECT_TRUE(epsEqual(image.evaluate(pt4), -50.785587311, 1e-6));
   EXPECT_TRUE(epsEqual(image.evaluate(pt5), -69.377281189, 1e-6));
+}
+
+//---------------------------------------------------------------------------
+// Registration tests
+//---------------------------------------------------------------------------
+
+/// read a .particles file (three whitespace separated coordinates per line)
+static std::vector<Point3> read_particles(const std::string& filename) {
+  std::ifstream in(filename);
+  std::vector<Point3> points;
+  double x, y, z;
+  while (in >> x >> y >> z) {
+    points.push_back(Point3({x, y, z}));
+  }
+  return points;
+}
+
+/// mean absolute distance transform value at the given points, i.e. how far they sit off the surface
+static double mean_surface_distance(Image& dt, const std::vector<Point3>& points) {
+  double total = 0.0;
+  for (auto point : points) {
+    total += std::abs(dt.evaluate(point));
+  }
+  return total / points.size();
+}
+
+TEST(ImageTests, registrationClampTest) {
+  Image dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  auto clamped = ImageRegistration::make_registration_image(dt, 5.0);
+
+  // the band maps to [0,1], with the surface landing at the midpoint
+  ASSERT_GE(clamped.min(), 0.0f);
+  ASSERT_LE(clamped.max(), 1.0f);
+  ASSERT_TRUE(epsEqual(clamped.evaluate(Point({0.0, 0.0, 0.0})), 1.0f, 1e-4));  // deep inside
+}
+
+TEST(ImageTests, registrationTranslationTest) {
+  Image fixed_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  const Vector3 offset({3.0, -2.0, 4.0});
+
+  Image moving_dt(fixed_dt);
+  moving_dt.translate(offset);
+
+  ImageRegistration registration;
+  registration.set_transform_type(ImageRegistration::TransformType::Rigid);
+  registration.run(ImageRegistration::make_registration_image(fixed_dt),
+                   ImageRegistration::make_registration_image(moving_dt));
+
+  // the transform maps fixed space to moving space, so it must reproduce the known offset
+  const std::vector<Point3> points = {Point3({0.0, 0.0, 0.0}), Point3({10.0, 5.0, -15.0}),
+                                      Point3({-8.0, -6.0, 12.0})};
+  auto transformed = registration.transform_points(points);
+
+  for (size_t i = 0; i < points.size(); i++) {
+    for (unsigned int d = 0; d < 3; d++) {
+      ASSERT_NEAR(transformed[i][d], points[i][d] + offset[d], 0.5);
+    }
+  }
+}
+
+TEST(ImageTests, registrationParticleTransferTest) {
+  Image reference_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  Image target_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd");
+
+  auto reference_particles = read_particles(std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles");
+  ASSERT_FALSE(reference_particles.empty());
+
+  // the reference particles lie on the reference surface, but not on the target's
+  ASSERT_LT(mean_surface_distance(reference_dt, reference_particles), 0.5);
+  const double before = mean_surface_distance(target_dt, reference_particles);
+
+  ImageRegistration registration;
+  registration.run(ImageRegistration::make_registration_image(reference_dt),
+                   ImageRegistration::make_registration_image(target_dt));
+
+  auto transferred = registration.transform_points(reference_particles);
+  ASSERT_EQ(transferred.size(), reference_particles.size());
+
+  // after transfer they should land on the target surface
+  const double after = mean_surface_distance(target_dt, transferred);
+  ASSERT_LT(after, before);
+  ASSERT_LT(after, 0.25);  // measured ~0.03, well under the 1mm voxel size
+}
+
+TEST(ImageTests, registrationTransformCacheTest) {
+  Image reference_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  Image target_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd");
+
+  auto reference_particles = read_particles(std::string(TEST_DATA_DIR) + "/ellipsoid_00.local.particles");
+
+  ImageRegistration registration;
+  registration.run(ImageRegistration::make_registration_image(reference_dt),
+                   ImageRegistration::make_registration_image(target_dt));
+  auto expected = registration.transform_points(reference_particles);
+
+  const std::string cache = std::string(TEST_DATA_DIR) + "/registration_cache_test.tfm";
+  registration.save_transform(cache);
+
+  // a saved transform must stand in for the registration exactly
+  ImageRegistration restored;
+  ASSERT_TRUE(restored.load_transform(cache));
+  auto actual = restored.transform_points(reference_particles);
+
+  ASSERT_EQ(actual.size(), expected.size());
+  for (size_t i = 0; i < actual.size(); i++) {
+    ASSERT_LT(actual[i].EuclideanDistanceTo(expected[i]), 1e-4);
+  }
+
+  // reading something that is not a transform is a miss, not a crash
+  ImageRegistration missing;
+  ASSERT_FALSE(missing.load_transform(std::string(TEST_DATA_DIR) + "/does_not_exist.tfm"));
+
+  std::remove(cache.c_str());
+  std::remove((cache + ".field.nrrd").c_str());
 }
