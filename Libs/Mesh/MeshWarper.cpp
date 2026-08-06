@@ -105,6 +105,14 @@ bool MeshWarper::get_warp_available() { return warp_available_; }
 bool MeshWarper::check_warp_ready() {
   std::scoped_lock lock(mutex);
 
+  // A warp that has already failed stays failed until a new reference mesh arrives.  build_mesh()
+  // reads warp_available_ before taking this lock, so every mesh that queued up behind a long
+  // generation is already past that test: without this each one would repeat the same failing
+  // generation, once per shape, with the GUI blocked behind them the whole time.
+  if (!warp_available_) {
+    return false;
+  }
+
   if (!needs_warp_) {
     // warp already done
     return true;

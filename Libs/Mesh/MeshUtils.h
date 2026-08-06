@@ -81,6 +81,12 @@ class MeshUtils {
   /// Recreate mesh, dropping deleted cells
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
+  /// Keep only the largest group of faces joined edge-to-edge, dropping any point left unused.
+  /// vtkPolyDataConnectivityFilter joins faces that merely share a corner, so it cannot separate a
+  /// scrap that hangs off the surface by a single vertex.  Solvers that walk the mesh by its edges
+  /// -- igl::biharmonic_coordinates among them -- see such a scrap as its own component and fail.
+  static vtkSmartPointer<vtkPolyData> extract_largest_edge_connected_component(vtkSmartPointer<vtkPolyData> mesh);
+
   /// Repair mesh: triangulate, optionally extract largest component, clean, fix non-manifold, remove zero-area
   /// triangles
   static vtkSmartPointer<vtkPolyData> repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest = true);
