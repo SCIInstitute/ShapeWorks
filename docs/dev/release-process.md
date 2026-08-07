@@ -5,7 +5,10 @@ This document outlines the steps to release a new version of ShapeWorks.
 
 * Create a new branch for the release.  E.g. `git co -b release_v6.5`
 
-* Update the version number in `CMakeLists.txt`
+`master` always keeps the `-dev` version string.  The release version number lives
+only on the release branch, so there is no need to bump `master` back afterwards.
+
+* Update the version number in `CMakeLists.txt` **on the release branch**
 
 ```
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
@@ -54,7 +57,7 @@ SW_MAJOR_VERSION=6.5
 
 * Update Release Notes
 
-- Update `docs/about/release_notes.md` with the new release notes
+- Update `docs/about/release-notes.md` with the new release notes
 
 * Create Walkthrough Video
 
@@ -64,7 +67,10 @@ SW_MAJOR_VERSION=6.5
 
 * When release candidate is final, set the version number in `CMakeLists.txt` to the final version number
 
-* After the release, set the version to the next development version
+* Tag the release from the release branch
+
+* Merge the release branch's doc/release-note changes back to `master`, leaving
+  `master`'s `SHAPEWORKS_VERSION_STRING` at the next `-dev` version
 
 * Point the documentation's `latest` version at the new release
 
