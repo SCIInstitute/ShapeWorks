@@ -3,6 +3,8 @@
 
 ## ShapeWorks 6.8.0
 
+![](../img/about/release6.8.png)
+
 ### What is new?
 
   * **Bundled Python**
@@ -10,6 +12,48 @@
     * New `swpython` and `swpip` wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a **ShapeWorks Prompt** Start Menu shortcut that puts these on `PATH`.
     * PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via `light-the-torch`, into a per-user directory that survives reinstalls.
     * Source/developer builds are unchanged: `install_shapeworks.sh` / `.bat` still set up the conda environment used to build from source.
+
+  * **ShapeWorks Back-end**
+    * Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)
+    * New `correspondence-quality` command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies (#2612)
+    * Large-cohort optimization speedups: the per-iteration correspondence update drops an O(P·N²) identity multiply during initialization and uses a symmetric eigensolver instead of a single-threaded general SVD, restoring multi-core use on large cohorts with no change to the result (#2574)
+    * Geodesic remeshing fixes: `geodesic_remesh_percent` is now interpreted correctly as a percentage, geodesics are actually enabled on the remeshed surface (previously it silently fell back to Euclidean distances), and per-particle face lookups are cached against the query point (#2556)
+    * Contours are detected by cell type rather than by inspecting the first cell, and polyline cells with more than two points are split into segments, so single-polyline contours load and optimize instead of crashing (#2377, #2457)
+    * Fixed-domain projects now verify that each fixed subject's particle count matches `number_of_particles` and fail with a clear message instead of silently producing a broken model (#2192)
+    * Optimizing a project with no optimize parameters now warns instead of silently applying built-in defaults (#1677)
+    * `Image::isolate()` takes a `minimum_size` option to keep every connected component above a voxel threshold, useful for cleaning noisy segmentations (#2324)
+    * `Image.getDICOMSeriesUIDs()` queries the DICOM series present in a directory (#2317)
+    * `Mesh.distance()` also stores its result as a `distance` point field so heat maps can be written without a separate `setField()` call, and `setField()`'s type argument defaults to Point (#1939)
+    * `Analyze.get_median_shape_points()` / `get_median_shape()` added to the Python API, mirroring the existing mean-shape pair (#2320)
+    * All-blank spreadsheet columns are ignored when loading a project, so an orphaned header no longer creates a phantom domain (#1985)
+
+  * **ShapeWorks Front-end**
+    * New Regression tab in the Analyze pane: fits shape against a numeric per-subject explanatory variable and previews the predicted shape with a slider and animation (#1654)
+    * Snap-to-axis views in the 3D viewer, via a Views dropdown and keyboard shortcuts, labeled anatomically or by axis depending on the orientation-marker preference (#1953)
+    * Optional world-coordinate scale bar so the physical size of the data is readable directly in the 3D view (#2259)
+    * Optional shape bounding box display (#2257)
+    * File → Export → Export All Meshes writes the reconstructed mesh for every subject in the project (#2281)
+    * The glyph-size slider and auto-sizing now scale to the shape's largest dimension instead of a fixed world-unit range, so very small or very large shapes get usable glyph sizes (#2459)
+    * Cutting-plane table edits to center and normal now take effect (#2567)
+
+  * **Documentation**
+    * New [optimization scaling study](../workflow/optimize-scaling.md) documenting runtime against particle count and cohort size, with a reproducible test harness (#2572)
+
+### Fixes
+  * Fix DeepSSM jobs reporting success after failing: a job that died during training logged "Training complete", chained into testing, and exited zero. Failures now stop the run and exit non-zero, and the CLI no longer hangs waiting on a failed job (#2621)
+  * Fix mesh warp failure on patches joined to the surface at a single vertex; `repair_mesh` now does an edge-connected extraction after removing zero-area triangles, and a failed warp is no longer regenerated for every queued mesh (#2619)
+  * Fix mesh warp template index when shapes are excluded, which left warped and reconstructed surfaces unavailable for the whole session — most visibly with DeepSSM, which marks the test split excluded (#2616)
+  * Fix groom segfault in `Mesh::computeNormals` on degenerate zero-area triangles produced by remesh/smooth (#2605)
+  * Fix crash when skipping the distance transform and converting to mesh (#2456)
+  * Report an error for corrupt mesh files instead of crashing (#2048)
+  * Fix particle and time estimates being wrong when initial landmarks are used (#2275)
+  * Fix initial landmarks and cutting-plane points rendering at near-zero size before optimization (#2276, #2595)
+  * Clear particle filenames when optimization fails, so saving the project no longer persists paths to files that were never written and the project reloads cleanly (#2455)
+  * Fix an intermittent race condition in debug instrumentation (#2530)
+
+### Platform Updates
+  * Bundled Python 3.12 (see above); VTK 9.5.0, ITK 5.4.4 and Qt 5.15.4 are unchanged from 6.7.0
+  * GitHub Actions updated to Node 20 runtimes (#1909)
 
 
 

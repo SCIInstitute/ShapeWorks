@@ -15,6 +15,57 @@ You can scroll through the dataset and zoom in and out to inspect fewer or more 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
 
+## Correspondence Quality
+
+Scrolling through the model tells you whether correspondence *looks* right. To quantify it per subject, use the `correspondence-quality` command.
+
+For each subject, ShapeWorks reconstructs the surface from that subject's **local** particles by biharmonic mesh warp from the cohort template, and then measures the distance from the reconstruction back to that subject's groomed mesh. A subject whose particles no longer describe its own surface — a failed split, a bad initialization, an outlier shape the model does not cover — shows up as a large distance.
+
+The template is the cohort L1-medoid (the same subject Studio picks as the median shape). Its own reconstruction is near-identity, so its row is reported but excluded from the aggregate statistics, which would otherwise be skewed on small cohorts.
+
+Distances are reported both in world units and normalized by each subject's groomed-mesh bounding-box diagonal. The normalized values are scale-invariant, so they can be compared across anatomies and are the better basis for a "good/bad" threshold.
+
+**Usage:**
+
+```
+shapeworks correspondence-quality --name <project.swproj|project.xlsx>
+                                  [--output <report.csv>]
+                                  [--output_meshes <dir>]
+                                  [--method point-to-cell|point-to-point]
+                                  [--worst <n>]
+```
+
+| Option | Description |
+| --- | --- |
+| `--name` | Path to the project file (`.swproj` or `.xlsx`). Required. |
+| `--output` | Write the per-subject table to CSV. |
+| `--output_meshes` | Write each reconstructed mesh as `.vtk` with a per-vertex `distance` field, for visual inspection of *where* correspondence breaks down. |
+| `--method` | `point-to-cell` (default) or `point-to-point`. |
+| `--worst` | How many worst-ranked subjects to print. Default 5. |
+
+The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns `subject`, `domain`, `is_template`, `mean_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_max`.
+
+Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
+
+### Python API
+
+```python
+import shapeworks as sw
+
+project = sw.Project()
+project.load("project.swproj")
+
+report = sw.CorrespondenceEvaluation.evaluate(project)
+
+print(report.template_subject, report.num_evaluated)
+print(report.agg_norm.mean, report.agg_norm.p95)
+
+for row in report.rows:
+    print(row.subject, row.domain, row.mean_dist, row.norm_mean, row.is_template)
+```
+
+`evaluate()` also takes `method` (`sw.CorrespondenceEvaluation.DistanceMethod.PointToCell` or `PointToPoint`) and `output_meshes_dir`. The project's relative paths are resolved against the current working directory, so run from the project's directory.
+
 ## Running ShapeWorks Studio
 
 When you open ShapeWorks Studio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.
