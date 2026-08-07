@@ -11,7 +11,7 @@
     * ShapeWorks now ships with a complete Python 3.12 environment built in — no conda setup required. Studio, the `shapeworks` CLI, and Python use cases all work directly out of the installer on macOS, Windows, and Linux.
     * New `swpython` and `swpip` wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a **ShapeWorks Prompt** Start Menu shortcut that puts these on `PATH`.
     * PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via `light-the-torch`, into a per-user directory that survives reinstalls.
-    * Source/developer builds are unchanged: `install_shapeworks.sh` / `.bat` still set up the conda environment used to build from source.
+    * Source/developer builds are unchanged: `install_shapeworks.sh` / `.bat` still set up the conda environment used to build from source. (#2289, #2313)
 
   * **ShapeWorks Back-end**
     * Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)
