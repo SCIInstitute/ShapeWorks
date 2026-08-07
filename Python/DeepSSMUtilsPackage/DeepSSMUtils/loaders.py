@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, Dataset
 import shapeworks as sw
 from shapeworks.utils import sw_message
 from DeepSSMUtils import constants as C
+from DeepSSMUtils import net_utils
 random.seed(1)
 
 # Use streaming data loading to avoid loading all images into memory
@@ -53,7 +54,7 @@ def load_data_loader(loader_path, loader_type='train'):
 				batch_size=data.get('batch_size', 1),
 				shuffle=True,
 				num_workers=data.get('num_workers', 0),
-				pin_memory=torch.cuda.is_available()
+				pin_memory=net_utils.gpu_available()
 			)
 		else:
 			# Validation or test
@@ -70,7 +71,7 @@ def load_data_loader(loader_path, loader_type='train'):
 				batch_size=1,
 				shuffle=False,
 				num_workers=data.get('num_workers', 0),
-				pin_memory=torch.cuda.is_available()
+				pin_memory=net_utils.gpu_available()
 			)
 	else:
 		# Legacy format - data is already a DataLoader
@@ -128,7 +129,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			batch_size=batch_size,
 			shuffle=True,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 	train_path = loader_dir + C.TRAIN_LOADER
 	torch.save(trainloader, train_path)
@@ -138,7 +139,7 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 			batch_size=1,
 			shuffle=True,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 	val_path = loader_dir + C.VALIDATION_LOADER
 	torch.save(validationloader, val_path)
@@ -175,7 +176,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
 			batch_size=batch_size,
 			shuffle=True,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 
 		# Save metadata for reconstruction
@@ -204,7 +205,7 @@ def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir
 			batch_size=batch_size,
 			shuffle=True,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 		train_path = loader_dir + C.TRAIN_LOADER
 		torch.save(trainloader, train_path)
@@ -260,7 +261,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 			batch_size=1,
 			shuffle=False,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 
 		# Save metadata
@@ -287,7 +288,7 @@ def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1
 			batch_size=1,
 			shuffle=False,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 		val_path = loader_dir + C.VALIDATION_LOADER
 		torch.save(val_loader, val_path)
@@ -336,7 +337,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num
 			batch_size=1,
 			shuffle=False,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 
 		# Save metadata
@@ -363,7 +364,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None, num
 			batch_size=1,
 			shuffle=False,
 			num_workers=num_workers,
-			pin_memory=torch.cuda.is_available()
+			pin_memory=net_utils.gpu_available()
 		)
 		test_path = loader_dir + C.TEST_LOADER
 		torch.save(testloader, test_path)

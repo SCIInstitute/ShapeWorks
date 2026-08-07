@@ -177,7 +177,7 @@ def supervised_train(config_file):
             sw_message(f"Epoch {e}/{num_epochs}")
         sw_progress(e / (num_epochs + 1))
 
-        torch.cuda.empty_cache()
+        net_utils.empty_gpu_cache()
         # train
         net.train()
         train_losses = []
@@ -312,7 +312,7 @@ def supervised_train(config_file):
             sw_message(f"Fine Tuning, Epoch {e}/{ft_epochs}")
             sw_progress(e / (num_epochs + 1))
 
-            torch.cuda.empty_cache()
+            net_utils.empty_gpu_cache()
             # train
             net.train()
             train_losses = []
@@ -472,7 +472,7 @@ def supervised_train_tl(config_file):
         sw_message(f"Autoencoder Epoch {e}/{ae_epochs}")
         sw_progress(e / (ae_epochs + 1))
 
-        torch.cuda.empty_cache()
+        net_utils.empty_gpu_cache()
         # train
         net.train()
         ae_train_losses = []
@@ -580,7 +580,7 @@ def supervised_train_tl(config_file):
         sw_message(f"T-Flank Epoch {e}/{tf_epochs}")
         sw_progress(e / (tf_epochs + 1))
 
-        torch.cuda.empty_cache()
+        net_utils.empty_gpu_cache()
         # train
         net.train()
         tf_train_losses = []

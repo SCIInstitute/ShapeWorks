@@ -39,6 +39,24 @@ installed — kick one off and try again, or trigger the install manually:
 swpython -c "from shapeworks import ensure_torch; ensure_torch()"
 ```
 
+## "No kernel image is available for execution on the device"
+
+PyTorch wheels only ship kernels for a fixed set of GPU architectures, so a card
+that is newer or older than the installed wheel supports is detected by
+`torch.cuda.is_available()` but fails at the first kernel launch. ShapeWorks
+probes the GPU before using it and falls back to the CPU with a message naming
+your GPU's compute capability and the architectures the wheel supports:
+
+```
+Your GPU (NVIDIA GeForce GTX 1080, compute capability 6.1) cannot run this PyTorch build:
+  CUDA error: no kernel image is available for execution on the device
+PyTorch 2.9.1 (CUDA 12.8) only has kernels for: sm_75, sm_80, sm_86, sm_90, sm_100, sm_120
+```
+
+To use the GPU, install a build that covers your card (see below): older cards
+(Maxwell, Pascal) need an older PyTorch with a CUDA 12.6 or earlier wheel, while
+Blackwell cards (RTX 50-series) need CUDA 12.8 or newer.
+
 ## Reinstalling a different PyTorch version
 
 If you need a different PyTorch version than `light-the-torch` selected:

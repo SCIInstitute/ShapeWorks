@@ -191,12 +191,13 @@ def get_image_registration_transform(
 
 def testPytorch() -> None:
     """Check if PyTorch is using GPU and print a warning if not."""
-    if torch.cuda.is_available():
+    # net_utils.gpu_available() explains itself when a GPU is present but unusable
+    if net_utils.gpu_available():
         print("Running on GPU.")
-    else:
+    elif not torch.cuda.is_available():
         print("********************* WARNING ****************************")
         print("Pytorch is running on your CPU!")
         print("This will be very slow. If your machine has a GPU,")
-        print("please reinstall Pytorch to your shapeworks conda ")
-        print("environment with the correct CUDA version.")
+        print("please install a PyTorch build with the correct CUDA version:")
+        print("  swpip install torch --index-url https://download.pytorch.org/whl/cu128")
         print("**********************************************************")
