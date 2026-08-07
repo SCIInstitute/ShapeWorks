@@ -4715,6 +4715,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-extract_largest_edge_connected_component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function extract_largest_edge_connected_component
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-repair_mesh" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4870,6 +4881,10 @@
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-extract-largest-edge-connected-component">extract_largest_edge_connected_component</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-repair-mesh">repair_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh, bool extract_largest =true)</td>
 </tr>
 <tr>
@@ -5020,6 +5035,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Recreate mesh, dropping deleted cells. </p>
+<h3 id="function-extract_largest_edge_connected_component">function extract_largest_edge_connected_component</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">extract_largest_edge_connected_component</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Keep only the largest group of faces joined edge-to-edge, dropping any point left unused. vtkPolyDataConnectivityFilter joins faces that merely share a corner, so it cannot separate a scrap that hangs off the surface by a single vertex. Solvers that walk the mesh by its edges &ndash; igl::biharmonic_coordinates among them &ndash; see such a scrap as its own component and fail. </p>
 <h3 id="function-repair_mesh">function repair_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">repair_mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
@@ -5047,7 +5068,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2026-08-06 at 14:20:14 +0000</p>
+<p>Updated on 2026-08-07 at 04:19:53 +0000</p>
 
 
 
