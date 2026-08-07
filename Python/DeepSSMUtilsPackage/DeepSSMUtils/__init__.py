@@ -191,10 +191,10 @@ def get_image_registration_transform(
 
 def testPytorch() -> None:
     """Check if PyTorch is using GPU and print a warning if not."""
-    # net_utils.gpu_available() explains itself when a GPU is present but unusable
+    # gpu_available() raises if a GPU is present but cannot run this PyTorch build
     if net_utils.gpu_available():
         print("Running on GPU.")
-    elif not torch.cuda.is_available():
+    else:
         print("********************* WARNING ****************************")
         print("Pytorch is running on your CPU!")
         print("This will be very slow. If your machine has a GPU,")

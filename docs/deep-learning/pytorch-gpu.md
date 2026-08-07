@@ -44,8 +44,8 @@ swpython -c "from shapeworks import ensure_torch; ensure_torch()"
 PyTorch wheels only ship kernels for a fixed set of GPU architectures, so a card
 that is newer or older than the installed wheel supports is detected by
 `torch.cuda.is_available()` but fails at the first kernel launch. ShapeWorks
-probes the GPU before using it and falls back to the CPU with a message naming
-your GPU's compute capability and the architectures the wheel supports:
+probes the GPU before using it and stops with a message naming your GPU's
+compute capability and the architectures the wheel supports:
 
 ```
 Your GPU (NVIDIA GeForce GTX 1080, compute capability 6.1) cannot run this PyTorch build:
@@ -53,9 +53,11 @@ Your GPU (NVIDIA GeForce GTX 1080, compute capability 6.1) cannot run this PyTor
 PyTorch 2.9.1 (CUDA 12.8) only has kernels for: sm_75, sm_80, sm_86, sm_90, sm_100, sm_120
 ```
 
-To use the GPU, install a build that covers your card (see below): older cards
-(Maxwell, Pascal) need an older PyTorch with a CUDA 12.6 or earlier wheel, while
-Blackwell cards (RTX 50-series) need CUDA 12.8 or newer.
+Install a build that covers your card (see below): older cards (Maxwell, Pascal)
+need an older PyTorch with a CUDA 12.6 or earlier wheel, while Blackwell cards
+(RTX 50-series) need CUDA 12.8 or newer. DeepSSM does not fall back to the CPU
+in this case — a machine with a GPU it cannot use is a setup problem worth
+fixing, not a reason to start a run that would take days.
 
 ## Reinstalling a different PyTorch version
 

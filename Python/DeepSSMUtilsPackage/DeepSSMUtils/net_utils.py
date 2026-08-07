@@ -2,11 +2,15 @@ import random
 import torch
 from torch import nn
 import numpy as np
-from shapeworks.utils import sw_message
 from DeepSSMUtils import constants as C
 
-# cached result of get_device(), the GPU probe only needs to run once
+# cached results of get_device(), the GPU probe only needs to run once
 _device = None
+_device_error = None
+
+
+class UnusableGPUError(RuntimeError):
+	"""Raised when a GPU is present but cannot run the installed PyTorch build."""
 
 
 def get_device() -> str:
@@ -17,23 +21,42 @@ def get_device() -> str:
 	only ship kernels for a fixed set of GPU architectures, so a card that is
 	newer or older than the installed wheel supports fails at the first kernel
 	launch with "no kernel image is available for execution on the device".
-	Probe the GPU once with a small kernel and fall back to the CPU if it fails.
+	Probe the GPU once with a small kernel so that case is reported up front
+	rather than crashing partway through a run.
 
 	Returns:
-		'cuda:0' if a GPU is present and usable, 'cpu' otherwise
+		'cuda:0' if a GPU is present and usable, 'cpu' if there is no GPU at all
+
+	Raises:
+		UnusableGPUError: if a GPU is present but cannot run this PyTorch build
 	"""
-	global _device
+	global _device, _device_error
+	if _device_error is not None:
+		raise UnusableGPUError(_device_error)
 	if _device is None:
-		_device = C.DEVICE_CUDA if _probe_gpu() else C.DEVICE_CPU
+		if not torch.cuda.is_available():
+			_device = C.DEVICE_CPU
+		else:
+			try:
+				probe = torch.zeros(8, 8, device=C.DEVICE_CUDA)
+				torch.matmul(probe, probe)
+				torch.cuda.synchronize()
+			except Exception as e:
+				_device_error = _unusable_gpu_message(e)
+				raise UnusableGPUError(_device_error) from e
+			_device = C.DEVICE_CUDA
 	return _device
 
 
 def gpu_available() -> bool:
 	"""
-	Check whether a GPU is present and able to run this PyTorch build.
+	Check whether DeepSSM will run on the GPU.
 
 	Returns:
-		True if DeepSSM will run on the GPU
+		True if a GPU is present and usable, False if there is no GPU at all
+
+	Raises:
+		UnusableGPUError: if a GPU is present but cannot run this PyTorch build
 	"""
 	return get_device() == C.DEVICE_CUDA
 
@@ -44,21 +67,7 @@ def empty_gpu_cache() -> None:
 		torch.cuda.empty_cache()
 
 
-def _probe_gpu() -> bool:
-	"""Run a small kernel on the GPU, warning and returning False if it cannot run."""
-	if not torch.cuda.is_available():
-		return False
-	try:
-		probe = torch.zeros(8, 8, device=C.DEVICE_CUDA)
-		torch.matmul(probe, probe)
-		torch.cuda.synchronize()
-		return True
-	except Exception as e:
-		_warn_gpu_unusable(e)
-		return False
-
-
-def _warn_gpu_unusable(error: Exception) -> None:
+def _unusable_gpu_message(error: Exception) -> str:
 	"""Explain why the GPU was rejected and how to install a PyTorch build that supports it."""
 	try:
 		name = torch.cuda.get_device_name(0)
@@ -68,15 +77,15 @@ def _warn_gpu_unusable(error: Exception) -> None:
 		# the device is unusable enough that even querying it fails
 		name = "unknown"
 		capability = "unknown"
-	sw_message("********************* WARNING ****************************")
-	sw_message(f"Your GPU ({name}, compute capability {capability}) cannot run this PyTorch build:")
-	sw_message(f"  {str(error).splitlines()[0]}")
-	sw_message(f"PyTorch {torch.__version__} (CUDA {torch.version.cuda}) only has kernels for: "
-	           f"{', '.join(torch.cuda.get_arch_list())}")
-	sw_message("Falling back to the CPU.  This will be very slow.")
-	sw_message("To use the GPU, install a PyTorch build that supports it, for example:")
-	sw_message("  swpip install torch --index-url https://download.pytorch.org/whl/cu128")
-	sw_message("**********************************************************")
+	return "\n".join([
+		f"Your GPU ({name}, compute capability {capability}) cannot run this PyTorch build:",
+		f"  {str(error).splitlines()[0]}",
+		f"PyTorch {torch.__version__} (CUDA {torch.version.cuda}) only has kernels for: "
+		f"{', '.join(torch.cuda.get_arch_list())}",
+		"Install a PyTorch build that supports your GPU, for example:",
+		"  swpip install torch --index-url https://download.pytorch.org/whl/cu128",
+		"See http://sciinstitute.github.io/ShapeWorks/latest/deep-learning/pytorch-gpu.html",
+	])
 
 
 def set_seed(seed: int = 42) -> None:
