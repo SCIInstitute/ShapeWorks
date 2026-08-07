@@ -99,6 +99,7 @@ void PythonWorker::set_cli_mode(bool cli_mode) { python_logger_->set_cli_mode(cl
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {
   if (init()) {
+    current_job_ = job;
     try {
       // Invalidate import caches in case packages were installed since init()
       // (e.g. PyTorch on-demand install)
@@ -109,14 +110,21 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
         SW_LOG("Running Task: " + job->name().toStdString());
       }
       Q_EMIT job->progress(0);
-      current_job_ = job;
-      current_job_->execute();
-      current_job_->set_complete(true);
-      if (!job->get_quiet_mode()) {
-        SW_LOG(current_job_->get_completion_message().toStdString());
-      }
+      job->execute();
     } catch (py::error_already_set& e) {
       SW_ERROR("{}", e.what());
+      job->set_failed();
+    }
+    // mark complete even on failure, otherwise anything waiting on the job waits forever
+    job->set_complete(true);
+    if (!job->get_quiet_mode()) {
+      if (job->is_failed()) {
+        SW_LOG(job->get_failure_message().toStdString());
+      } else if (job->is_aborted()) {
+        SW_LOG(job->get_abort_message().toStdString());
+      } else {
+        SW_LOG(job->get_completion_message().toStdString());
+      }
     }
   }
 

@@ -4,6 +4,89 @@ from torch import nn
 import numpy as np
 from DeepSSMUtils import constants as C
 
+# cached results of get_device(), the GPU probe only needs to run once
+_device = None
+_device_error = None
+
+
+class UnusableGPUError(RuntimeError):
+	"""Raised when a GPU is present but cannot run the installed PyTorch build."""
+
+
+def get_device() -> str:
+	"""
+	Get the device DeepSSM should run on.
+
+	A GPU can be visible to torch and still be unable to run it: PyTorch wheels
+	only ship kernels for a fixed set of GPU architectures, so a card that is
+	newer or older than the installed wheel supports fails at the first kernel
+	launch with "no kernel image is available for execution on the device".
+	Probe the GPU once with a small kernel so that case is reported up front
+	rather than crashing partway through a run.
+
+	Returns:
+		'cuda:0' if a GPU is present and usable, 'cpu' if there is no GPU at all
+
+	Raises:
+		UnusableGPUError: if a GPU is present but cannot run this PyTorch build
+	"""
+	global _device, _device_error
+	if _device_error is not None:
+		raise UnusableGPUError(_device_error)
+	if _device is None:
+		if not torch.cuda.is_available():
+			_device = C.DEVICE_CPU
+		else:
+			try:
+				probe = torch.zeros(8, 8, device=C.DEVICE_CUDA)
+				torch.matmul(probe, probe)
+				torch.cuda.synchronize()
+			except Exception as e:
+				_device_error = _unusable_gpu_message(e)
+				raise UnusableGPUError(_device_error) from e
+			_device = C.DEVICE_CUDA
+	return _device
+
+
+def gpu_available() -> bool:
+	"""
+	Check whether DeepSSM will run on the GPU.
+
+	Returns:
+		True if a GPU is present and usable, False if there is no GPU at all
+
+	Raises:
+		UnusableGPUError: if a GPU is present but cannot run this PyTorch build
+	"""
+	return get_device() == C.DEVICE_CUDA
+
+
+def empty_gpu_cache() -> None:
+	"""Free cached GPU memory, a no-op when not running on the GPU."""
+	if gpu_available():
+		torch.cuda.empty_cache()
+
+
+def _unusable_gpu_message(error: Exception) -> str:
+	"""Explain why the GPU was rejected and how to install a PyTorch build that supports it."""
+	try:
+		name = torch.cuda.get_device_name(0)
+		major, minor = torch.cuda.get_device_capability(0)
+		capability = f"{major}.{minor}"
+	except Exception:
+		# the device is unusable enough that even querying it fails
+		name = "unknown"
+		capability = "unknown"
+	return "\n".join([
+		f"Your GPU ({name}, compute capability {capability}) cannot run this PyTorch build:",
+		f"  {str(error).splitlines()[0]}",
+		f"PyTorch {torch.__version__} (CUDA {torch.version.cuda}) only has kernels for: "
+		f"{', '.join(torch.cuda.get_arch_list())}",
+		"Install a PyTorch build that supports your GPU, for example:",
+		"  swpip install torch --index-url https://download.pytorch.org/whl/cu128",
+		"See http://sciinstitute.github.io/ShapeWorks/latest/deep-learning/pytorch-gpu.html",
+	])
+
 
 def set_seed(seed: int = 42) -> None:
 	"""

@@ -1,4 +1,3 @@
-import torch
 from torch import nn
 import sys
 import json
@@ -62,11 +61,7 @@ class ConvolutionalBackbone(nn.Module):
 class DeterministicEncoder(nn.Module):
 	def __init__(self, num_latent, img_dims, loader_dir):
 		super(DeterministicEncoder, self).__init__()
-		if torch.cuda.is_available():
-			device = C.DEVICE_CUDA
-		else:
-			device = C.DEVICE_CPU
-		self.device = device
+		self.device = net_utils.get_device()
 		self.num_latent = num_latent
 		self.img_dims = img_dims
 		self.loader_dir = loader_dir
@@ -98,11 +93,7 @@ Supervised DeepSSM Model
 class DeepSSMNet(nn.Module):
 	def __init__(self, config_file):
 		super(DeepSSMNet, self).__init__()
-		if torch.cuda.is_available():
-			device = C.DEVICE_CUDA
-		else:
-			device = C.DEVICE_CPU
-		self.device = device
+		self.device = net_utils.get_device()
 		with open(config_file) as json_file:
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']
@@ -169,11 +160,7 @@ DeepSSM TL-Net Model
 class DeepSSMNet_TLNet(nn.Module):
 	def __init__(self, conflict_file):
 		super(DeepSSMNet_TLNet, self).__init__()
-		if torch.cuda.is_available():
-			device = C.DEVICE_CUDA
-		else:
-			device = C.DEVICE_CPU
-		self.device = device
+		self.device = net_utils.get_device()
 		with open(conflict_file) as json_file:
 			parameters = json.load(json_file)
 		self.num_latent = parameters['num_latent_dim']

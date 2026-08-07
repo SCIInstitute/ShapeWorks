@@ -21,6 +21,12 @@ QString Job::get_abort_message() {
 }
 
 //---------------------------------------------------------------------------
+QString Job::get_failure_message() {
+  QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
+  return name() + " failed.  Duration: " + duration + " seconds";
+}
+
+//---------------------------------------------------------------------------
 void Job::execute() {
   TIME_SCOPE(name());
   run();

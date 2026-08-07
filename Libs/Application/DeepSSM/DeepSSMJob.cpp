@@ -48,6 +48,7 @@ void DeepSSMJob::run() {
     }
   } catch (const std::exception& e) {
     SW_ERROR("Exception Caught: {}", e.what());
+    set_failed();
   }
 }
 

@@ -27,6 +27,9 @@ class Job : public QObject {
   //! get a message to display when the job is aborted
   virtual QString get_abort_message();
 
+  //! get a message to display when the job has failed
+  virtual QString get_failure_message();
+
   //! start the timer
   void start_timer();
 
@@ -45,6 +48,12 @@ class Job : public QObject {
   //! was the job aborted?
   bool is_aborted() const { return abort_; }
 
+  //! mark the job as failed (the error itself should be logged by the caller)
+  void set_failed() { failed_ = true; }
+
+  //! did the job fail?
+  bool is_failed() const { return failed_; }
+
   //! set to quiet mode (no progress messages)
   void set_quiet_mode(bool quiet) { quiet_mode_ = quiet; }
 
@@ -61,6 +70,7 @@ class Job : public QObject {
  private:
   std::atomic<bool> complete_ = false;
   std::atomic<bool> abort_ = false;
+  std::atomic<bool> failed_ = false;
   std::atomic<bool> quiet_mode_ = false;
 
   QElapsedTimer timer_;

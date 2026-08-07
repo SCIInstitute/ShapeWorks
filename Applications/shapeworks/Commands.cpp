@@ -616,7 +616,7 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
         return false;
       }
     }
-    return true;
+    return !job->is_failed();
   };
 
   if (do_prep) {

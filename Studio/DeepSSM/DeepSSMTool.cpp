@@ -268,7 +268,8 @@ void DeepSSMTool::run_prep_clicked(int step) {
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete() {
   try {
-    if (!deep_ssm_->is_aborted()) {
+    bool succeeded = !deep_ssm_->is_aborted() && !deep_ssm_->is_failed();
+    if (succeeded) {
       if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
         auto params = DeepSSMParameters(session_->get_project());
         params.set_prep_stage(static_cast<int>(prep_step_));
@@ -287,7 +288,7 @@ void DeepSSMTool::handle_thread_complete() {
     update_panels();
     session_->reload_particles();
 
-    if (!deep_ssm_->is_aborted()) {
+    if (succeeded) {
       if (ui_->run_all->isChecked()) {
         if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
           run_tool(DeepSSMJob::JobType::DeepSSM_AugmentationType);
