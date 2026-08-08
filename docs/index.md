@@ -79,7 +79,7 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
-*ShapeWorks 6.8 tour - Bundled Python, Registration-Based Initialization, Correspondence Quality, Regression Analysis, and more ...*
+*ShapeWorks 6.8 tour - Bundled Python, Large-Cohort Speedups, Registration-Based Initialization, Correspondence Quality, Regression Analysis, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.8.mp4" autoplay muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.7 tour - DeepSSM CLI, DWD Group Analysis, Laplacian Mesh Warping, Fixed Domain Speedups, and more ...*
