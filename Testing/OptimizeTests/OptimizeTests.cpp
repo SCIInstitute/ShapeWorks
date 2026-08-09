@@ -1,3 +1,4 @@
+#include <Eigen/Eigen>
 #include <Mesh/MeshUtils.h>
 #include <Optimize/OptimizeParameters.h>
 #include <Project/Project.h>
@@ -1112,3 +1113,76 @@ TEST(OptimizeTests, registration_initialization_single_shape) {
   // the single shape is the reference, so it must be the one chosen
   ASSERT_EQ(app.GetRegistrationReference(), 0);
 }
+
+//---------------------------------------------------------------------------
+/// @brief Fraction of the total variance explained by the first PCA mode of the given shapes.
+static double first_mode_fraction(const std::vector<std::vector<itk::Point<double>>>& shapes) {
+  Eigen::MatrixXd values(shapes.size(), shapes[0].size() * 3);
+  for (size_t shape = 0; shape < shapes.size(); shape++) {
+    for (size_t particle = 0; particle < shapes[shape].size(); particle++) {
+      for (int component = 0; component < 3; component++) {
+        values(shape, particle * 3 + component) = shapes[shape][particle][component];
+      }
+    }
+  }
+
+  values.rowwise() -= values.colwise().mean();
+  Eigen::VectorXd variances = values.jacobiSvd().singularValues().array().square();
+  return variances[0] / variances.sum();
+}
+
+//---------------------------------------------------------------------------
+// Disentangled spatiotemporal SSM (#2122).  Each subject in this dataset is an ellipsoid observed
+// at eight time points.  Its X radius is fixed per subject, while its Y radius follows a trajectory
+// that every subject shares, so within any single time point the subjects differ only in X radius.
+// That is a single linear mode, and correspondence across subjects is good exactly when the first
+// mode explains nearly all of the variance at every time point.
+TEST(OptimizeTests, disentangled_spatiotemporal_test) {
+  prep_temp("/optimize/disentangled_spatiotemporal", "disentangled_spatiotemporal");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("disentangled.swproj"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  ASSERT_TRUE(app.Run());
+
+  // the disentangled objective has to have been used, not silently replaced by ensemble entropy
+  ASSERT_EQ(app.GetSampler()->GetCorrespondenceMode(), CorrespondenceMode::DisentagledEnsembleEntropy);
+
+  auto points = app.GetGlobalPoints();
+  const int num_time_points = app.GetDomainsPerShape();
+  const int num_subjects = points.size() / num_time_points;
+  ASSERT_EQ(num_time_points, 8);
+  ASSERT_EQ(num_subjects, 8);
+
+  for (int time_point = 0; time_point < num_time_points; time_point++) {
+    std::vector<std::vector<itk::Point<double>>> shapes;
+    for (int subject = 0; subject < num_subjects; subject++) {
+      shapes.push_back(points[subject * num_time_points + time_point]);
+    }
+
+    // ~0.99 when correspondence is good, and below 0.2 once it is lost
+    double fraction = first_mode_fraction(shapes);
+    std::cerr << "Time point " << time_point << " first mode fraction: " << fraction << "\n";
+    ASSERT_GT(fraction, 0.95);
+  }
+}
+
+//---------------------------------------------------------------------------
+// The per-subject objective matrix was sized by the number of subjects rather than the number of
+// time points, so a dataset with more time points than subjects used to abort.
+TEST(OptimizeTests, disentangled_spatiotemporal_extra_time_points_test) {
+  prep_temp("/optimize/disentangled_spatiotemporal", "disentangled_spatiotemporal_extra_time_points");
+
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("disentangled_extra_time_points.swproj"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  ASSERT_TRUE(app.Run());
+
+  ASSERT_EQ(app.GetDomainsPerShape(), 8);
+  ASSERT_EQ(app.GetGlobalPoints().size(), 4 * 8);
+}
+

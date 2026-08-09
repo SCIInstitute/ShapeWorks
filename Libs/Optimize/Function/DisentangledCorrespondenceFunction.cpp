@@ -122,10 +122,10 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
   {
     // Iterate n = 1....N
     for (size_t sub = r.begin(); sub < r.end(); ++sub) {
-      // Build objective matrix Z
+      // Build objective matrix Z, one column per time point
       vnl_matrix_type z;
       z.clear();
-      z.set_size(num_dims, num_N);
+      z.set_size(num_dims, num_T);
       z.fill(0.0);
       for(unsigned int t = 0; t < num_T; ++t){
         unsigned int row_start = num_dims * t;
