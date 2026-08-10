@@ -23,6 +23,8 @@ The **Views** dropdown next to Reset View snaps the 3D camera to an axis-aligned
 
 Item labels follow the orientation-marker preference: when the medical cube marker is shown they are anatomical (Left, Right, Posterior, Anterior, Superior, Inferior); with the triad marker, or with no marker, they are axis labels (X+, X-, Y+, Y-, Z+, Z-).
 
+![Views dropdown](../img/studio/studio_viewer_views_menu.png){: width="300" }
+
 The same orientations are on the keyboard while the 3D view has focus — lower-case for the positive direction, shift for the negative:
 
 | Key | Axis | Anatomical |
