@@ -45,6 +45,9 @@ shapeworks correspondence-quality --name <project.swproj|project.xlsx>
 
 The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns `subject`, `domain`, `is_template`, `mean_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_max`.
 
+*A reconstructed mesh written by `--output_meshes`, coloured by the `distance` field. Load it in Studio and select `distance` from the scalar dropdown to see where the reconstruction departs from the groomed surface.*
+![Correspondence quality distance field](../img/workflow/correspondence_quality.png)
+
 Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
 
 ### Python API
