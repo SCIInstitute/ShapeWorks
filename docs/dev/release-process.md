@@ -69,8 +69,10 @@ SW_MAJOR_VERSION=6.5
 
 * Tag the release from the release branch
 
-* Merge the release branch's doc/release-note changes back to `master`, leaving
-  `master`'s `SHAPEWORKS_VERSION_STRING` at the next `-dev` version
+* Merge the release branch back to `master`.  Fixes and doc updates made during the
+  release cycle live on the release branch and come back in this one merge; take
+  `master`'s `SHAPEWORKS_VERSION_STRING` (the next `-dev` version) over the release
+  branch's when resolving
 
 * Point the documentation's `latest` version at the new release
 
