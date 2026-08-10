@@ -22,6 +22,10 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 Lightbox::Lightbox() {
   renderer_ = vtkSmartPointer<vtkRenderer>::New();
+  // FXAA rather than MSAA: the surface format deliberately sets samples to 0 because
+  // multisampling breaks depth reads used for picking (see c971ffacd0).  FXAA is a
+  // post-process pass, so it smooths lines without touching the depth buffer.
+  renderer_->UseFXAAOn();
   camera_ = renderer_->GetActiveCamera();
 
   style_ = vtkSmartPointer<StudioInteractorStyle>::New();
@@ -190,6 +194,7 @@ void Lightbox::setup_renderers() {
       // create/get a renderer for the viewer
       if (i >= viewers_.size()) {
         renderer = vtkSmartPointer<vtkRenderer>::New();
+        renderer->UseFXAAOn();
         render_window_->AddRenderer(renderer);
       } else {
         renderer = viewers_[i]->get_renderer();
