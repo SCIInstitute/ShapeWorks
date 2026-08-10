@@ -24,10 +24,16 @@ class StatusBarWidget : public QWidget {
   void set_message(MessageType message_type, QString message);
   void set_progress(int value);
 
+  //! Clear the currently displayed message
+  void clear_message();
+
   void resizeEvent(QResizeEvent* event) override;
 
  Q_SIGNALS:
   void toggle_log_window();
+
+ protected:
+  bool eventFilter(QObject* watched, QEvent* event) override;
 
  private:
   void update_layout();
