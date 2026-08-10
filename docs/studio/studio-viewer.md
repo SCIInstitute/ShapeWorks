@@ -38,6 +38,8 @@ The isosurface visibility dropdown carries two display options for judging the p
 * **Show bounding box** — draws the bounding box of the displayed shape.
 * **Show scale bar** — overlays a labeled ruler in world coordinates, with a **Scale bar font** slider to size the labels.
 
+![Bounding box and scale bar](../img/studio/studio_viewer_bbox_scalebar.png)
+
 Both are preferences, so they persist across sessions.
 
 ## Glyph sizing
