@@ -23,7 +23,14 @@ def main(args):
         # --target the user passed will be the *second* one and pip will
         # reject the duplicate, which is the right behavior — they should
         # drop our default if they want to override.
-        args = ["install", "--target", target] + args[1:]
+        # --upgrade is required with --target: without it pip skips every file
+        # that already exists, so reinstalling a package (say, swapping PyTorch
+        # for a build that supports your GPU) reports success and changes
+        # nothing.
+        if "--upgrade" not in args and "-U" not in args:
+            args = ["install", "--target", target, "--upgrade"] + args[1:]
+        else:
+            args = ["install", "--target", target] + args[1:]
     return subprocess.call([sys.executable, "-m", "pip"] + args)
 
 

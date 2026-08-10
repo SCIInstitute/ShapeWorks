@@ -72,20 +72,39 @@ def _unusable_gpu_message(error: Exception) -> str:
 	try:
 		name = torch.cuda.get_device_name(0)
 		major, minor = torch.cuda.get_device_capability(0)
-		capability = f"{major}.{minor}"
+		capability = major * 10 + minor
+		capability_str = f"{major}.{minor}"
 	except Exception:
 		# the device is unusable enough that even querying it fails
 		name = "unknown"
-		capability = "unknown"
+		capability = None
+		capability_str = "unknown"
+	arch_list = torch.cuda.get_arch_list()
 	return "\n".join([
-		f"Your GPU ({name}, compute capability {capability}) cannot run this PyTorch build:",
+		f"Your GPU ({name}, compute capability {capability_str}) cannot run this PyTorch build:",
 		f"  {str(error).splitlines()[0]}",
 		f"PyTorch {torch.__version__} (CUDA {torch.version.cuda}) only has kernels for: "
-		f"{', '.join(torch.cuda.get_arch_list())}",
-		"Install a PyTorch build that supports your GPU, for example:",
-		"  swpip install torch --index-url https://download.pytorch.org/whl/cu128",
+		f"{', '.join(arch_list)}",
+		_reinstall_advice(capability, arch_list),
 		"See http://sciinstitute.github.io/ShapeWorks/latest/deep-learning/pytorch-gpu.html",
 	])
+
+
+def _reinstall_advice(capability: 'int | None', arch_list: list) -> str:
+	"""Recommend a newer or older PyTorch depending on which way the GPU misses the wheel."""
+	supported = sorted(int(arch[len("sm_"):]) for arch in arch_list if arch.startswith("sm_"))
+	if capability is not None and supported:
+		if capability > supported[-1]:
+			# too new: e.g. a Blackwell card (sm_120) against a CUDA 12.6 wheel
+			return ("Your GPU is newer than this build supports.  Install PyTorch built with "
+			        "CUDA 12.8 or later:\n"
+			        "  swpip install torch --index-url https://download.pytorch.org/whl/cu128")
+		if capability < supported[0]:
+			return ("Your GPU is older than this build supports.  Install an older PyTorch, "
+			        "such as:\n"
+			        "  swpip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu126")
+	return ("Install a PyTorch build that supports your GPU, for example:\n"
+	        "  swpip install torch --index-url https://download.pytorch.org/whl/cu128")
 
 
 def set_seed(seed: int = 42) -> None:

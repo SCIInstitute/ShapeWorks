@@ -53,26 +53,32 @@ Your GPU (NVIDIA GeForce GTX 1080, compute capability 6.1) cannot run this PyTor
 PyTorch 2.9.1 (CUDA 12.8) only has kernels for: sm_75, sm_80, sm_86, sm_90, sm_100, sm_120
 ```
 
-Install a build that covers your card (see below): older cards (Maxwell, Pascal)
-need an older PyTorch with a CUDA 12.6 or earlier wheel, while Blackwell cards
-(RTX 50-series) need CUDA 12.8 or newer. DeepSSM does not fall back to the CPU
-in this case — a machine with a GPU it cannot use is a setup problem worth
-fixing, not a reason to start a run that would take days.
+The message says which way your card misses the wheel. A GPU that is *newer*
+than the build supports (Blackwell / RTX 50-series, compute capability 12.0)
+needs PyTorch built with CUDA 12.8 or later; a GPU that is *older* (Maxwell,
+Pascal) needs an older PyTorch, since recent wheels have dropped those
+architectures. Reinstall as described below.
+
+DeepSSM does not fall back to the CPU in this case — a machine with a GPU it
+cannot use is a setup problem worth fixing, not a reason to start a run that
+would take days.
 
 ## Reinstalling a different PyTorch version
 
-If you need a different PyTorch version than `light-the-torch` selected:
+If you need a different PyTorch version than `light-the-torch` selected, install
+it with `swpip` and the appropriate index URL from
+[PyTorch Getting Started](https://pytorch.org/get-started/locally/):
 
-1. Uninstall the current PyTorch:
-   ```
-   swpip uninstall torch torchvision torchaudio
-   ```
-2. Check your CUDA version (see [CUDA compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/)
-   and [How to check CUDA version](https://varhowto.com/check-pytorch-cuda-version/)).
-3. Install the version you want using `swpip` and the appropriate index URL from
-   [PyTorch Getting Started](https://pytorch.org/get-started/locally/):
-   ```
-   swpip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu<VERSION>
-   ```
-   Where `<VERSION>` is your CUDA version with no dot (such as `121` for CUDA 12.1).
-4. Verify with the GPU-support check above.
+```
+swpip install torch --index-url https://download.pytorch.org/whl/cu<VERSION>
+```
+
+Where `<VERSION>` is the CUDA version with no dot (such as `128` for CUDA 12.8).
+To pin an older PyTorch for an older card, name the version too:
+
+```
+swpip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu126
+```
+
+`swpip install` replaces any copy already there, so there is no need to
+uninstall first. Verify the result with the GPU-support check above.
