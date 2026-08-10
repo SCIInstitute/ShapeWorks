@@ -9,6 +9,7 @@ The File -> Export menu is shown below.
 * Export Current Particles - Export the currently display particles as an "X Y Z" particles file
 * Export Current Particle Scalars - Export the currently displayed particle scalars as a CSV file
 * Export Current Mesh Scalars - Export the currently displayed mesh scalars as a CSV file
+* Export All Meshes - Export the reconstructed mesh for every subject in the project.  The filename you choose is used as a prefix, and each mesh is written as `<base>_<subject>.<ext>`, with an extra `_<domain>` for multi-domain projects
 * Export All Subjects Particle Scalars - Export the particle scalars for all subjects
 * Export Eigenvectors - Export the PCA eigenvectors
 * Export Eigenvalues - Export the PCA eigenvalues
