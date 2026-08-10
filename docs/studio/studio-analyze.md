@@ -83,6 +83,8 @@ The Regression tab fits shape against a numeric per-subject explanatory variable
 
 Choose the variable from the **Explanatory Variable** dropdown, which lists the numeric per-subject columns in the project spreadsheet.  The slider then moves the predicted shape across the observed range of that variable, with the current value shown beneath it and the range end points labeled at either side.  The **Animate** checkbox sweeps the slider continuously.
 
+![ShapeWorks Studio Analysis View Panel Regression Display](../img/studio/studio_analyze_view_regression.png)
+
 The tab requires a numeric column with at least two subjects holding differing values.  If the project has no numeric per-subject columns, or the selected column is constant, the tab explains what is missing instead of displaying a shape — add a numeric column (e.g. age or time) to the project spreadsheet.
 
 ### Multi-Level PCA
