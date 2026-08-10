@@ -185,7 +185,10 @@ Viewer::Viewer() {
   bounding_box_actor_ = vtkSmartPointer<vtkActor>::New();
   bounding_box_actor_->SetMapper(bounding_box_mapper_);
   bounding_box_actor_->GetProperty()->SetColor(1.0, 1.0, 0.0);
-  bounding_box_actor_->GetProperty()->SetLineWidth(1.5);
+  // Wide enough that FXAA does not treat the edge as a subpixel feature and blend it away in
+  // patches. Tubes are deliberately not used here: they are shaded as cylinders, which puts a
+  // white specular highlight along a yellow line.
+  bounding_box_actor_->GetProperty()->SetLineWidth(2.5);
   bounding_box_actor_->GetProperty()->LightingOff();
   bounding_box_actor_->PickableOff();
 
