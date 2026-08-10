@@ -196,9 +196,11 @@ Viewer::Viewer() {
   // This reads correctly in a perspective view (unlike a 2D legend scale bar). Bounds and camera
   // are set in update_actors(). White axes/labels to match the dark viewer background.
   scale_bar_actor_ = vtkSmartPointer<vtkCubeAxesActor>::New();
-  // Closest-triad mode draws a single ruler per axis (meeting at the corner nearest the camera).
-  // Outer-edges mode draws two rulers per axis, whose labels overlap in near-axis-aligned views.
-  scale_bar_actor_->SetFlyModeToClosestTriad();
+  // Outer-edges mode keeps the rulers on the silhouette edges of the box, so the labels sit
+  // outside the shape: neither drawn across it (closest triad, whose corner is in front of the
+  // geometry) nor hidden behind it (furthest triad). The cost is that a near-axis-aligned view
+  // can show two rulers for an axis, with labels close together.
+  scale_bar_actor_->SetFlyModeToOuterEdges();
   scale_bar_actor_->XAxisMinorTickVisibilityOff();
   scale_bar_actor_->YAxisMinorTickVisibilityOff();
   scale_bar_actor_->ZAxisMinorTickVisibilityOff();
