@@ -21,7 +21,12 @@ To add a new use case to the codebase:
 
 To add the dataset associated with the new use case:
 
-- Upload the datset to ShapeWorks Cloud
+- Place the data in the local dataset export, laid out exactly as the use case globs for it
+- Add an entry for it to `DATASETS` in `Support/build_dataset_archives.py`
+- Run `python3 Support/build_dataset_archives.py --only <dataset-name>` to build the archive and refresh `manifest.json`
+- Upload the new `.zip` and the regenerated `manifest.json` to the data server
+
+The use case then downloads it by name via `sw.download_dataset(<dataset-name>, output_directory)`.
 
 ## Use case documentation 
  

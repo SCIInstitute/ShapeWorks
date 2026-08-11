@@ -17,7 +17,7 @@ The use case pipeline includes creation of a training, validation, and testing s
 
 ### Step 1: Getting the original data
 
-The femur data is downloaded from the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org). The data includes the original unsegmented `.nrrd` images, corresponding `.ply` mesh files, and `.json` constraint files with cutting planes. Below is one example of an MRI (blue), mesh (white), and corrresponding cutting plane (green).
+The femur data is downloaded from the [ShapeWorks data server](https://www.sci.utah.edu/~shapeworks/data-sets/). The data includes the original unsegmented `.nrrd` images, corresponding `.ply` mesh files, and `.json` constraint files with cutting planes. Below is one example of an MRI (blue), mesh (white), and corrresponding cutting plane (green).
 ![Femur Data Example](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_data.png)
 
 ### Step 2: Define the data split

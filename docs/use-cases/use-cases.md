@@ -1,7 +1,7 @@
 # Getting Started with Use Cases
 
 ## What is a Use Case?
-Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/) and downloads automatically when the use case runs.
+Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is published at [sci.utah.edu/~shapeworks/data-sets](https://www.sci.utah.edu/~shapeworks/data-sets/) and downloads automatically when the use case runs. No account or login is needed.
 
 Most use cases demomstrates the [Shape Modeling Workflow](../getting-started/workflow.md):
 
@@ -24,50 +24,31 @@ To see the names currently supported use cases and the complete list of optional
 ```
 $ swpython RunUseCase.py --help
 ```
-When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a *free* ShapeWorks account by visiting the [ShapeWorks Data Portal](https://girder.shapeworks-cloud.org/).
+When a use case is run, the dataset it needs is downloaded automatically over HTTPS. No account, login, or credentials are required.
 
-!!! danger
-    Do not use the same password as for your bank account or email.
-
-After registering a free account, you can log in from within the script. 
-Note: You are only required to enter your credentials the first time you run a use case. 
-
-### Uploading a Dataset
-
-Uploading a dataset requires the following parameters:
-
-1. dataset_name - The name of the dataset and the same name must be used while running the usecase.
-
-2. licence_filename - File location which contains licence information of the dataset
-
-3. ack_filename - File location which contains acknowledge information of the dataset
-
-4. description - Description of the dataset
-
-5. project_file - File location which contains the project file of dataset using by the usecase which needs to be uploaded. (must be in swproj extension)
-
-6. overwrite - This is a boolean variable which controls any existing dataset with same name should be deleted or not. if True is passed it will delete the existing dataset. The default value is True.
-
-<!-- --overwrite - which controls any existing dataset with same name should be deleted or not. if --overwrite is specified it will delete the existing dataset. -->
-
-For example refer the following command
-```
-$ import shapeworks as sw
-$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)
-```
+Each archive is checked against a published SHA-256 before it is unpacked, so an interrupted or corrupted download fails with a clear error rather than leaving a partially populated directory for the use case to run on. A dataset already present is reused; if it has been republished on the server, the next run notices the checksum changed and downloads the new copy.
 
 ### Downloading a Dataset
 
-Downloading a Dataset requires the following parameters:
+To fetch a dataset yourself, outside of a use case:
 
-1. datasetName - The name of the dataset which needs to be downloaded.
-
-2. outputDirectory - The location where the dataset should be downloaded.
-
-For example refer the following command
 ```
-$ python portal.py [dataset name] [output directory]
+$ import shapeworks as sw
+$ sw.download_dataset(dataset_name, output_directory)
 ```
+
+1. dataset_name - The name of the dataset to download.
+
+2. output_directory - The location the dataset should be extracted into.
+
+To see everything available:
+
+```
+$ import shapeworks as sw
+$ sw.list_datasets()
+```
+
+Set the `SW_DATA_URL` environment variable to fetch from a mirror or a local copy of the data instead of the default server.
 
 ### Use Case Data
 

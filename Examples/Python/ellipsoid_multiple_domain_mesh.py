@@ -40,7 +40,9 @@ def Run_Pipeline(args):
     else:
         dataset_name = "ellipsoid_multiple_domain_mesh"
         sw.download_dataset(dataset_name, output_directory)
-        mesh_files = sorted(glob.glob(output_directory + "/meshes/*.vtk"))
+        dataset_name = "ellipsoid_joint_rotation"
+        mesh_files = sorted(glob.glob(output_directory +
+                                      dataset_name + "/meshes/*.vtk"))
 
         if args.use_subsample:
             inputMeshes = [sw.Mesh(filename) for filename in mesh_files]
