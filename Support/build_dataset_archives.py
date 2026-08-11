@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 """Build the use case dataset archives served from sci.utah.edu.
 
-Turns a local export of the use case data into one zip per dataset name, plus a
-manifest.json describing them. The zips are laid out so that extracting
-<dataset>.zip into Output/<use case>/ produces exactly the directory structure the
-use case scripts glob for.
+Turns a local export of the use case data into one zip per dataset name, and updates
+the pinned dataset table the shapeworks package downloads against. The zips are laid
+out so that extracting one into Output/<use case>/ produces exactly the directory
+structure the use case scripts glob for.
 
-Archives are versioned per dataset rather than as one big numbered directory. Each
-is published as <name>-v<version>.zip and is never overwritten, so changing one
-dataset means bumping its `version` in DATASETS, rebuilding just that one, and
-uploading a single new zip plus the regenerated manifest. Every other dataset keeps
-the file it already had, and the previous version stays on the server to roll back to.
+Archives are versioned per dataset rather than as one big numbered directory. Each is
+published as <name>-v<version>.zip and is never overwritten on the server. Which
+archive a dataset name resolves to is pinned in the checked-in datasets.json, so an
+older release of ShapeWorks keeps downloading the data it shipped against no matter
+what is published later.
+
+To update a dataset: bump its `version` in DATASETS, rebuild just that one, upload the
+single new zip, and commit the regenerated datasets.json. Every other dataset keeps the
+file it already had, and the previous version stays on the server to roll back to.
 
 Usage:
     python3 Support/build_dataset_archives.py [--source DIR] [--dest DIR]
-                                              [--only NAME ...] [--skip NAME ...]
-                                              [--list] [--jobs N] [--force]
+                                              [--index FILE] [--only NAME ...]
+                                              [--skip NAME ...] [--list] [--jobs N]
+                                              [--force]
 
-The resulting --dest directory is what gets uploaded to
-https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/
+--dest holds the zips to upload; --index is the table to commit.
 """
 import argparse
 import concurrent.futures
@@ -31,6 +35,8 @@ import zipfile
 
 DEFAULT_SOURCE = os.path.expanduser("~/sci/datasets")
 DEFAULT_DEST = os.path.expanduser("~/sci/datasets-web")
+DEFAULT_INDEX = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "Python", "shapeworks", "shapeworks", "datasets.json")
 
 BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/"
 
@@ -169,6 +175,8 @@ def main():
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="local dataset export")
     parser.add_argument("--dest", default=DEFAULT_DEST, help="staging directory to write")
+    parser.add_argument("--index", default=DEFAULT_INDEX,
+                        help="pinned dataset table to update and commit")
     parser.add_argument("--only", nargs="+", metavar="NAME", help="build only these datasets")
     parser.add_argument("--skip", nargs="+", metavar="NAME", default=[], help="skip these datasets")
     parser.add_argument("--jobs", type=int, default=4, help="parallel zip workers")
@@ -190,11 +198,10 @@ def main():
 
     os.makedirs(args.dest, exist_ok=True)
 
-    # Merge into any manifest already staged so partial rebuilds are additive.
-    manifest_path = os.path.join(args.dest, "manifest.json")
+    # Merge into the pinned table so partial rebuilds leave other datasets alone.
     datasets = {}
-    if os.path.exists(manifest_path):
-        with open(manifest_path) as fh:
+    if os.path.exists(args.index):
+        with open(args.index) as fh:
             datasets = json.load(fh).get("datasets", {})
 
     failures = []
@@ -213,14 +220,15 @@ def main():
             print(f"  {action:11} {entry['file']:44} {entry['files']:>5} files  "
                   f"{entry['size'] / 1e6:>9.1f} MB")
 
-    with open(manifest_path, "w") as fh:
-        json.dump({"version": 1, "base_url": BASE_URL,
+    with open(args.index, "w") as fh:
+        json.dump({"base_url": BASE_URL,
                    "datasets": dict(sorted(datasets.items()))}, fh, indent=2)
         fh.write("\n")
 
     total = sum(d["size"] for d in datasets.values())
-    print(f"\n{len(datasets)} datasets in manifest, {total / 1e9:.2f} GB total")
-    print(f"staged in {args.dest}")
+    print(f"\n{len(datasets)} datasets pinned, {total / 1e9:.2f} GB total")
+    print(f"archives staged in {args.dest}")
+    print(f"index written to  {args.index}  (commit this)")
     if failures:
         print(f"\n{len(failures)} failed:", file=sys.stderr)
         for name, error in failures:

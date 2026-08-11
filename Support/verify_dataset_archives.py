@@ -11,6 +11,7 @@ Reads the archives' indexes only, so it is cheap even for the multi-gigabyte set
 
 Usage:
     python3 Support/verify_dataset_archives.py [--staging DIR] [--examples DIR]
+                                               [--index FILE]
 """
 import argparse
 import ast
@@ -128,6 +129,9 @@ def main():
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     parser.add_argument("--staging", default=os.path.expanduser("~/sci/datasets-web"),
                         help="directory holding the built archives")
+    parser.add_argument("--index", default=os.path.join(
+        here, "Python", "shapeworks", "shapeworks", "datasets.json"),
+        help="pinned dataset table naming the archive for each dataset")
     parser.add_argument("--examples", default=os.path.join(here, "Examples", "Python"),
                         help="directory holding the use case scripts")
     args = parser.parse_args()
@@ -137,12 +141,11 @@ def main():
         print("no glob patterns recovered from the use cases", file=sys.stderr)
         return 1
 
-    manifest_path = os.path.join(args.staging, "manifest.json")
-    if not os.path.exists(manifest_path):
-        print(f"no manifest at {manifest_path}; run build_dataset_archives.py first",
+    if not os.path.exists(args.index):
+        print(f"no dataset index at {args.index}; run build_dataset_archives.py first",
               file=sys.stderr)
         return 1
-    with open(manifest_path) as fh:
+    with open(args.index) as fh:
         published = json.load(fh).get("datasets", {})
 
     listings = {}

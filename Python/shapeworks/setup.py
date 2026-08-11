@@ -11,5 +11,7 @@ setuptools.setup(
    version='1.0',
    description='Python module for Shapeworks.',
    packages=setuptools.find_packages(),
+   # datasets.json pins which archive each use case dataset downloads from
+   package_data={'shapeworks': ['datasets.json']},
    install_requires=['requests'], #external packages as dependencies
 )

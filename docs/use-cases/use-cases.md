@@ -26,7 +26,9 @@ $ swpython RunUseCase.py --help
 ```
 When a use case is run, the dataset it needs is downloaded automatically over HTTPS. No account, login, or credentials are required.
 
-Each archive is checked against a published SHA-256 before it is unpacked, so an interrupted or corrupted download fails with a clear error rather than leaving a partially populated directory for the use case to run on. A dataset already present is reused; if it has been republished on the server, the next run notices the checksum changed and downloads the new copy.
+Each archive is checked against a SHA-256 recorded in your ShapeWorks install before it is unpacked, so an interrupted or corrupted download fails with a clear error rather than leaving a partially populated directory for the use case to run on.
+
+Each release of ShapeWorks downloads the exact version of the data it was built against, so updating a dataset for a newer release does not change what your version gets. A dataset already on disk is reused without touching the network, so re-running a use case works offline.
 
 ### Downloading a Dataset
 

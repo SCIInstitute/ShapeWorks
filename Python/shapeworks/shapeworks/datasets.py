@@ -3,16 +3,23 @@
 """
 Download use case datasets over plain HTTPS.
 
-The use case data is published as one zip per dataset alongside a manifest.json
-describing each one. This module fetches those archives directly, with no account,
-login, or client library needed, so the use cases keep working regardless of the
+The use case data is published as one zip per dataset, fetched directly with no
+account, login, or client library, so the use cases keep working regardless of the
 state of the ShapeWorks Cloud portal.
 
-Archives are versioned individually (<name>-v<version>.zip) and never overwritten;
-the manifest is what maps a dataset name to the file currently published for it.
+Which archive each dataset name resolves to is pinned in datasets.json, next to
+this file and checked into the source tree. Archives are versioned individually
+(<name>-v<version>.zip) and are never overwritten on the server, so a given release
+of ShapeWorks keeps downloading exactly the data it shipped against: republishing a
+dataset for a newer release cannot change what an older one gets. Updating a dataset
+means building a new version and pointing datasets.json at it.
 
-Set SW_DATA_URL to point at a different server or a local directory listing when
-testing. Archives are built by Support/build_dataset_archives.py.
+Pinning the checksums here rather than reading them from the server is also what
+makes verification worth doing, since a bad re-upload cannot rewrite the hash it is
+checked against.
+
+Set SW_DATA_URL to point at a different server or a local mirror when testing.
+Archives are built by Support/build_dataset_archives.py.
 """
 import hashlib
 import json
@@ -26,18 +33,32 @@ import urllib.parse
 import urllib.request
 import zipfile
 
-DEFAULT_BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/"
+INDEX_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasets.json")
 
 _CHUNK = 1024 * 256
 _RETRIES = 3
 _TIMEOUT = 60
 
-_manifest_cache = None
+_index_cache = None
+
+
+def get_index():
+    """The pinned dataset table shipped alongside this module."""
+    global _index_cache
+    if _index_cache is None:
+        try:
+            with open(INDEX_FILE) as fh:
+                _index_cache = json.load(fh)
+        except OSError as e:
+            raise RuntimeError(f"Dataset index missing at {INDEX_FILE}: {e}")
+        except json.JSONDecodeError as e:
+            raise RuntimeError(f"Malformed dataset index at {INDEX_FILE}: {e}")
+    return _index_cache
 
 
 def base_url():
     """Server holding the dataset archives; override with $SW_DATA_URL."""
-    url = os.environ.get("SW_DATA_URL", DEFAULT_BASE_URL)
+    url = os.environ.get("SW_DATA_URL") or get_index().get("base_url", "")
     return url if url.endswith("/") else url + "/"
 
 
@@ -55,23 +76,9 @@ def _open(url):
                        f"Check your network connection, or set $SW_DATA_URL to a mirror.")
 
 
-def get_manifest(refresh=False):
-    """Fetch and cache the dataset manifest."""
-    global _manifest_cache
-    if _manifest_cache is not None and not refresh:
-        return _manifest_cache
-    url = base_url() + "manifest.json"
-    with _open(url) as response:
-        try:
-            _manifest_cache = json.loads(response.read().decode("utf-8"))
-        except json.JSONDecodeError as e:
-            raise RuntimeError(f"Malformed dataset manifest at {url}: {e}")
-    return _manifest_cache
-
-
 def list_datasets():
-    """Names of every dataset available on the server."""
-    return sorted(get_manifest().get("datasets", {}))
+    """Names of every dataset this release knows how to download."""
+    return sorted(get_index().get("datasets", {}))
 
 
 def _progress(name, done, total):
@@ -126,38 +133,29 @@ def download_dataset(datasetName, outputDirectory, force=False):
     extracted, so a partial or corrupted transfer fails loudly rather than leaving
     a half-populated directory behind for the use case to silently run on.
 
-    The marker records the checksum that was installed, so republishing a dataset
-    on the server makes the next run re-download it automatically instead of
-    quietly reusing whatever is already on disk.
+    The marker records the checksum that was installed, so pointing this release at
+    a newer version of a dataset makes the next run replace it instead of quietly
+    reusing whatever is already on disk.
     """
     marker = os.path.join("Output", datasetName + ".downloaded")
     installed = _read_marker(marker) if os.path.exists(marker) else None
 
-    try:
-        manifest = get_manifest()
-    except RuntimeError:
-        # Offline, but the data is already here: let the use case run on it.
-        if installed:
-            print(f"Warning: cannot reach {base_url()}, using the copy of "
-                  f"{datasetName} already in {outputDirectory}")
-            return
-        raise
-
-    datasets = manifest.get("datasets", {})
+    datasets = get_index().get("datasets", {})
     if datasetName not in datasets:
         raise RuntimeError(
-            f"Unknown dataset '{datasetName}' on {base_url()}\n"
+            f"Unknown dataset '{datasetName}'\n"
             f"Available datasets:\n    " + "\n    ".join(sorted(datasets)))
 
     entry = datasets[datasetName]
 
+    # Nothing here touches the network, so re-running a use case works offline.
     if installed and not force and installed.get("sha256") == entry.get("sha256"):
         print(f"Dataset {datasetName} already downloaded ({marker} exists)")
         if os.environ.get("SW_PORTAL_DOWNLOAD_ONLY") == "1":
             sys.exit(0)
         return
     if installed and installed.get("sha256") != entry.get("sha256"):
-        print(f"Dataset {datasetName} changed on the server, downloading again")
+        print(f"Dataset {datasetName} is pinned to {entry['file']}, downloading it")
 
     url = urllib.parse.urljoin(base_url(), entry["file"])
     os.makedirs(outputDirectory, exist_ok=True)
@@ -172,10 +170,11 @@ def download_dataset(datasetName, outputDirectory, force=False):
         expected = entry.get("sha256")
         if expected and actual != expected:
             raise RuntimeError(
-                f"{datasetName}: checksum mismatch\n"
+                f"{datasetName}: checksum mismatch for {entry['file']}\n"
                 f"  expected {expected}\n  got      {actual}\n"
-                f"The copy on the server may be corrupt or mid-update. "
-                f"Re-run to retry; if it persists the archive needs rebuilding.")
+                f"The copy on the server does not match what this release of "
+                f"ShapeWorks was built against. Published archives are immutable, "
+                f"so {entry['file']} was either overwritten or is corrupt.")
 
         print(f"Extracting {datasetName} to {outputDirectory}")
         with zipfile.ZipFile(temporary) as archive:
@@ -186,7 +185,7 @@ def download_dataset(datasetName, outputDirectory, force=False):
         if expected_files is not None and len(members) != expected_files:
             raise RuntimeError(
                 f"{datasetName}: archive holds {len(members)} files, "
-                f"manifest says {expected_files}. The archive needs rebuilding.")
+                f"datasets.json expects {expected_files}. The archive needs rebuilding.")
     finally:
         if os.path.exists(temporary):
             os.remove(temporary)
