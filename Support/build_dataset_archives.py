@@ -6,13 +6,19 @@ manifest.json describing them. The zips are laid out so that extracting
 <dataset>.zip into Output/<use case>/ produces exactly the directory structure the
 use case scripts glob for.
 
+Archives are versioned per dataset rather than as one big numbered directory. Each
+is published as <name>-v<version>.zip and is never overwritten, so changing one
+dataset means bumping its `version` in DATASETS, rebuilding just that one, and
+uploading a single new zip plus the regenerated manifest. Every other dataset keeps
+the file it already had, and the previous version stays on the server to roll back to.
+
 Usage:
     python3 Support/build_dataset_archives.py [--source DIR] [--dest DIR]
                                               [--only NAME ...] [--skip NAME ...]
-                                              [--list] [--jobs N]
+                                              [--list] [--jobs N] [--force]
 
 The resulting --dest directory is what gets uploaded to
-https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v4/
+https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/
 """
 import argparse
 import concurrent.futures
@@ -26,13 +32,16 @@ import zipfile
 DEFAULT_SOURCE = os.path.expanduser("~/sci/datasets")
 DEFAULT_DEST = os.path.expanduser("~/sci/datasets-web")
 
-BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v4/"
+BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/"
 
 # Fixed timestamp so rebuilding identical content produces an identical zip.
 FIXED_DATE = (1980, 1, 1, 0, 0, 0)
 
 # dataset name (as requested by the use cases) -> how to build it
 #   dir     : directory under --source holding the content
+#   version : bump when a dataset's content changes; publishes <name>-v<version>.zip
+#             beside the existing one instead of overwriting it, so only the dataset
+#             that actually changed is rebuilt and re-uploaded (default 1)
 #   prefix  : directory level to insert at the root of the zip (the export is
 #             missing a level the use case globs for)
 #   include : keep only files matching one of these globs
@@ -109,7 +118,20 @@ def collect(root, spec):
     return sorted(entries, key=lambda e: e[1])
 
 
-def build_one(name, spec, source, dest):
+def archive_name(name, spec):
+    return f"{name}-v{spec.get('version', 1)}.zip"
+
+
+def build_one(name, spec, source, dest, existing=None, force=False):
+    filename = archive_name(name, spec)
+    out = os.path.join(dest, filename)
+
+    # An archive is immutable once published: same name means same bytes, so a
+    # rebuild of an unchanged dataset is a no-op rather than a fresh upload.
+    if not force and existing and existing.get("file") == filename \
+            and os.path.exists(out) and os.path.getsize(out) == existing.get("size"):
+        return name, existing, None
+
     root = os.path.join(source, spec["dir"])
     if not os.path.isdir(root):
         return name, None, f"source directory missing: {root}"
@@ -118,7 +140,6 @@ def build_one(name, spec, source, dest):
     if not entries:
         return name, None, f"no files found under {root}"
 
-    out = os.path.join(dest, name + ".zip")
     tmp = out + ".partial"
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         for full, arcname in entries:
@@ -135,7 +156,8 @@ def build_one(name, spec, source, dest):
             digest.update(chunk)
 
     return name, {
-        "file": name + ".zip",
+        "file": filename,
+        "version": spec.get("version", 1),
         "sha256": digest.hexdigest(),
         "size": os.path.getsize(out),
         "files": len(entries),
@@ -150,12 +172,14 @@ def main():
     parser.add_argument("--only", nargs="+", metavar="NAME", help="build only these datasets")
     parser.add_argument("--skip", nargs="+", metavar="NAME", default=[], help="skip these datasets")
     parser.add_argument("--jobs", type=int, default=4, help="parallel zip workers")
+    parser.add_argument("--force", action="store_true",
+                        help="rebuild archives even if already staged at this version")
     parser.add_argument("--list", action="store_true", help="list dataset names and exit")
     args = parser.parse_args()
 
     if args.list:
         for name in sorted(DATASETS):
-            print(name)
+            print(f"{name:44} v{DATASETS[name].get('version', 1)}")
         return 0
 
     names = sorted(args.only if args.only else DATASETS)
@@ -175,7 +199,8 @@ def main():
 
     failures = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        futures = {pool.submit(build_one, n, DATASETS[n], args.source, args.dest): n
+        futures = {pool.submit(build_one, n, DATASETS[n], args.source, args.dest,
+                               datasets.get(n), args.force): n
                    for n in names}
         for future in concurrent.futures.as_completed(futures):
             name, entry, error = future.result()
@@ -183,8 +208,9 @@ def main():
                 failures.append((name, error))
                 print(f"  FAIL  {name}: {error}", file=sys.stderr)
                 continue
+            action = "up to date" if datasets.get(name) == entry else "built"
             datasets[name] = entry
-            print(f"  ok    {name:44} {entry['files']:>5} files  "
+            print(f"  {action:11} {entry['file']:44} {entry['files']:>5} files  "
                   f"{entry['size'] / 1e6:>9.1f} MB")
 
     with open(manifest_path, "w") as fh:

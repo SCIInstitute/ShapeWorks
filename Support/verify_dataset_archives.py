@@ -16,6 +16,7 @@ import argparse
 import ast
 import fnmatch
 import glob
+import json
 import os
 import sys
 import zipfile
@@ -76,12 +77,31 @@ def _walk(body, env, found):
                     found.append((env["__dataset__"], pattern, env.get("__outdir__") or ""))
 
 
+def runnable_use_cases(examples):
+    """Use case names RunUseCase.py actually accepts, so scratch scripts are skipped."""
+    runner = os.path.join(examples, "RunUseCase.py")
+    tree = ast.parse(open(runner).read())
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if not ast.unparse(node.func).endswith("add_argument"):
+            continue
+        for kw in node.keywords:
+            if kw.arg == "choices" and isinstance(kw.value, (ast.List, ast.Tuple)):
+                names = [e.value for e in kw.value.elts
+                         if isinstance(e, ast.Constant) and isinstance(e.value, str)]
+                if names:
+                    return set(names)
+    return set()
+
+
 def collect_patterns(examples):
     """Return [(use case, dataset, pattern relative to the extraction root)]."""
+    runnable = runnable_use_cases(examples)
     results = []
     for path in sorted(glob.glob(os.path.join(examples, "*.py"))):
         name = os.path.basename(path)
-        if name in ("RunUseCase.py", "AnalyzeUtils.py"):
+        if runnable and name[:-3] not in runnable:
             continue
         try:
             tree = ast.parse(open(path).read())
@@ -117,12 +137,21 @@ def main():
         print("no glob patterns recovered from the use cases", file=sys.stderr)
         return 1
 
+    manifest_path = os.path.join(args.staging, "manifest.json")
+    if not os.path.exists(manifest_path):
+        print(f"no manifest at {manifest_path}; run build_dataset_archives.py first",
+              file=sys.stderr)
+        return 1
+    with open(manifest_path) as fh:
+        published = json.load(fh).get("datasets", {})
+
     listings = {}
     rows, broken = [], 0
     for use_case, dataset, pattern in patterns:
-        archive = os.path.join(args.staging, dataset + ".zip")
         if dataset not in listings:
-            if not os.path.exists(archive):
+            entry = published.get(dataset)
+            archive = os.path.join(args.staging, entry["file"]) if entry else None
+            if not archive or not os.path.exists(archive):
                 listings[dataset] = None
             else:
                 with zipfile.ZipFile(archive) as zf:
@@ -147,10 +176,9 @@ def main():
     print("-" * (34 + dw + pw + 14))
     print(f"{len(rows)} patterns checked across {len(listings)} archives, {broken} broken")
 
-    unused = sorted(set(os.path.basename(p)[:-4] for p in glob.glob(
-        os.path.join(args.staging, "*.zip"))) - set(listings))
+    unused = sorted(set(published) - set(listings))
     if unused:
-        print(f"\narchives not referenced by any use case: {', '.join(unused)}")
+        print(f"\npublished but not referenced by any use case: {', '.join(unused)}")
     return 1 if broken else 0
 
 

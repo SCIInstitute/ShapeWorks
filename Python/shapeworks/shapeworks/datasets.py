@@ -8,6 +8,9 @@ describing each one. This module fetches those archives directly, with no accoun
 login, or client library needed, so the use cases keep working regardless of the
 state of the ShapeWorks Cloud portal.
 
+Archives are versioned individually (<name>-v<version>.zip) and never overwritten;
+the manifest is what maps a dataset name to the file currently published for it.
+
 Set SW_DATA_URL to point at a different server or a local directory listing when
 testing. Archives are built by Support/build_dataset_archives.py.
 """
@@ -23,7 +26,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 
-DEFAULT_BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v4/"
+DEFAULT_BASE_URL = "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/"
 
 _CHUNK = 1024 * 256
 _RETRIES = 3

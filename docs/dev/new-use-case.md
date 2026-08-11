@@ -24,9 +24,19 @@ To add the dataset associated with the new use case:
 - Place the data in the local dataset export, laid out exactly as the use case globs for it
 - Add an entry for it to `DATASETS` in `Support/build_dataset_archives.py`
 - Run `python3 Support/build_dataset_archives.py --only <dataset-name>` to build the archive and refresh `manifest.json`
+- Run `python3 Support/verify_dataset_archives.py` to confirm the archive contains the paths the use case globs for
 - Upload the new `.zip` and the regenerated `manifest.json` to the data server
 
 The use case then downloads it by name via `sw.download_dataset(<dataset-name>, output_directory)`.
+
+## Changing an existing dataset
+
+Archives are versioned per dataset, not as one numbered directory, so only the dataset that changed is rebuilt and re-uploaded:
+
+- Bump that dataset's `version` in `DATASETS`
+- Rebuild it and upload the resulting `<dataset-name>-v<version>.zip` along with the regenerated `manifest.json`
+
+Every other dataset keeps the file it already had, and the previous version stays on the server to roll back to. Archives are never overwritten in place: the manifest is what decides which file a dataset name resolves to. Because a use case run compares the checksum it installed against the manifest, users pick the new data up automatically on their next run.
 
 ## Use case documentation 
  
