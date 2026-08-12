@@ -67,13 +67,16 @@ async def run_command(args):
 
 
 def run_case(use_case):
-    command = f"python -u RunUseCase.py {use_case}"
+    # use sys.executable rather than "python" so the use cases run under the same
+    # interpreter as this script; PYTHONHOME is set for that interpreter and a
+    # different "python" from PATH would load a mismatched stdlib.
+    argv = [sys.executable, "-u", "RunUseCase.py"] + use_case.split()
     print(f"\n----------------------------------------------------------------")
-    print(f"* Running : {command}")
+    print(f"* Running : {' '.join(argv)}")
     print(f"----------------------------------------------------------------")
     start = time.time()
 
-    success = asyncio.run(run_command(command.split()))
+    success = asyncio.run(run_command(argv))
 
     end = time.time()
     duration = f"{end - start:6.0f} seconds"

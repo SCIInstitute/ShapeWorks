@@ -10,6 +10,6 @@ from .utils import num_subplots, positive_factors, save_images, get_file_with_ex
 from .data import get_file_list, sample_images, sample_meshes
 from .stats import compute_pvalues_for_group_difference,lda,dwd_loadings
 from .network_analysis import NetworkAnalysis
-from .portal import download_dataset
+from .datasets import download_dataset, list_datasets
 from .shape_scalars import run_mbpls
 from .torch_install import ensure_torch, is_torch_available

@@ -1,0 +1,201 @@
+{
+  "base_url": "https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data/",
+  "datasets": {
+    "deep_ssm_femur": {
+      "file": "deep_ssm_femur-v1.zip",
+      "version": 1,
+      "sha256": "341d7d43866d52a43894cd3480b156fb069d5f55ec8f0f5134cfa7e32a731d0b",
+      "size": 4111489211,
+      "files": 131
+    },
+    "deep_ssm_femur_tiny_test": {
+      "file": "deep_ssm_femur_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "164c944b59c5c701d330c82c6007102a9db67b4e487d3ddba3fbeef2a2a1c99f",
+      "size": 601139594,
+      "files": 16
+    },
+    "ellipsoid": {
+      "file": "ellipsoid-v1.zip",
+      "version": 1,
+      "sha256": "2fca8034b4633eb44762ec3cdc44d77e8d0d3377682e35fa3f0f0311baffc5ce",
+      "size": 3732351,
+      "files": 61
+    },
+    "ellipsoid_cut": {
+      "file": "ellipsoid_cut-v1.zip",
+      "version": 1,
+      "sha256": "f8b756ab3c8dd8a930177462ebca738ba91bd8eaafb13aceba39e51ecd4e6c2a",
+      "size": 3265150,
+      "files": 76
+    },
+    "ellipsoid_cut_tiny_test": {
+      "file": "ellipsoid_cut_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "8c74ea70a1803bf28a6851d0b65f6f365edc1fed3c525e919b7a8f706f933892",
+      "size": 654138,
+      "files": 16
+    },
+    "ellipsoid_fd": {
+      "file": "ellipsoid_fd-v1.zip",
+      "version": 1,
+      "sha256": "6f59323ccc6cb112bfeffe108719c0dcee1d4fb78338ede3a961e09ac827db4e",
+      "size": 7751869,
+      "files": 97
+    },
+    "ellipsoid_fd_multiscale": {
+      "file": "ellipsoid_fd_multiscale-v1.zip",
+      "version": 1,
+      "sha256": "fe9a523faa97aa1c76226bb3124c1a49baa45755a59a35669d38c179bb92cda4",
+      "size": 7751891,
+      "files": 97
+    },
+    "ellipsoid_mesh": {
+      "file": "ellipsoid_mesh-v1.zip",
+      "version": 1,
+      "sha256": "eead381a3cbec3ca6a780371815383d8a0aebb7c1186bafc4c75a9c642559bf8",
+      "size": 712412,
+      "files": 61
+    },
+    "ellipsoid_mesh_tiny_test": {
+      "file": "ellipsoid_mesh_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "c566946278c1d7a4691ac8378ee7ac4f85ece673e9b3da695dc26aadd86cc124",
+      "size": 140467,
+      "files": 13
+    },
+    "ellipsoid_multiple_domain": {
+      "file": "ellipsoid_multiple_domain-v1.zip",
+      "version": 1,
+      "sha256": "68e13f3b5c0992d20d1ae8801fde6a67f58727c918116c3ae421c369f90afcbb",
+      "size": 61642,
+      "files": 31
+    },
+    "ellipsoid_multiple_domain_mesh": {
+      "file": "ellipsoid_multiple_domain_mesh-v1.zip",
+      "version": 1,
+      "sha256": "012514624218ca0f293ec86a068ddb9eb4765882e64d5d16e83663d3ee98c245",
+      "size": 1327283,
+      "files": 121
+    },
+    "ellipsoid_multiple_domain_mesh_tiny_test": {
+      "file": "ellipsoid_multiple_domain_mesh_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "7f252dba90090571ef2ce266cbf4b97ba4e80cf3bacae6607a9ca039a531969b",
+      "size": 528299,
+      "files": 49
+    },
+    "ellipsoid_multiple_domain_tiny_test": {
+      "file": "ellipsoid_multiple_domain_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "fbdec37cec763f898b1f66e725b94bc58a398b6c6f7f63f50407f09009ca960d",
+      "size": 9198,
+      "files": 7
+    },
+    "ellipsoid_tiny_test": {
+      "file": "ellipsoid_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "171981870ab45dd4d22efb13d3c3b250f7b7da84788d6275b6b1bcf8abdc54af",
+      "size": 703593,
+      "files": 13
+    },
+    "femur_cut": {
+      "file": "femur_cut-v1.zip",
+      "version": 1,
+      "sha256": "c4be1ae6b2d36d2be01959bb1289d79ff8e5fc1551e57a41721a098d5864f70f",
+      "size": 45206054,
+      "files": 246
+    },
+    "femur_cut_tiny_test": {
+      "file": "femur_cut_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "f43525b16b2ac12a8a6a867819bc54361305495c796608fbbc7b42c9df76a039",
+      "size": 2754929,
+      "files": 16
+    },
+    "hip_multiple_domain": {
+      "file": "hip_multiple_domain-v1.zip",
+      "version": 1,
+      "sha256": "a859cd5d6abdb5388cb690b7170210d7fb82871c69e2e5e130082d472807a590",
+      "size": 57278678,
+      "files": 161
+    },
+    "hip_multiple_domain_tiny_test": {
+      "file": "hip_multiple_domain_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "56851e87d325da066a7a2ae6f4b1f0e06e9dc17ac3a20bdb85abbeef098944ce",
+      "size": 21434562,
+      "files": 61
+    },
+    "incremental_supershapes": {
+      "file": "incremental_supershapes-v1.zip",
+      "version": 1,
+      "sha256": "18a5d808e1894a2e4f4fa6eee85dc5b5f095ca1a01cb99a11183c12b51dbd418",
+      "size": 1794926,
+      "files": 152
+    },
+    "incremental_supershapes_tiny_test": {
+      "file": "incremental_supershapes_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "412a2824e28f511e3aee44788871369671a69131a5828a0389dbc70a7ec02452",
+      "size": 109733,
+      "files": 10
+    },
+    "left_atrium": {
+      "file": "left_atrium-v1.zip",
+      "version": 1,
+      "sha256": "012d647344e6d4967bba1cb08b4c4d74513c5ed2017981cee8c36aa3105cb1de",
+      "size": 218722328,
+      "files": 201
+    },
+    "left_atrium_tiny_test": {
+      "file": "left_atrium_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "663120fee55b9376093fb5bca5ee6ab1e6aa3ce1e025be2626fd9f1668662f85",
+      "size": 11491951,
+      "files": 13
+    },
+    "lumps": {
+      "file": "lumps-v1.zip",
+      "version": 1,
+      "sha256": "9ea9d6e1a7aa79869d80ad5b0f03a830f39ffee0aaa74a885d71dc55f9b306d6",
+      "size": 4168646,
+      "files": 76
+    },
+    "lumps_tiny_test": {
+      "file": "lumps_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "a4d24405e66d53fc359de0367008763e3a2f58f463ce15d9f6638aee06ef6729",
+      "size": 500480,
+      "files": 10
+    },
+    "peanut_shared_boundary": {
+      "file": "peanut_shared_boundary-v1.zip",
+      "version": 1,
+      "sha256": "3303eccd8ad9411b53fee0b30eab2a80083b19baf08665c86c2b4f2400fa9a0b",
+      "size": 4973781,
+      "files": 212
+    },
+    "peanut_shared_boundary_tiny_test": {
+      "file": "peanut_shared_boundary_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "71bc77cc143f60cf54859b65ddea1da2e2c094057b84fd366df2b082fdab15bc",
+      "size": 681064,
+      "files": 29
+    },
+    "thin_cavity_bean": {
+      "file": "thin_cavity_bean-v1.zip",
+      "version": 1,
+      "sha256": "45dc471dae5c56d03ae7fb87c16ebcd8cb99788d8a8c22ad227adc33b2ac7e06",
+      "size": 7985366,
+      "files": 103
+    },
+    "thin_cavity_bean_tiny_test": {
+      "file": "thin_cavity_bean_tiny_test-v1.zip",
+      "version": 1,
+      "sha256": "1f30225744628f889c4130362f0776914f0d46a915cb8a592d47f244b9181dac",
+      "size": 800807,
+      "files": 3
+    }
+  }
+}
