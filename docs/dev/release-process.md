@@ -66,4 +66,14 @@ SW_MAJOR_VERSION=6.5
 
 * After the release, set the version to the next development version
 
+* Point the documentation's `latest` version at the new release
+
+The docs site publishes one version per minor release, taken from `CMakeLists.txt`.  Builds of
+`master` are always published as `<version> (dev)` under the `dev` alias, so bumping
+`CMakeLists.txt` to the next development version automatically starts a new dev version in the
+version dropdown.  The `latest` alias, which is what the site redirects to, has to be moved to the
+released version by hand: run the **Mac Arm64 Build** workflow manually with the release tag
+selected as the ref, `deploy_docs` checked, and `docs_alias` set to `latest`.  That rebuilds the
+release's docs from its tag and moves `latest` onto it.
+
 
