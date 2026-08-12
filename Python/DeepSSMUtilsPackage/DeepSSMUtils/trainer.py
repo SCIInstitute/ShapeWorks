@@ -83,6 +83,16 @@ def set_scheduler(opt, sched_params):
     return scheduler
 
 
+def restart_scheduler(opt, sched_params, learning_rate):
+    # The TL-net stages train in sequence on one optimizer and each anneals from the base rate, so
+    # the schedule restarts at every stage boundary.  StepLR.get_lr() is relative to the current
+    # rate, so the group rates have to be restored explicitly; a new scheduler is not enough.
+    for group in opt.param_groups:
+        group['lr'] = learning_rate
+        group['initial_lr'] = learning_rate
+    return set_scheduler(opt, sched_params)
+
+
 def train(project, config_file):
     net_utils.set_seed(42)
     sw.utils.initialize_project_mesh_warper(project)
@@ -423,6 +433,7 @@ def supervised_train_tl(config_file):
     learning_rate = parameters['trainer']['learning_rate']
     eval_freq = parameters['trainer']['val_freq']
     decay_lr = parameters['trainer']['decay_lr']['enabled']
+    decay_lr_params = parameters['trainer']['decay_lr']
     a_ae = parameters["tl_net"]["a_ae"]
     c_ae = parameters["tl_net"]["c_ae"]
     a_lat = parameters["tl_net"]["a_lat"]
@@ -445,8 +456,6 @@ def supervised_train_tl(config_file):
     train_params = net.parameters()
     opt = torch.optim.Adam(train_params, learning_rate)
     opt.zero_grad()
-    if decay_lr:
-        scheduler = set_scheduler(opt, parameters['trainer']['decay_lr'])
     print("Done.")
     # train
     print("Beginning training on device = " + device + '\n')
@@ -478,6 +487,8 @@ def supervised_train_tl(config_file):
 
     mean_mdl = torch.mean(train_loader.dataset.mdl_target, 0).to(device)
 
+    if decay_lr:
+        scheduler = restart_scheduler(opt, decay_lr_params, learning_rate)
     for e in range(1, ae_epochs + 1):
         if sw_check_abort():
             sw_message("Aborted")
@@ -558,6 +569,8 @@ def supervised_train_tl(config_file):
             train_plot.canvas.draw()
             train_plot.savefig(model_dir + C.TRAINING_PLOT_AE_FILE)
             t0 = time.time()
+        if decay_lr:
+            scheduler.step()
     # save
     torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_AE_FILE))
     # fix the autoencoder and train the TL-net
@@ -585,6 +598,8 @@ def supervised_train_tl(config_file):
     epochs = []
     plot_train_losses = []
     plot_val_losses = []
+    if decay_lr:
+        scheduler = restart_scheduler(opt, decay_lr_params, learning_rate)
     for e in range(1, tf_epochs + 1):
         if sw_check_abort():
             sw_message("Aborted")
@@ -667,6 +682,8 @@ def supervised_train_tl(config_file):
             train_plot.canvas.draw()
             train_plot.savefig(model_dir + C.TRAINING_PLOT_TF_FILE)
             t0 = time.time()
+        if decay_lr:
+            scheduler.step()
     # save
     torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_TF_FILE))
     # jointly train the model
@@ -694,6 +711,8 @@ def supervised_train_tl(config_file):
     plot_train_losses = []
     plot_val_losses = []
     t0 = time.time()
+    if decay_lr:
+        scheduler = restart_scheduler(opt, decay_lr_params, learning_rate)
     for e in range(1, joint_epochs + 1):
         if sw_check_abort():
             sw_message("Aborted")
