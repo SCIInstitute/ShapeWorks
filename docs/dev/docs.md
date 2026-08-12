@@ -113,6 +113,19 @@ Deployment is taken care of automatically by GitHub Actions using the script `Su
 !!! danger "Do not edit gh-pages"
     Never manually edit files on the `gh-pages` branch because you will lose your work the next time the docs are deployed.
 
+### Versioned Documentation
+
+The site is versioned with [mike](https://github.com/jimporter/mike), which keeps one published
+version per minor release plus two aliases:
+
+- `dev` always points at the development version, i.e. whatever `CMakeLists.txt` says on `master`.
+  Every build of `master` publishes there and titles it `<version> (dev)` in the version dropdown.
+- `latest` points at the most recent *release*, and is what `https://sciinstitute.github.io/ShapeWorks/`
+  redirects to. It is moved by hand as part of the [release process](release-process.md).
+
+Because the version comes from `CMakeLists.txt`, bumping the version after a release is all that is
+needed to start publishing a new dev version; `Support/deploy_docs.sh` does not need to be edited.
+
 ## Contributing to Documentation
 
 !!! important
