@@ -1,0 +1,8037 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The official documentation of ShapeWorks">
+      
+      
+        <meta name="author" content="Shireen Elhabian et al.">
+      
+      
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/about/release-notes.html">
+      
+      
+        <link rel="prev" href="team.html">
+      
+      
+        <link rel="next" href="license.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Release Notes - ShapeWorks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","UA-36723568-3"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","UA-36723568-3",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=UA-36723568-3",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#release-notes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ShapeWorks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Release Notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SCIInstitute/ShapeWorks
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    ShapeWorks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SCIInstitute/ShapeWorks
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/shapes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shapes, What & From Where?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workflow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Modeling Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/sw-stories.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Success Stories
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/interfaces.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Interfaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/examples.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/how-tos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-Tos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Users
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Users
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/install.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Install ShapeWorks?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/citation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Cite ShapeWorks?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Revelant Papers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/groom.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Groom Your Dataset?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Model Optimization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shape Model Optimization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/optimize.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Optimize Your Shape Model?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/parameters.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimization Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/optimize-scaling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimization Performance & Scaling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/analyze.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Analyze Your Shape Model?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Feature Highlights
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Feature Highlights
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/new-studio.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Studio Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/openvdb.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory Efficiency with OpenVDB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/sw-meshes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mesh Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-command.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Command
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ssm-eval.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Model Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-python.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks in Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ellipsoid-joint-generation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid Joint Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ai-assisted-segmentation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Assisted Segmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Studio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ShapeWorks Studio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/getting-started-with-studio.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-viewer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer Controls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-export.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-groom.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Groom Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-optimize.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-analyze.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/surface-reconstruction.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Surface Reconstruction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/deepssm-in-studio.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DeepSSM Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/multiple-domains.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiple Domains SSM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/multi-domain-analysis-reference-frames.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Domain Reference Frames
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-shared-boundary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Boundaries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/segmentation-tool.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/ai-assisted-segmentation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Assisted Segmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Cloud
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ShapeWorks Cloud
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/getting-started-with-cloud.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-dataset.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-project.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-data-module.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-groom-module.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Groom Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-optimize-module.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-analyze-module.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analyze Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/cloud-shape-viewer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Viewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud/swcc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Cloud Client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ShapeWorks Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/ShapeWorksCommands.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks in Python
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ShapeWorks in Python
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Jupyter Notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Segmentations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Meshes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Exploring Segmentations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Data Augmentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Shape Cohort Generator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/array-passing-without-copying.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Array passing without copying
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transforms can be used to center image data or to align two images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transforms can also be used to align two meshes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Learning & SSMs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deep Learning & SSMs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/pytorch-gpu.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PyTorch GPU Support for ShapeWorks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/data-augmentation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Augmentation for Deep Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/deep-ssm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSMs Directly from Images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/use-cases.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Use Cases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_2" id="__nav_11_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Segmentation Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid: Basic Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Left Atrium: Shape Model from Segmentations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Model for Multiple Domains from Segmentations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_3" id="__nav_11_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mesh Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mesh Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid Mesh: Basic Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/lumps.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lumps: Shape Model directly from Mesh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thin Cavity Bean: Shape Model with Geodesic Distances
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shape Model for Multiple Domains directly from Mesh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/hip.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hip: Multiple Domains Alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_4" id="__nav_11_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contour Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contour Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supershapes:Shape Model for Contour Domains
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_5" id="__nav_11_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constraints Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Constraints Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid: Shape Model with Cutting Planes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Femur:Shape Model with Cutting Planes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes-studio.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Studio Femur: Shape Model from Meshes with Cutting Planes Using Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_6" id="__nav_11_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Step Optimization Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Multi-Step Optimization Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/fixed-domain-ellipsoid.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fixed Domains Ellipsoid: Shape Model on New Shapes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/incremental_supershapes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Incremental Supershapes: Building a Shape Model Incrementally
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_7" id="__nav_11_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistics Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Statistics Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid: Shape Statistics in Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Femur: Group Difference Statistics in Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ellipsoid: Shape Evaluation in Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_8" id="__nav_11_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Learning Based Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deep Learning Based Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Femur SSM Directly from Images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_9" id="__nav_11_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shared Boundary Use Cases
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Shared Boundary Use Cases
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Peanut:Shape Model of Multiple Domains with Shared Boundaries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/right-ventricle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Right Ventricle: Highly Variable Shapes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Developers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    For Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/onboarding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/build.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Build ShapeWorks from Source?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/contribute.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Contribute to ShapeWorks?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/commands.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Add ShapeWorks Commands?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/python-apis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Add Python APIs?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/tests.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Add and Run Unit Tests?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-use-case.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Add New Use Cases?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-notebook.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Add New Notebooks?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/docs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/gh-actions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with GitHub Actions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/markdown.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started with Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/paths.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding to PATH Environment Variable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/release-process.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Process
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C++ API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/shapeworks-library.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ShapeWorks as a Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Groups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Files/index_files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java/Matlab Interface
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java/Matlab Interface
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/java.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java Interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../java/matlab.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matlab Interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    About
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="team.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Meet ShapeWorkers!
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="release-notes.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.8.0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.8.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-670" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.7.0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.7.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-661-2025-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.6.1 - 2025-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.6.1 - 2025-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-660-2025-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.6.0 - 2025-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.6.0 - 2025-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-651-2024-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.5.1 - 2024-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.1 - 2024-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-650-2024-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.5.0 - 2024-03
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-642-2023-07-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.2 - 2023-07-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.2 - 2023-07-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-641-2023-05-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.1 - 2023-05-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.1 - 2023-05-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-640-2023-05-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.0 - 2023-05-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.0 - 2023-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-632-2022-10-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.2 - 2022-10-04
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.2 - 2022-10-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-631-2022-07-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.1 - 2022-07-22
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.1 - 2022-07-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-630-2022-06-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.0 - 2022-06-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.0 - 2022-06-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-621-2022-01-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.2.1 - 2022-01-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.2.1 - 2022-01-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-62-2021-11-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.2 - 2021-11-16
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.2 - 2021-11-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is new?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-61-2021-06-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.1 - 2021-06-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.1 - 2021-06-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is new?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-60-2021-03-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.0 - 2021-03-30
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.0 - 2021-03-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s New">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-550-2020-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.5.0 - 2020-10-15
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.5.0 - 2020-10-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s New">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-541-2020-06-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.4.1 - 2020-06-15
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.4.1 - 2020-06-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-540-2020-06-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.4.0 - 2020-06-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.4.0 - 2020-06-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-530-2020-02-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.3.0 - 2020-02-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.3.0 - 2020-02-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-522-2020-01-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.2 - 2020-01-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.2 - 2020-01-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-521-2019-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.1 - 2019-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.1 - 2019-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-520-2019-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.0 - 2019-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.0 - 2019-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="license.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contact.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact Us
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.8.0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.8.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-670" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.7.0
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.7.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-661-2025-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.6.1 - 2025-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.6.1 - 2025-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-660-2025-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.6.0 - 2025-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.6.0 - 2025-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-651-2024-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.5.1 - 2024-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.1 - 2024-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-650-2024-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.5.0 - 2024-03
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.5.0 - 2024-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-642-2023-07-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.2 - 2023-07-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.2 - 2023-07-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-641-2023-05-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.1 - 2023-05-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.1 - 2023-05-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-640-2023-05-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.4.0 - 2023-05-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.4.0 - 2023-05-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-632-2022-10-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.2 - 2022-10-04
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.2 - 2022-10-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-631-2022-07-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.1 - 2022-07-22
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.1 - 2022-07-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-630-2022-06-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.3.0 - 2022-06-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.3.0 - 2022-06-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-621-2022-01-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.2.1 - 2022-01-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.2.1 - 2022-01-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-62-2021-11-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.2 - 2021-11-16
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.2 - 2021-11-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is new?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-61-2021-06-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.1 - 2021-06-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.1 - 2021-06-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-new_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is new?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What is new?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#users-support_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-front-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-60-2021-03-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 6.0 - 2021-03-30
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 6.0 - 2021-03-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s New">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-550-2020-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.5.0 - 2020-10-15
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.5.0 - 2020-10-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s New">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deep-learning-shape-modeling_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Learning &amp; Shape Modeling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#users-support_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User's Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-in-one-studio-front-end_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All-in-one Studio Front-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks-back-end_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks Back-end
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-541-2020-06-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.4.1 - 2020-06-15
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.4.1 - 2020-06-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-540-2020-06-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.4.0 - 2020-06-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.4.0 - 2020-06-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-530-2020-02-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.3.0 - 2020-02-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.3.0 - 2020-02-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-522-2020-01-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.2 - 2020-01-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.2 - 2020-01-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-521-2019-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.1 - 2019-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.1 - 2019-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shapeworks-520-2019-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShapeWorks 5.2.0 - 2019-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ShapeWorks 5.2.0 - 2019-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-new_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's New
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#improvements_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="release-notes">Release Notes</h1>
+<h2 id="shapeworks-680">ShapeWorks 6.8.0</h2>
+<h3 id="what-is-new">What is new?</h3>
+<ul>
+<li><strong>Bundled Python</strong><ul>
+<li>ShapeWorks now ships with a complete Python 3.12 environment built in — no conda setup required. Studio, the <code>shapeworks</code> CLI, and Python use cases all work directly out of the installer on macOS, Windows, and Linux.</li>
+<li>New <code>swpython</code> and <code>swpip</code> wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a <strong>ShapeWorks Prompt</strong> Start Menu shortcut that puts these on <code>PATH</code>.</li>
+<li>PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via <code>light-the-torch</code>, into a per-user directory that survives reinstalls.</li>
+<li>Source/developer builds are unchanged: <code>install_shapeworks.sh</code> / <code>.bat</code> still set up the conda environment used to build from source.</li>
+</ul>
+</li>
+</ul>
+<h2 id="shapeworks-670">ShapeWorks 6.7.0</h2>
+<p><img alt="" src="../img/about/release6.7.png" /></p>
+<h3 id="what-is-new_1">What is new?</h3>
+<ul>
+<li>
+<p><strong>DeepSSM</strong></p>
+<ul>
+<li>DeepSSM CLI: <code>shapeworks deepssm</code> command for headless/batch workflows on HPC clusters</li>
+<li>TL-DeepSSM support from CLI via <code>--tl_net</code> flag</li>
+<li>Streaming data loaders to reduce memory usage during training</li>
+<li>Config schema validation before running</li>
+<li>Improved error handling in data loaders</li>
+</ul>
+</li>
+<li>
+<p><strong>ShapeWorks Back-end</strong></p>
+<ul>
+<li>Fixed domain optimization speedups: shape space precomputation, Procrustes caching, and batch particle loading</li>
+<li>PCA projection correspondence for fixed domain optimization (<code>use_pca_projection</code> parameter)</li>
+<li>Geodesic walk for particle splitting on meshes, keeping particles on-surface</li>
+<li>Laplacian mesh warping as alternative to biharmonic, reducing thinning artifacts on sparse regions</li>
+<li>Replaced VNL eigensystem with Eigen SVD for PCA computation, fixing eigenvector sign ambiguity</li>
+<li>Parallel mesh loading with TBB and progress reporting</li>
+<li>Automatic mesh repair in grooming pipeline (replaces manual Extract Largest Component step)</li>
+<li>Auto ICP alignment subset size defaults to 30 shapes for faster grooming on large datasets</li>
+<li>Support for multiple shared boundaries between domains</li>
+<li>Sampling gradient scaling based on surface area normalization for multi-domain models</li>
+<li>Early stopping via morphological deviation score for optimization convergence detection</li>
+<li>Built-in performance profiling and Chrome trace output via <code>SW_TIME_PROFILE</code> and <code>SW_TIME_TRACE</code> environment variables (see <a href="../dev/build.html#performance-profiling">developer docs</a>)</li>
+</ul>
+</li>
+<li>
+<p><strong>ShapeWorks Front-end</strong></p>
+<ul>
+<li>DWD (Distance Weighted Discrimination) group analysis method alongside LDA</li>
+<li>Redesigned Optimize panel with reorganized parameter groups</li>
+<li>Sampling scale UI for multi-domain particle density control</li>
+<li>Export clipped meshes</li>
+<li>Warp method selector (Biharmonic/Laplacian) in Analysis panel</li>
+</ul>
+</li>
+<li>
+<p><strong>Platform Updates</strong></p>
+<ul>
+<li>Python 3.12</li>
+<li>VTK 9.5.0</li>
+<li>ITK 5.4.4</li>
+<li>PyTorch 2.8.0 (2.2.2 on Intel Mac)</li>
+<li>Linux builds use manylinux_2_28 (GLIBC 2.28, compatible with RHEL 8+, Ubuntu 20.04+)</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Fix cross-domain p-value bleed in multi-domain models where neighboring domain particles corrupted KD-tree interpolation near anatomically close regions</li>
+<li>Fix multi-domain overlap when pre-aligned data skips grooming alignment (#2514)</li>
+<li>Fix reflection being applied twice in global multi-domain ICP alignment</li>
+<li>Fix PPCA noise variance dilution and null-space leakage in MorphologicalDeviationScore (#2495)</li>
+<li>Fix fillHoles creating zero-area triangles</li>
+<li>Fix crash when geodesic distance from landmarks is enabled without landmarks</li>
+<li>Fix DeepSSM crash when training split is set to 0% (#2398)</li>
+<li>Fix crash when mesh contains no cells during grooming</li>
+</ul>
+<h2 id="shapeworks-661-2025-05">ShapeWorks 6.6.1 - 2025-05</h2>
+<h3 id="fixes_1">Fixes</h3>
+<ul>
+<li>Fix loading of non-binary segmentations</li>
+<li>Add padding for visualization of segmentation surfaces</li>
+<li>Add Blue/Red color map for scalar visualization</li>
+<li>Fix PCA/Group sliders when switching projects</li>
+<li>Fix stats being reloaded when groups are changed</li>
+<li>Fix a crash that can happen when changing projects while mesh warping</li>
+<li>Turn off group animate checkbox when deactivating analysis module</li>
+<li>Disallow network analysis when there are no scalar features</li>
+<li>Auto adjust network analysis alpha when necessary</li>
+<li>Add logging of groom and optimize parameters to file log</li>
+<li>Fix itk image factory registration for network analysis with image based features</li>
+<li>Added warning about inconsistent number of values in particle vector</li>
+<li>Fix libomp.dylib install problem on mac arm64 </li>
+<li>Update URL for UpdateChecker</li>
+</ul>
+<h2 id="shapeworks-660-2025-05">ShapeWorks 6.6.0 - 2025-05</h2>
+<p><img alt="" src="../img/about/release6.6.png" /></p>
+<h3 id="what-is-new_2">What is new?</h3>
+<ul>
+<li>
+<p><strong>ShapeWorks Back-end</strong></p>
+<ul>
+<li>Improved support for varied image sizes in DeepSSM (#2218)</li>
+<li>Faster and more robust neighborhood computation code in the optimizer (#2314)</li>
+<li>Added Java bindings for ShapeWorks</li>
+<li>Added Matlab bindings for ShapeWorks</li>
+<li>Improve mesh domain memory usage (#2353)</li>
+</ul>
+</li>
+<li>
+<p><strong>ShapeWorks Front-end</strong></p>
+<ul>
+<li>Added new MONAI Label tool in Studio</li>
+<li>Added basic segmentation tools in Studio</li>
+<li>Modeling Shared Boundaries is now fully supported in Studio</li>
+<li>Added ability to close a project</li>
+<li>Added evaluation metrics and graphs for shape+scalar analysis (#2218)</li>
+<li>Added feature to evaluate generalization and specificity using particle to surface distance (#2212)</li>
+<li>Added ability to limit number of threads for grooming/optimization in Studio</li>
+<li>Added ability to manually choose reference template mesh for mesh warping (#1085)</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes_2">Fixes</h3>
+<ul>
+<li>Fix bug in Studio where parameters are lost switching modules (#2263)</li>
+<li>Fix problem where VTK DLL was being marked as a virus (#2308)</li>
+<li>Fix problem loading certain kinds of NIFTI files (#2294)</li>
+<li>Placing landmarks on very zoomed in anatomy, causes landmarks to be misplaced (#2346)</li>
+<li>Studio crash when removing all shapes (#2354)</li>
+<li>Fix Crash on exporting mesh from computed shape (#2335)</li>
+<li></li>
+</ul>
+<h2 id="shapeworks-651-2024-08">ShapeWorks 6.5.1 - 2024-08</h2>
+<h3 id="fixes_3">Fixes</h3>
+<ul>
+<li>Fix VTK Python version for windows (#2308)</li>
+<li>Fix some alignment issues in grooming</li>
+<li>Fix crash during ICP alignment with multiple domains</li>
+</ul>
+<h2 id="shapeworks-650-2024-03">ShapeWorks 6.5.0 - 2024-03</h2>
+<p><img alt="" src="../img/about/release6.5.png" /></p>
+<h3 id="what-is-new_3">What is new?</h3>
+<ul>
+<li>
+<p><strong>ShapeWorks Back-end</strong></p>
+<ul>
+<li>DeepSSM variants and losses (TL network and other options) (#1881)</li>
+<li>Ability to use mesh scalar fields as correspondence attribute (#2081)</li>
+<li>Tool to compute cortical thickness using surface and CT (#2103)</li>
+<li>Tool to compute geodesic fields from landmarks (#2102) and use as a correspondence attribute</li>
+<li>Ability to run geodesic distance on a decimated mesh to improve speed</li>
+</ul>
+</li>
+<li>
+<p><strong>ShapeWorks Front-end</strong></p>
+<ul>
+<li>Shape and Scalar Correlation / Prediction (2 Block PLS) (#985)</li>
+<li>Particle Area Analysis (#2140)</li>
+<li>Compute the mean and standard deviation of the area associated with each particle</li>
+<li>Studio can now run models with fixed domains support</li>
+<li>Studio can now exclude subjects from grooming/optimization</li>
+<li>Free form constraints can now be applied from one shape to others</li>
+<li>Improved Brightness and Contrast control for slice viewer</li>
+<li>Cortical thickness values can be displayed as an inner contour for QA on slices (#2177)</li>
+<li>Network and SPM1D Analysis</li>
+<li>Statistically analyze feature map data using the relative size of the network of connected particles</li>
+<li>DeepSSM Enhancements in Studio</li>
+<li>Validation and Testing shapes/images are now held out from training grooming/optimization</li>
+<li>Image registration is used to align Validation and Testing</li>
+<li>Validation shapes have correspondence generated using fixed domains</li>
+<li>Inference on new images can now be performed using an existing model</li>
+</ul>
+</li>
+<li>
+<p><strong>User's Support</strong></p>
+<ul>
+<li>macOS Silicon (arm64) support</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes_4">Fixes</h3>
+<ul>
+<li>Bug fix for very large covariance matrices (#2118)</li>
+<li>Fix windows python multiprocessing</li>
+<li>Fix bug when saving project after defining only 2 points of a plane (#2091)</li>
+<li>Improved data augmentation API (#2072)</li>
+</ul>
+<h2 id="shapeworks-642-2023-07-05">ShapeWorks 6.4.2 - 2023-07-05</h2>
+<h3 id="fixes_5">Fixes</h3>
+<ul>
+<li>Fix python module versions preventing python import from working (#2104)</li>
+</ul>
+<h2 id="shapeworks-641-2023-05-10">ShapeWorks 6.4.1 - 2023-05-10</h2>
+<h3 id="fixes_6">Fixes</h3>
+<ul>
+<li>Fix grooming crash when there are free form constraints in an untitled/unsaved project (#2078)</li>
+<li>Fix update checker potentially crashing (#2079)</li>
+</ul>
+<h2 id="shapeworks-640-2023-05-05">ShapeWorks 6.4.0 - 2023-05-05</h2>
+<p><img alt="" src="../img/about/release6.4.png" /></p>
+<h3 id="what-is-new_4">What is new?</h3>
+<ul>
+<li><strong>ShapeWorks Back-end</strong><ul>
+<li>New shapeworks 'analyze' command for offline analysis of shape models</li>
+<li>Improved free form constraints that now support doubly connected areas (e.g. donut-like)</li>
+<li>Data Portal migrated to new ShapeWorks Cloud and swcc (ShapeWorks Cloud Client) tool</li>
+<li>ShapeWorks can now be used as a 3rd party library (<a href="../dev/shapeworks-library.html">details here</a>)</li>
+<li>Added support for 'save_init_splits' and 'checkpointing_interval' parameters in the project spreadsheet formats</li>
+<li>Added new JSON based file format for storing ShapeWorks projects (swproj)</li>
+<li>Added a unified logging library for ShapeWorks (spdlog)</li>
+<li>Uniform numerical computation of specificity across platforms</li>
+<li>Updated dependencies.  Python now at 3.9, PyTorch 1.11.0, VTK 9.1, ITK 5.2.1</li>
+</ul>
+</li>
+<li><strong>ShapeWorks Front-end</strong><ul>
+<li>Studio can now automatically check for updates and prompt the user to download them</li>
+<li>Improved progress bar in Studio is more representative and also estimates time remaining</li>
+<li>Added ability to arbitrarily scale difference arrows in Studio</li>
+<li>Added file association support for swproj file extension on Windows and Mac</li>
+<li>New multi-level analysis feature in Studio (<a href="../studio/studio-analyze.html#multi-level-pca">details here</a>)</li>
+<li>Added ability to hide/show particles per domain</li>
+</ul>
+</li>
+<li><strong>User's Support</strong><ul>
+<li>Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
+  to capture inter-domain correlations and interactions directly on triangular surface meshes. 
+  The use case showcases calculating the alignment options available for multiple organ anatomies.
+  (<a href="../use-cases/mesh-based/hip.html">details here</a>)</li>
+<li>Added options to the incremental use case when run in --interactive mode, including sorting method, 
+  initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
+  to be added incrementally. There are three options: random, median, distribution.
+  (<a href="../use-cases/multistep/incremental_supershapes.html">details here</a>)</li>
+<li><a href="../python/python-api.html">Python API documentation</a> has been added to the ShapeWorks documentation site</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes_7">Fixes</h3>
+<ul>
+<li>Fix Studio python problem causing crash on group differences (#1781)</li>
+<li>Fix Studio slow/hanging on certain free form constraints (#1817, #1801)</li>
+<li>Fix crashes on certain projects (#1800, #1815)</li>
+<li>Fix procrustes with multi-domain models (#1755)</li>
+<li>Fixed crashes in groom due to multi-threading (#1944)</li>
+</ul>
+<h2 id="shapeworks-632-2022-10-04">ShapeWorks 6.3.2 - 2022-10-04</h2>
+<h3 id="fixes_8">Fixes</h3>
+<ul>
+<li>Fix install_shapeworks.sh on Linux (#1883)</li>
+</ul>
+<h2 id="shapeworks-631-2022-07-22">ShapeWorks 6.3.1 - 2022-07-22</h2>
+<h3 id="fixes_9">Fixes</h3>
+<ul>
+<li>Fix Studio python problem causing crash on group differences (#1781)</li>
+<li>Fix Studio slow/hanging on certain free form constraints (#1817, #1801)</li>
+<li>Fix crashes on certain projects (#1800, #1815)</li>
+</ul>
+<hr />
+<h2 id="shapeworks-630-2022-06-09">ShapeWorks 6.3.0 - 2022-06-09</h2>
+<p><img alt="" src="../img/about/release6.3.png" /></p>
+<h3 id="what-is-new_5">What is new?</h3>
+<ul>
+<li><strong>ShapeWorks Back-end</strong><ul>
+<li>Added constraints functionality for the mesh domain both clipping and augmented lagrangian together with a flag to flip between the two options.</li>
+<li>Group Difference Statistics in Python can now perform LDA.  The use case also demonstrates Linear Discrimination of Variation (LDA) for analyzing shape variation between the subgroups.</li>
+</ul>
+</li>
+<li><strong>ShapeWorks Front-end</strong><ul>
+<li>New selectable and configurable colormap support</li>
+<li>Added new support for showing the difference to the mean for any given mesh (subjects or generated PCA mode positions)</li>
+<li>Added new support for displaying multiple image types (e.g. original vs groomed) with individual opacity settings. Also ability to show surface to surface distance.</li>
+<li>The multiple domains groom section has been upgraded to its own panel for better UI consistency. A new checkbox for applying grooming steps to all domains has been added to assist when many domains are in use</li>
+<li>A new image export dialog as been added with various export options</li>
+<li>PCA Montage and Fringe plot export.  Building on the image export dialog, the PCA Montage exporter allows you to create a multi-image montage across PCA modes.</li>
+<li>Export scalar values: Addition export options have been added to export mesh scalars, particle scalars, and all subjects particle scalars.</li>
+<li>Image volume support: New support has been added for displaying 2D slices from image volumes (e.g. CT/MRI)</li>
+<li>Landmark placement UI in Studio, landmark registration, landmarks as initializers</li>
+<li>Cutting planes UI in Studio: Added new support for defining and manipulating cutting planes</li>
+<li>Free form constraints UI in Studio: Added new support for defining free form constraints</li>
+<li>Procrustes scaling only mode: New support for running procrustes in a scaling-only mode has been added.</li>
+<li>Good/bad particle display: The Particles Panel enabled the display of "good/bad particles" in ShapeWorks Studio.</li>
+<li>Group LDA chart in Studio: Support for the group LDA chart has been added in Studio</li>
+</ul>
+</li>
+<li><strong>User's Support</strong><ul>
+<li>Added grooming steps to mesh-based use cases using the mesh Python API</li>
+<li>Alignment transforms are now passed to the optimizer and used in optimization instead of being applied before optimization. This results in local particles in the original data's coordinate system, allowing for easier subsequent analysis</li>
+<li>The use cases now use project spreadsheets in optimizations instead of XML files. This format is more interpretable and allows of better integration with Studio. The project sheets support multiple domains, fixed domains, constraints</li>
+<li>The femur use case has been refactored into a single use case where alignment transforms and cutting plane constraints are passed in optimization.</li>
+<li>Grooming added for multiple domain use cases. The pipeline demonstrates alignment w.r.t domain 1 ellipsoids.</li>
+<li>DeepSSM Use Case:<ul>
+<li>The DeepSSM use case has been updated to demonstrate the full pipeline, including training data generation instead of relying on the femur use case to create a training shape model.</li>
+<li>The use case now demonstrates how to optimize validation particles via fixed domain optimization where the training particles are unchanged.</li>
+<li>Image-to-image registration tools have been added to prepare DeepSSM input images without requiring corresponding segmentations or meshes. This allows for true inference with DeepSSM.</li>
+</ul>
+</li>
+<li>Incremental Use Case:<ul>
+<li>A new use case has been added, demonstrating how a shape model can be optimized incrementally on 3D supershapes. This approach is beneficial when the cohort of shapes is very large, and single optimization would be slow, and when the dataset is small but contains a large amount of shape variation.</li>
+<li>Functionality has been added to select the order of shape optimization based on the distance of each shape to all others in the cohort. This allows for particles to be fit to inlier shapes first, then outliers.</li>
+<li>Documentation has been added that explains the use case and quantitatively demonstrates the benefit of incremental optimization.</li>
+</ul>
+</li>
+<li>Added a Studio use case for constraints and a pseudo-tutorial for it in the documentation.</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes_10">Fixes</h3>
+<ul>
+<li>Studio: TabWidget rendering on MacOS 11/12 fixed</li>
+<li>Mesh::toDistanceTransform fixed</li>
+<li>Studio: Fixed optimization abort not always aborting</li>
+<li>Optimize: Fixed particle splitting for use with input transforms</li>
+<li>Studio: Fix clamping of glyph size</li>
+<li>Studio: Fix bug when groom output path is blank</li>
+</ul>
+<hr />
+<h2 id="shapeworks-621-2022-01-07">ShapeWorks 6.2.1 - 2022-01-07</h2>
+<h3 id="what-is-new_6">What is new?</h3>
+<ul>
+<li><strong>ShapeWorks Back-end</strong><ul>
+<li>Added new <code>isolate</code> functionality that isolates the largest object in a segmentation</li>
+<li>Added remeshing using ACVD library</li>
+<li>Added option to save mesh file as binary (default is ASCII)</li>
+<li>Uniform transform interface added: ITK transforms can be applied to meshes and VTK transforms can be applied to images. </li>
+</ul>
+</li>
+<li><strong>ShapeWorks Front-end</strong><ul>
+<li>Studio: Added convert to mesh pipeline for segmentation inputs (can run both image and mesh pipelines)</li>
+<li>Studio: Added reflection, remeshing, image cropping, image resampling to grooming</li>
+<li>Studio: New UI for grooming</li>
+</ul>
+</li>
+<li><strong>User's Support</strong><ul>
+<li>Updated <code>ellipsoid_mesh</code> use case to demonstrate mesh grooming</li>
+<li>Combined the functionality of the three femur use cases - <code>femur</code>,<code>femur_mesh</code>,<code>femur_cut</code> into one use case. The <code>femur_cut</code> use case now demonstrates the process of grooming meshes and the associated images , optimization on meshes with a single cutting plane as a constraint.</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixes_11">Fixes</h3>
+<ul>
+<li>Studio: Fixed display names in the corner (removing long paths)</li>
+<li>Studio: Fixed recomputation of shape statistics upon re-running shape model and removing shapes</li>
+</ul>
+<hr />
+<h2 id="shapeworks-62-2021-11-16">ShapeWorks 6.2 - 2021-11-16</h2>
+<p><img alt="" src="../img/about/release6.2.png" /></p>
+<h3 id="what-is-new_7">What is new?</h3>
+<h4 id="shapeworks-back-end">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>New <code>Mesh</code> grooming tools:</strong><br />
+The following grooming tools are supported from all three different interfaces - command line, C++ and Python:  </p>
+<ul>
+<li><code>curvature</code>: computes curvature (types include principal, gaussian, and mean curvature) of a given triangular mesh and returns a field that contains a scalar value for each mesh vertex. See <a href="../tools/ShapeWorksCommands.html#mesh-curvature">mesh-curvature</a> to know about function parameters. </li>
+<li><code>fixElement</code>: fixes element winding of a given triangular mesh as a quality control step for preparing meshes for shape modeling. See <a href="../tools/ShapeWorksCommands.html#fix-element">fix-element</a> to know about function parameters.  </li>
+<li><code>geodesicDistance</code>: the computation of geodesic distances enables feature-based correspondences. Read this <a href="https://link.springer.com/content/pdf/10.1007/978-3-642-40763-5_3.pdf">paper</a> for more details. Below are exemplar usage scenarios.    <ul>
+<li><code>geodesicDistance (pointA, pointB)</code>: computes geodesic distance between 2 points on a triangular mesh. See <a href="../tools/ShapeWorksCommands.html#geodesic-distance">geodesic-distance</a> to know about function parameters.  </li>
+<li><code>geodesicDistance (landmark)</code>: computes geodesic distances between all points on a triangular mesh to a given point (landmark). See <a href="../tools/ShapeWorksCommands.html#geodesic-distance-landmark">geodesic-distance-landmark</a> to know about function parameters.   </li>
+<li><code>geodesicDistance (curve)</code>: computes geodesic distances between all points on mesh and set of points (curve) <br />
+<code>computeMeanNormals</code>: computes the average surface normal for each mesh vertex in a given set of triangular meshes with vertex-wise correspondences and returns a field containing a normal vector for each mesh vertex. See <a href="../tools/ShapeWorksCommands.html#mean-normals">mean-normals</a> to know about function parameters. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>New <code>Mesh</code> query/operator tools:</strong><br />
+The following tools are supported from all three different interfaces - command line, C++ and Python:    </p>
+<ul>
+<li><code>operator+=</code>: appends a mesh to an existing mesh. The result of this operator is a single mesh with a single vertex and face lists.</li>
+<li><code>closestPoint</code>: returns the closest point on a face in the mesh to a given point in space. See <a href="../tools/ShapeWorksCommands.html#closest-point">closest-point</a> to know about function parameters. </li>
+<li><code>closestPointId</code>: returns closest point id in the mesh to a given point in space   </li>
+<li><code>points</code>: returns matrix with number of points with (x,y,z) coordinates of each point   </li>
+<li><code>faces</code>: returns matrix with number of faces with indices of the three points from which each face is composed   </li>
+<li><code>getFace</code>: return indices of the three points with which the face at the given index is composed   </li>
+</ul>
+</li>
+<li>
+<p><strong><code>Mesh</code> fields:</strong> Added support for passing multi-valued fields in addition to scalar fields. Previously field operations such as <code>getField</code>, <code>setField</code> supported only single-value components. Now, these operations can be used for multi-valued components as well. This is useful for associated surface meshes with positional (i.e., spatially varying) features, e.g., application-specific features such as cortical thickness and bone density, and computationally driven features such as geodesics to anatomical landmarks, curvatures, and surface normals.   </p>
+</li>
+<li>
+<p><strong>Free-form constraints (FFCs):</strong> FFCs support has been added. Added a unit test for FFCs, a typical sphere unit test with a constraint that cuts the sphere like a tennis ball grove. Also added a unit test with two domains, both spheres in different locations. The first sphere has one cutting plane and 25 sphere constraints, and the second sphere has one cutting plane and one free form constraint. See <a href="../new/free-form-constraints.html">Free-Form Constraints</a> for more details.</p>
+</li>
+</ul>
+<h4 id="shapeworks-front-end">ShapeWorks Front-end</h4>
+<ul>
+<li>
+<p><strong>Multiple domains in Studio:</strong> Support for multiple alignment strategies is now present in Studio. It allows analysis with and without articulation with a choice of reference domain or global alignment. See <a href="../studio/multiple-domains.html#multiple-domain-alignments">Multiple Domain Alignments</a></p>
+</li>
+<li>
+<p><strong>New analysis features in Studio:</strong> Shape evaluation charts for compactness, specificity, and generalization have been added. See for <a href="../studio/getting-started-with-studio.html#metrics-panel">Metrics Panel</a> more details.</p>
+</li>
+<li>
+<p><strong>Usability features in Studio:</strong> New usability features such as group p-value display, feature map scalar control, surface opacity controls on a per doamin basis, message history window, suppressible error dialog, narrow band optimization parameter, multiple domain expore options (combined and support) and allow initial landmark points. See <a href="../new/new-studio.html#usability-features">New in ShapeWorks Studio 6.2</a> for more details.</p>
+</li>
+</ul>
+<h4 id="users-support">User's Support</h4>
+<ul>
+<li>
+<p><strong>Shape cohort generation:</strong> Added segmentation and image generation for 2D contour supershapes. See this <a href="../notebooks/getting-started-with-data-augmentation.html">Jupyter Notebook</a> for more details.</p>
+</li>
+<li>
+<p><strong>Analyzing the group differences:</strong> A new use case has been added, demonstrating the functionality of shape statistics tools to perform hypothesis testing of group shape differences. See <a href="../use-cases/stats-based/femur-pvalues.html">Femur: Group Difference Statistics in Python</a> for more details.   </p>
+</li>
+<li>
+<p><strong>Sub-sampling for multiple domains:</strong> We can now perform subsampling for multiple domains data by combining the individual shapes from all the domains and generating combined shapes. We perform a clustering-based subset selection on the combined shapes so that the subset is representative of the entire dataset and all domains. The representative subset of the specified sample size will be helpful to run through the SSM pipeline so that the use case runs faster and uses less memory.</p>
+</li>
+<li>
+<p><strong>API reference in Documentation:</strong> Information about different classes (e.g Image), functions (e.g Image::antialias), function parameters, function return types in C++ API has been added. Check out <a href="http://sciinstitute.github.io/ShapeWorks/api/Modules/index_groups.html">Groups</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Classes/index_classes.html">Classes</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Namespaces/index_namespaces.html">Namespaces</a>, <a href="http://sciinstitute.github.io/ShapeWorks/api/Files/index_files.html">Files</a> for more details.</p>
+</li>
+</ul>
+<h4 id="deep-learning">Deep Learning</h4>
+<ul>
+<li><strong>DeepSSM in Studio:</strong> The ability to run DeepSSM has been added to Studio. See <a href="../studio/deepssm-in-studio.html">DeepSSM in Studio</a> for more details.</li>
+</ul>
+<h3 id="improvements">Improvements</h3>
+<h4 id="shapeworks-back-end_1">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>Safe construction of <code>Image</code> instances in Python:</strong> Images can now be safely constructed without copying and passed without copying from/to Python. In particular, passing Images for rendering using <code>pyvista</code> is now transparent and copy-free (note: copying is still supported if necessary). A <a href="../notebooks/array-passing-without-copying.html">Jupyter Notebook</a> was added to demonstrate <code>Image</code> initialization and passing.</p>
+</li>
+<li>
+<p><strong>Efficient data sharing between Python and C++:</strong> Added efficient sharing of large data between Python and C++ (for both <code>Mesh</code> fields and <code>Image</code> data) that enables Python tools which access <code>Mesh</code> fields or <code>Image</code> data for visualization and analysis, or wish to create an Image or add fields from NumPy to a <code>Mesh</code>, to do so with optimal efficiency without fear of memory leak due to mishandled transfers. </p>
+</li>
+<li>
+<p><strong>Improved Python APIs:</strong> <code>Coordsys</code> of images in Python can now be set using <code>setCoordsys</code>. Fixed Python bindings and improved interactive help where necessary. More efficient conversion of shapeworks <code>Mesh</code> in Python to vtk mesh by creating a <code>PolyData</code> instead of performing IO operations.</p>
+</li>
+<li>
+<p><strong>Transforms in <code>Image</code> and <code>Mesh</code> API:</strong> Separate transforms such as center of mass, rigid registration and thin plate spiline can be created. They are passed efficiently and transparently between Python and C++. These transform functions create and accept numpy arrays instead of using proprietary transform type in the Python API. A jupyter notebook was to demonstrate this for <a href="../notebooks/create-and-apply-image-transforms.html">images</a> and <a href="../notebooks/create-and-apply-mesh-transforms.html">meshes</a>. </p>
+</li>
+<li>
+<p><strong>Optimizer exports alignment transforms:</strong> Write individual procrustes transforms. The ShapeWorks <code>Optimizer</code> can now export individual procrustes transform files if requested. Use the xml tag <code>&lt;write_transform_files&gt; 1 &lt;/write_transform_files&gt;</code> to enable it. Additionally, for project spreadsheets (e.g., Studio), individual procrustes transforms will be added as additional columns in the data sheet. See <a href="../workflow/optimize.html">Optimize</a> for more details.</p>
+</li>
+<li>
+<p><strong>Improved testing:</strong> More robust testing of Python tests was achieved by adding code to ensure that all tests are performed for all functions, whereas before the test failure was reported immediately without testing if any related functions failed. Concrete seeding of random number generators (only for testing) is utilized to ensure objective comparison of results across all platforms. Improved verification of use case testing by comparing shape statistics compactness, generalization, and specificity against a good shape model instead of checking for a file. A log file (<code>verify.log</code>) is written that contains the use case outputs and summary.</p>
+</li>
+</ul>
+<h4 id="users-support_1">User's Support</h4>
+<ul>
+<li>
+<p><strong>Use cases:</strong> Added <code>--mesh_mode</code> option to image-based use cases. When running in mesh mode, after grooming segmentations, distance transforms are converted to meshes, and optimization is done directly on meshes, saving memory footprint and allowing the usage of geodesic distances for particle repulsion. This enables improved modeling for thin structures and high curvature regions. See <a href="../use-cases/use-cases.html#use-cases-arguments">Use Case Documentation</a> for more details. </p>
+</li>
+<li>
+<p><strong>Improved use cases documentation:</strong> Restructured use cases documentation to reduce repetition and better highlight the focus and differences of each demonstration. Added relevant documentation links for every step and parameter in use case descriptions. Reorganized use case documentation based on category (i.e., mesh-based, constraint-based, etc.). See <a href="../use-cases/use-cases.html">Getting Started with Use Cases</a> for information on running use cases and <a href="../getting-started/examples.html">Examples</a> for an overview of released use cases. More explanation of interpreting modes of variation in <a href="../getting-started/shapes.html">Shapes. What &amp; From Where?</a>.</p>
+</li>
+<li>
+<p><strong>Restructured <code>ellipsoid_evaluate</code> use case:</strong> The computation time for calculating specificity, compactness, and generalization metrics have been dramatically reduced. A 50X speedup was experienced when calculating evaluation metrics for all modes for a dataset with 75 shapes, each with 1024 particles. We can now calculate the evaluation metrics for all the modes or query the values for a specified mode. The use case has been modified to demonstrate these functionalities. See <a href="../use-cases/stats-based/ellipsoid-evaluate.html">Ellipsoid: Shape Evaluation in Python</a> for more details.</p>
+</li>
+</ul>
+<h3 id="fixes_12">Fixes</h3>
+<h4 id="shapeworks-back-end_2">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Memory leak:</strong> Fixed memory leak issues in <code>FEMesh</code> operations</li>
+</ul>
+<h4 id="shapeworks-front-end_1">ShapeWorks Front-end</h4>
+<ul>
+<li><strong>Fix processing of all orientation images:</strong> We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) was fully compatible with all tools. </li>
+</ul>
+<hr />
+<h2 id="shapeworks-61-2021-06-28">ShapeWorks 6.1 - 2021-06-28</h2>
+<p><img alt="" src="../img/about/release6.1.png" /></p>
+<h3 id="what-is-new_8">What is new?</h3>
+<h4 id="shapeworks-back-end_3">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Improved shape models for convoluted structures:</strong> Geodesic distance-based repulsion is now supported for mesh domains. This improves results on structures with thin and/or convoluted features at the cost of increased memory and runtime. Refer to the <code>thin_cavity_bean</code> use case for an example.</li>
+<li><strong>Optimizing shape models on contours:</strong> N-dimensional contour domains are now supported in ShapeWorks. Refer to the <code>supershapes_1mode_contour</code> use case for an example.</li>
+<li><strong>Robust and scalable primitive-based constrained surface sampling:</strong> Constraints are now implemented by turning the problem into an unconstrained optimization using the augmented lagrangian inequality formulation. The new implementation supports both cutting planes and spheres. It also supports multiple constraints per domain/shape with different types.</li>
+<li><strong>Consolidated library for shape statistics:</strong> The <code>shapeworks</code> computational library is updated to include refactored code for shape statistics, including functions to read particle files and compute eigenvectors, eigenvalues, and PCA loadings. </li>
+</ul>
+<h4 id="shapeworks-front-end_2">ShapeWorks Front-end</h4>
+<ul>
+<li><strong>Grooming support for meshes in Studio:</strong> Multiple grooming features for mesh domains are added to Studio, including two methods for mesh smoothing, hole filling, mesh centering, and iterative closest point for rigid pre-alignment with automated reference shape selection.</li>
+<li><strong>Multiple domains support in Studio:</strong> Multiple domains are added to Studio where shape models are optimized in the given domains' shared/joint shape spaces to capture inter-domains correlations and interactions. The way multiple domains are implemented allows for an arbitrary number of domains as long as all shape samples in a given cohort have the same domains. Furthermore, the multiple domain support enables modeling scenarios with mixed-type domains (e.g., meshes and contours).</li>
+<li><strong>Python APIs for shape statistics:</strong> Python APIs for principal component analysis (PCA) are added for shape statistics. These APIs include reading particle files and computing eigenvectors, eigenvalues, and PCA loadings. See <code>ellipsoid_pca</code> for a demonstrating example.</li>
+</ul>
+<!--#### Deep Learning & Shape Modeling-->
+
+<h4 id="users-support_2">User's Support</h4>
+<ul>
+<li>
+<p><strong>Multi-domain shape cohort generation:</strong> Ellipsoid joint generation is added to ShapeWorks' cohort generator python module. Shape cohorts with multiple domains can be generated with options to control the distance separating the domains and modes of variations (size/rotation). These cohorts can be used for troubleshooting multiple domain shape modeling workflows.</p>
+</li>
+<li>
+<p><strong>New use cases:</strong> A new use case (<code>ellipsoid_pca</code>) demonstrating the usage of the new PCA tools is added. The <code>thin_cavity_bean</code> use case is added to demonstrate geodesic distance-based particle-to-particle interactions to demonstrate improved shape statistics and surface sampling for thin and convoluted structures. The <code>supershapes_1mode_contour</code> use case is added to demonstrate shape modeling using contour domains. Another two new use cases, <code>ellipsoid_multiple_domain</code> and <code>ellipsoid_multiple_domain_mesh</code>, are added to demonstrate a typical shape modeling workflow for multiple domains using binary segmentations and surface meshes, respectively.</p>
+</li>
+</ul>
+<h3 id="improvements_1">Improvements</h3>
+<h4 id="shapeworks-back-end_4">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Particle splitting is agnostic to constraints:</strong> Particle splitting and constraints will no longer require that no particle violates constraints. It will work even if a particle violates a constraint. Multiple unit tests are added.</li>
+<li><strong>Mesh reconstruction for multiple meshes:</strong> The warp-mesh command is extended to work with multiple meshes at the same time with the same reference mesh and points.</li>
+<li><strong>Improvements to the <code>Image</code> and <code>Mesh</code> libraries:</strong> Exact specification of crop regions and clip plane for both images and meshes are enabled.</li>
+<li>Better error detection and handling.</li>
+<li>More robust automated testing to ensure improvements do not break existing functionality.</li>
+</ul>
+<h4 id="shapeworks-front-end_3">ShapeWorks Front-end</h4>
+<ul>
+<li><strong>Multiple domain support:</strong> <code>OptimizeUtils</code> and <code>AnalyzeUtils</code> are updated to handle multiple domain datasets.</li>
+<li><strong>Restructured use cases:</strong> Depreciated <code>GroomUtils</code>, <code>CommonUtils</code>, and <code>EvaluationUtils</code>. All use cases are restructured to make the grooming steps more transparent and demonstrate the usage of Python APIs with inline documentation. </li>
+<li><strong>Improved ShapeWorks Python module library coverage:</strong> The entire ShapeWorks library framework now accessible via Python bindings. </li>
+<li><strong>Python types support in ShapeWorks Python module:</strong> ShapeWorks Python module uses generic Python types (e.g., numpy, arrays, lists) rather than opaque wrappers for parameters to/from ShapeWorks objects. It is now possible to instantiate shapeworks.Image from a numpy array. One can now request raw image data as a numpy array. </li>
+<li><strong>Safe dot-chain operations in ShapeWorks Python module:</strong>  The “dot chain” operations are now safely enabled (e.g., <code>img.translate([tx, ty, tz]).rotate(45, shapeworks::Z).scale([sx, sy, sz))</code>)</li>
+<li><strong><code>RunUseCase</code> improvements:</strong> <code>RunUseCase</code> no longer requires <code>--use_case</code> before the use case name. This makes it simpler to use since omitting a use case name immediately prints help, which itself shows the list of use cases as a required argument rather than listing them with the other optional args. <code>RunUseCase</code> no longer accepts paths to shapeworks executables or Python modules. All of these are in the user's conda environment, or set using the <code>devenv</code> for testing by developers.</li>
+</ul>
+<h4 id="deep-learning-shape-modeling">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li><strong>Refactored DeepSSM:</strong> Defined a config file for DeepSSM parameters that are used in training and testing. This will be helpful for parameter tuning, model comparison, and adding additional functionality and parameters to DeepSSM.</li>
+<li><strong>DeepSSM with fine-tuning:</strong> A fine-tuning option has been added to DeepSSM. This allows the model to learn the mapping between the PCA space to the correspondence point space, improving accuracy.</li>
+<li><strong>Improved DeepSSM evaluation:</strong> DeepSSM evaluation has been adapted to use ShapeWorks mesh warp function and Python binding mesh distance function.</li>
+<li><strong>DeepSSM on both GPU and CPU:</strong> The DeepSSM use case has been adapted to run on both GPU and CPU. It is considerably faster on GPU but no longer exits when running on CPU.</li>
+</ul>
+<h4 id="users-support_3">User's Support</h4>
+<ul>
+<li><strong>Improved documentation:</strong> More clear documentation both from Python, the command line, and online are added.</li>
+<li><strong>Improved notebooks:</strong> Notebooks are significantly simplified by moving helper functions into the ShapeWorks Python module, reducing redundant information, and using only the PyVista library for visualization. </li>
+<li><strong>Improved installation:</strong> Users no longer are required to modify PATHs or pass parameters to find executables or import the ShapeWorks Python module. Installation works even if non-standard installation directories are used and it works on all platforms.</li>
+<li><strong>New shapeworks environments can now be created using <code>install_shapeworks [name]</code>:</strong> This supports multiple installations on the same platform, where users can change installation just by activating a different conda environment.</li>
+<li><strong>Clean installation for ShapeWorks Python module:</strong> ShapeWorks Python module is now seamlessly installed as part of ShapeWorks suite installation on all platforms. The Python module no longer requires any special path modifications to import. </li>
+</ul>
+<h3 id="fixes_13">Fixes</h3>
+<h4 id="shapeworks-back-end_5">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Image to Array:</strong> ShapeWorks image functionality is fixed such that an image can be successfully converted to a numpy array and back to a ShapeWorks image. </li>
+</ul>
+<h4 id="shapeworks-front-end_4">ShapeWorks Front-end</h4>
+<ul>
+<li><strong>Notebook visualization:</strong> Volume renderings using ITK Widgets were causing notebooks to crash on some platforms. The notebooks are now updated to no longer use ITK Widgets for visualization and instead use the more robust and stable PyVista library. </li>
+<li><strong>Use case file writing:</strong> RunUseCase.py has been updated to check that the current folder is writable before proceeding so that use case output can be saved. </li>
+</ul>
+<h4 id="deep-learning-shape-modeling_1">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li><strong>DeepSSM evaluation:</strong> The DeepSSM evaluation step in the use case is updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. </li>
+</ul>
+<hr />
+<h2 id="shapeworks-60-2021-03-30">ShapeWorks 6.0 - 2021-03-30</h2>
+<p><img alt="" src="../img/about/release6.0.png" /></p>
+<h3 id="whats-new">What's New</h3>
+<h4 id="users-support_4">User's Support</h4>
+<ul>
+<li><strong>New discussion forum:</strong> We started an online discussion forum (<a href="https://shapeworks.discourse.group/">shapeworks.discourse.group</a>). This forum is a place for ShapeWorks users to discuss how to customize shape modeling workflows for their own use cases, troubleshoot issues end-users facing when using ShapeWorks, keep track of suggestions to improve the software and documentation, and ensure awareness of the latest ShapeWorks tools within the research community. </li>
+<li><strong>Tiny tests for use cases:</strong> All use cases now have a tiny test that can be run using the <code>--tiny_test</code> option. When the tiny test is run, only the data necessary for the test is downloaded rather than all of the data.</li>
+<li><strong>Running use cases on subsets:</strong> All of the use cases (mesh or segmentation based) can now be run on a subset of the data using the <code>--use_subsample</code> option. Note that the entire dataset is downloaded in this case so that a subset that is representative of the entire dataset can be selected.</li>
+<li><strong>Generating shape cohorts:</strong> Example shape cohorts with analytic correspondences can now be generated using the ShapeWorks package <code>GenerateShapeCohort</code>. Currently, cohorts of parameterized ellipsoids or supershapes can be generated. Options are available to specify the degree to which the cohort is groomed (i.e., a cohort can be generated to be in alignment or misaligned in various ways). These cohorts can help with troubleshooting the shape modeling workflow.</li>
+<li><strong>Notebook demonstrating cohort generation:</strong> A <a href="http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-shape-cohort-generation.ipynb">Jupyter notebook</a> was added that demonstrates how to use GenerateShapeCohort.</li>
+</ul>
+<!--* **Interactive Jupyter notebooks:** We developed a set of Jupyter notebooks to interactively demonstrate the usage of ShapeWorks Python APIs. These notebooks enable users to explore their data before just throwing it all in a huge batch job. We also added notebooks that reflect the thought process to learn about shapeworks classes/functions. See [ShapeWorks in Python](http://sciinstitute.github.io/ShapeWorks/new/shapeworks-python) for more details. -->
+
+<h4 id="shapeworks-back-end_6">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>Support for use_normals with meshes:</strong> Added support for surface normals when optimizing directly on meshes. This results in improved shape models on thin domains. See <a href="http://sciinstitute.github.io/ShapeWorks/new/sw-meshes">ShapeWorks Directly on Meshes</a> for more details.</p>
+</li>
+<li>
+<p><strong>Consolidation of mesh-based grooming tools:</strong> Updated the <code>shapeworks</code> API to include mesh-based grooming tools (smooth, decimate, invert normals, reflect, alignment, fill holes, probe volume at mesh vertices, clip, translate, scale, bounding box, quality control, surface to surface distance, to image and to distance transform). Added mesh-based query tools (center, center of mass, number of points, number of faces, get field names, set field, get field, set field value, get field value, get field range, get field mean, get field std and comparison). This includes a full complement of unit tests.</p>
+</li>
+</ul>
+<!-- * **New Python ShapeWorks API:** In addition to the command line and C++ interface, there is a Python interface for existing image-based, segmentation-based, and mesh-based grooming tools and query tools. This includes a full complement of unit tests. -->
+
+<h4 id="all-in-one-studio-front-end">All-in-one Studio Front-end</h4>
+<ul>
+<li><strong>Mesh support in Studio:</strong> Added support for mesh inputs with minimal grooming. See <a href="http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support">New in ShapeWorks Studio</a> for more details.</li>
+<li><strong>New and faster surface reconstruction:</strong> Added a new surface reconstruction method with support for both mesh or image inputs. This method is much faster and is the new default. See <a href="http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support">New in ShapeWorks Studio</a> for more details.</li>
+<li><strong>Feature maps support for meshes:</strong> Added support for loading and displaying scalar values from mesh inputs. See <a href="http://sciinstitute.github.io/ShapeWorks/new/new-studio#mesh-support">New in ShapeWorks Studio</a> for more details.</li>
+<li><strong>User help in Studio:</strong> Added user interface tooltips and Help-&gt;Keyboard shortcuts.</li>
+<li><strong>Detailed optimization progress:</strong> Added particle count, initialization/optimization phase, and iteration count on the status bar in addition to the progress bar. (user feature request)</li>
+<li><strong>Enabled aborting grooming:</strong> Added ability to abort grooming step.</li>
+</ul>
+<h4 id="deep-learning-shape-modeling_2">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li><strong>DeepSSM now saves both the "best" and "final" model:</strong> The final model is saved after all training epochs have run. The best model is saved after the epoch that had the lowest prediction error on the validation set. The best model makes use of early stopping to prevent overfitting.</li>
+<li><strong>Visualization of DeepSSM errors:</strong> The error meshes that are output from running the DeepSSM use case can now be visualized in Studio. These meshes have a distance scalar field that captures the distance between the true and predicted mesh. To view in Studio simply run: <code>ShapeWorksStudio path/to/error/mesh.vtk</code>.</li>
+<li><strong>Data augmentation handles modeling scenarios that need Procrustes alignment:</strong> Data augmentation can now be run on a dataset for which Procrustes was used in optimization. When both the local and world .particle files are passed as arguments for data augmentation, the translation is accounted for in the augmented data.</li>
+<li><strong>Visualizing data augmentation:</strong> Parallel violin plots are used to compare the distribution of real and augmented data visually.</li>
+<li><strong>Demonstrating data augmentation:</strong> A <a href="http://sciinstitute.github.io/ShapeWorks/notebooks/tutorials/getting-started-with-data-augmentation.ipynb">Jupyter notebook</a> that demonstrates the data augmentation process has been added. In this notebook, parallel violin plots are used to compare the distribution of real and augmented data visually.</li>
+</ul>
+<h3 id="improvements_2">Improvements</h3>
+<h4 id="users-support_5">User's Support</h4>
+<ul>
+<li><strong>Improved Python grooming utils:</strong> GroomUtils.py now uses Python binding rather than calling command-line tools.</li>
+</ul>
+<h4 id="shapeworks-back-end_7">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Enable multi-threading on Mac platforms:</strong> Switched from OpenMP to TBB (thread building blocks), allowing multithreading on Mac. Performance improvements include a ~4x speedup on Mac laptop and same speed or better on Linux/Windows.</li>
+<li><strong>Performance improvements in <code>shapeworks optimize</code>:</strong> ~20% faster optimization in mesh and image domains by replacing specific data structures (that were initially in place to allow interactive removal of particles during the optimization). ~50% faster optimization in mesh domain by caching nearest-triangle lookups.</li>
+</ul>
+<h4 id="all-in-one-studio-front-end_1">All-in-one Studio Front-end</h4>
+<ul>
+<li><strong>Improved Studio viewer:</strong> Added ability to use 2 viewers (in between 1 and 4). Added ability to choose orientation marker (medical, triad) and location (corner).</li>
+<li><strong>Improved Studio interface:</strong> Added new checkbox for automatic glyph sizing. Added support for drag and drop of images and meshes. Scalar bar color is now opposite of background color (e.g., when the background is white, the text should be dark) (user request).</li>
+<li><strong>Improved responsiveness:</strong> Improved particle shape statistics computation speed. Improved user interface responsiveness during optimization. Improved distance transform loading for surface reconstruction.</li>
+<li><strong>Improved error handling:</strong> Enhanced error handling and graceful reporting of errors such as attempts to write/save to read-only directories and filesystems.</li>
+</ul>
+<h4 id="deep-learning-shape-modeling_3">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li><strong>More control on data augmentation:</strong> In data augmentation, the user can now either specify how many PCA components to retain in embedding OR what percentage of population variability to retain. For example, suppose the user specifies that 95% of population variability should be kept. In that case, the number of components will be automatically selected such that less than 5% of shape variation is lost in embedding.</li>
+</ul>
+<h3 id="fixes_14">Fixes</h3>
+<!--#### User's Support
+-->
+
+<h4 id="shapeworks-back-end_8">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Replaced mesh library:</strong> Replaced backend mesh library to fix bugs that caused optimizer crashing when optimizing particles directly on meshes.</li>
+<li><strong>Gradient of normals for image domain:</strong> Corrected a long-standing bug where we used the hessian in place of the gradient of the normal. If you have an existing use case with use_normals enabled, the normal weighting may have to be adjusted.</li>
+<li><strong>Cutting planes constraints for mesh domains:</strong> Fixed a bug in the integration of mesh domains with cutting planes constraints, where the optimization gets stuck due to the fact that constraints get violated when not being considered by geodesic walks.</li>
+</ul>
+<h4 id="all-in-one-studio-front-end_2">All-in-one Studio Front-end</h4>
+<ul>
+<li><strong>Fixed bugs in Data:</strong> Fixed a bug when adding and removing shapes. Studio now appends <code>.xlsx</code> when saving a project file.</li>
+<li><strong>Fixed bugs in Optimize:</strong> Studio optimize default for initial relative weighting is smaller than relative weighting to enable a better surface sampling during initialization. Enable file menu when the optimization is aborted.</li>
+<li><strong>Fixed bugs in Analyze:</strong> Limit PCA modes to the number of samples - 1. Surface reconstruction for spheres is fixed. Fixed a bug that produced blank screens and error messages on the consoles when switching out of analysis while PCA animation is running. Fixed a sample display bug that occurred when loading XML project for analysis and exploring individual samples after switching to PCA animation.</li>
+</ul>
+<!--#### Deep Learning & Shape Modeling-->
+
+<hr />
+<h2 id="shapeworks-550-2020-10-15">ShapeWorks 5.5.0 - 2020-10-15</h2>
+<p><img alt="" src="../img/about/release5.5.png" /></p>
+<h3 id="whats-new_1">What's New</h3>
+<h4 id="users-support_6">User's Support</h4>
+<ul>
+<li>
+<p><strong>Revamped documentation:</strong> <a href="http://sciinstitute.github.io/ShapeWorks">New documentation</a> to support both end-users and open-source developer community in one easily navigable place. This documentation includes background information about statistical shape modeling, the scientific premise of ShapeWorks, and how to get started. It also demonstrates the latest software features, exemplar use cases, and instructions to build/install ShapeWorks.</p>
+</li>
+<li>
+<p><strong>Optimized shape models for use cases:</strong> All datasets on the <a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a> now have the shape model output from running the use cases with a corresponding <code>analyze.xml</code> for launching Studio. Users can <code>cd</code> to where the data is extracted and call <code>ShapeWorksStudio analyze.xml</code> to visualize these shape models.</p>
+</li>
+</ul>
+<h4 id="shapeworks-back-end_9">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>ShapeWorks directly on meshes:</strong> ShapeWorks now supports particle optimization directly on triangular surface meshes. This mesh support also enables working with open meshes without additional user inputs. See <a href="http://sciinstitute.github.io/ShapeWorks/new/sw-meshes">ShapeWorks Directly on Meshes</a> for more details. For exemplar use cases, see <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-mesh">Femur Mesh: SSM directly from meshes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/lumps">Lumps: SSM directly from meshes</a> to learn how to get started. <em>This mesh support allows for significant memory savings (9.2GB to 53MB in the femur use case)</em>.</p>
+</li>
+<li>
+<p><strong>New ShapeWorks API:</strong> Consolidation of image-based and segmentation-based grooming tools that creates a stable and reusable API making it much easier and more flexible for users to groom their datasets. This includes a full complement of unit tests. See <a href="http://sciinstitute.github.io/ShapeWorks/new/shapeworks-api">ShapeWorks API</a> for more details.</p>
+</li>
+</ul>
+<h4 id="all-in-one-studio-front-end_3">All-in-one Studio Front-end</h4>
+<ul>
+<li>
+<p><strong>Feature maps support:</strong> Studio supports the integration of 3d volume feature maps to map imaging data to the optimized shape model. See <a href="http://sciinstitute.github.io/ShapeWorks/new/new-studio#feature-maps">New in ShapeWorks Studio</a> for more details.</p>
+</li>
+<li>
+<p><strong>New interface for group analysis:</strong> Studio supports group definitions from spreadsheets. The new interface supports multiple group sets within the same project file and categorical groups compared to the old binary groups (i.e., yes/no) setting. See <a href="http://sciinstitute.github.io/ShapeWorks/workflow/analyze#group-differences">New in ShapeWorks Studio</a> for more details.</p>
+</li>
+<li>
+<p><strong>User notes in Studio:</strong> Studio stores/loads a rich text notes section in the spreadsheet.</p>
+</li>
+</ul>
+<h4 id="deep-learning-shape-modeling_4">Deep Learning &amp; Shape Modeling</h4>
+<ul>
+<li>
+<p><strong>New Python package for model-based data augmentation:</strong> A Python package for data augmentation has been added. See <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/data-augmentation">Data Augmentation for Deep Learning</a> for more details.</p>
+</li>
+<li>
+<p><strong>DeepSSM Python package:</strong> A Python package has been added for a deep learning framework that estimates statistical representations of shape directly from unsegmented images once trained. See <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/deep-ssm">SSMs Directly from Images</a> for more details. </p>
+</li>
+<li>
+<p><strong>New DeepSSM use case:</strong> We added a new use case called <code>deep_ssm</code> that demonstrates data augmentation and deep learning on the femur data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/deep-ssm-femur">Femur SSM Directly from Images</a> for more details. </p>
+</li>
+</ul>
+<h3 id="improvements_3">Improvements</h3>
+<h4 id="users-support_7">User's Support</h4>
+<ul>
+<li>
+<p><strong>Improved data/output organization for use cases:</strong> Use case organization has been updated such that downloaded data goes into one folder (<code>ShapeWorks/Examples/Python/Data/</code>) and use case output goes into another (<code>ShapeWorks/Examples/Python/Output/</code>). This organization will avoid re-downloading use case datasets if the user deleted the output folder. </p>
+</li>
+<li>
+<p><strong>Enable only-shape data for the femur use case:</strong> Femur use case demonstrates the processing workflow starting from surface meshes and can now be run without grooming images (in case they are not available). To groom with images, use the <code>--start_with_image_and_segmentation_data</code> tag. If this tag is not included, images will not be used in grooming.</p>
+</li>
+</ul>
+<h4 id="shapeworks-back-end_10">ShapeWorks Back-end</h4>
+<ul>
+<li><strong>Improved constrained particle optimization:</strong> An improved implementation for cutting planes that support single and multiple cutting planes per sample has been added. This can be used in modeling scenarios where statistical modeling/analysis is needed for a region-of-interest on the anatomy/object-class at hand without having to affect the input data. See <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/ellipsoid-cutting-planes">Ellipsoid: Cutting Planes</a> and <a href="http://sciinstitute.github.io/ShapeWorks/use-cases/femur-cutting-planes">Femur with Cutting Planes</a> for exemplar use cases.</li>
+</ul>
+<h4 id="all-in-one-studio-front-end_4">All-in-one Studio Front-end</h4>
+<ul>
+<li><strong>Improved interface design for Studio:</strong> User interface improvements to Studio have been added. These improvements include collapsable analysis panels to improve screen usability, a cleaner file menu, an about box that shows website information and software version, and a splash screen that enables the opening of new/recent projects.</li>
+</ul>
+<h3 id="fixes_15">Fixes</h3>
+<h4 id="shapeworks-back-end_11">ShapeWorks Back-end</h4>
+<ul>
+<li>
+<p><strong>Constraint-aware particles initialization and optimization:</strong> The initialization and optimization steps now respect the user-defined constraints when using signed distance transforms. Hence, at no point, particles will violate the constraints, allowing for arbitrarily defined cutting planes. </p>
+</li>
+<li>
+<p><strong>Constraint-aware particles splitting:</strong> Added constraint aware particle splitting for signed distance transforms. The particle splitting only occurred towards a single quadrant. This is fixed by allowing particle splits to shift in a different direction for each particle in every domain.</p>
+</li>
+<li>
+<p><strong>Constraint-aware particle projection:</strong> Projecting particles on the surface while manipulating/optimizing particle position now respects the user-defined constraints.</p>
+</li>
+</ul>
+<hr />
+<h2 id="shapeworks-541-2020-06-15">ShapeWorks 5.4.1 - 2020-06-15</h2>
+<h3 id="fixes_16">Fixes</h3>
+<ul>
+<li><strong>ShapeWorks Studio:</strong> Fixed crash when importing data on a new/blank project.    </li>
+</ul>
+<hr />
+<h2 id="shapeworks-540-2020-06-10">ShapeWorks 5.4.0 - 2020-06-10</h2>
+<h3 id="whats-new_2">What's New</h3>
+<ul>
+<li><strong>New, flexible ShapeWorks project file format:</strong> New spreadsheet (XLSX) based project file format that can easily handle multiple shape modeling scenarios. It is now fully integrated into Studio. See the ellipsoid studio example in <code>Examples/Studio/ellipsoid.xlsx</code> for an example.</li>
+<li><strong>Exporting shape parameters:</strong> Added PCA Raw Component Score Export to Studio.</li>
+<li><strong>New Getting Started documentation:</strong> New <a href="../getting-started/workflow.html">Getting started</a> documentation goes over shape modeling workflow documentation, different ShapeWorks interfaces with a video illustration for Studio.</li>
+<li><strong>Lower memory footprint and faster optimization:</strong> ShapeWorks is now using <a href="https://www.openvdb.org/">OpenVDB</a>, a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses <em>85% less memory</em> (from 57.09GB to 9.67GB in one use case). Additionally, the particle optimizer is now <em>2X faster</em>.</li>
+<li><strong>Automated development builds:</strong> We now offer up-to-date development binary builds that track the master branch, available <a href="https://github.com/SCIInstitute/ShapeWorks/releases">here</a>. Please understand that these are in-progress development builds, not official releases.</li>
+</ul>
+<h3 id="improvements_4">Improvements</h3>
+<ul>
+<li><strong>Improved scalability for Studio:</strong> Files now loaded on-demand as necessary.</li>
+<li><strong>Restructured datasets portal:</strong> Better and more consistent directory structure for use cases datasets. See <a href="../dev/datasets.md">datasets guidelines</a> for more details. Visit our <a href="https://girder.shapeworks-cloud.org">ShapeWorks Portal</a> to register and download datasets to run <a href="../use-cases/use-cases.html">use cases</a>.</li>
+<li><strong>Lower memory footprint for estimating correspondences for new shapes on existing shape models:</strong> For <fixed_domains> usage, only distance transforms for the new shapes will be loaded.</li>
+<li><strong>Improved use case documentation:</strong> Better documentation for the <a href="../use-cases/use-cases.html">RunUseCase</a> input arguments.</li>
+<li><strong>Documentation for running existing shape models:</strong> Added <a href="../use-cases/use-cases.html#running-subsequent-analysis">instructions</a> on how to load a pre-trained shape model without running the full pipeline.</li>
+<li><strong>Consistent cross-platform splitting direction:</strong> Correspondence point splits take a random direction, but are now consistent and repeatable across platforms for reproducible shape models.</li>
+</ul>
+<h3 id="fixes_17">Fixes</h3>
+<ul>
+<li><strong>Mesh export in Studio:</strong> Changed exported meshes to be compatible with CloudCompare</li>
+</ul>
+<hr />
+<h2 id="shapeworks-530-2020-02-20">ShapeWorks 5.3.0 - 2020-02-20</h2>
+<h3 id="whats-new_3">What's New</h3>
+<ul>
+<li>Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model</li>
+<li>Use cases: Added ellipsoid evaluation use that demonstrates the quantitative evaluation of the ellipsoid</li>
+<li>New commands: Added commands to the <code>shapeworks</code> executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity</li>
+<li>New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.</li>
+<li>New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)</li>
+</ul>
+<h3 id="improvements_5">Improvements</h3>
+<ul>
+<li>Use cases: Updated femur use case with an interactive cutting plane selection</li>
+<li>Studio: Replaced bar chart with explained variance chart</li>
+</ul>
+<hr />
+<h2 id="shapeworks-522-2020-01-09">ShapeWorks 5.2.2 - 2020-01-09</h2>
+<h3 id="fixes_18">Fixes</h3>
+<ul>
+<li>Returned to superbuild.sh build process</li>
+<li>Fixed non-Qt build</li>
+<li>Fixed Windows conda_installs.bat</li>
+<li>Studio: Fixed import and processing of non-RAI image volumes</li>
+<li>Studio: Fix centering of groomed and reconstructed volumes</li>
+</ul>
+<hr />
+<h2 id="shapeworks-521-2019-11-09">ShapeWorks 5.2.1 - 2019-11-09</h2>
+<h3 id="fixes_19">Fixes</h3>
+<ul>
+<li>Fix examples, binaries</li>
+</ul>
+<hr />
+<h2 id="shapeworks-520-2019-11-07">ShapeWorks 5.2.0 - 2019-11-07</h2>
+<h3 id="whats-new_4">What's New</h3>
+<ul>
+<li>Studio: Added live particle optimization updates</li>
+<li>Studio: Added "Stop optimization" button</li>
+<li>Use cases: Added a femur use case that demonstrates grooming surface meshes along with imaging data for shape modeling</li>
+<li>Use cases: Added a left atrium use case that demonstrates grooming images data along with shape data and build multi-scale shape models</li>
+<li>Use cases: New portal downloadable example data (ellipsoid, left atrium, and femurs)</li>
+<li>Windows installer and binary releases for Mac and Linux</li>
+<li>CMake-based superbuild with all dependencies built automatically</li>
+</ul>
+<h3 id="improvements_6">Improvements</h3>
+<ul>
+<li>Studio: Added support for reading View2 parameter files</li>
+<li>Studio: Added legacy (View2) surface reconstructor</li>
+<li>Studio: Replaced optimization library with same used by ShapeWorksRun</li>
+</ul>
+<h3 id="fixes_20">Fixes</h3>
+<ul>
+<li>Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 1998 - 2024 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIBIB-R01EB016701. Software maintenance and support are provided within the funding period.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../assets/mathjaxhelper.js"></script>
+      
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
