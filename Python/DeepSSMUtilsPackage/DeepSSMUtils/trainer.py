@@ -56,6 +56,19 @@ def log_print(logger, values):
     logger.write(log_string + '\n')
 
 
+# The TL-net stages report different terms, so every stage gets its own columns and leaves the
+# columns it does not compute blank.  Keep this in sync with log_tl_net().
+TL_NET_LOG_HEADER = ["Training_Stage", "Epoch", "LR",
+                     "Train_Err_AE", "Train_Rel_Err_AE", "Val_Err_AE", "Val_Rel_Err_AE",
+                     "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF",
+                     "Train_Err_Joint", "Val_Err_Joint", "Sec"]
+
+
+def log_tl_net(logger, stage, epoch, lr, seconds, ae=("", "", "", ""), tf=("", "", "", ""), joint=("", "")):
+    # ae and tf are (train_err, train_rel_err, val_err, val_rel_err), joint is (train_err, val_err)
+    log_print(logger, [stage, epoch, lr, *ae, *tf, *joint, seconds])
+
+
 def set_scheduler(opt, sched_params):
     if sched_params["type"] == "Step":
         step_size = sched_params['parameters']['step_size']
@@ -461,7 +474,7 @@ def supervised_train_tl(config_file):
 
     # train the AE first
 
-    log_print(logger, ["Training_Stage", "Epoch", "LR", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
+    log_print(logger, TL_NET_LOG_HEADER)
 
     mean_mdl = torch.mean(train_loader.dataset.mdl_target, 0).to(device)
 
@@ -533,9 +546,8 @@ def supervised_train_tl(config_file):
             last_learning_rate = learning_rate
             if decay_lr:
                 last_learning_rate = scheduler.get_last_lr()[0]
-            log_print(logger,
-                      ["AE", e, last_learning_rate, train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err,
-                       time.time() - t0])
+            log_tl_net(logger, "AE", e, last_learning_rate, time.time() - t0,
+                       ae=(train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err))
             # plot
             epochs.append(e)
             plot_train_losses.append(train_ae_err)
@@ -643,9 +655,8 @@ def supervised_train_tl(config_file):
             last_learning_rate = learning_rate
             if decay_lr:
                 last_learning_rate = scheduler.get_last_lr()[0]
-            log_print(logger,
-                      ["T-Flank", e, last_learning_rate, train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err,
-                       time.time() - t0])
+            log_tl_net(logger, "T-Flank", e, last_learning_rate, time.time() - t0,
+                       tf=(train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err))
             # plot
             epochs.append(e)
             plot_train_losses.append(train_tf_err)
@@ -692,7 +703,9 @@ def supervised_train_tl(config_file):
 
         # train
         net.train()
+        ae_train_losses = []
         ae_train_rel_losses = []
+        tf_train_losses = []
         tf_train_rel_losses = []
         joint_train_losses = []
         pred_particles = []
@@ -720,7 +733,9 @@ def supervised_train_tl(config_file):
             loss.backward()
             opt.step()
             joint_train_losses.append(loss.item())
+            ae_train_losses.append(loss_ae.item())
             ae_train_rel_losses.append(ae_train_rel_loss.item())
+            tf_train_losses.append(loss_tf.item())
             tf_train_rel_losses.append(tf_train_rel_loss.item())
             pred_particles.extend(pred_pt.detach().cpu().numpy())
             true_particles.extend(mdl.detach().cpu().numpy())
@@ -732,7 +747,9 @@ def supervised_train_tl(config_file):
         val_names = []
         if ((e % eval_freq) == 0 or e == 1):
             net.eval()
+            ae_val_losses = []
             ae_val_rel_losses = []
+            tf_val_losses = []
             tf_val_rel_losses = []
             joint_val_losses = []
             for img, pca, mdl, names in val_loader:
@@ -748,7 +765,9 @@ def supervised_train_tl(config_file):
                 tf_val_rel_loss = losses.MSE(lat, lat_img) / losses.MSE(lat * 0, lat_img)
 
                 joint_val_losses.append(loss_ae.item() + alpha * loss_tf.item())
+                ae_val_losses.append(loss_ae.item())
                 ae_val_rel_losses.append(ae_val_rel_loss.item())
+                tf_val_losses.append(loss_tf.item())
                 tf_val_rel_losses.append(tf_val_rel_loss.item())
                 pred_particles.extend(pred_pt.detach().cpu().numpy())
                 true_particles.extend(mdl.detach().cpu().numpy())
@@ -756,17 +775,23 @@ def supervised_train_tl(config_file):
                                      model_dir + "examples/validation_")
 
             # log
+            train_ae_err = np.mean(ae_train_losses)
             train_rel_ae_err = np.mean(ae_train_rel_losses)
-            train_rel_tf_err = np.mean(tf_train_rel_losses)
+            val_ae_err = np.mean(ae_val_losses)
             val_rel_ae_err = np.mean(ae_val_rel_losses)
+            train_tf_err = np.mean(tf_train_losses)
+            train_rel_tf_err = np.mean(tf_train_rel_losses)
+            val_tf_err = np.mean(tf_val_losses)
             val_rel_tf_err = np.mean(tf_val_rel_losses)
             joint_train_losses = np.mean(joint_train_losses)
             joint_val_losses = np.mean(joint_val_losses)
             last_learning_rate = learning_rate
             if decay_lr:
                 last_learning_rate = scheduler.get_last_lr()[0]
-            log_print(logger, ["Joint", e, last_learning_rate, train_rel_ae_err, val_rel_ae_err, train_rel_tf_err,
-                               val_rel_tf_err, time.time() - t0])
+            log_tl_net(logger, "Joint", e, last_learning_rate, time.time() - t0,
+                       ae=(train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err),
+                       tf=(train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err),
+                       joint=(joint_train_losses, joint_val_losses))
             # plot
             epochs.append(e)
             plot_train_losses.append(joint_train_losses)
