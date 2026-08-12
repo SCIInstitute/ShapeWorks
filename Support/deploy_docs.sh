@@ -13,6 +13,11 @@ if [ "$#" -ne 1 ]; then
 fi
 INSTALL_DIR=$1
 
+# Git ref the docs are built from.  Normally "master", which is always the
+# development version.  Run the workflow manually against a release tag (e.g.
+# v6.7.0) to rebuild the docs for a version that has already shipped.
+DOCS_REF=${DOCS_REF:-master}
+
 # Update auto-documentation
 PATH=$INSTALL_DIR/bin:$PATH
 
@@ -43,11 +48,12 @@ git remote rm origin
 git remote add origin "${remote_repo}"
 
 # get remote gh-pages branch
+git fetch origin gh-pages
 git checkout --track origin/gh-pages
 git pull --rebase
 
-# build docs from master
-git checkout master
+# build docs from the requested ref
+git checkout ${DOCS_REF}
 
 # clean out old api docs as mkdocs will just find whatever is there.
 rm -rf docs/api
@@ -57,9 +63,31 @@ mkdir docs/api
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 doxybook2 -i ${INSTALL_DIR}/Documentation/Doxygen/xml -o docs/api -c docs/doxygen/doxybook2.config.json
 
+# Derive the docs version (e.g. "6.8") from the source tree so this script does
+# not have to be edited every release.
+SW_MAJOR=$(sed -n 's/^SET(SHAPEWORKS_MAJOR_VERSION \([0-9][0-9]*\).*/\1/p' CMakeLists.txt)
+SW_MINOR=$(sed -n 's/^SET(SHAPEWORKS_MINOR_VERSION \([0-9][0-9]*\).*/\1/p' CMakeLists.txt)
+if [[ -z "${SW_MAJOR}" || -z "${SW_MINOR}" ]]; then
+    echo "Could not determine the ShapeWorks version from CMakeLists.txt"
+    exit 1
+fi
+DOCS_VERSION="${SW_MAJOR}.${SW_MINOR}"
+
+# master is the development version, so it is titled "<version> (dev)" and owns
+# the "dev" alias.  Anything else is a release rebuild and gets a plain title.
+# "latest" always points at the most recently released version; it is moved by
+# rebuilding that release's docs with DOCS_ALIAS=latest.
+if [ "${DOCS_REF}" = "master" ]; then
+    DOCS_TITLE=${DOCS_TITLE:-"${DOCS_VERSION} (dev)"}
+    DOCS_ALIAS=${DOCS_ALIAS:-dev}
+else
+    DOCS_TITLE=${DOCS_TITLE:-"${DOCS_VERSION}"}
+    DOCS_ALIAS=${DOCS_ALIAS:-}
+fi
+
 # use mike to mkdocs w/ version
-mike deploy --config-file ./mkdocs.yml --title "6.7 (dev)" 6.7 dev --branch gh-pages --update-aliases
-mike set-default latest
+mike deploy --config-file ./mkdocs.yml --title "${DOCS_TITLE}" --branch gh-pages --update-aliases "${DOCS_VERSION}" ${DOCS_ALIAS}
+mike set-default latest --branch gh-pages
 
 # update docs on github
 git push origin gh-pages

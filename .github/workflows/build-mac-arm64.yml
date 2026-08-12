@@ -9,6 +9,17 @@ on:
     - '*'
   pull_request:
   workflow_dispatch:
+    inputs:
+      deploy_docs:
+        description: 'Deploy the docs for the selected ref (use with a release tag to rebuild a released version)'
+        type: boolean
+        required: false
+        default: false
+      docs_alias:
+        description: 'mike alias to move to this version (e.g. latest).  Leave blank for the default.'
+        type: string
+        required: false
+        default: ''
   schedule:
     - cron: '0 0 * * 0'
 
@@ -176,10 +187,12 @@ jobs:
              ${{runner.workspace}}/ShapeWorks/artifacts/*.pkg
 
     - name: Deploy Docs
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' || inputs.deploy_docs
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCS_REF: ${{ github.ref_name }}
+          DOCS_ALIAS: ${{ inputs.docs_alias }}
       
