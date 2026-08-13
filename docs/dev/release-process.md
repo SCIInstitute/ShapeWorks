@@ -84,4 +84,28 @@ released version by hand: run the **Mac Arm64 Build** workflow manually with the
 selected as the ref, `deploy_docs` checked, and `docs_alias` set to `latest`.  That rebuilds the
 release's docs from its tag and moves `latest` onto it.
 
+* Update `version.json` on the web server
+
+Studio checks for updates against `https://www.sci.utah.edu/~shapeworks/version.json`
+(`Studio/Interface/UpdateChecker.cpp`).  It reads the block for its own platform, compares
+`major`/`minor`/`patch` against the version compiled into the running build, and if the file is
+newer it shows a "New version available" dialog pointing at the GitHub releases page, followed by
+`message`.
+
+Until this file is updated **no existing installation is told the release exists**, so do it once
+the binaries are actually downloadable.  The file lives in the `shapeworks-www` checkout:
+
+```json
+{
+    "windows" : { "major": 6, "minor": 8, "patch": 0, "message": "6.8.0 has been released" },
+    "linux"   : { "major": 6, "minor": 8, "patch": 0, "message": "6.8.0 has been released" },
+    "macos"   : { "major": 6, "minor": 8, "patch": 0, "message": "6.8.0 has been released" }
+}
+```
+
+The three platform keys must be exactly `windows`, `linux` and `macos` — they are matched against
+`StudioUtils::get_platform_string()`.  A missing or misspelled key throws a JSON exception that is
+swallowed unless the check was triggered manually, so a typo here fails silently.  Platforms can
+hold different versions if a build is late, which is the reason for the per-platform blocks.
+
 
