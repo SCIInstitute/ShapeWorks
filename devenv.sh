@@ -11,7 +11,7 @@
 # compiled portion of the Python bindings).
 #
 
-SW_MAJOR_VERSION=6.8
+SW_MAJOR_VERSION=6.9
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
