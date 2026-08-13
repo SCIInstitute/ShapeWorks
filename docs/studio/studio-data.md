@@ -51,6 +51,8 @@ Follow the steps below to define cutting planes on an existing project:
 4. Now the newly defined cutting-plane constraint is active for the desired domain on the desired shape. This will show on the constraints panel. Now particles will not spread to the grayed out area.  
 ![Plane 6](../img/studio/plane6.png){: width="300" }
 
+The constraints panel lists each plane's center and normal, and those values are editable.  Type a new center or normal and the plane moves to match, which is the way to place a plane on exact coordinates rather than by clicking points on the surface.
+
 ## Defining Free-Form Constraints
 
 Follow the steps below to define free-form constraints on an existing project:

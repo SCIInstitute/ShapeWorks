@@ -1,6 +1,7 @@
 #include "StatusBarWidget.h"
 
 #include <QDebug>
+#include <QMouseEvent>
 #include <QResizeEvent>
 #include <QStatusBar>
 
@@ -25,7 +26,33 @@ StatusBarWidget::StatusBarWidget(QMainWindow* parent) : QWidget(parent) {
   ui_->log_button->setIcon(normal_message_icon_);
   ui_->progress_bar->setVisible(false);
 
+  // clicking the message clears it, for when a stale path or debug line is in the way
+  ui_->message->installEventFilter(this);
+  ui_->message->setToolTip("Click to clear this message");
+
   connect(ui_->log_button, &QToolButton::clicked, this, &StatusBarWidget::toggle_log_window);
+}
+
+//---------------------------------------------------------------------------
+bool StatusBarWidget::eventFilter(QObject* watched, QEvent* event) {
+  if (watched == ui_->message && event->type() == QEvent::MouseButtonPress) {
+    auto* mouse_event = static_cast<QMouseEvent*>(event);
+    if (mouse_event->button() == Qt::LeftButton && !ui_->message->text().isEmpty()) {
+      clear_message();
+      return true;
+    }
+  }
+  return QWidget::eventFilter(watched, event);
+}
+
+//---------------------------------------------------------------------------
+void StatusBarWidget::clear_message() {
+  ui_->message->clear();
+  ui_->message->setCursor(Qt::ArrowCursor);
+  // the icon reflects the severity of the displayed message, so it goes with it.
+  // History remains in the log window.
+  ui_->log_button->setIcon(normal_message_icon_);
+  update_layout();
 }
 
 //---------------------------------------------------------------------------
@@ -49,6 +76,8 @@ void StatusBarWidget::set_message(MessageType message_type, QString message) {
   }
 
   ui_->message->setText(message);
+  // hint that the message is clickable, but only while there is one to clear
+  ui_->message->setCursor(message.isEmpty() ? Qt::ArrowCursor : Qt::PointingHandCursor);
   update_layout();
 }
 

@@ -77,6 +77,16 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 
 ![ShapeWorks Studio Analysis View Panel PCA Display](../img/studio/studio_analyze_view_pca.png)
 
+### Regression
+
+The Regression tab fits shape against a numeric per-subject explanatory variable and shows the predicted shape at any value of it.  This is useful for variables that vary continuously across the cohort, such as age or time.
+
+Choose the variable from the **Explanatory Variable** dropdown, which lists the numeric per-subject columns in the project spreadsheet.  The slider then moves the predicted shape across the observed range of that variable, with the current value shown beneath it and the range end points labeled at either side.  The **Animate** checkbox sweeps the slider continuously.
+
+![ShapeWorks Studio Analysis View Panel Regression Display](../img/studio/studio_analyze_view_regression.png)
+
+The tab requires a numeric column with at least two subjects holding differing values.  If the project has no numeric per-subject columns, or the selected column is constant, the tab explains what is missing instead of displaying a shape — add a numeric column (e.g. age or time) to the project spreadsheet.
+
 ### Multi-Level PCA
 
 The PCA tab of the View panel shows options to select modes of variation in different subspaces when a multiple domain shape model is loaded:

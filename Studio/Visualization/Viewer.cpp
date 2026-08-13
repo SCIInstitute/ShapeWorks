@@ -185,7 +185,10 @@ Viewer::Viewer() {
   bounding_box_actor_ = vtkSmartPointer<vtkActor>::New();
   bounding_box_actor_->SetMapper(bounding_box_mapper_);
   bounding_box_actor_->GetProperty()->SetColor(1.0, 1.0, 0.0);
-  bounding_box_actor_->GetProperty()->SetLineWidth(1.5);
+  // Wide enough that FXAA does not treat the edge as a subpixel feature and blend it away in
+  // patches. Tubes are deliberately not used here: they are shaded as cylinders, which puts a
+  // white specular highlight along a yellow line.
+  bounding_box_actor_->GetProperty()->SetLineWidth(2.5);
   bounding_box_actor_->GetProperty()->LightingOff();
   bounding_box_actor_->PickableOff();
 
@@ -193,9 +196,11 @@ Viewer::Viewer() {
   // This reads correctly in a perspective view (unlike a 2D legend scale bar). Bounds and camera
   // are set in update_actors(). White axes/labels to match the dark viewer background.
   scale_bar_actor_ = vtkSmartPointer<vtkCubeAxesActor>::New();
-  // Closest-triad mode draws a single ruler per axis (meeting at the corner nearest the camera).
-  // Outer-edges mode draws two rulers per axis, whose labels overlap in near-axis-aligned views.
-  scale_bar_actor_->SetFlyModeToClosestTriad();
+  // Outer-edges mode keeps the rulers on the silhouette edges of the box, so the labels sit
+  // outside the shape: neither drawn across it (closest triad, whose corner is in front of the
+  // geometry) nor hidden behind it (furthest triad). The cost is that a near-axis-aligned view
+  // can show two rulers for an axis, with labels close together.
+  scale_bar_actor_->SetFlyModeToOuterEdges();
   scale_bar_actor_->XAxisMinorTickVisibilityOff();
   scale_bar_actor_->YAxisMinorTickVisibilityOff();
   scale_bar_actor_->ZAxisMinorTickVisibilityOff();

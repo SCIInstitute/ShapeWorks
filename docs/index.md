@@ -23,7 +23,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
  <!--![](img/about/release6.3.png)-->
  <!--![](img/about/release6.4.png)-->
  <!--![](img/about/release6.6.png)-->
-![](img/about/release6.7.png)
+ <!--![](img/about/release6.7.png)-->
+![](img/about/release6.8.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -78,8 +79,11 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
+*ShapeWorks 6.8 tour - Bundled Python, Large-Cohort Speedups, Registration-Based Initialization, Correspondence Quality, Regression Analysis, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.8.mp4" autoplay muted loop controls style="width:100%"></p>
+
 *ShapeWorks 6.7 tour - DeepSSM CLI, DWD Group Analysis, Laplacian Mesh Warping, Fixed Domain Speedups, and more ...*
-<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.7.mp4" autoplay muted loop controls style="width:100%"></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.7.mp4" muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.6 tour - MONAI Label, Shared Boundaries, Java/MATLAB, Segmentation Tools, Particle to Surface Metrics, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.6.mp4" muted loop controls style="width:100%"></p>

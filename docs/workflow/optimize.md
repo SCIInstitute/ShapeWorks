@@ -187,6 +187,33 @@ Higher regularization values would undermine the ensemble's underlying covarianc
 *This regularization can be considered as having a Gaussian ball in the shape space. Starting regularization pushes all samples to the mean and hides the underlying “unoptimized” covariance structure. Ending regularization should be small enough to reveal the optimized covariance structure.*
 ![Starting and ending regularization](../img/workflow/regularization.png)
 
+### Early Stopping
+
+Optimization normally runs for the full `optimization_iterations` you request. Early stopping instead watches the model for convergence and stops once it has settled, which avoids paying for iterations that no longer change the result.
+
+Convergence is judged by a *morphological deviation score* computed periodically over the particle system. When that score stops changing by more than a threshold across a window of consecutive checks, the run stops.
+
+Early stopping is **off by default**. Enable it with `early_stopping_enabled`:
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `early_stopping_enabled` | `false` | Turn early stopping on. |
+| `early_stopping_warmup_iters` | `1000` | Iterations to run before any convergence check, so the model is not judged while it is still settling. |
+| `early_stopping_frequency` | `1000` | How often, in iterations, to compute the score. |
+| `early_stopping_window` | `5` | Number of consecutive checks that must all be below the threshold before stopping. |
+| `early_stopping_threshold` | `0.0001` | Change in score below which a check counts as converged. Lower is stricter. |
+| `early_stopping_strategy` | `relative_difference` | `relative_difference` compares consecutive scores directly; `exponential_moving_average` smooths them first, which is more tolerant of a noisy score. |
+| `early_stopping_ema_alpha` | `0.2` | Smoothing factor for the `exponential_moving_average` strategy. Lower means heavier smoothing. |
+| `early_stopping_enable_logging` | `false` | Log the score, its difference, and per-subject convergence at every check. Useful for picking a threshold. |
+
+If a run stops earlier than you expect, raise `early_stopping_window` or lower `early_stopping_threshold`; if it never stops, do the reverse, and turn on `early_stopping_enable_logging` to see what the score is actually doing.
+
+### Geodesic Remeshing
+
+When geodesic distances are enabled on mesh domains, `geodesic_remesh_percent` (default `100`) controls the resolution of the surface geodesics are computed on. It is a percentage of the original vertex count, so `100` uses the mesh as-is and smaller values compute geodesics on a decimated copy while particles remain on the full-resolution surface.
+
+Reducing it trades geodesic accuracy for speed on dense meshes. Note that before 6.8 this value was misinterpreted, which inflated the mesh instead of decimating it and silently fell back to Euclidean distances; if you carried a value over from an older project, re-check it.
+
 ## Optimizing Correspondences 
 
 You can use either ShapeWorks Studio or `shapeworks optimize <parameters.xml>` or `shapeworks optimize <project.xlsx>` command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.

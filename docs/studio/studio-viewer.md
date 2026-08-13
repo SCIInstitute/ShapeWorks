@@ -7,14 +7,48 @@ At the bottom of the viewers are the controls for the viewers:
 Each button has tooltips with descriptions.  The controls from left to right are:
 
 * Autoview / reset view
+* Views dropdown for snapping the camera to an axis-aligned orientation
 * Cutting plane visibility
 * Landmark visibility
 * Glyph visibility with dropdown for glyph size and detail
-* Isosurface visibility with dropdown for surface opacity (of each domain)
+* Isosurface visibility with dropdown for surface opacity (of each domain), bounding box, and scale bar
 * View mode (original/groomed/reconstructed)
 * Align (whether to align each object based on the alignment strategy)
 * Compare mode (e.g. compare original vs groomed)
 * Number of views in lightbox (1,2,4,9,16,25,36,49,64)
+
+## Axis-aligned views
+
+The **Views** dropdown next to Reset View snaps the 3D camera to an axis-aligned orientation and fits it to the scene. The change applies to every viewer in the lightbox at once, so a multi-sample view stays consistent.
+
+Item labels follow the orientation-marker preference: when the medical cube marker is shown they are anatomical (Left, Right, Posterior, Anterior, Superior, Inferior); with the triad marker, or with no marker, they are axis labels (X+, X-, Y+, Y-, Z+, Z-).
+
+![Views dropdown](../img/studio/studio_viewer_views_menu.png){: width="300" }
+
+The same orientations are on the keyboard while the 3D view has focus — lower-case for the positive direction, shift for the negative:
+
+| Key | Axis | Anatomical |
+| --- | --- | --- |
+| `x` / `Shift+X` | X+ / X- | Left / Right |
+| `y` / `Shift+Y` | Y+ / Y- | Posterior / Anterior |
+| `z` / `Shift+Z` | Z+ / Z- | Superior / Inferior |
+
+## Bounding box and scale bar
+
+The isosurface visibility dropdown carries two display options for judging the physical size of the data:
+
+* **Show bounding box** — draws the bounding box of the displayed shape.
+* **Show scale bar** — overlays a labeled ruler in world coordinates, with a **Scale bar font** slider to size the labels.
+
+![Bounding box and scale bar](../img/studio/studio_viewer_bbox_scalebar.png)
+
+Both are preferences, so they persist across sessions.
+
+## Glyph sizing
+
+Glyph size is available from the glyph visibility dropdown, either set manually or left on auto.
+
+Both the slider and the automatic size scale to the largest dimension of the displayed shape rather than to a fixed range of world units. The slider spans 0.1% to 10% of that dimension, so glyphs stay usable on anatomies that are very small or very large. Auto sizing also works before optimization — with only initial landmarks or cutting-plane points placed, glyphs are sized from the shape's bounding box instead of from particles.
 
 ## Comparing mesh types
 

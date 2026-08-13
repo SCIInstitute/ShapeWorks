@@ -391,7 +391,7 @@ kiwisolver==1.4.9
     #   matplotlib
 lark==1.2.2
     # via rfc3987-syntax
-light-the-torch==0.8.0
+light-the-torch==0.8.1
     # via -r requirements.in
 lxml==6.1.0
     # via -r requirements.in
