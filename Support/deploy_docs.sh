@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -e
+
 # Don't run this script if you are not a GitHub Action
 
 if [[ -z "${GITHUB_TOKEN}" ]]; then
@@ -26,13 +28,11 @@ echo "pip list:"
 pip list
 
 # check that 'shapeworks -h' is working
-shapeworks -h
-if [ $? -eq 0 ]; then
-    echo "shapeworks -h is working"
-else
+if ! shapeworks -h; then
     echo "shapeworks -h is not working"
     exit 1
 fi
+echo "shapeworks -h is working"
 
 # install doxybook2
 ${GITHUB_WORKSPACE}/Support/build_docs.sh $INSTALL_DIR
@@ -47,10 +47,11 @@ git reset --hard HEAD
 git remote rm origin
 git remote add origin "${remote_repo}"
 
-# get remote gh-pages branch
+# Make gh-pages available locally for mike, but do not check it out.  nbstripout
+# installs an *.ipynb clean filter into .git/info/attributes, which applies on
+# every branch, so checking out gh-pages leaves the notebooks it publishes dirty
+# and the working tree can never be switched back off of it.
 git fetch origin gh-pages
-git checkout --track origin/gh-pages
-git pull --rebase
 
 # build docs from the requested ref
 git checkout ${DOCS_REF}
