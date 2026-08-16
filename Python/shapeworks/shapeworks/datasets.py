@@ -18,15 +18,18 @@ Pinning the checksums here rather than reading them from the server is also what
 makes verification worth doing, since a bad re-upload cannot rewrite the hash it is
 checked against.
 
+Downloads resume, within a run and across runs, from the bytes already on disk.
+
 Set SW_DATA_URL to point at a different server or a local mirror when testing.
 Archives are built by Support/build_dataset_archives.py.
 """
 import hashlib
+import http.client
 import json
 import os
+import socket
 import ssl
 import sys
-import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -36,10 +39,19 @@ import zipfile
 INDEX_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasets.json")
 
 _CHUNK = 1024 * 256
-_RETRIES = 3
-_TIMEOUT = 60
+_TIMEOUT = 60           # seconds one read may stall
+_STALLED_RETRIES = 6    # consecutive attempts moving no bytes before giving up
+_MAX_ATTEMPTS = 40
+_MAX_BACKOFF = 30
+_REPORT_EVERY = 30      # seconds between progress lines in a log
+
+# socket.timeout only aliases TimeoutError from Python 3.10 on.
+_TRANSIENT = (urllib.error.URLError, http.client.HTTPException, ssl.SSLError,
+              socket.timeout, TimeoutError, ConnectionError, EOFError)
+_RETRY_STATUS = (408, 425, 429, 500, 502, 503, 504)
 
 _index_cache = None
+_reported = [0.0]
 
 
 def get_index():
@@ -62,67 +74,146 @@ def base_url():
     return url if url.endswith("/") else url + "/"
 
 
-def _open(url):
-    """Open a URL, retrying transient failures."""
-    last = None
-    for attempt in range(_RETRIES):
-        try:
-            return urllib.request.urlopen(url, timeout=_TIMEOUT)
-        except (urllib.error.URLError, ssl.SSLError, TimeoutError) as e:
-            last = e
-            if attempt < _RETRIES - 1:
-                time.sleep(2 ** attempt)
-    raise RuntimeError(f"Could not reach {url}\n  {last}\n"
-                       f"Check your network connection, or set $SW_DATA_URL to a mirror.")
-
-
 def list_datasets():
     """Names of every dataset this release knows how to download."""
     return sorted(get_index().get("datasets", {}))
 
 
 def _progress(name, done, total):
-    if not sys.stdout.isatty():
-        return
-    if total:
-        pct = 100.0 * done / total
-        sys.stdout.write(f"\r  {name}: {pct:5.1f}%  "
-                         f"({done / 1e6:.1f} / {total / 1e6:.1f} MB)")
+    """Report progress: continuously on a terminal, every _REPORT_EVERY seconds in a log."""
+    now = time.monotonic()
+    if sys.stdout.isatty():
+        line_end = "\r"
+    elif now - _reported[0] >= _REPORT_EVERY:
+        line_end = "\n"
     else:
-        sys.stdout.write(f"\r  {name}: {done / 1e6:.1f} MB")
+        return
+    _reported[0] = now
+    if total:
+        sys.stdout.write(f"  {name}: {100.0 * done / total:5.1f}%  "
+                         f"({done / 1e6:.1f} / {total / 1e6:.1f} MB){line_end}")
+    else:
+        sys.stdout.write(f"  {name}: {done / 1e6:.1f} MB{line_end}")
     sys.stdout.flush()
 
 
-def _download(url, destination, name, expected_size):
-    """Stream a URL to disk, returning its sha256."""
+def _size(path):
+    return os.path.getsize(path) if os.path.exists(path) else 0
+
+
+def _sha256(path):
     digest = hashlib.sha256()
-    downloaded = 0
-    with _open(url) as response:
-        total = expected_size or int(response.headers.get("Content-Length") or 0)
-        with open(destination, "wb") as out:
+    with open(path, "rb") as fh:
+        for block in iter(lambda: fh.read(_CHUNK), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _transient(error):
+    """Whether another attempt could get past this failure."""
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code in _RETRY_STATUS
+    return isinstance(error, _TRANSIENT)
+
+
+def _stream(url, destination, name, total, tag):
+    """One attempt at fetching url, appending to whatever destination already holds.
+
+    total and tag (length and ETag) carry over between attempts. Returns the bytes on
+    disk, short of total if the connection dropped.
+    """
+    have = _size(destination)
+    request = urllib.request.Request(url)
+    if have:
+        request.add_header("Range", f"bytes={have}-")
+        if tag:
+            # A changed archive answers 200, not 206, so we start over rather than
+            # splice two different downloads together.
+            request.add_header("If-Range", tag)
+
+    with urllib.request.urlopen(request, timeout=_TIMEOUT) as response:
+        tag = response.headers.get("ETag") or tag
+        length = int(response.headers.get("Content-Length") or 0)
+        if response.getcode() != 206:
+            have = 0  # not partial content: start over
+        total = total or (have + length)
+        with open(destination, "ab" if have else "wb") as out:
             while True:
                 chunk = response.read(_CHUNK)
                 if not chunk:
                     break
                 out.write(chunk)
-                digest.update(chunk)
-                downloaded += len(chunk)
-                _progress(name, downloaded, total)
+                have += len(chunk)
+                _progress(name, have, total)
+    return have, total, tag
+
+
+def _download(url, destination, name, expected_size):
+    """Fetch a URL to disk and return its sha256.
+
+    Each attempt resumes from the bytes already on disk, and the partial file is left
+    behind when we give up.
+    """
+    total = expected_size or 0
+    tag = None
+    have = _size(destination)
+    stalled = 0
+    problem = None
+
+    for attempt in range(_MAX_ATTEMPTS):
+        before = have
+        try:
+            have, total, tag = _stream(url, destination, name, total, tag)
+            if have >= total:
+                break
+            problem = f"connection closed after {have} of {total} bytes"
+        except _TRANSIENT as e:
+            if isinstance(e, urllib.error.HTTPError) and e.code == 416:
+                # A partial longer than the archive cannot belong to it.
+                os.remove(destination)
+                total = expected_size or 0
+                tag = None
+            elif not _transient(e):
+                raise RuntimeError(f"Could not download {url}\n  {e}\n"
+                                   f"Set $SW_DATA_URL to a mirror if the server has "
+                                   f"moved.") from None
+            have = _size(destination)
+            problem = str(e) or e.__class__.__name__
+
+        stalled = 0 if have > before else stalled + 1
+        if stalled >= _STALLED_RETRIES:
+            problem = f"{problem} (nothing transferred in {stalled} attempts)"
+            break
+        if attempt + 1 >= _MAX_ATTEMPTS:
+            problem = f"{problem} (gave up after {_MAX_ATTEMPTS} attempts)"
+            break
+        delay = min(_MAX_BACKOFF, 2 ** stalled)
+        if sys.stdout.isatty():
+            sys.stdout.write("\n")
+        print(f"  {name}: {problem}; resuming in {delay}s "
+              f"(attempt {attempt + 2} of {_MAX_ATTEMPTS})", flush=True)
+        time.sleep(delay)
+
     if sys.stdout.isatty():
         sys.stdout.write("\n")
-    if expected_size and downloaded != expected_size:
+    if have < total or (expected_size and have != expected_size):
         raise RuntimeError(
-            f"{name}: download truncated, got {downloaded} bytes, expected {expected_size}")
-    return digest.hexdigest()
+            f"Could not download {name} from {url}\n  {problem}\n"
+            f"{_size(destination) / 1e6:.1f} MB were kept in {destination}, so running "
+            f"this again resumes rather than starting over.\n"
+            f"Check your network connection, or set $SW_DATA_URL to a mirror.")
+    return _sha256(destination)
 
 
 def _read_marker(path):
-    """Return what a previous download recorded, or None."""
+    """What a previous download recorded, or {} for the empty markers older releases and
+    the CI tiny test cache wrote."""
     try:
         with open(path) as fh:
             return json.load(fh)
-    except (OSError, json.JSONDecodeError):
-        # Pre-existing marker files were empty, so treat them as unknown content.
+    except json.JSONDecodeError:
+        return {}
+    except OSError:
         return None
 
 
@@ -136,6 +227,8 @@ def download_dataset(datasetName, outputDirectory, force=False):
     The marker records the checksum that was installed, so pointing this release at
     a newer version of a dataset makes the next run replace it instead of quietly
     reusing whatever is already on disk.
+
+    A download that gives up leaves its partial archive behind for the next run.
     """
     marker = os.path.join("Output", datasetName + ".downloaded")
     installed = _read_marker(marker) if os.path.exists(marker) else None
@@ -147,14 +240,16 @@ def download_dataset(datasetName, outputDirectory, force=False):
             f"Available datasets:\n    " + "\n    ".join(sorted(datasets)))
 
     entry = datasets[datasetName]
+    recorded = installed.get("sha256") if installed is not None else None
 
-    # Nothing here touches the network, so re-running a use case works offline.
-    if installed and not force and installed.get("sha256") == entry.get("sha256"):
+    # Nothing here touches the network, so re-running a use case works offline. A marker
+    # naming no checksum is taken at its word: CI pre-populates the tiny test data.
+    if installed is not None and not force and recorded in (None, entry.get("sha256")):
         print(f"Dataset {datasetName} already downloaded ({marker} exists)")
         if os.environ.get("SW_PORTAL_DOWNLOAD_ONLY") == "1":
             sys.exit(0)
         return
-    if installed and installed.get("sha256") != entry.get("sha256"):
+    if recorded and recorded != entry.get("sha256"):
         print(f"Dataset {datasetName} is pinned to {entry['file']}, downloading it")
 
     url = urllib.parse.urljoin(base_url(), entry["file"])
@@ -162,22 +257,25 @@ def download_dataset(datasetName, outputDirectory, force=False):
     os.makedirs(os.path.dirname(marker) or ".", exist_ok=True)
 
     print(f"Downloading {datasetName} from {url}")
-    handle, temporary = tempfile.mkstemp(suffix=".zip", prefix=datasetName + "-",
-                                         dir=outputDirectory)
-    os.close(handle)
+    partial = os.path.join(outputDirectory, entry["file"] + ".part")
+    if os.path.exists(partial):
+        print(f"Resuming from {_size(partial) / 1e6:.1f} MB already in {partial}")
+
+    # Kept on a failed download so the next run resumes, removed once judged.
+    actual = _download(url, partial, datasetName, entry.get("size"))
     try:
-        actual = _download(url, temporary, datasetName, entry.get("size"))
         expected = entry.get("sha256")
         if expected and actual != expected:
             raise RuntimeError(
                 f"{datasetName}: checksum mismatch for {entry['file']}\n"
                 f"  expected {expected}\n  got      {actual}\n"
-                f"The copy on the server does not match what this release of "
-                f"ShapeWorks was built against. Published archives are immutable, "
-                f"so {entry['file']} was either overwritten or is corrupt.")
+                f"The bytes we ended up with do not match what this release of "
+                f"ShapeWorks was built against. Published archives are immutable, so "
+                f"{entry['file']} was either overwritten on the server or arrived "
+                f"corrupt. It has been discarded, so running this again starts fresh.")
 
         print(f"Extracting {datasetName} to {outputDirectory}")
-        with zipfile.ZipFile(temporary) as archive:
+        with zipfile.ZipFile(partial) as archive:
             members = [m for m in archive.namelist() if not m.endswith("/")]
             archive.extractall(outputDirectory)
 
@@ -187,8 +285,8 @@ def download_dataset(datasetName, outputDirectory, force=False):
                 f"{datasetName}: archive holds {len(members)} files, "
                 f"datasets.json expects {expected_files}. The archive needs rebuilding.")
     finally:
-        if os.path.exists(temporary):
-            os.remove(temporary)
+        if os.path.exists(partial):
+            os.remove(partial)
 
     with open(marker, "w") as fh:
         json.dump({"dataset": datasetName, "sha256": entry.get("sha256"),
