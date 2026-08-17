@@ -75,20 +75,51 @@ fi
 DOCS_VERSION="${SW_MAJOR}.${SW_MINOR}"
 
 # master is the development version, so it is titled "<version> (dev)" and owns
-# the "dev" alias.  Anything else is a release rebuild and gets a plain title.
-# "latest" always points at the most recently released version; it is moved by
-# rebuilding that release's docs with DOCS_ALIAS=latest.
+# the "dev" alias.  Anything else is a release rebuild.  "latest" always points at
+# the most recently released version; it is moved by rebuilding that release's docs
+# with DOCS_ALIAS=latest, and that version is titled "<version> (latest)" so the
+# version selector says which one the site redirects to.
 if [ "${DOCS_REF}" = "master" ]; then
     DOCS_TITLE=${DOCS_TITLE:-"${DOCS_VERSION} (dev)"}
     DOCS_ALIAS=${DOCS_ALIAS:-dev}
+elif [ "${DOCS_ALIAS}" = "latest" ]; then
+    DOCS_TITLE=${DOCS_TITLE:-"${DOCS_VERSION} (latest)"}
 else
     DOCS_TITLE=${DOCS_TITLE:-"${DOCS_VERSION}"}
-    DOCS_ALIAS=${DOCS_ALIAS:-}
+fi
+
+# A master build must never publish over a version that has already shipped.  That
+# happens whenever master's version number has not been bumped past the release,
+# and it is how the 6.7 docs ended up serving 6.8 content.
+if [ "${DOCS_REF}" = "master" ] && mike list --branch gh-pages --json |
+        DOCS_VERSION="${DOCS_VERSION}" python -c '
+import json, os, sys
+released = [v for v in json.load(sys.stdin)
+            if v["version"] == os.environ["DOCS_VERSION"] and "latest" in v["aliases"]]
+sys.exit(0 if released else 1)'; then
+    echo "Refusing to publish master over ${DOCS_VERSION}, which is the released 'latest' version."
+    echo "Bump SHAPEWORKS_MAJOR_VERSION/SHAPEWORKS_MINOR_VERSION in CMakeLists.txt on master."
+    exit 1
 fi
 
 # use mike to mkdocs w/ version
 mike deploy --config-file ./mkdocs.yml --title "${DOCS_TITLE}" --branch gh-pages --update-aliases "${DOCS_VERSION}" ${DOCS_ALIAS}
 mike set-default latest --branch gh-pages
+
+# mike only titles the version it deploys, so the version that just lost the
+# "latest" alias would keep the "(latest)" suffix forever.  Strip it.
+if [ "${DOCS_ALIAS}" = "latest" ]; then
+    mike list --branch gh-pages --json |
+        DOCS_VERSION="${DOCS_VERSION}" python -c '
+import json, os, sys
+suffix = " (latest)"
+for v in json.load(sys.stdin):
+    if v["version"] != os.environ["DOCS_VERSION"] and v["title"].endswith(suffix):
+        print("%s\t%s" % (v["version"], v["title"][:-len(suffix)]))' |
+        while IFS=$'\t' read -r stale_version stale_title; do
+            mike retitle --branch gh-pages "${stale_version}" "${stale_title}"
+        done
+fi
 
 # update docs on github
 git push origin gh-pages
