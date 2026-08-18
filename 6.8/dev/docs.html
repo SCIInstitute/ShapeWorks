@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/dev/docs.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/dev/docs.html">
       
       
         <link rel="prev" href="new-notebook.html">
@@ -3926,6 +3926,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deploying on GitHub Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versioned-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioned Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -4676,6 +4693,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deploying on GitHub Pages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versioned-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioned Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -4841,6 +4875,17 @@
 <p class="admonition-title">Do not edit gh-pages</p>
 <p>Never manually edit files on the <code>gh-pages</code> branch because you will lose your work the next time the docs are deployed.</p>
 </div>
+<h3 id="versioned-documentation">Versioned Documentation</h3>
+<p>The site is versioned with <a href="https://github.com/jimporter/mike">mike</a>, which keeps one published
+version per minor release plus two aliases:</p>
+<ul>
+<li><code>dev</code> always points at the development version, i.e. whatever <code>CMakeLists.txt</code> says on <code>master</code>.
+  Every build of <code>master</code> publishes there and titles it <code>&lt;version&gt; (dev)</code> in the version dropdown.</li>
+<li><code>latest</code> points at the most recent <em>release</em>, and is what <code>https://sciinstitute.github.io/ShapeWorks/</code>
+  redirects to. It is moved by hand as part of the <a href="release-process.html">release process</a>.</li>
+</ul>
+<p>Because the version comes from <code>CMakeLists.txt</code>, bumping the version after a release is all that is
+needed to start publishing a new dev version; <code>Support/deploy_docs.sh</code> does not need to be edited.</p>
 <h2 id="contributing-to-documentation">Contributing to Documentation</h2>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -4938,7 +4983,6 @@
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

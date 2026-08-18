@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/use-cases/deep-learning-based/deep-ssm-femur.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/use-cases/deep-learning-based/deep-ssm-femur.html">
       
       
         <link rel="prev" href="../stats-based/ellipsoid-evaluate.html">
@@ -4912,7 +4912,7 @@
 <h2 id="use-case-pipeline">Use Case Pipeline</h2>
 <p>The use case pipeline includes creation of a training, validation, and testing sets. This involves particle optimization, image grooming, and <a href="../../deep-learning/data-augmentation.html">data augmentation</a>. Additionally, the use case demonstrates creating and training a <a href="../../deep-learning/deep-ssm.html">DeepSSM network</a> using ShapeWorks Python packages. For a full explanation of these packages see <a href="../../deep-learning/data-augmentation.html#Using-the-Data-Augmentation-Package">Using the Data Augmentation Python Package</a> and <a href="../../deep-learning/deep-ssm.html#Using-the-DeepSSM-Python-Package">Using the DeepSSM Python Package</a>. Each step of the pipeline is outlined below.</p>
 <h3 id="step-1-getting-the-original-data">Step 1: Getting the original data</h3>
-<p>The femur data is downloaded from the <a href="https://girder.shapeworks-cloud.org">ShapeWorks Data Portal</a>. The data includes the original unsegmented <code>.nrrd</code> images, corresponding <code>.ply</code> mesh files, and <code>.json</code> constraint files with cutting planes. Below is one example of an MRI (blue), mesh (white), and corrresponding cutting plane (green).
+<p>The femur data is downloaded from the <a href="https://www.sci.utah.edu/~shapeworks/data-sets/">ShapeWorks data server</a>. The data includes the original unsegmented <code>.nrrd</code> images, corresponding <code>.ply</code> mesh files, and <code>.json</code> constraint files with cutting planes. Below is one example of an MRI (blue), mesh (white), and corrresponding cutting plane (green).
 <img alt="Femur Data Example" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_data.png" /></p>
 <h3 id="step-2-define-the-data-split">Step 2: Define the data split</h3>
 <p>The data is randomly split into training (80%), validation (10%), and test (10%) sets. Of the 49 examples in the femur dataset, 39 are used to create training set, 5 are held out for the validation set, and the remaining 5 are held out for a test set. If running <code>--tiny_test</code> only 5 samples are downloaded and 3 are used in training, 1 for validation, and 1 for testing. </p>
@@ -5026,7 +5026,6 @@ The functions relevant to this step are <a href="../../deep-learning/deep-ssm.ht
       <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

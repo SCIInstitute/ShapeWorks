@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/dev/new-use-case.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/dev/new-use-case.html">
       
       
         <link rel="prev" href="tests.html">
@@ -3851,6 +3851,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#changing-an-existing-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing an existing dataset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-case-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4591,6 +4602,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#changing-an-existing-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing an existing dataset
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-case-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4639,8 +4661,22 @@
 <h2 id="use-case-dataset">Use case dataset</h2>
 <p>To add the dataset associated with the new use case:</p>
 <ul>
-<li>Upload the datset to ShapeWorks Cloud</li>
+<li>Place the data in the local dataset export, laid out exactly as the use case globs for it</li>
+<li>Add an entry for it to <code>DATASETS</code> in <code>Support/build_dataset_archives.py</code></li>
+<li>Run <code>python3 Support/build_dataset_archives.py --only &lt;dataset-name&gt;</code> to build the archive and update the pinned table</li>
+<li>Run <code>python3 Support/verify_dataset_archives.py</code> to confirm the archive contains the paths the use case globs for</li>
+<li>Upload the new <code>.zip</code> to the data server, and commit the regenerated <code>Python/shapeworks/shapeworks/datasets.json</code></li>
 </ul>
+<p>The use case then downloads it by name via <code>sw.download_dataset(&lt;dataset-name&gt;, output_directory)</code>.</p>
+<h2 id="changing-an-existing-dataset">Changing an existing dataset</h2>
+<p>Archives are versioned per dataset, not as one numbered directory, so only the dataset that changed is rebuilt and re-uploaded:</p>
+<ul>
+<li>Bump that dataset's <code>version</code> in <code>DATASETS</code></li>
+<li>Rebuild it, upload the resulting <code>&lt;dataset-name&gt;-v&lt;version&gt;.zip</code>, and commit the regenerated <code>datasets.json</code></li>
+</ul>
+<p>Every other dataset keeps the file it already had. Archives are immutable once published: nothing is ever overwritten in place, so the previous version stays on the server.</p>
+<p>Which archive a dataset name resolves to is decided by <code>datasets.json</code> in the source tree, not by anything on the server. That is what keeps older releases working — a release downloads exactly the data it shipped against, and publishing a new version for <code>master</code> cannot change what a release branch gets. Rolling back is a revert of that file. Users on the release you updated pick the new data up on their next run, because it compares the checksum it installed against the pinned one.</p>
+<p>Pinning the checksums in the source tree rather than fetching them alongside the data is also what makes the integrity check meaningful: a bad re-upload cannot rewrite the hash it is checked against.</p>
 <h2 id="use-case-documentation">Use case documentation</h2>
 <p>To add the documentation of the new dataset, add a markdown file <code>&lt;use-case-name&gt;.md</code> in <code>docs/use-cases</code> with the following structure. Please use the <a href="docs.html#naming-and-organization">Naming and Organization</a> conventions currently deployed for ShapeWorks documentation. Then, add a corresponding entry in <code>mkdocs.yml</code>.</p>
 <div class="admonition important">
@@ -4719,7 +4755,6 @@
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

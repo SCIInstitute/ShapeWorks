@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/workflow/optimize.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/workflow/optimize.html">
       
       
         <link rel="prev" href="groom.html">
@@ -972,6 +972,28 @@
     <span class="md-ellipsis">
       
         Starting and Ending Regularization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#early-stopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Early Stopping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-remeshing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geodesic Remeshing
       
     </span>
   </a>
@@ -4887,6 +4909,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#early-stopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Early Stopping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geodesic-remeshing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geodesic Remeshing
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5117,6 +5161,65 @@ cohorts whose shapes differ substantially.</p>
 <p>Higher regularization values would undermine the ensemble's underlying covariance structure and favors all shapes to converge to the mean shape. Hence, it is recommended to use starting regularization value as ~5% of the covariance matrix's expected highest eigenvalue while ending regularization can be taken as ten times less than the starting value.</p>
 <p><em>This regularization can be considered as having a Gaussian ball in the shape space. Starting regularization pushes all samples to the mean and hides the underlying “unoptimized” covariance structure. Ending regularization should be small enough to reveal the optimized covariance structure.</em>
 <img alt="Starting and ending regularization" src="../img/workflow/regularization.png" /></p>
+<h3 id="early-stopping">Early Stopping</h3>
+<p>Optimization normally runs for the full <code>optimization_iterations</code> you request. Early stopping instead watches the model for convergence and stops once it has settled, which avoids paying for iterations that no longer change the result.</p>
+<p>Convergence is judged by a <em>morphological deviation score</em> computed periodically over the particle system. When that score stops changing by more than a threshold across a window of consecutive checks, the run stops.</p>
+<p>Early stopping is <strong>off by default</strong>. Enable it with <code>early_stopping_enabled</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>early_stopping_enabled</code></td>
+<td><code>false</code></td>
+<td>Turn early stopping on.</td>
+</tr>
+<tr>
+<td><code>early_stopping_warmup_iters</code></td>
+<td><code>1000</code></td>
+<td>Iterations to run before any convergence check, so the model is not judged while it is still settling.</td>
+</tr>
+<tr>
+<td><code>early_stopping_frequency</code></td>
+<td><code>1000</code></td>
+<td>How often, in iterations, to compute the score.</td>
+</tr>
+<tr>
+<td><code>early_stopping_window</code></td>
+<td><code>5</code></td>
+<td>Number of consecutive checks that must all be below the threshold before stopping.</td>
+</tr>
+<tr>
+<td><code>early_stopping_threshold</code></td>
+<td><code>0.0001</code></td>
+<td>Change in score below which a check counts as converged. Lower is stricter.</td>
+</tr>
+<tr>
+<td><code>early_stopping_strategy</code></td>
+<td><code>relative_difference</code></td>
+<td><code>relative_difference</code> compares consecutive scores directly; <code>exponential_moving_average</code> smooths them first, which is more tolerant of a noisy score.</td>
+</tr>
+<tr>
+<td><code>early_stopping_ema_alpha</code></td>
+<td><code>0.2</code></td>
+<td>Smoothing factor for the <code>exponential_moving_average</code> strategy. Lower means heavier smoothing.</td>
+</tr>
+<tr>
+<td><code>early_stopping_enable_logging</code></td>
+<td><code>false</code></td>
+<td>Log the score, its difference, and per-subject convergence at every check. Useful for picking a threshold.</td>
+</tr>
+</tbody>
+</table>
+<p>If a run stops earlier than you expect, raise <code>early_stopping_window</code> or lower <code>early_stopping_threshold</code>; if it never stops, do the reverse, and turn on <code>early_stopping_enable_logging</code> to see what the score is actually doing.</p>
+<h3 id="geodesic-remeshing">Geodesic Remeshing</h3>
+<p>When geodesic distances are enabled on mesh domains, <code>geodesic_remesh_percent</code> (default <code>100</code>) controls the resolution of the surface geodesics are computed on. It is a percentage of the original vertex count, so <code>100</code> uses the mesh as-is and smaller values compute geodesics on a decimated copy while particles remain on the full-resolution surface.</p>
+<p>Reducing it trades geodesic accuracy for speed on dense meshes. Note that before 6.8 this value was misinterpreted, which inflated the mesh instead of decimating it and silently fell back to Euclidean distances; if you carried a value over from an older project, re-check it.</p>
 <h2 id="optimizing-correspondences">Optimizing Correspondences</h2>
 <p>You can use either ShapeWorks Studio or <code>shapeworks optimize &lt;parameters.xml&gt;</code> or <code>shapeworks optimize &lt;project.xlsx&gt;</code> command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.</p>
 <p>See the <img alt="parameters page" src="parameters.html" /> for details regarding the XML file and project file format. </p>
@@ -5221,7 +5324,6 @@ cohorts whose shapes differ substantially.</p>
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

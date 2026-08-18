@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/studio/studio-analyze.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/studio/studio-analyze.html">
       
       
         <link rel="prev" href="studio-optimize.html">
@@ -1551,6 +1551,17 @@
     <span class="md-ellipsis">
       
         PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression
       
     </span>
   </a>
@@ -4813,6 +4824,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#multi-level-pca" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4999,6 +5021,11 @@
 <p><code>Lambda</code> - This shows the PCA loading of current position of the slider.  The middle of the slider, at the mean value, will be 0.  The extent of lambda is defined by the number of standard deviations of the slider as described above.  At standard deviation of 1.0, it will be the square root of the mode's eigenvalue.</p>
 <p><code>Eigenvalue</code> - This shows the eigenvalue of the currently selected mode.  This is a unitless measure of how much variance is explained by this mode.  The modes are sorted in decreasing order of eigenvalue, corresponding to the most variance explained first.</p>
 <p><img alt="ShapeWorks Studio Analysis View Panel PCA Display" src="../img/studio/studio_analyze_view_pca.png" /></p>
+<h3 id="regression">Regression</h3>
+<p>The Regression tab fits shape against a numeric per-subject explanatory variable and shows the predicted shape at any value of it.  This is useful for variables that vary continuously across the cohort, such as age or time.</p>
+<p>Choose the variable from the <strong>Explanatory Variable</strong> dropdown, which lists the numeric per-subject columns in the project spreadsheet.  The slider then moves the predicted shape across the observed range of that variable, with the current value shown beneath it and the range end points labeled at either side.  The <strong>Animate</strong> checkbox sweeps the slider continuously.</p>
+<p><img alt="ShapeWorks Studio Analysis View Panel Regression Display" src="../img/studio/studio_analyze_view_regression.png" /></p>
+<p>The tab requires a numeric column with at least two subjects holding differing values.  If the project has no numeric per-subject columns, or the selected column is constant, the tab explains what is missing instead of displaying a shape — add a numeric column (e.g. age or time) to the project spreadsheet.</p>
 <h3 id="multi-level-pca">Multi-Level PCA</h3>
 <p>The PCA tab of the View panel shows options to select modes of variation in different subspaces when a multiple domain shape model is loaded:
 <img alt="ShapeWorks Studio Analysis View Panel PCA Display for Multiple-Domain Shape Model" src="../img/studio/studio_analyze_view_pca_multiple_domain.png" /></p>
@@ -5102,7 +5129,6 @@
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

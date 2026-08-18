@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/notebooks/getting-started-with-exploring-segmentations.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/notebooks/getting-started-with-exploring-segmentations.html">
       
       
         <link rel="prev" href="getting-started-with-meshes.html">
@@ -5707,11 +5707,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1-defining-and-exploring-your-dataset">¶</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">¶</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
-<p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
-After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
-<p><strong>This notebook assumes that you have downloaded <code>ellipsoid_1mode</code> and you have placed the unzipped folder <code>ellipsoid_1mode</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
-<p><video autoplay="" controls="" loop="" muted="" src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" style="width:100%"></video></p>
+<h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1-defining-and-exploring-your-dataset">¶</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">¶</a></h3><p>The tutorial datasets are published on the ShapeWorks data server and are downloaded directly over HTTPS. No account, login, or registration is needed.</p>
+<p>The cell below downloads <a href="https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v2/ellipsoid_1mode.zip"><code>ellipsoid_1mode</code></a> (85 MB) into <code>Examples/Python/Data/</code> and extracts it, unless it is already there. This notebook uses the <code>segmentations</code> folder inside it. Feel free to use your own dataset instead.</p>
 </div>
 </div>
 </div>
@@ -5725,6 +5722,69 @@ After you download the dataset zip file, make sure you unzip/extract the content
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+
+<span class="n">datasetName</span> <span class="o">=</span> <span class="s1">'ellipsoid_1mode'</span>
+<span class="n">dataDir</span> <span class="o">=</span> <span class="s1">'../../Data/'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v2/'</span> <span class="o">+</span> <span class="n">datasetName</span> <span class="o">+</span> <span class="s1">'.zip'</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dataDir</span> <span class="o">+</span> <span class="n">datasetName</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dataDir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">archive</span> <span class="o">=</span> <span class="n">dataDir</span> <span class="o">+</span> <span class="n">datasetName</span> <span class="o">+</span> <span class="s1">'.zip'</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Downloading '</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">archive</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Extracting to '</span> <span class="o">+</span> <span class="n">dataDir</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">archive</span><span class="p">)</span> <span class="k">as</span> <span class="n">zipHandle</span><span class="p">:</span>
+        <span class="n">zipHandle</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">dataDir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archive</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Dataset ready: '</span> <span class="o">+</span> <span class="n">dataDir</span> <span class="o">+</span> <span class="n">datasetName</span><span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-2">import os
+import urllib.request
+import zipfile
+
+datasetName = 'ellipsoid_1mode'
+dataDir = '../../Data/'
+url = 'https://www.sci.utah.edu/~shapeworks/data-sets/use-case-data-v2/' + datasetName + '.zip'
+
+if not os.path.isdir(dataDir + datasetName):
+    os.makedirs(dataDir, exist_ok=True)
+    archive = dataDir + datasetName + '.zip'
+    print('Downloading ' + url)
+    urllib.request.urlretrieve(url, archive)
+    print('Extracting to ' + dataDir)
+    with zipfile.ZipFile(archive) as zipHandle:
+        zipHandle.extractall(dataDir)
+    os.remove(archive)
+
+print('Dataset ready: ' + dataDir + datasetName)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -5749,7 +5809,7 @@ After you download the dataset zip file, make sure you unzip/extract the content
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Dataset Name:     '</span> <span class="o">+</span> <span class="n">datasetName</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Shape Directory:  '</span> <span class="o">+</span> <span class="n">shapeDir</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">#import relevant libraries
+<div class="clipboard-copy-txt" id="cell-3">#import relevant libraries
 import os
 import pyvista as pv
 import numpy as np
@@ -5789,7 +5849,7 @@ print('Shape Directory:  ' + shapeDir)</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -5816,7 +5876,7 @@ print('Shape Directory:  ' + shapeDir)</div>
     <span class="n">shapeFilename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">shapeFilename</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">shapeFilename</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">import glob 
+<div class="clipboard-copy-txt" id="cell-4">import glob 
 from pathlib import Path 
 
 
@@ -5869,7 +5929,7 @@ for shapeFilename in shapeFilenames:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -5905,7 +5965,7 @@ for shapeFilename in shapeFilenames:
 <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span> <span class="o">+</span> 
       <span class="s1">' segmentations are loaded for the '</span> <span class="o">+</span> <span class="n">datasetName</span> <span class="o">+</span> <span class="s1">' dataset ...'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4"># list of shape segmentations
+<div class="clipboard-copy-txt" id="cell-5"># list of shape segmentations
 shapeSegList = []
 
 # list of shape names (shape files prefixes) to be used 
@@ -5956,7 +6016,7 @@ We will use <code>sw.plot_volumes</code> function from the Shapeworks python mod
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -5993,7 +6053,7 @@ We will use <code>sw.plot_volumes</code> function from the Shapeworks python mod
              <span class="n">link_views</span>      <span class="o">=</span> <span class="n">link_views</span>
              <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5"># define parameters that controls the plotter
+<div class="clipboard-copy-txt" id="cell-6"># define parameters that controls the plotter
 use_same_window = False # plot using multiple rendering windows if false
 notebook        = False # True will enable the plots to lie inline
 show_borders    = True  # show borders for each rendering window
@@ -6080,7 +6140,7 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6102,7 +6162,7 @@ sw.plot_volumes(shapeSegList,
 
 <span class="n">sw</span><span class="o">.</span><span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">import pyvista as pv
+<div class="clipboard-copy-txt" id="cell-7">import pyvista as pv
 # to better appreciate the pixelated nature of these segmentations, we need to only visualize 
 # the binary segmentation, notice the thick slices
 
@@ -6140,7 +6200,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6158,7 +6218,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 
 <span class="n">sw</span><span class="o">.</span><span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7"># let's inspect a segmentation that touches the image boundaries
+<div class="clipboard-copy-txt" id="cell-8"># let's inspect a segmentation that touches the image boundaries
 shapeIdx = 13
 shapeSeg = shapeSegList[shapeIdx]
 
@@ -6201,7 +6261,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6217,7 +6277,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 <span class="c1"># found it - toMesh, let's see its help</span>
 <span class="n">help</span><span class="p">(</span><span class="n">shapeSeg</span><span class="o">.</span><span class="n">toMesh</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8"># let's see if there's a function that extracts an isosurface from an image
+<div class="clipboard-copy-txt" id="cell-9"># let's see if there's a function that extracts an isosurface from an image
 # use dot-tap to get a list of functions/apis available for shapeSeg
 
 # found it - toMesh, let's see its help
@@ -6247,7 +6307,7 @@ help(shapeSeg.toMesh)</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6274,7 +6334,7 @@ help(shapeSeg.toMesh)</div>
 <span class="k">else</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">'Shape '</span> <span class="o">+</span> <span class="n">shapeName</span> <span class="o">+</span> <span class="s1">' is a binary segmentation'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-9">import numpy as np
+<div class="clipboard-copy-txt" id="cell-10">import numpy as np
 # let's make sure that our assumptions about the voxel values are correct
 # is the given volume a binary segmentation?
 
@@ -6304,7 +6364,7 @@ else:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6327,7 +6387,7 @@ else:
 <span class="n">isoValue</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxVal</span> <span class="o">-</span> <span class="n">minVal</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">isoValue = '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">isoValue</span><span class="p">))</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-10"># now define the isovalue, in case a binary segmentation has a foreground label that is not 1
+<div class="clipboard-copy-txt" id="cell-11"># now define the isovalue, in case a binary segmentation has a foreground label that is not 1
 # we need to obtain a value inbetween
 
 # get min and max values
@@ -6353,7 +6413,7 @@ print('\nisoValue = ' + str(isoValue))</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6373,7 +6433,7 @@ print('\nisoValue = ' + str(isoValue))</div>
 
 <span class="n">sw</span><span class="o">.</span><span class="n">plot_meshes</span><span class="p">([</span><span class="n">shapeMesh_vtk</span><span class="p">])</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-11"># let's extract the segmentation isosurface and visualize it
+<div class="clipboard-copy-txt" id="cell-12"># let's extract the segmentation isosurface and visualize it
 
 # extract isosurface
 shapeMesh = shapeSeg.toMesh(isovalue = isoValue)
@@ -6430,7 +6490,7 @@ sw.plot_meshes([shapeMesh_vtk])</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6446,7 +6506,7 @@ sw.plot_meshes([shapeMesh_vtk])</div>
 <span class="n">shapeSegSubset</span>   <span class="o">=</span> <span class="p">[</span><span class="n">shapeSegList</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span> <span class="k">for</span> <span class="n">shapeIdx</span> <span class="ow">in</span> <span class="n">shapeIdxs</span> <span class="p">]</span>
 <span class="n">shapeNamesSubset</span> <span class="o">=</span> <span class="p">[</span><span class="n">shapeNames</span><span class="p">[</span><span class="n">shapeIdx</span><span class="p">]</span>   <span class="k">for</span> <span class="n">shapeIdx</span> <span class="ow">in</span> <span class="n">shapeIdxs</span> <span class="p">]</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-12"># let's inspect some segmentations where we can observe misalignment
+<div class="clipboard-copy-txt" id="cell-13"># let's inspect some segmentations where we can observe misalignment
 shapeIdxs = [8,9,10]
 
 shapeSegSubset   = [shapeSegList[shapeIdx] for shapeIdx in shapeIdxs ]
@@ -6476,7 +6536,7 @@ shapeNamesSubset = [shapeNames[shapeIdx]   for shapeIdx in shapeIdxs ]</div>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-14">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6499,7 +6559,7 @@ shapeNamesSubset = [shapeNames[shapeIdx]   for shapeIdx in shapeIdxs ]</div>
     <span class="c1"># sw to vtk</span>
     <span class="n">shapeSegIsosurfaces_vtk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">sw2vtkMesh</span><span class="p">(</span><span class="n">shapeIsosurface</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-13">shapeSegIsosurfaces     = []
+<div class="clipboard-copy-txt" id="cell-14">shapeSegIsosurfaces     = []
 shapeSegIsosurfaces_vtk = []
 
 for shapeSeg in shapeSegSubset:
@@ -6526,7 +6586,7 @@ for shapeSeg in shapeSegSubset:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-14">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-15">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6550,7 +6610,7 @@ for shapeSeg in shapeSegSubset:
             <span class="n">link_views</span>      <span class="o">=</span> <span class="kc">True</span>   
            <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-14">sw.plot_meshes(shapeSegIsosurfaces,       
+<div class="clipboard-copy-txt" id="cell-15">sw.plot_meshes(shapeSegIsosurfaces,       
             use_same_window = True, 
             notebook        = False,  
             show_borders    = True,  
@@ -6600,7 +6660,7 @@ for shapeSeg in shapeSegSubset:
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-15">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-16">
 <div>
 <span class="notice" hidden="">Copied!</span>
 <svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
@@ -6617,7 +6677,7 @@ for shapeSeg in shapeSegSubset:
 
 <span class="n">sw</span><span class="o">.</span><span class="n">plot_volumes</span><span class="p">(</span><span class="n">shapeSeg_vtk</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-15">shapeIdx = 12
+<div class="clipboard-copy-txt" id="cell-16">shapeIdx = 12
 shapeSeg = shapeSegList[shapeIdx]
 
 shapeSeg_vtk = sw.sw2vtkImage(shapeSeg, verbose = False)
@@ -6739,7 +6799,6 @@ sw.plot_volumes(shapeSeg_vtk)</div>
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

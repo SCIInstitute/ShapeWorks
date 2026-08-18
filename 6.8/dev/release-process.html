@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/dev/release-process.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/dev/release-process.html">
       
       
         <link rel="prev" href="paths.html">
@@ -4513,12 +4513,12 @@
 <h1 id="shapeworks-release-process">ShapeWorks Release Process</h1>
 <p>This document outlines the steps to release a new version of ShapeWorks.</p>
 <ul>
-<li>
-<p>Create a new branch for the release.  E.g. <code>git co -b release_v6.5</code></p>
-</li>
-<li>
-<p>Update the version number in <code>CMakeLists.txt</code></p>
-</li>
+<li>Create a new branch for the release.  E.g. <code>git co -b release_v6.5</code></li>
+</ul>
+<p><code>master</code> always keeps the <code>-dev</code> version string.  The release version number lives
+only on the release branch, so there is no need to bump <code>master</code> back afterwards.</p>
+<ul>
+<li>Update the version number in <code>CMakeLists.txt</code> <strong>on the release branch</strong></li>
 </ul>
 <div class="highlight"><pre><span></span><code>SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL &quot;Major version number&quot; FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL &quot;Minor version number&quot; FORCE)
@@ -4563,7 +4563,7 @@ echo %PATH% &gt; &quot;%USERPROFILE%\.shapeworks\path_6.5.txt&quot;
 <p>Update Release Notes</p>
 </li>
 <li>
-<p>Update <code>docs/about/release_notes.md</code> with the new release notes</p>
+<p>Update <code>docs/about/release-notes.md</code> with the new release notes</p>
 </li>
 <li>
 <p>Create Walkthrough Video</p>
@@ -4579,9 +4579,45 @@ echo %PATH% &gt; &quot;%USERPROFILE%\.shapeworks\path_6.5.txt&quot;
 <p>When release candidate is final, set the version number in <code>CMakeLists.txt</code> to the final version number</p>
 </li>
 <li>
-<p>After the release, set the version to the next development version</p>
+<p>Tag the release from the release branch</p>
+</li>
+<li>
+<p>Merge the release branch back to <code>master</code>.  Fixes and doc updates made during the
+  release cycle live on the release branch and come back in this one merge; take
+  <code>master</code>'s <code>SHAPEWORKS_VERSION_STRING</code> (the next <code>-dev</code> version) over the release
+  branch's when resolving</p>
+</li>
+<li>
+<p>Point the documentation's <code>latest</code> version at the new release</p>
 </li>
 </ul>
+<p>The docs site publishes one version per minor release, taken from <code>CMakeLists.txt</code>.  Builds of
+<code>master</code> are always published as <code>&lt;version&gt; (dev)</code> under the <code>dev</code> alias, so bumping
+<code>CMakeLists.txt</code> to the next development version automatically starts a new dev version in the
+version dropdown.  The <code>latest</code> alias, which is what the site redirects to, has to be moved to the
+released version by hand: run the <strong>Mac Arm64 Build</strong> workflow manually with the release tag
+selected as the ref, <code>deploy_docs</code> checked, and <code>docs_alias</code> set to <code>latest</code>.  That rebuilds the
+release's docs from its tag and moves <code>latest</code> onto it.</p>
+<ul>
+<li>Update <code>version.json</code> on the web server</li>
+</ul>
+<p>Studio checks for updates against <code>https://www.sci.utah.edu/~shapeworks/version.json</code>
+(<code>Studio/Interface/UpdateChecker.cpp</code>).  It reads the block for its own platform, compares
+<code>major</code>/<code>minor</code>/<code>patch</code> against the version compiled into the running build, and if the file is
+newer it shows a "New version available" dialog pointing at the GitHub releases page, followed by
+<code>message</code>.</p>
+<p>Until this file is updated <strong>no existing installation is told the release exists</strong>, so do it once
+the binaries are actually downloadable.  The file lives in the <code>shapeworks-www</code> checkout:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;windows&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;major&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;patch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6.8.0 has been released&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;linux&quot;</span><span class="w">   </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;major&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;patch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6.8.0 has been released&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;macos&quot;</span><span class="w">   </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;major&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;patch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6.8.0 has been released&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The three platform keys must be exactly <code>windows</code>, <code>linux</code> and <code>macos</code> — they are matched against
+<code>StudioUtils::get_platform_string()</code>.  A missing or misspelled key throws a JSON exception that is
+swallowed unless the check was triggered manually, so a typo here fails silently.  Platforms can
+hold different versions if a build is late, which is the reason for the per-platform blocks.</p>
 
 
 
@@ -4643,7 +4679,6 @@ echo %PATH% &gt; &quot;%USERPROFILE%\.shapeworks\path_6.5.txt&quot;
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

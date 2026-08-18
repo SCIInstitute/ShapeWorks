@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/api/Classes/classshapeworks_1_1StatusBarWidget.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/api/Classes/classshapeworks_1_1StatusBarWidget.html">
       
       
       
@@ -4505,6 +4505,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#protected-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#detailed-description" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4589,10 +4600,49 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-clear_message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function clear_message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-resizeevent" class="md-nav__link">
     <span class="md-ellipsis">
       
         function resizeEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protected-functions-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected Functions Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Protected Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-eventfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function eventFilter
       
     </span>
   </a>
@@ -4666,7 +4716,26 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1StatusBarWidget.html#function-clear-message">clear_message</a></strong>()<br>Clear the currently displayed message.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1StatusBarWidget.html#function-resizeevent">resizeEvent</a></strong>(QResizeEvent * event) override</td>
+</tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1StatusBarWidget.html#function-eventfilter">eventFilter</a></strong>(QObject * watched, QEvent * event) override</td>
 </tr>
 </tbody>
 </table>
@@ -4696,13 +4765,24 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-clear_message">function clear_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_message</span><span class="p">()</span>
+</code></pre></div>
+<p>Clear the currently displayed message. </p>
 <h3 id="function-resizeevent">function resizeEvent</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">resizeEvent</span><span class="p">(</span>
 <span class="w">    </span><span class="n">QResizeEvent</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">event</span>
 <span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-eventfilter">function eventFilter</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">eventFilter</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">watched</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QEvent</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">event</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-08-09 at 22:28:04 +0000</p>
+<p>Updated on 2026-08-18 at 05:07:09 +0000</p>
 
 
 
@@ -4767,7 +4847,6 @@
       <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

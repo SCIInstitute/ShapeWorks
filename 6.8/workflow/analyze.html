@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/workflow/analyze.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/workflow/analyze.html">
       
       
         <link rel="prev" href="optimize-scaling.html">
@@ -948,6 +948,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correspondence-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correspondence Quality
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correspondence Quality">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4641,6 +4669,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#correspondence-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Correspondence Quality
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Correspondence Quality">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#running-shapeworks-studio" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4752,6 +4808,67 @@
 <p><em>Correspondence model inspectation by scrolling though the dataset and zooming in &amp; out</em></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
+<h2 id="correspondence-quality">Correspondence Quality</h2>
+<p>Scrolling through the model tells you whether correspondence <em>looks</em> right. To quantify it per subject, use the <code>correspondence-quality</code> command.</p>
+<p>For each subject, ShapeWorks reconstructs the surface from that subject's <strong>local</strong> particles by biharmonic mesh warp from the cohort template, and then measures the distance from the reconstruction back to that subject's groomed mesh. A subject whose particles no longer describe its own surface — a failed split, a bad initialization, an outlier shape the model does not cover — shows up as a large distance.</p>
+<p>The template is the cohort L1-medoid (the same subject Studio picks as the median shape). Its own reconstruction is near-identity, so its row is reported but excluded from the aggregate statistics, which would otherwise be skewed on small cohorts.</p>
+<p>Distances are reported both in world units and normalized by each subject's groomed-mesh bounding-box diagonal. The normalized values are scale-invariant, so they can be compared across anatomies and are the better basis for a "good/bad" threshold.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code>shapeworks correspondence-quality --name &lt;project.swproj|project.xlsx&gt;
+                                  [--output &lt;report.csv&gt;]
+                                  [--output_meshes &lt;dir&gt;]
+                                  [--method point-to-cell|point-to-point]
+                                  [--worst &lt;n&gt;]
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--name</code></td>
+<td>Path to the project file (<code>.swproj</code> or <code>.xlsx</code>). Required.</td>
+</tr>
+<tr>
+<td><code>--output</code></td>
+<td>Write the per-subject table to CSV.</td>
+</tr>
+<tr>
+<td><code>--output_meshes</code></td>
+<td>Write each reconstructed mesh as <code>.vtk</code> with a per-vertex <code>distance</code> field, for visual inspection of <em>where</em> correspondence breaks down.</td>
+</tr>
+<tr>
+<td><code>--method</code></td>
+<td><code>point-to-cell</code> (default) or <code>point-to-point</code>.</td>
+</tr>
+<tr>
+<td><code>--worst</code></td>
+<td>How many worst-ranked subjects to print. Default 5.</td>
+</tr>
+</tbody>
+</table>
+<p>The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns <code>subject</code>, <code>domain</code>, <code>is_template</code>, <code>mean_dist</code>, <code>max_dist</code>, <code>bbox_diag</code>, <code>norm_mean</code>, <code>norm_max</code>.</p>
+<p><em>A reconstructed mesh written by <code>--output_meshes</code>, coloured by the <code>distance</code> field. Load it in Studio and select <code>distance</code> from the scalar dropdown to see where the reconstruction departs from the groomed surface.</em>
+<img alt="Correspondence quality distance field" src="../img/workflow/correspondence_quality.png" /></p>
+<p>Note that this measures the correspondence model against the <em>groomed</em> meshes, so it reflects both optimization quality and any grooming problems upstream of it.</p>
+<h3 id="python-api">Python API</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sw</span>
+
+<span class="n">project</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Project</span><span class="p">()</span>
+<span class="n">project</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;project.swproj&quot;</span><span class="p">)</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">CorrespondenceEvaluation</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">template_subject</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">num_evaluated</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">agg_norm</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">agg_norm</span><span class="o">.</span><span class="n">p95</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">mean_dist</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">norm_mean</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">is_template</span><span class="p">)</span>
+</code></pre></div>
+<p><code>evaluate()</code> also takes <code>method</code> (<code>sw.CorrespondenceEvaluation.DistanceMethod.PointToCell</code> or <code>PointToPoint</code>) and <code>output_meshes_dir</code>. The project's relative paths are resolved against the current working directory, so run from the project's directory.</p>
 <h2 id="running-shapeworks-studio">Running ShapeWorks Studio</h2>
 <p>When you open ShapeWorks Studio without a project, either from terminal or double-clicking on the application binary/exe file, the splash screen is displayed to enable you to load a recent project, open existing projects on your local machine, or create a new project.</p>
 <p><em>ShapeWorks Studio splash screen</em>
@@ -4880,7 +4997,6 @@ After the correspondence is generated, the average feature map can be displayed 
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

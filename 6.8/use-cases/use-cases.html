@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.7/use-cases/use-cases.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.8/use-cases/use-cases.html">
       
       
         <link rel="prev" href="../deep-learning/deep-ssm.html">
@@ -2602,17 +2602,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#uploading-a-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Uploading a Dataset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#downloading-a-dataset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4742,17 +4731,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#uploading-a-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Uploading a Dataset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#downloading-a-dataset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4923,7 +4901,7 @@
 
 <h1 id="getting-started-with-use-cases">Getting Started with Use Cases</h1>
 <h2 id="what-is-a-use-case">What is a Use Case?</h2>
-<p>Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is available on <a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a> and downloads automatically when the use case runs.</p>
+<p>Use cases are Python examples that can help users get familiar with ShapeWorks and the general shape modeling workflow. The full dataset associated with each use case (input and output) is published at <a href="https://www.sci.utah.edu/~shapeworks/data-sets/">sci.utah.edu/~shapeworks/data-sets</a> and downloads automatically when the use case runs. No account or login is needed.</p>
 <p>Most use cases demomstrates the <a href="../getting-started/workflow.html">Shape Modeling Workflow</a>:</p>
 <ol>
 <li><a href="../workflow/groom.html">Grooming</a> a dataset for optimization.</li>
@@ -4939,54 +4917,27 @@ $ swpython RunUseCase.py [use case name]
 <p>To see the names currently supported use cases and the complete list of optional arguments, run:
 <div class="highlight"><pre><span></span><code>$ swpython RunUseCase.py --help
 </code></pre></div>
-When a use case is run, the dataset required for the use case is automatically downloaded. This requires registering for a <em>free</em> ShapeWorks account by visiting the <a href="https://girder.shapeworks-cloud.org/">ShapeWorks Data Portal</a>.</p>
-<div class="admonition danger">
-<p class="admonition-title">Danger</p>
-<p>Do not use the same password as for your bank account or email.</p>
-</div>
-<p>After registering a free account, you can log in from within the script. 
-Note: You are only required to enter your credentials the first time you run a use case. </p>
-<h3 id="uploading-a-dataset">Uploading a Dataset</h3>
-<p>Uploading a dataset requires the following parameters:</p>
-<ol>
-<li>
-<p>dataset_name - The name of the dataset and the same name must be used while running the usecase.</p>
-</li>
-<li>
-<p>licence_filename - File location which contains licence information of the dataset</p>
-</li>
-<li>
-<p>ack_filename - File location which contains acknowledge information of the dataset</p>
-</li>
-<li>
-<p>description - Description of the dataset</p>
-</li>
-<li>
-<p>project_file - File location which contains the project file of dataset using by the usecase which needs to be uploaded. (must be in swproj extension)</p>
-</li>
-<li>
-<p>overwrite - This is a boolean variable which controls any existing dataset with same name should be deleted or not. if True is passed it will delete the existing dataset. The default value is True.</p>
-</li>
-</ol>
-<!-- --overwrite - which controls any existing dataset with same name should be deleted or not. if --overwrite is specified it will delete the existing dataset. -->
-
-<p>For example refer the following command
-<div class="highlight"><pre><span></span><code>$ import shapeworks as sw
-$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)
-</code></pre></div></p>
+When a use case is run, the dataset it needs is downloaded automatically over HTTPS. No account, login, or credentials are required.</p>
+<p>Each archive is checked against a SHA-256 recorded in your ShapeWorks install before it is unpacked, so an interrupted or corrupted download fails with a clear error rather than leaving a partially populated directory for the use case to run on.</p>
+<p>Each release of ShapeWorks downloads the exact version of the data it was built against, so updating a dataset for a newer release does not change what your version gets. A dataset already on disk is reused without touching the network, so re-running a use case works offline.</p>
 <h3 id="downloading-a-dataset">Downloading a Dataset</h3>
-<p>Downloading a Dataset requires the following parameters:</p>
+<p>To fetch a dataset yourself, outside of a use case:</p>
+<div class="highlight"><pre><span></span><code>$ import shapeworks as sw
+$ sw.download_dataset(dataset_name, output_directory)
+</code></pre></div>
 <ol>
 <li>
-<p>datasetName - The name of the dataset which needs to be downloaded.</p>
+<p>dataset_name - The name of the dataset to download.</p>
 </li>
 <li>
-<p>outputDirectory - The location where the dataset should be downloaded.</p>
+<p>output_directory - The location the dataset should be extracted into.</p>
 </li>
 </ol>
-<p>For example refer the following command
-<div class="highlight"><pre><span></span><code>$ python portal.py [dataset name] [output directory]
-</code></pre></div></p>
+<p>To see everything available:</p>
+<div class="highlight"><pre><span></span><code>$ import shapeworks as sw
+$ sw.list_datasets()
+</code></pre></div>
+<p>Set the <code>SW_DATA_URL</code> environment variable to fetch from a mirror or a local copy of the data instead of the default server.</p>
 <h3 id="use-case-data">Use Case Data</h3>
 <p>When a use case runs, the appropriate zipped data downloads to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all the output from running the use case is also saved.</p>
 <p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). </p>
@@ -5108,7 +5059,6 @@ A description of each optional argument and how to use it is provided below.</p>
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/mathjaxhelper.js"></script>
-      
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
