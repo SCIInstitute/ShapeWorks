@@ -11,7 +11,6 @@
     * ShapeWorks now ships with a complete Python 3.12 environment built in — no conda setup required. Studio, the `shapeworks` CLI, and Python use cases all work directly out of the installer on macOS, Windows, and Linux.
     * New `swpython` and `swpip` wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a **ShapeWorks Prompt** Start Menu shortcut that puts these on `PATH`.
     * PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via `light-the-torch`, into a per-user directory that survives reinstalls.
-    * Source/developer builds are unchanged: `install_shapeworks.sh` / `.bat` still set up the conda environment used to build from source. (#2289, #2313)
 
   * **ShapeWorks Back-end**
     * Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)
@@ -35,9 +34,6 @@
     * File → Export → Export All Meshes writes the reconstructed mesh for every subject in the project (#2281)
     * The glyph-size slider and auto-sizing now scale to the shape's largest dimension instead of a fixed world-unit range, so very small or very large shapes get usable glyph sizes (#2459)
     * Cutting-plane table edits to center and normal now take effect (#2567)
-
-  * **Documentation**
-    * New [optimization scaling study](../workflow/optimize-scaling.md) documenting runtime against particle count and cohort size, with a reproducible test harness (#2572)
 
 ### Fixes
   * Fix DeepSSM jobs reporting success after failing: a job that died during training logged "Training complete", chained into testing, and exited zero. Failures now stop the run and exit non-zero, and the CLI no longer hangs waiting on a failed job (#2621)
