@@ -74,7 +74,7 @@ void Visualizer::set_center(bool center) { center_ = center; }
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples() {
   update_viewer_properties();
-  auto shapes = session_->get_shapes();
+  auto shapes = session_->get_ordered_shapes();
   display_shapes(shapes);
 }
 

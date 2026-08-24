@@ -1,12 +1,18 @@
 #pragma once
 
+#include <vtkSmartPointer.h>
+
 #include <Eigen/Core>
 #include <memory>
 #include <string>
 #include <vector>
 
+class vtkDataArray;
+class vtkPolyData;
+
 namespace shapeworks {
 
+class Mesh;
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
@@ -15,9 +21,11 @@ struct CorrespondenceQualityRow {
   std::string subject;
   int domain = 0;
   double mean_dist = 0.0;    //!< mean point-to-cell (or point-to-point) distance, reconstructed -> groomed
+  double median_dist = 0.0;  //!< median per-vertex distance
   double max_dist = 0.0;     //!< max per-vertex distance
   double bbox_diag = 0.0;    //!< diagonal of the subject's groomed-mesh bounding box
   double norm_mean = 0.0;    //!< mean_dist / bbox_diag (scale-invariant)
+  double norm_median = 0.0;  //!< median_dist / bbox_diag
   double norm_max = 0.0;     //!< max_dist / bbox_diag
   bool is_template = false;  //!< true for the L1-medoid template row (excluded from aggregates)
 };
@@ -54,6 +62,11 @@ struct CorrespondenceQualityReport {
  * The template row itself is included in `rows` (with is_template=true) but
  * excluded from aggregate statistics — its reconstruction is near-identity
  * and would skew small cohorts.
+ *
+ * `evaluate()` drives the whole thing from a project file. Callers that already
+ * have reconstructions in memory (Studio, which reconstructs through its own
+ * configured mesh warper) should use `evaluate_reconstruction()` and
+ * `compute_aggregates()` instead so the metric definition stays in one place.
  */
 class CorrespondenceEvaluation {
  public:
@@ -73,6 +86,24 @@ class CorrespondenceEvaluation {
   static CorrespondenceQualityReport evaluate(ProjectHandle project,
                                               DistanceMethod method = DistanceMethod::PointToCell,
                                               const std::string& output_meshes_dir = "");
+
+  //! Score a single already-reconstructed mesh against its groomed target.
+  //!
+  //! Fills everything on the row except `subject`, `domain` and `is_template`,
+  //! which the caller owns. If \p out_distance is non-null it receives the
+  //! per-vertex distance field (named "distance"), for surface display or
+  //! writing alongside the mesh.
+  //!
+  //! Returns a default-constructed row if \p reconstructed is null or empty.
+  static CorrespondenceQualityRow evaluate_reconstruction(vtkSmartPointer<vtkPolyData> reconstructed,
+                                                          const Mesh& groomed, DistanceMethod method,
+                                                          vtkSmartPointer<vtkDataArray>* out_distance = nullptr);
+
+  //! Summary statistics (mean/median/p95/max) over a set of values.
+  static CorrespondenceQualityStats summarize(std::vector<double> values);
+
+  //! Fill num_evaluated, num_template_rows, agg_raw and agg_norm from report.rows.
+  static void compute_aggregates(CorrespondenceQualityReport& report);
 };
 
 }  // namespace shapeworks

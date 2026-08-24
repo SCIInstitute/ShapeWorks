@@ -102,6 +102,7 @@ SET(STUDIO_DATA_MOC_HDRS
   )
 
 SET(STUDIO_JOB_SRCS
+  Job/CorrespondenceQualityJob.cpp
   Job/GroupPvalueJob.cpp
   Job/ParticleAreaJob.cpp
   Job/NetworkAnalysisJob.cpp
@@ -112,6 +113,7 @@ SET(STUDIO_JOB_SRCS
   )
 
 SET(STUDIO_JOB_MOC_HDRS
+  Job/CorrespondenceQualityJob.h
   Job/GroupPvalueJob.h
   Job/NetworkAnalysisJob.h
   Job/ParticleAreaJob.h
@@ -139,12 +141,14 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
+  Analysis/CorrespondenceQualityPanel.cpp
   Analysis/ParticleAreaPanel.cpp
   Analysis/ShapeEvaluationJob.cpp
   Analysis/ShapeScalarPanel.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
+  Analysis/CorrespondenceQualityPanel.h
   Analysis/ParticleAreaPanel.h
   Analysis/ShapeEvaluationJob.h
   Analysis/ShapeScalarPanel.h

@@ -117,6 +117,17 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   //! return all non-excluded shapes
   ShapeList get_non_excluded_shapes();
 
+  //! return all shapes in the current sample display order
+  ShapeList get_ordered_shapes();
+
+  //! set an alternate ordering for the sample display, as indices into get_shapes().
+  //! An empty or invalid order restores the natural order.  This affects only the
+  //! all-samples display; indices used elsewhere (stats, PCA, warp template) are unchanged.
+  void set_shape_display_order(const std::vector<int>& order);
+
+  //! get the current sample display order (empty when natural)
+  std::vector<int> get_shape_display_order();
+
   void calculate_reconstructed_samples();
 
   /// get the filename
@@ -355,6 +366,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   /// collection of shapes
   ShapeList shapes_;
+
+  /// alternate ordering for the sample display, as indices into shapes_ (empty = natural order)
+  std::vector<int> shape_display_order_;
 
   Particles difference_particles_;
 

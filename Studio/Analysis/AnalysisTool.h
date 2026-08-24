@@ -31,6 +31,7 @@ class StatsGroupLDAJob;
 class StatsGroupDWDJob;
 class ParticleAreaPanel;
 class ShapeScalarPanel;
+class CorrespondenceQualityPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -118,6 +119,9 @@ class AnalysisTool : public QWidget {
   bool export_variance_graph(QString filename);
 
   void compute_shape_evaluations();
+
+  //! project parameter key holding the mesh-warp template index (an index into the non-excluded shapes)
+  static constexpr const char* MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
 
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
@@ -339,6 +343,7 @@ class AnalysisTool : public QWidget {
 
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
+  CorrespondenceQualityPanel* correspondence_quality_panel_{nullptr};
 
   std::vector<QPointer<Worker>> workers_;
 };

@@ -19,6 +19,10 @@ class AnalysisUtils {
 
   static void create_box_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
                               QColor color = Qt::blue);
+
+  //! bar chart of data, one bar per entry, in the order given
+  static void create_bar_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label, QString y_label,
+                              QColor color = Qt::blue);
 };
 
 }  // namespace shapeworks

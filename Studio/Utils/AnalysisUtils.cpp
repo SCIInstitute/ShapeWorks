@@ -2,6 +2,7 @@
 
 #include <Data/Session.h>
 #include <Logging.h>
+#include <jkqtplotter/graphs/jkqtpbarchart.h>
 #include <jkqtplotter/graphs/jkqtpboxplot.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/graphs/jkqtpstatisticsadaptors.h>
@@ -104,6 +105,52 @@ void AnalysisUtils::create_box_plot(JKQTPlotter* plot, Eigen::VectorXd data, QSt
   plot->setMousePositionShown(false);
   plot->setMinimumSize(250, 250);
   plot->zoomToFit();
+  // setColor() above only mutates style state; without this the widget can keep showing the
+  // render triggered by addGraph(), which still has the auto-assigned palette color
+  plot->redrawPlot();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisUtils::create_bar_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
+                                    QString y_label, QColor color) {
+  JKQTPDatastore* ds = plot->getDatastore();
+  ds->clear();
+
+  QVector<double> x, y;
+  for (int i = 0; i < data.size(); i++) {
+    x << i + 1;
+    y << data[i];
+  }
+  size_t column_x = ds->addCopiedColumn(x, x_label);
+  size_t column_y = ds->addCopiedColumn(y, y_label);
+
+  plot->clearGraphs();
+  JKQTPBarVerticalGraph* graph = new JKQTPBarVerticalGraph(plot);
+  graph->setColor(color);
+  graph->setXColumn(column_x);
+  graph->setYColumn(column_y);
+  graph->setTitle(title);
+
+  plot->getPlotter()->setUseAntiAliasingForGraphs(true);
+  plot->getPlotter()->setUseAntiAliasingForSystem(true);
+  plot->getPlotter()->setUseAntiAliasingForText(true);
+  plot->getPlotter()->setPlotLabelFontSize(18);
+  plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
+  plot->getPlotter()->setDefaultTextSize(14);
+  plot->getPlotter()->setShowKey(false);
+
+  plot->getXAxis()->setAxisLabel(x_label);
+  plot->getXAxis()->setLabelFontSize(14);
+  plot->getYAxis()->setAxisLabel(y_label);
+  plot->getYAxis()->setLabelFontSize(14);
+
+  plot->getPlotter()->setPlotBorderBottom(10);
+
+  plot->clearAllMouseWheelActions();
+  plot->setMousePositionShown(false);
+  plot->addGraph(graph);
+  plot->zoomToFit();
+  plot->redrawPlot();
 }
 //---------------------------------------------------------------------------
 

@@ -138,6 +138,26 @@ The *Particle Area Analysis* panel allows for the visualization of the area of e
 
 ![ShapeWorks Studio Particle Area Analysis Panel Standard Deviation Display](../img/studio/studio_particle_area_analysis_std.png)
 
+## Correspondence Quality ##
+
+The *Correspondence Quality* panel scores every sample by how well its particles describe its own surface.  Each sample is reconstructed from its local particles through the mesh warper configured in the [Surface Reconstruction](surface-reconstruction.md) panel — the same reconstruction shown in the viewer, using your chosen template and warp method — and the distance from that reconstruction back to the sample's groomed mesh is measured.  A sample whose particles no longer follow its own surface (a failed split, a bad initialization, an outlier shape the model does not cover) shows a large distance.
+
+The results are shown on the samples, so running the analysis switches you to the *Samples* tab (if you are not already on a sample view) and to the reconstructed surfaces.
+
+Press *Run* to compute.  Distances are reported per sample as mean, median and max over the reconstruction's vertices.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.
+
+The bar chart plots one bar per sample in the same order as the table, so its shape shows how the cohort is distributed: a long tail on one end means a handful of genuinely challenging shapes rather than a model that is uniformly poor.
+
+The template sample is marked in the table and excluded from the summary statistics and the chart, since it is warped from itself and its reconstruction is near-identity.
+
+**Finding the challenging shapes.** Use *Sort by* to rank the table by mean, median or max distance (or by name), in descending order (worst first) or ascending (best first).  Checking *Sort samples in view* applies the same ranking to the *All Samples* view, so the most challenging shapes appear first in the grid.  For a multi-domain project a sample is ranked by its worst domain.  Unchecking it restores the original order.
+
+*Show distance on surface* colors each sample by its per-vertex distance to the groomed surface, switching the view to the reconstructed surfaces where that field lives.  This shows *where* correspondence breaks down, not just which samples are worst.
+
+Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
+
+The same metric is available outside Studio via the `shapeworks correspondence-quality` command and the Python API — see [Correspondence Quality](../workflow/analyze.md#correspondence-quality).  Studio reconstructs through its own warper, so its numbers can differ slightly from the command line's if you have changed the template sample or the warp method.
+
 ## Shape/Scalar Correlation ##
 
 The *Shape/Scalar Correlation* panel uses 2 block PLS regression to identify the relationship between shape and scalar data. 

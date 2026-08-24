@@ -30,6 +30,7 @@
 
 #include <map>
 
+#include "CorrespondenceQualityPanel.h"
 #include "ParticleAreaPanel.h"
 #include "ShapeScalarPanel.h"
 
@@ -41,7 +42,6 @@ const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
-constexpr auto MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
 constexpr auto MESH_WARP_METHOD = "mesh_warp_method";
 
 //---------------------------------------------------------------------------
@@ -81,6 +81,20 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   shape_scalar_panel_ = new ShapeScalarPanel(this);
   layout()->addWidget(shape_scalar_panel_);
+
+  correspondence_quality_panel_ = new CorrespondenceQualityPanel(this);
+  layout()->addWidget(correspondence_quality_panel_);
+
+  // the correspondence distance and the sample ordering are only visible in the sample views, so
+  // take the user there rather than leaving them wondering why nothing changed
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_samples_view, this,
+          [this](bool all_samples) {
+            auto mode = get_analysis_mode();
+            if (mode == MODE_ALL_SAMPLES_C || (!all_samples && mode == MODE_SINGLE_SAMPLE_C)) {
+              return;  // already somewhere the results show
+            }
+            set_analysis_mode(MODE_ALL_SAMPLES_C);
+          });
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -367,6 +381,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   particle_area_panel_->set_session(session);
   shape_scalar_panel_->set_session(session);
+  correspondence_quality_panel_->set_session(session);
 
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
@@ -1460,6 +1475,7 @@ void AnalysisTool::reset_stats() {
 
   particle_area_panel_->reset();
   shape_scalar_panel_->reset();
+  correspondence_quality_panel_->reset();
   stats_ = ParticleShapeStatistics();
   evals_ready_ = false;
   stats_ready_ = false;
@@ -1721,6 +1737,14 @@ std::string AnalysisTool::get_display_feature_map() {
     } else {
       return particle_area_panel_->get_computed_value_name();
     }
+  }
+
+  // the correspondence distance is a per-vertex field on each sample's reconstruction, so it
+  // only applies to the sample views
+  if (correspondence_quality_panel_->get_display_distance() &&
+      (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||
+       get_analysis_mode() == AnalysisTool::MODE_SINGLE_SAMPLE_C)) {
+    return correspondence_quality_panel_->get_display_feature_name();
   }
 
   if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C &&

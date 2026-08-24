@@ -43,7 +43,10 @@ Eigen::MatrixXd load_particles_matrix(const std::string& filename) {
   return m;
 }
 
-CorrespondenceQualityStats summarize(std::vector<double> values) {
+}  // namespace
+
+//---------------------------------------------------------------------------
+CorrespondenceQualityStats CorrespondenceEvaluation::summarize(std::vector<double> values) {
   CorrespondenceQualityStats s;
   if (values.empty()) return s;
   std::sort(values.begin(), values.end());
@@ -55,8 +58,79 @@ CorrespondenceQualityStats summarize(std::vector<double> values) {
   return s;
 }
 
-}  // namespace
+//---------------------------------------------------------------------------
+CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
+    vtkSmartPointer<vtkPolyData> reconstructed, const Mesh& groomed, DistanceMethod method,
+    vtkSmartPointer<vtkDataArray>* out_distance) {
+  CorrespondenceQualityRow row;
+  if (!reconstructed || reconstructed->GetNumberOfPoints() == 0) {
+    return row;
+  }
 
+  const Mesh::DistanceMethod distance_method =
+      (method == DistanceMethod::PointToPoint) ? Mesh::DistanceMethod::PointToPoint : Mesh::DistanceMethod::PointToCell;
+
+  Mesh recon_mesh(reconstructed);
+  auto field = recon_mesh.distance(groomed, distance_method)[0];
+
+  const int n = field->GetNumberOfTuples();
+  if (n == 0) {
+    return row;
+  }
+
+  std::vector<double> values(n);
+  double sum = 0.0;
+  double maxv = 0.0;
+  for (int k = 0; k < n; ++k) {
+    const double v = std::fabs(field->GetTuple1(k));
+    values[k] = v;
+    sum += v;
+    if (v > maxv) maxv = v;
+  }
+
+  const size_t mid = values.size() / 2;
+  std::nth_element(values.begin(), values.begin() + mid, values.end());
+
+  row.mean_dist = sum / n;
+  row.median_dist = values[mid];
+  row.max_dist = maxv;
+
+  const auto bbox = groomed.boundingBox();
+  row.bbox_diag = (bbox.max - bbox.min).GetNorm();
+  if (row.bbox_diag > 0.0) {
+    row.norm_mean = row.mean_dist / row.bbox_diag;
+    row.norm_median = row.median_dist / row.bbox_diag;
+    row.norm_max = row.max_dist / row.bbox_diag;
+  }
+
+  if (out_distance) {
+    field->SetName("distance");
+    *out_distance = field;
+  }
+
+  return row;
+}
+
+//---------------------------------------------------------------------------
+void CorrespondenceEvaluation::compute_aggregates(CorrespondenceQualityReport& report) {
+  std::vector<double> means;
+  std::vector<double> norm_means;
+  int num_template_rows = 0;
+  for (const auto& r : report.rows) {
+    if (r.is_template) {
+      num_template_rows++;
+      continue;
+    }
+    means.push_back(r.mean_dist);
+    norm_means.push_back(r.norm_mean);
+  }
+  report.num_template_rows = num_template_rows;
+  report.num_evaluated = static_cast<int>(means.size());
+  report.agg_raw = summarize(means);
+  report.agg_norm = summarize(norm_means);
+}
+
+//---------------------------------------------------------------------------
 CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle project, DistanceMethod method,
                                                                const std::string& output_meshes_dir) {
   if (!project) {
@@ -71,9 +145,6 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
   if (num_domains <= 0) {
     throw std::runtime_error("project has no domains");
   }
-
-  const Mesh::DistanceMethod distance_method =
-      (method == DistanceMethod::PointToPoint) ? Mesh::DistanceMethod::PointToPoint : Mesh::DistanceMethod::PointToCell;
 
   // Pass 1: load particles + groomed paths per (subject, domain). Only keep subjects
   // with complete data across all domains, so the L1-medoid is computed over a
@@ -166,9 +237,6 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
 
   CorrespondenceQualityReport report;
   report.template_subject = name_per_subject[template_idx];
-  std::vector<double> all_means;       // pooled raw mean distances (template excluded)
-  std::vector<double> all_norm_means;  // pooled bbox-normalized values (template excluded)
-
   // Pass 2: per-domain warp + distance using the single global template.
   for (int domain = 0; domain < num_domains; ++domain) {
     SW_LOG("=== Domain {} ===", domain);
@@ -189,44 +257,18 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
         continue;
       }
 
-      Mesh recon_mesh(reconstructed);
       Mesh groomed_mesh = load_groomed_as_mesh(groomed_per_subject_domain[i][domain]);
-      auto field = recon_mesh.distance(groomed_mesh, distance_method)[0];
+      vtkSmartPointer<vtkDataArray> field;
+      CorrespondenceQualityRow row = evaluate_reconstruction(reconstructed, groomed_mesh, method, &field);
+      if (!field) continue;
 
-      const int n = field->GetNumberOfTuples();
-      if (n == 0) continue;
-      double sum = 0.0;
-      double maxv = 0.0;
-      for (int k = 0; k < n; ++k) {
-        const double v = std::fabs(field->GetTuple1(k));
-        sum += v;
-        if (v > maxv) maxv = v;
-      }
-      const double mean_d = sum / n;
-
-      const auto bbox = groomed_mesh.boundingBox();
-      const double bbox_diag = (bbox.max - bbox.min).GetNorm();
-      const double norm_mean = (bbox_diag > 0.0) ? mean_d / bbox_diag : 0.0;
-      const double norm_max = (bbox_diag > 0.0) ? maxv / bbox_diag : 0.0;
-
-      CorrespondenceQualityRow row;
       row.subject = name_per_subject[i];
       row.domain = domain;
-      row.mean_dist = mean_d;
-      row.max_dist = maxv;
-      row.bbox_diag = bbox_diag;
-      row.norm_mean = norm_mean;
-      row.norm_max = norm_max;
       row.is_template = (i == template_idx);
       report.rows.push_back(row);
 
-      if (!row.is_template) {
-        all_means.push_back(mean_d);
-        all_norm_means.push_back(norm_mean);
-      }
-
       if (!meshes_dir.empty()) {
-        field->SetName("distance");
+        Mesh recon_mesh(reconstructed);
         recon_mesh.setField("distance", field, Mesh::FieldType::Point);
         std::string fname = name_per_subject[i] + "_domain" + std::to_string(domain) + "_reconstructed.vtk";
         if (row.is_template) {
@@ -242,10 +284,7 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
     throw std::runtime_error("no subjects evaluated");
   }
 
-  report.num_template_rows = static_cast<int>(report.rows.size() - all_means.size());
-  report.num_evaluated = static_cast<int>(all_means.size());
-  report.agg_raw = summarize(all_means);
-  report.agg_norm = summarize(all_norm_means);
+  compute_aggregates(report);
   return report;
 }
 

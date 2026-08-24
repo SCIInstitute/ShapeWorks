@@ -110,6 +110,9 @@ class Lightbox : public QObject {
 
   void check_for_first_draw();
 
+  //! Refit the shared camera after a tile layout change, once the tiles actually have content
+  void check_for_pending_camera_reset();
+
   void display_shapes();
 
   void insert_shape_into_viewer(std::shared_ptr<Shape> shape, int position);
@@ -133,6 +136,10 @@ class Lightbox : public QObject {
   int start_row_ = 0;
 
   bool first_draw_ = true;
+
+  //! set when the tile layout changes, cleared once every visible tile has been drawn
+  bool camera_reset_pending_ = false;
+  int camera_reset_attempts_ = 0;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
   vtkSmartPointer<StudioSliceInteractorStyle> slice_style_;
