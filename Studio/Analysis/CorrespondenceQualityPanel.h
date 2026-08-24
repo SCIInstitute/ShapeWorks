@@ -42,7 +42,9 @@ class CorrespondenceQualityPanel : public QWidget {
 
   void run_clicked();
   void show_distance_clicked();
-  void sort_changed();
+
+  //! any option that changes how the results are presented: normalization, sort metric or order
+  void options_changed();
 
   void handle_job_progress(double progress);
   void handle_job_complete();
@@ -59,6 +61,7 @@ class CorrespondenceQualityPanel : public QWidget {
   double get_sort_value(const CorrespondenceQualityRow& row) const;
 
   bool sorting_by_name() const;
+  bool sorting_by_ratio() const;
   bool sort_descending() const;
   bool normalized() const;
 

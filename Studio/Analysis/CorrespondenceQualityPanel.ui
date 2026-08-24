@@ -252,6 +252,19 @@ QWidget#panel {
           </widget>
          </item>
          <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="normalize_checkbox">
+           <property name="text">
+            <string>Normalize by bounding box diagonal</string>
+           </property>
+           <property name="toolTip">
+            <string>Show every distance as a percentage of that sample's groomed bounding box diagonal, so samples of different size are comparable.  Applies to the summary, the table, the chart and the sort.</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
           <widget class="QLabel" name="summary_label">
            <property name="text">
             <string/>
@@ -264,7 +277,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="4" column="0" colspan="2">
+         <item row="5" column="0" colspan="2">
           <widget class="QCheckBox" name="show_distance">
            <property name="text">
             <string>Show distance on surface</string>
@@ -274,14 +287,14 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="2">
+         <item row="6" column="0" colspan="2">
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="2">
+         <item row="7" column="0" colspan="2">
           <widget class="QGroupBox" name="sort_group">
            <property name="title">
             <string>Sort</string>
@@ -313,6 +326,11 @@ QWidget#panel {
               </item>
               <item>
                <property name="text">
+                <string>Localized (max / mean)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Name</string>
                </property>
               </item>
@@ -340,19 +358,6 @@ QWidget#panel {
              </widget>
             </item>
             <item row="2" column="0" colspan="2">
-             <widget class="QCheckBox" name="normalize_checkbox">
-              <property name="text">
-               <string>Normalize by bounding box diagonal</string>
-              </property>
-              <property name="toolTip">
-               <string>Divide each distance by the sample's groomed bounding box diagonal, so samples of different size are comparable</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" colspan="2">
              <widget class="QCheckBox" name="sort_samples_checkbox">
               <property name="text">
                <string>Sort samples in view</string>
@@ -365,7 +370,7 @@ QWidget#panel {
            </layout>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="8" column="0" colspan="2">
           <widget class="QTableWidget" name="results_table">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -390,7 +395,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="8" column="0" colspan="2">
+         <item row="9" column="0" colspan="2">
           <widget class="JKQTPlotter" name="boxplot" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">

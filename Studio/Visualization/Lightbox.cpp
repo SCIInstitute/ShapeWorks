@@ -16,6 +16,7 @@
 #include <vtkRenderer.h>
 
 #include <QPixmap>
+#include <QTimer>
 
 namespace shapeworks {
 
@@ -258,7 +259,12 @@ void Lightbox::set_tile_layout(int width, int height) {
 
   setup_renderers();
   display_shapes();
-  check_for_pending_camera_reset();
+
+  // Don't try to frame anything yet: the layout is changed before the new shapes are installed
+  // (AnalysisTool emits analysis_mode_changed before update_view), so shapes_ is still whatever the
+  // previous mode was showing.  Defer to the end of this update cycle, by which point set_shapes()
+  // has run.
+  QTimer::singleShot(0, this, [this]() { check_for_pending_camera_reset(); });
 }
 
 //-----------------------------------------------------------------------------
@@ -440,15 +446,19 @@ void Lightbox::check_for_pending_camera_reset() {
   // tiles are filled from position 0, so only the ones backed by a shape can be framed
   const int start = get_start_shape();
   const int filled = std::min<int>(viewers_.size(), std::max<int>(0, static_cast<int>(shapes_.size()) - start));
-  if (filled == 0 || !viewers_[0]->is_viewer_ready()) {
-    return;  // nothing drawn yet, try again when the next mesh arrives
+
+  // is_viewer_ready() is not the right gate: display_shape() clears it when the mesh is missing but
+  // update_points() sets it straight back from the particles alone, so it goes true while only the
+  // glyphs are up.  Framing that gives the wrong result, so wait for the surface itself.
+  if (filled == 0 || !viewers_[0]->get_meshes().valid()) {
+    return;  // nothing to frame yet, try again when the next mesh arrives
   }
 
   reset_camera();
 
   bool all_ready = true;
   for (int i = 0; i < filled; i++) {
-    if (!viewers_[i]->is_viewer_ready()) {
+    if (!viewers_[i]->get_meshes().valid()) {
       all_ready = false;
     }
   }

@@ -2,11 +2,13 @@
 
 #include <Data/Session.h>
 #include <Logging.h>
-#include <jkqtplotter/graphs/jkqtpbarchart.h>
 #include <jkqtplotter/graphs/jkqtpboxplot.h>
+#include <jkqtplotter/graphs/jkqtpgeometric.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/graphs/jkqtpstatisticsadaptors.h>
 #include <jkqtplotter/jkqtplotter.h>
+
+#include <limits>
 
 namespace shapeworks {
 
@@ -111,25 +113,62 @@ void AnalysisUtils::create_box_plot(JKQTPlotter* plot, Eigen::VectorXd data, QSt
 }
 
 //---------------------------------------------------------------------------
-void AnalysisUtils::create_bar_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString title, QString x_label,
-                                    QString y_label, QColor color) {
+void AnalysisUtils::create_ranked_plot(JKQTPlotter* plot, const std::vector<RankedSeries>& series,
+                                       const std::vector<double>& reference_lines, QString title, QString x_label,
+                                       QString y_label, bool log_y, KeyCorner key_corner) {
   JKQTPDatastore* ds = plot->getDatastore();
   ds->clear();
+  plot->clearGraphs();
 
-  QVector<double> x, y;
-  for (int i = 0; i < data.size(); i++) {
+  int num_points = 0;
+  double min_value = std::numeric_limits<double>::max();
+  for (const auto& s : series) {
+    num_points = std::max<int>(num_points, s.values.size());
+    for (int i = 0; i < s.values.size(); i++) {
+      min_value = std::min(min_value, s.values[i]);
+    }
+  }
+  if (num_points == 0) {
+    plot->redrawPlot();
+    return;
+  }
+
+  QVector<double> x;
+  for (int i = 0; i < num_points; i++) {
     x << i + 1;
-    y << data[i];
   }
   size_t column_x = ds->addCopiedColumn(x, x_label);
-  size_t column_y = ds->addCopiedColumn(y, y_label);
 
-  plot->clearGraphs();
-  JKQTPBarVerticalGraph* graph = new JKQTPBarVerticalGraph(plot);
-  graph->setColor(color);
-  graph->setXColumn(column_x);
-  graph->setYColumn(column_y);
-  graph->setTitle(title);
+  // a log axis cannot show a zero or negative value, so only use it when the data allows
+  const bool use_log = log_y && min_value > 0;
+  plot->getYAxis()->setLogAxis(use_log);
+
+  // reference lines go in first so the series are drawn over them
+  for (double value : reference_lines) {
+    if (use_log && value <= 0) {
+      continue;
+    }
+    auto* line = new JKQTPGeoInfiniteLine(plot->getPlotter(), 0, value, 1, 0, QColor(120, 120, 120), 1, Qt::DashLine);
+    line->setTwoSided(true);
+    plot->addGraph(line);
+  }
+
+  for (const auto& s : series) {
+    QVector<double> y;
+    for (int i = 0; i < s.values.size(); i++) {
+      y << s.values[i];
+    }
+    size_t column_y = ds->addCopiedColumn(y, s.label);
+
+    auto* graph = new JKQTPXYLineGraph(plot);
+    graph->setColor(s.color);
+    graph->setSymbolType(JKQTPNoSymbol);
+    graph->setLineWidth(2);
+    graph->setXColumn(column_x);
+    graph->setYColumn(column_y);
+    graph->setTitle(s.label);
+    plot->addGraph(graph);
+  }
 
   plot->getPlotter()->setUseAntiAliasingForGraphs(true);
   plot->getPlotter()->setUseAntiAliasingForSystem(true);
@@ -137,21 +176,40 @@ void AnalysisUtils::create_bar_plot(JKQTPlotter* plot, Eigen::VectorXd data, QSt
   plot->getPlotter()->setPlotLabelFontSize(18);
   plot->getPlotter()->setPlotLabel("\\textbf{" + title + "}");
   plot->getPlotter()->setDefaultTextSize(14);
-  plot->getPlotter()->setShowKey(false);
+  plot->getPlotter()->setShowKey(series.size() > 1);
+  plot->getPlotter()->setKeyFontSize(10);
+  // an outside key gets clipped in a panel this narrow, so tuck it into whichever bottom corner the
+  // caller says the data leaves free
+  plot->getPlotter()->setKeyPosition(key_corner == KeyCorner::BottomRight ? JKQTPKeyInsideBottomRight
+                                                                         : JKQTPKeyInsideBottomLeft);
 
+  // setLabelFontSize() is the axis *title*; the tick numbers have their own, much smaller, default
   plot->getXAxis()->setAxisLabel(x_label);
   plot->getXAxis()->setLabelFontSize(14);
+  plot->getXAxis()->setTickLabelFontSize(12);
   plot->getYAxis()->setAxisLabel(y_label);
   plot->getYAxis()->setLabelFontSize(14);
+  plot->getYAxis()->setTickLabelFontSize(12);
+
+  if (use_log) {
+    // a log axis only labels whole decades, which over this range means just two numbers, so label
+    // the minor ticks as well
+    plot->getYAxis()->setMinorTickLabelsEnabled(true);
+    plot->getYAxis()->setMinorTickLabelFullNumber(true);
+    plot->getYAxis()->setMinorTickLabelFontSize(9);
+    // the axis drops any minor label that would collide with its neighbour, so ask for the denser
+    // set and let it keep whatever fits
+    plot->getYAxis()->setMinorTicks(4);
+  }
 
   plot->getPlotter()->setPlotBorderBottom(10);
 
   plot->clearAllMouseWheelActions();
   plot->setMousePositionShown(false);
-  plot->addGraph(graph);
   plot->zoomToFit();
   plot->redrawPlot();
 }
+
 //---------------------------------------------------------------------------
 
 }  // namespace shapeworks

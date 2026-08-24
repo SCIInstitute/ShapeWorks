@@ -146,7 +146,9 @@ The results are shown on the samples, so running the analysis switches you to th
 
 Press *Run* to compute.  Distances are reported per sample as mean, median and max over the reconstruction's vertices.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.
 
-The bar chart plots one bar per sample in the same order as the table, so its shape shows how the cohort is distributed: a long tail on one end means a handful of genuinely challenging shapes rather than a model that is uniformly poor.
+The chart plots the samples in the same order as the table, showing the chosen metric and the max distance together on a log axis, with the median and p95 marked. Two lines rather than one, because a mean-only chart hides the most common failure: when a few correspondence points get swapped, only a small patch of the surface is wrong, so the mean barely moves while the max spikes. The gap between the two lines is how localized the damage is — lines close together mean a diffusely poor reconstruction, a wide gap means a small bad region on an otherwise good one.
+
+For the same reason *Sort by* offers **Localized (max / mean)**, which ranks by how concentrated each sample's error is rather than how large it is, bringing swapped-particle cases to the top even when their mean distance looks healthy. The ratio is already scale-free, so the normalize option does not change it.
 
 The template sample is marked in the table and excluded from the summary statistics and the chart, since it is warped from itself and its reconstruction is near-identity.
 

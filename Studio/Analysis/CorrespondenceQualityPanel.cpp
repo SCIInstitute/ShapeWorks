@@ -20,7 +20,7 @@
 namespace shapeworks {
 
 namespace {
-enum SortMetric { SORT_MEAN = 0, SORT_MEDIAN = 1, SORT_MAX = 2, SORT_NAME = 3 };
+enum SortMetric { SORT_MEAN = 0, SORT_MEDIAN = 1, SORT_MAX = 2, SORT_LOCALIZED = 3, SORT_NAME = 4 };
 }
 
 //---------------------------------------------------------------------------
@@ -36,6 +36,7 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   ui_->progress->hide();
 
   ui_->show_distance->setEnabled(false);
+  ui_->normalize_checkbox->setEnabled(false);
   ui_->sort_group->setEnabled(false);
 
   // rich text lays out to the full label width, so without a margin the summary table's right
@@ -51,11 +52,11 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   connect(ui_->show_distance, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::show_distance_clicked);
 
   connect(ui_->sort_metric_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-          &CorrespondenceQualityPanel::sort_changed);
+          &CorrespondenceQualityPanel::options_changed);
   connect(ui_->sort_order_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-          &CorrespondenceQualityPanel::sort_changed);
-  connect(ui_->normalize_checkbox, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::sort_changed);
-  connect(ui_->sort_samples_checkbox, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::sort_changed);
+          &CorrespondenceQualityPanel::options_changed);
+  connect(ui_->normalize_checkbox, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::options_changed);
+  connect(ui_->sort_samples_checkbox, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::options_changed);
 
   update_summary();
   update_table();
@@ -76,6 +77,7 @@ void CorrespondenceQualityPanel::reset() {
   job_.reset();
   ui_->show_distance->setEnabled(false);
   ui_->show_distance->setChecked(false);
+  ui_->normalize_checkbox->setEnabled(false);
   ui_->sort_group->setEnabled(false);
   ui_->sort_samples_checkbox->setChecked(false);
   if (session_ && !session_->get_shape_display_order().empty()) {
@@ -100,6 +102,11 @@ std::string CorrespondenceQualityPanel::get_display_feature_name() const {
 bool CorrespondenceQualityPanel::sorting_by_name() const { return ui_->sort_metric_combo->currentIndex() == SORT_NAME; }
 
 //---------------------------------------------------------------------------
+bool CorrespondenceQualityPanel::sorting_by_ratio() const {
+  return ui_->sort_metric_combo->currentIndex() == SORT_LOCALIZED;
+}
+
+//---------------------------------------------------------------------------
 bool CorrespondenceQualityPanel::sort_descending() const { return ui_->sort_order_combo->currentIndex() == 0; }
 
 //---------------------------------------------------------------------------
@@ -113,6 +120,10 @@ double CorrespondenceQualityPanel::get_sort_value(const CorrespondenceQualityRow
       return norm ? row.norm_median : row.median_dist;
     case SORT_MAX:
       return norm ? row.norm_max : row.max_dist;
+    case SORT_LOCALIZED:
+      // how concentrated the error is: a few swapped particles leave most of the surface intact,
+      // so the mean stays low while the max spikes.  Scale free, so normalization does not apply.
+      return row.mean_dist > 0 ? row.max_dist / row.mean_dist : 0.0;
     case SORT_MEAN:
     default:
       return norm ? row.norm_mean : row.mean_dist;
@@ -189,7 +200,9 @@ void CorrespondenceQualityPanel::show_distance_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void CorrespondenceQualityPanel::sort_changed() {
+void CorrespondenceQualityPanel::options_changed() {
+  // normalization applies to every number the panel shows, the summary included
+  update_summary();
   update_table();
   update_graphs();
   apply_sample_order();
@@ -224,6 +237,7 @@ void CorrespondenceQualityPanel::handle_job_complete() {
 
   ui_->show_distance->setEnabled(true);
   ui_->show_distance->setChecked(true);
+  ui_->normalize_checkbox->setEnabled(true);
   ui_->sort_group->setEnabled(true);
   session_->set_display_mode(DisplayMode::Reconstructed);
   Q_EMIT request_samples_view(false);
@@ -348,34 +362,69 @@ void CorrespondenceQualityPanel::update_graphs() {
   const bool norm = normalized();
   const double scale = norm ? 100.0 : 1.0;
 
-  // one bar per sample, in the same order as the table, so the plot reads as the shape of the
-  // ranking: a long tail on the left means a handful of genuinely challenging shapes
-  std::vector<double> values;
+  // Rank the samples, then plot the chosen metric alongside the max.  Plotting the max is the
+  // point: a handful of swapped particles leaves the mean almost untouched because the rest of the
+  // surface is still fine, so a mean-only chart would rank that sample as healthy.  The max spikes
+  // instead, and the gap between the two lines is how localized the damage is.
+  std::vector<double> primary;
+  std::vector<double> companion;
   for (int row_index : get_sorted_rows()) {
     const auto& row = rows[row_index];
     if (row.is_template) {  // near-identity reconstruction, would flatten the rest of the chart
       continue;
     }
-    values.push_back(get_sort_value(row) * scale);
+    if (sorting_by_ratio()) {
+      primary.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
+      companion.push_back((norm ? row.norm_max : row.max_dist) * scale);
+    } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
+      primary.push_back((norm ? row.norm_max : row.max_dist) * scale);
+      companion.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
+    } else {
+      primary.push_back(get_sort_value(row) * scale);
+      companion.push_back((norm ? row.norm_max : row.max_dist) * scale);
+    }
   }
 
-  if (values.empty()) {  // e.g. a cohort of only the template
+  if (primary.empty()) {  // e.g. a cohort of only the template
     ui_->boxplot->hide();
     return;
   }
 
-  Eigen::VectorXd numbers(values.size());
-  for (int i = 0; i < static_cast<int>(values.size()); i++) {
-    numbers(i) = values[i];
+  auto to_vector = [](const std::vector<double>& values) {
+    Eigen::VectorXd out(values.size());
+    for (int i = 0; i < static_cast<int>(values.size()); i++) {
+      out(i) = values[i];
+    }
+    return out;
+  };
+
+  QString primary_label = ui_->sort_metric_combo->currentText();
+  QString companion_label = "Max distance";
+  if (sorting_by_name() || sorting_by_ratio()) {
+    primary_label = "Mean distance";
+  } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
+    companion_label = "Mean distance";
   }
 
-  QString metric = ui_->sort_metric_combo->currentText();
-  if (sorting_by_name()) {
-    metric = "Mean distance";
-  }
-  const QString label = norm ? metric + " (% of bbox diag)" : metric;
+  std::vector<AnalysisUtils::RankedSeries> series;
+  series.push_back({to_vector(primary), primary_label, QColor(40, 80, 200)});
+  series.push_back({to_vector(companion), companion_label, QColor(200, 60, 40)});
 
-  AnalysisUtils::create_bar_plot(ui_->boxplot, numbers, "Correspondence quality", "Sample (table order)", label);
+  // median and p95 of the per-sample mean, matching the summary above
+  const auto& stats = norm ? job_->get_report().agg_norm : job_->get_report().agg_raw;
+  std::vector<double> reference_lines{stats.median * scale, stats.p95 * scale};
+
+  const QString y_label = norm ? "Distance (% of bbox diag)" : "Distance (world units)";
+  const QString x_label = sorting_by_name() ? "Sample (name order)" : "Sample (table order)";
+
+  // the two series differ by more than an order of magnitude, so a linear axis would flatten the
+  // lower one against zero
+  // the primary series is ranked, so the corner it falls away from is the empty one
+  const auto key_corner = sort_descending() ? AnalysisUtils::KeyCorner::BottomLeft
+                                            : AnalysisUtils::KeyCorner::BottomRight;
+
+  AnalysisUtils::create_ranked_plot(ui_->boxplot, series, reference_lines, "Correspondence quality", x_label, y_label,
+                                    true, key_corner);
 }
 
 //---------------------------------------------------------------------------
