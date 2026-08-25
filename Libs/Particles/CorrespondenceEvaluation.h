@@ -22,10 +22,12 @@ struct CorrespondenceQualityRow {
   int domain = 0;
   double mean_dist = 0.0;    //!< mean point-to-cell (or point-to-point) distance, reconstructed -> groomed
   double median_dist = 0.0;  //!< median per-vertex distance
+  double p99_dist = 0.0;     //!< 99th percentile per-vertex distance, a max that ignores single outlier vertices
   double max_dist = 0.0;     //!< max per-vertex distance
   double bbox_diag = 0.0;    //!< diagonal of the subject's groomed-mesh bounding box
   double norm_mean = 0.0;    //!< mean_dist / bbox_diag (scale-invariant)
   double norm_median = 0.0;  //!< median_dist / bbox_diag
+  double norm_p99 = 0.0;     //!< p99_dist / bbox_diag
   double norm_max = 0.0;     //!< max_dist / bbox_diag
   bool is_template = false;  //!< true for the L1-medoid template row (excluded from aggregates)
 };

@@ -47,6 +47,8 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   ui_->results_table->verticalHeader()->hide();
   ui_->results_table->horizontalHeader()->setStretchLastSection(true);
   StudioUtils::add_table_copy_menu(ui_->results_table);
+  ui_->results_table->setToolTip("Click a row to show that sample");
+  connect(ui_->results_table, &QTableWidget::cellClicked, this, &CorrespondenceQualityPanel::handle_table_clicked);
 
   update_run_button();
 
@@ -124,8 +126,9 @@ double CorrespondenceQualityPanel::get_sort_value(const CorrespondenceQualityRow
       return norm ? row.norm_max : row.max_dist;
     case SORT_LOCALIZED:
       // how concentrated the error is: a few swapped particles leave most of the surface intact,
-      // so the mean stays low while the max spikes.  Scale free, so normalization does not apply.
-      return row.mean_dist > 0 ? row.max_dist / row.mean_dist : 0.0;
+      // so the mean stays low while the tail spikes.  p99 rather than max, which is a single
+      // vertex and moves with one bad triangle.  Scale free, so normalization does not apply.
+      return row.mean_dist > 0 ? row.p99_dist / row.mean_dist : 0.0;
     case SORT_MEAN:
     default:
       return norm ? row.norm_mean : row.mean_dist;
@@ -253,6 +256,25 @@ void CorrespondenceQualityPanel::handle_job_complete() {
 }
 
 //---------------------------------------------------------------------------
+void CorrespondenceQualityPanel::handle_table_clicked(int row, int column) {
+  Q_UNUSED(column);
+  if (!job_) {
+    return;
+  }
+  // the table is sorted, so map the visible row back to the report row and then to the shape
+  auto order = get_sorted_rows();
+  if (row < 0 || row >= static_cast<int>(order.size())) {
+    return;
+  }
+  const auto& shape_indices = job_->get_row_shape_indices();
+  const int report_row = order[row];
+  if (report_row < 0 || report_row >= static_cast<int>(shape_indices.size())) {
+    return;
+  }
+  Q_EMIT request_show_sample(shape_indices[report_row]);
+}
+
+//---------------------------------------------------------------------------
 void CorrespondenceQualityPanel::update_summary() {
   if (!job_) {
     ui_->summary_label->hide();
@@ -311,7 +333,7 @@ void CorrespondenceQualityPanel::update_table() {
     headers << "Domain";
   }
   const QString suffix = norm ? " %" : "";
-  headers << ("Mean" + suffix) << ("Median" + suffix) << ("Max" + suffix);
+  headers << ("Mean" + suffix) << ("Median" + suffix) << ("p99" + suffix) << ("Max" + suffix);
 
   table->setColumnCount(headers.size());
   table->setHorizontalHeaderLabels(headers);
@@ -337,10 +359,10 @@ void CorrespondenceQualityPanel::update_table() {
       table->setItem(i, col++, new QTableWidgetItem(QString::number(row.domain)));
     }
 
-    const double values[3] = {norm ? row.norm_mean : row.mean_dist, norm ? row.norm_median : row.median_dist,
-                              norm ? row.norm_max : row.max_dist};
-    const double raw[3] = {row.mean_dist, row.median_dist, row.max_dist};
-    for (int v = 0; v < 3; v++) {
+    const double values[4] = {norm ? row.norm_mean : row.mean_dist, norm ? row.norm_median : row.median_dist,
+                              norm ? row.norm_p99 : row.p99_dist, norm ? row.norm_max : row.max_dist};
+    const double raw[4] = {row.mean_dist, row.median_dist, row.p99_dist, row.max_dist};
+    for (int v = 0; v < 4; v++) {
       auto item = new QTableWidgetItem(QString::number(values[v] * scale, 'f', 4));
       if (norm) {
         item->setToolTip(QString("%1 in world units").arg(raw[v]));
@@ -376,8 +398,9 @@ void CorrespondenceQualityPanel::update_graphs() {
       continue;
     }
     if (sorting_by_ratio()) {
+      // the ratio is built from p99, so plot that rather than max
       primary.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
-      companion.push_back((norm ? row.norm_max : row.max_dist) * scale);
+      companion.push_back((norm ? row.norm_p99 : row.p99_dist) * scale);
     } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
       primary.push_back((norm ? row.norm_max : row.max_dist) * scale);
       companion.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
@@ -402,7 +425,10 @@ void CorrespondenceQualityPanel::update_graphs() {
 
   QString primary_label = ui_->sort_metric_combo->currentText();
   QString companion_label = "Max distance";
-  if (sorting_by_name() || sorting_by_ratio()) {
+  if (sorting_by_ratio()) {
+    primary_label = "Mean distance";
+    companion_label = "p99 distance";
+  } else if (sorting_by_name()) {
     primary_label = "Mean distance";
   } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
     companion_label = "Mean distance";

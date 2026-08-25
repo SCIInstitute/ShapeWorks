@@ -1,7 +1,9 @@
 #include <string>
 #include <vector>
 
+#include "CorrespondenceEvaluation.h"
 #include "Libs/Optimize/Domain/Surface.h"
+#include "Mesh/Mesh.h"
 #include "ParticleNormalEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "ParticleSystemEvaluation.h"
@@ -295,3 +297,117 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
 }
 //---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
+namespace {
+
+//! flat NxN grid of triangles in the z=0 plane, spanning [0,1] in x and y
+Mesh make_grid_mesh(int n) {
+  Eigen::MatrixXd points(n * n, 3);
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      points.row(y * n + x) << static_cast<double>(x) / (n - 1), static_cast<double>(y) / (n - 1), 0.0;
+    }
+  }
+
+  Eigen::MatrixXi faces(2 * (n - 1) * (n - 1), 3);
+  int f = 0;
+  for (int y = 0; y < n - 1; y++) {
+    for (int x = 0; x < n - 1; x++) {
+      const int i = y * n + x;
+      faces.row(f++) << i, i + 1, i + n;
+      faces.row(f++) << i + 1, i + n + 1, i + n;
+    }
+  }
+  return Mesh(points, faces);
+}
+
+}  // namespace
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, identicalMeshesHaveNoDistance) {
+  Mesh mesh = make_grid_mesh(10);
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(mesh.getVTKMesh(), mesh,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  ASSERT_NEAR(row.mean_dist, 0.0, 1e-9);
+  ASSERT_NEAR(row.median_dist, 0.0, 1e-9);
+  ASSERT_NEAR(row.p99_dist, 0.0, 1e-9);
+  ASSERT_NEAR(row.max_dist, 0.0, 1e-9);
+  ASSERT_GT(row.bbox_diag, 0.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, uniformOffsetMeasuresThatOffset) {
+  const double offset = 0.25;
+  Mesh groomed = make_grid_mesh(10);
+
+  Mesh shifted = make_grid_mesh(10);
+  shifted.translate(makeVector({0, 0, offset}));
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(shifted.getVTKMesh(), groomed,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  // every vertex is the same distance from the target plane, so all the statistics agree
+  ASSERT_NEAR(row.mean_dist, offset, 1e-6);
+  ASSERT_NEAR(row.median_dist, offset, 1e-6);
+  ASSERT_NEAR(row.max_dist, offset, 1e-6);
+
+  // the target is the flat grid, so its bounding box diagonal is that of the unit square
+  ASSERT_NEAR(row.bbox_diag, std::sqrt(2.0), 1e-6);
+  ASSERT_NEAR(row.norm_mean, offset / std::sqrt(2.0), 1e-6);
+}
+
+//---------------------------------------------------------------------------
+// The failure this metric exists to catch: a few swapped correspondence points leave most of the
+// surface intact, so the mean barely moves while the tail spikes.
+TEST(CorrespondenceEvaluationTests, localizedDefectSpikesTheTailNotTheMean) {
+  const int n = 20;  // 400 vertices, so p99 and max land on different ones
+  Mesh groomed = make_grid_mesh(n);
+
+  Mesh damaged = make_grid_mesh(n);
+  auto poly_data = damaged.getVTKMesh();
+  double point[3];
+  poly_data->GetPoint(0, point);
+  point[2] += 1.0;  // drag a single vertex well off the surface
+  poly_data->GetPoints()->SetPoint(0, point);
+  poly_data->Modified();
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(poly_data, groomed,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  ASSERT_NEAR(row.median_dist, 0.0, 1e-9);      // the surface is otherwise untouched
+  ASSERT_NEAR(row.max_dist, 1.0, 1e-6);         // the moved vertex
+  ASSERT_LT(row.mean_dist, 0.01);               // one vertex in 400 barely moves the mean
+  ASSERT_GT(row.max_dist / row.mean_dist, 50);  // which is exactly why ranking on the mean hides it
+
+  // p99 ignores the single outlier, so it is a steadier basis for the localization ratio than max
+  ASSERT_LT(row.p99_dist, row.max_dist);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, summarizeReportsOrderStatistics) {
+  std::vector<double> values{5.0, 1.0, 4.0, 2.0, 3.0};
+  auto stats = CorrespondenceEvaluation::summarize(values);
+
+  ASSERT_NEAR(stats.mean, 3.0, 1e-9);
+  ASSERT_NEAR(stats.median, 3.0, 1e-9);
+  ASSERT_NEAR(stats.max, 5.0, 1e-9);
+
+  ASSERT_NEAR(CorrespondenceEvaluation::summarize({}).mean, 0.0, 1e-9);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, aggregatesExcludeTheTemplate) {
+  CorrespondenceQualityReport report;
+  report.rows.push_back({"a", 0, 1.0, 1.0, 1.0, 1.0, 10.0, 0.1, 0.1, 0.1, 0.1, false});
+  report.rows.push_back({"b", 0, 3.0, 3.0, 3.0, 3.0, 10.0, 0.3, 0.3, 0.3, 0.3, false});
+  report.rows.push_back({"t", 0, 99.0, 99.0, 99.0, 99.0, 10.0, 9.9, 9.9, 9.9, 9.9, true});
+
+  CorrespondenceEvaluation::compute_aggregates(report);
+
+  ASSERT_EQ(report.num_evaluated, 2);
+  ASSERT_EQ(report.num_template_rows, 1);
+  ASSERT_NEAR(report.agg_raw.mean, 2.0, 1e-9);  // the template row would have dominated this
+  ASSERT_NEAR(report.agg_raw.max, 3.0, 1e-9);
+}

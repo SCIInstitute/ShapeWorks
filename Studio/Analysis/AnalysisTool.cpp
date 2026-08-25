@@ -88,6 +88,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   // the correspondence distance and the sample ordering are only visible in the sample views, so
   // take the user there rather than leaving them wondering why nothing changed
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_show_sample, this,
+          &AnalysisTool::show_sample);
   connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_samples_view, this,
           [this](bool all_samples) {
             auto mode = get_analysis_mode();
@@ -371,6 +373,17 @@ void AnalysisTool::set_labels(QString which, QString value) {
 
 //---------------------------------------------------------------------------
 int AnalysisTool::get_sample_number() { return ui_->sampleSpinBox->value(); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::show_sample(int index) {
+  if (!session_ || index < 0 || index >= static_cast<int>(session_->get_shapes().size())) {
+    return;
+  }
+  ui_->singleSamplesRadio->setChecked(true);
+  ui_->sampleSpinBox->setValue(index);
+  set_analysis_mode(MODE_SINGLE_SAMPLE_C);
+  handle_analysis_options();
+}
 
 //---------------------------------------------------------------------------
 AnalysisTool::~AnalysisTool() {}

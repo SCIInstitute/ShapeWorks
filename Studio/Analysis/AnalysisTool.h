@@ -84,6 +84,9 @@ class AnalysisTool : public QWidget {
 
   int get_sample_number();
 
+  //! switch to the single sample view showing the given index into Session::get_shapes()
+  void show_sample(int index);
+
   bool compute_stats();
 
   void update_slider();

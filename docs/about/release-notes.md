@@ -8,15 +8,15 @@
   * **ShapeWorks Front-end**
     * New *Correspondence Quality* panel in the Analyze pane: scores every sample by reconstructing it from its local particles through Studio's own mesh warper — the same reconstruction shown in the viewer, using your chosen template and warp method — and measuring the distance back to that sample's groomed mesh
     * *Show distance on surface* colors each sample's surface and particles by the per-vertex distance, so a bad region can be located and not just detected
-    * Samples can be sorted by mean, median or max distance, or by how localized the error is (max / mean), which surfaces swapped-correspondence cases whose mean distance still looks healthy; *Sort samples in view* applies the same ranking to the All Samples grid so the challenging shapes come up first
+    * Samples can be sorted by mean, median, p99 or max distance, or by how localized the error is, which surfaces swapped-correspondence cases whose mean distance still looks healthy; *Sort samples in view* applies the same ranking to the All Samples grid so the challenging shapes come up first, and clicking a row shows that sample on its own
     * The quality chart plots the ranked metric together with the max distance on a log axis, with median and p95 marked, so a small badly reconstructed patch stays visible even when it barely moves the mean
     * Result tables can be right-clicked to copy their contents to the clipboard as CSV, now with the header row and proper quoting of values that contain a comma or a quote
 
   * **ShapeWorks Back-end**
-    * `correspondence-quality` reports median distance alongside mean and max, in the printed summary, the CSV (`median_dist`, `norm_median`) and the Python API
+    * `correspondence-quality` reports median and 99th percentile distance alongside mean and max, in the printed summary, the CSV (`median_dist`, `p99_dist`, `norm_median`, `norm_p99`) and the Python API. p99 measures the worst part of a surface without following a single stray vertex the way max does
 
 ### Fixes
-  * Fix the Particle Area Analysis progress bar never moving: the job's fractional progress was truncated to an integer before being scaled to a percentage
+  * Fix the Particle Area Analysis and Shape/Scalar Correlation progress bars never moving: the job's fractional progress was truncated to an integer before being scaled to a percentage
   * Fix box plots showing an auto-assigned palette color rather than the color they were given, which made the plot color appear to change between runs
   * Fix the lightbox not refitting its shared camera when the tile layout changes, which left samples small and off-centre after switching to the All Samples view until *Autoview* was pressed
 

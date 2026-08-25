@@ -43,7 +43,7 @@ shapeworks correspondence-quality --name <project.swproj|project.xlsx>
 | `--method` | `point-to-cell` (default) or `point-to-point`. |
 | `--worst` | How many worst-ranked subjects to print. Default 5. |
 
-The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns `subject`, `domain`, `is_template`, `mean_dist`, `median_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_median`, `norm_max`.
+The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns `subject`, `domain`, `is_template`, `mean_dist`, `median_dist`, `p99_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_median`, `norm_p99`, `norm_max`. `p99_dist` is the 99th percentile of the per-vertex distances: a measure of the worst part of the surface that, unlike `max_dist`, does not move with a single bad vertex.
 
 *A reconstructed mesh written by `--output_meshes`, coloured by the `distance` field. Load it in Studio and select `distance` from the scalar dropdown to see where the reconstruction departs from the groomed surface.*
 ![Correspondence quality distance field](../img/workflow/correspondence_quality.png)
@@ -64,7 +64,7 @@ print(report.template_subject, report.num_evaluated)
 print(report.agg_norm.mean, report.agg_norm.p95)
 
 for row in report.rows:
-    print(row.subject, row.domain, row.mean_dist, row.median_dist, row.max_dist, row.norm_mean, row.is_template)
+    print(row.subject, row.domain, row.mean_dist, row.median_dist, row.p99_dist, row.max_dist, row.is_template)
 ```
 
 `evaluate()` also takes `method` (`sw.CorrespondenceEvaluation.DistanceMethod.PointToCell` or `PointToPoint`) and `output_meshes_dir`. The project's relative paths are resolved against the current working directory, so run from the project's directory.

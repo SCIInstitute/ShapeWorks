@@ -414,12 +414,13 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
         boost::filesystem::current_path(oldBasePath);
         return false;
       }
-      csv << "subject,domain,is_template,mean_dist,median_dist,max_dist,bbox_diag,norm_mean,norm_median,norm_max\n";
+      csv << "subject,domain,is_template,mean_dist,median_dist,p99_dist,max_dist,bbox_diag,norm_mean,norm_median,"
+             "norm_p99,norm_max\n";
       csv << std::fixed << std::setprecision(8);
       for (const auto& r : report.rows) {
         csv << r.subject << "," << r.domain << "," << (r.is_template ? 1 : 0) << "," << r.mean_dist << ","
-            << r.median_dist << "," << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean << ","
-            << r.norm_median << "," << r.norm_max << "\n";
+            << r.median_dist << "," << r.p99_dist << "," << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean
+            << "," << r.norm_median << "," << r.norm_p99 << "," << r.norm_max << "\n";
       }
       SW_LOG("Wrote per-subject CSV: {}", out_path.string());
     }

@@ -90,9 +90,14 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
 
   const size_t mid = values.size() / 2;
   std::nth_element(values.begin(), values.begin() + mid, values.end());
+  const double median = values[mid];
+
+  const size_t p99_idx = std::min(values.size() - 1, static_cast<size_t>(0.99 * values.size()));
+  std::nth_element(values.begin(), values.begin() + p99_idx, values.end());
 
   row.mean_dist = sum / n;
-  row.median_dist = values[mid];
+  row.median_dist = median;
+  row.p99_dist = values[p99_idx];
   row.max_dist = maxv;
 
   const auto bbox = groomed.boundingBox();
@@ -100,6 +105,7 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
   if (row.bbox_diag > 0.0) {
     row.norm_mean = row.mean_dist / row.bbox_diag;
     row.norm_median = row.median_dist / row.bbox_diag;
+    row.norm_p99 = row.p99_dist / row.bbox_diag;
     row.norm_max = row.max_dist / row.bbox_diag;
   }
 

@@ -49,12 +49,18 @@ class CorrespondenceQualityPanel : public QWidget {
   void handle_job_progress(double progress);
   void handle_job_complete();
 
+  //! clicking a row jumps the viewer to that sample
+  void handle_table_clicked(int row, int column);
+
  Q_SIGNALS:
 
   //! ask the analysis tool to switch to a samples view, which is where this panel's results show.
   //! \p all_samples forces the All Samples grid (sorting only applies there); otherwise the single
   //! sample view is left alone if that is where the user already is.
   void request_samples_view(bool all_samples);
+
+  //! ask the analysis tool to show one sample, by index into Session::get_shapes()
+  void request_show_sample(int shape_index);
 
  private:
   //! value a row is ranked by, honoring the metric and normalization options
