@@ -40,6 +40,13 @@ class CorrespondenceQualityJob : public Job {
   //! thread) with Shape::set_point_features() before the field can be displayed.
   const std::map<int, Eigen::VectorXd>& get_particle_values() const { return particle_values_; }
 
+  //! the per-vertex distance field for each domain of each shape, keyed by index into
+  //! Session::get_shapes().  Shape::set_point_features() interpolates the particle values back over
+  //! the mesh under the same name, so these have to be re-applied after it to survive.
+  const std::map<int, std::vector<vtkSmartPointer<vtkDataArray>>>& get_distance_fields() const {
+    return distance_fields_;
+  }
+
  private:
   QSharedPointer<Session> session_;
   CorrespondenceEvaluation::DistanceMethod method_;
@@ -47,6 +54,7 @@ class CorrespondenceQualityJob : public Job {
   CorrespondenceQualityReport report_;
   std::vector<int> row_shape_indices_;
   std::map<int, Eigen::VectorXd> particle_values_;
+  std::map<int, std::vector<vtkSmartPointer<vtkDataArray>>> distance_fields_;
 };
 
 }  // namespace shapeworks

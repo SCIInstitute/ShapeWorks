@@ -26,6 +26,7 @@ void CorrespondenceQualityJob::run() {
   report_ = CorrespondenceQualityReport();
   row_shape_indices_.clear();
   particle_values_.clear();
+  distance_fields_.clear();
 
   auto shapes = session_->get_shapes();
   auto non_excluded = session_->get_non_excluded_shapes();
@@ -97,6 +98,7 @@ void CorrespondenceQualityJob::run() {
       // leave the per-vertex field on the reconstructed mesh so it can be shown as a surface scalar
       distance->SetName(FEATURE_NAME);
       reconstructed_poly_data->GetPointData()->AddArray(distance);
+      distance_fields_[s].push_back(distance);
 
       // sample the field at each particle so the glyphs are colored by the same value as the
       // surface underneath them, rather than falling back to the particle index

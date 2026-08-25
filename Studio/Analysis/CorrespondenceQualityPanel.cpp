@@ -10,7 +10,9 @@
 #include <Interface/Style.h>
 #include <Logging.h>
 #include <Utils/AnalysisUtils.h>
+#include <StudioMesh.h>
 #include <Utils/StudioUtils.h>
+#include <vtkPointData.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_CorrespondenceQualityPanel.h>
 
@@ -233,11 +235,29 @@ void CorrespondenceQualityPanel::handle_job_complete() {
     return;
   }
 
-  // the glyphs are colored from the shape's point features, so hand them the sampled values
+  // The glyphs are colored from the shape's point features, so hand them the sampled values.  This
+  // has to come first: set_point_features() interpolates those particle values back over the mesh
+  // under the same name, which would otherwise replace the real per-vertex field.  The
+  // reconstruction passes through the particles, so that interpolation is near zero everywhere and
+  // hides the very error this panel measures.
   auto shapes = session_->get_shapes();
   for (const auto& [shape_index, values] : job_->get_particle_values()) {
     if (shape_index >= 0 && shape_index < static_cast<int>(shapes.size())) {
       shapes[shape_index]->set_point_features(CorrespondenceQualityJob::FEATURE_NAME, values);
+    }
+  }
+
+  // now put the measured per-vertex distances back on the surfaces
+  for (const auto& [shape_index, fields] : job_->get_distance_fields()) {
+    if (shape_index < 0 || shape_index >= static_cast<int>(shapes.size())) {
+      continue;
+    }
+    auto meshes = shapes[shape_index]->get_reconstructed_meshes(true);
+    for (int d = 0; d < static_cast<int>(fields.size()) && d < static_cast<int>(meshes.meshes().size()); d++) {
+      auto poly_data = meshes.meshes()[d]->get_poly_data();
+      if (poly_data && fields[d]) {
+        poly_data->GetPointData()->AddArray(fields[d]);
+      }
     }
   }
 
