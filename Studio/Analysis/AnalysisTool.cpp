@@ -379,6 +379,17 @@ void AnalysisTool::show_sample(int index) {
   if (!session_ || index < 0 || index >= static_cast<int>(session_->get_shapes().size())) {
     return;
   }
+
+  // Asking for the sample that is already showing returns to the grid, so a results table can step
+  // in and out of samples without sending the user back up to the Samples tab to find the radio.
+  if (get_analysis_mode() == MODE_SINGLE_SAMPLE_C && ui_->sampleSpinBox->value() == index) {
+    ui_->allSamplesRadio->setChecked(true);
+    ui_->singleSamplesRadio->setChecked(false);
+    set_analysis_mode(MODE_ALL_SAMPLES_C);
+    handle_analysis_options();
+    return;
+  }
+
   ui_->singleSamplesRadio->setChecked(true);
   ui_->sampleSpinBox->setValue(index);
   set_analysis_mode(MODE_SINGLE_SAMPLE_C);

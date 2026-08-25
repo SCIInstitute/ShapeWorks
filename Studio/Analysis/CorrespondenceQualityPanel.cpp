@@ -47,7 +47,7 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   ui_->results_table->verticalHeader()->hide();
   ui_->results_table->horizontalHeader()->setStretchLastSection(true);
   StudioUtils::add_table_copy_menu(ui_->results_table);
-  ui_->results_table->setToolTip("Click a row to show that sample");
+  ui_->results_table->setToolTip("Click a row to show that sample on its own, click it again to go back to all samples");
   connect(ui_->results_table, &QTableWidget::cellClicked, this, &CorrespondenceQualityPanel::handle_table_clicked);
 
   update_run_button();
