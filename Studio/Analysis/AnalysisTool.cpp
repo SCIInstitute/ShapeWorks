@@ -1097,7 +1097,10 @@ void AnalysisTool::update_regression_interface() {
       ui_->regression_hint_label->setText(
           "The selected column needs at least two subjects with differing numeric values.");
     }
-    ui_->regression_hint_label->show();
+    // a wrapped label's minimum is one line, too short for resize_tab_to_current()
+    auto* hint = ui_->regression_hint_label;
+    hint->setMinimumHeight(hint->heightForWidth(hint->width()));
+    hint->show();
     ui_->regression_min_label->setText("");
     ui_->regression_max_label->setText("");
     ui_->regressionLabel->setText("");
