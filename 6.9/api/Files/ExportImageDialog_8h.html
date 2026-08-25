@@ -4597,6 +4597,18 @@
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_preview</span><span class="p">();</span>
 
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">render_image</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&amp;</span><span class="w"> </span><span class="n">all_ready</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_export_size</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_size_preset</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">multiplier</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">begin_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">maximum</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">step_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">end_progress</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">drawRotatedText</span><span class="p">(</span><span class="n">QPainter</span><span class="o">&amp;</span><span class="w"> </span><span class="n">painter</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">QPointF</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">qreal</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="n">QRect</span><span class="w"> </span><span class="n">rect</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_modes</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
@@ -4608,12 +4620,13 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">update_preview_timer_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">updating_preview_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 01:48:15 +0000</p>
+<p>Updated on 2026-08-25 at 15:44:43 +0000</p>
 
 
 
