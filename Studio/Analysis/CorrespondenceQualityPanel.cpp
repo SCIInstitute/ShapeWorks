@@ -47,6 +47,10 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   // border falls outside the visible area
   ui_->summary_label->setMargin(3);
 
+  // the template names vary in length, and a label that asks for its text width would resize the
+  // column and shuffle every control beside it on each step of the spinbox
+  ui_->template_name_label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+
   ui_->results_table->verticalHeader()->hide();
   // the sample name is what benefits from spare width, not the last numeric column
   ui_->results_table->horizontalHeader()->setStretchLastSection(false);
@@ -90,6 +94,7 @@ void CorrespondenceQualityPanel::set_session(QSharedPointer<Session> session) {
 
 //---------------------------------------------------------------------------
 void CorrespondenceQualityPanel::reset() {
+  const bool had_results = !job_.isNull();
   job_.reset();
   ui_->show_distance->setEnabled(false);
   ui_->show_distance->setChecked(false);
@@ -102,6 +107,12 @@ void CorrespondenceQualityPanel::reset() {
   update_summary();
   update_table();
   update_graphs();
+
+  // the panel no longer claims the feature map, but the samples keep the colors until the viewer
+  // is told to look again
+  if (had_results && session_) {
+    session_->trigger_reinsert_shapes();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -181,6 +192,7 @@ void CorrespondenceQualityPanel::set_template_info(int index, int maximum, QStri
     ui_->template_spinbox->setValue(index);
   }
   ui_->template_name_label->setText(name);
+  ui_->template_name_label->setToolTip(name);  // in case the column is too narrow to show it all
 
   // the template can also be changed from the Surface Reconstruction panel, and any results were
   // measured against the old one
