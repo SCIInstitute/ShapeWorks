@@ -38,6 +38,9 @@ class CorrespondenceQualityPanel : public QWidget {
   //! name of the surface scalar to display
   std::string get_display_feature_name() const;
 
+  //! mirror the analysis tool's warp template into this panel's controls
+  void set_template_info(int index, int maximum, QString name);
+
  public Q_SLOTS:
 
   void run_clicked();
@@ -52,6 +55,8 @@ class CorrespondenceQualityPanel : public QWidget {
   //! clicking a row jumps the viewer to that sample
   void handle_table_clicked(int row, int column);
 
+  void template_changed();
+
  Q_SIGNALS:
 
   //! ask the analysis tool to switch to a samples view, which is where this panel's results show.
@@ -61,6 +66,13 @@ class CorrespondenceQualityPanel : public QWidget {
 
   //! ask the analysis tool to show one sample, by index into Session::get_shapes()
   void request_show_sample(int shape_index);
+
+  //! ask the analysis tool to change the warp template, by index into the non-excluded shapes
+  void request_template(int index);
+  void request_template_median();
+
+  //! ask the analysis tool to rebuild the warper for the current template
+  void request_apply_template();
 
  private:
   //! value a row is ranked by, honoring the metric and normalization options

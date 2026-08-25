@@ -148,6 +148,8 @@ Note that this measures the correspondence model against the *groomed* meshes, s
 
 The results are shown on the samples, so running the analysis switches you to the *Samples* tab (if you are not already on a sample view) and to the reconstructed surfaces.
 
+*Template* selects the sample everything is warped from.  It is the same template the [Surface Reconstruction](surface-reconstruction.md) panel uses, so changing it here changes it there as well, and pressing *Run* rebuilds the reconstructions before measuring.  *Median* picks the cohort median.  Changing the template discards any results already on screen, since they were measured against the previous one.
+
 ### Reading the results
 
 Press *Run* to compute.  Distances are reported per sample as mean, median, p99 and max over the reconstruction's vertices.  The p99 column is the worst part of the surface without the sensitivity to a single stray vertex that max has.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.  Normalization applies to the summary, the table, the chart and the sort together.

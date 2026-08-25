@@ -228,7 +228,49 @@ QWidget#panel {
            </item>
           </widget>
          </item>
-         <item row="1" column="0" colspan="2">
+         <item row="1" column="0">
+          <widget class="QLabel" name="template_label">
+           <property name="text">
+            <string>Template:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="template_layout">
+           <item>
+            <widget class="QPushButton" name="template_median_button">
+             <property name="toolTip">
+              <string>Use the cohort median shape as the template</string>
+             </property>
+             <property name="text">
+              <string>Median</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="template_spinbox">
+             <property name="toolTip">
+              <string>Sample used as the warp template. Every sample is reconstructed from it, so its own reconstruction is near-identity and is excluded from the statistics.</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="template_name_caption">
+           <property name="text">
+            <string>Template Name:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="template_name_label">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
           <widget class="QPushButton" name="run_button">
            <property name="enabled">
             <bool>true</bool>
@@ -238,7 +280,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
+         <item row="4" column="0" colspan="2">
           <widget class="QProgressBar" name="progress">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -251,7 +293,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="5" column="0" colspan="2">
           <widget class="QCheckBox" name="normalize_checkbox">
            <property name="text">
             <string>Normalize by bounding box diagonal</string>
@@ -264,7 +306,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="4" column="0" colspan="2">
+         <item row="6" column="0" colspan="2">
           <widget class="QLabel" name="summary_label">
            <property name="text">
             <string/>
@@ -277,7 +319,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="2">
+         <item row="7" column="0" colspan="2">
           <widget class="QCheckBox" name="show_distance">
            <property name="text">
             <string>Show distance on surface</string>
@@ -287,14 +329,14 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="2">
+         <item row="8" column="0" colspan="2">
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="9" column="0" colspan="2">
           <widget class="QGroupBox" name="sort_group">
            <property name="title">
             <string>Sort</string>
@@ -370,7 +412,7 @@ QWidget#panel {
            </layout>
           </widget>
          </item>
-         <item row="8" column="0" colspan="2">
+         <item row="10" column="0" colspan="2">
           <widget class="QTableWidget" name="results_table">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -395,7 +437,7 @@ QWidget#panel {
            </property>
           </widget>
          </item>
-         <item row="9" column="0" colspan="2">
+         <item row="11" column="0" colspan="2">
           <widget class="JKQTPlotter" name="boxplot" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">

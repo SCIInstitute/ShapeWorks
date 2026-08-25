@@ -1,5 +1,6 @@
 // qt
 #include <QHeaderView>
+#include <QSignalBlocker>
 #include <QTableWidgetItem>
 #include <QTimer>
 
@@ -56,6 +57,10 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   update_run_button();
 
   connect(ui_->run_button, &QPushButton::clicked, this, &CorrespondenceQualityPanel::run_clicked);
+  connect(ui_->template_median_button, &QPushButton::clicked, this,
+          [this]() { Q_EMIT request_template_median(); });
+  connect(ui_->template_spinbox, qOverload<int>(&QSpinBox::valueChanged), this,
+          &CorrespondenceQualityPanel::template_changed);
   connect(ui_->show_distance, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::show_distance_clicked);
 
   ui_->sort_metric_combo->setToolTip(
@@ -167,6 +172,33 @@ std::vector<int> CorrespondenceQualityPanel::get_sorted_rows() const {
 }
 
 //---------------------------------------------------------------------------
+void CorrespondenceQualityPanel::set_template_info(int index, int maximum, QString name) {
+  const bool changed = ui_->template_spinbox->value() != index;
+  {
+    // driven by the analysis tool, so do not echo it straight back
+    QSignalBlocker blocker(ui_->template_spinbox);
+    ui_->template_spinbox->setMaximum(std::max(0, maximum));
+    ui_->template_spinbox->setValue(index);
+  }
+  ui_->template_name_label->setText(name);
+
+  // the template can also be changed from the Surface Reconstruction panel, and any results were
+  // measured against the old one
+  if (changed && job_) {
+    reset();
+  }
+}
+
+//---------------------------------------------------------------------------
+void CorrespondenceQualityPanel::template_changed() {
+  Q_EMIT request_template(ui_->template_spinbox->value());
+  // every distance was measured against the old template, so they no longer describe this model
+  if (job_) {
+    reset();
+  }
+}
+
+//---------------------------------------------------------------------------
 void CorrespondenceQualityPanel::run_clicked() {
   if (!session_) {
     return;
@@ -181,6 +213,10 @@ void CorrespondenceQualityPanel::run_clicked() {
     SW_LOG("Aborting {}", job_->name());
     return;
   }
+
+  // the spinbox only records the choice; the warper still holds whatever was last applied, and the
+  // measurement has to be made against the template the panel is showing
+  Q_EMIT request_apply_template();
 
   ui_->progress->show();
   handle_job_progress(0);

@@ -87,6 +87,15 @@ class AnalysisTool : public QWidget {
   //! switch to the single sample view showing the given index into Session::get_shapes()
   void show_sample(int index);
 
+  //! set the mesh warp template, as an index into the non-excluded shapes
+  void set_mesh_warp_template(int index);
+
+  //! set the mesh warp template to the cohort median shape
+  void set_mesh_warp_template_to_median();
+
+  //! rebuild the mesh warper for the current template, discarding cached reconstructions
+  void apply_mesh_warp_template();
+
   bool compute_stats();
 
   void update_slider();
@@ -192,6 +201,9 @@ class AnalysisTool : public QWidget {
   void reconstruction_method_changed();
 
   void initialize_mesh_warper();
+
+  //! mirror the current warp template into the panels that also present it
+  void push_template_to_panels();
 
   void group_p_values_clicked();
   void network_analysis_clicked();

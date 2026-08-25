@@ -90,6 +90,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   // take the user there rather than leaving them wondering why nothing changed
   connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_show_sample, this,
           &AnalysisTool::show_sample);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_template, this,
+          &AnalysisTool::set_mesh_warp_template);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_template_median, this,
+          &AnalysisTool::set_mesh_warp_template_to_median);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_apply_template, this,
+          &AnalysisTool::apply_mesh_warp_template);
   connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_samples_view, this,
           [this](bool all_samples) {
             auto mode = get_analysis_mode();
@@ -1587,6 +1593,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
   // the mesh warp template is chosen from the non-excluded shapes
   ui_->mesh_warp_sample_spinbox->setMaximum(static_cast<int>(session_->get_non_excluded_shapes().size()) - 1);
+  push_template_to_panels();
 }
 
 //---------------------------------------------------------------------------
@@ -2470,6 +2477,25 @@ void AnalysisTool::handle_samples_predicted_scalar_options() {
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::push_template_to_panels() {
+  if (!correspondence_quality_panel_ || !session_) {
+    return;
+  }
+  correspondence_quality_panel_->set_template_info(ui_->mesh_warp_sample_spinbox->value(),
+                                                   ui_->mesh_warp_sample_spinbox->maximum(),
+                                                   ui_->template_mesh_name_label->text());
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_mesh_warp_template(int index) { ui_->mesh_warp_sample_spinbox->setValue(index); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_mesh_warp_template_to_median() { mesh_warp_median_clicked(); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::apply_mesh_warp_template() { mesh_warp_run_clicked(); }
+
+//---------------------------------------------------------------------------
 void AnalysisTool::mesh_warp_median_clicked() {
   ui_->mesh_warp_sample_spinbox->setValue(stats_.compute_median_shape(-32));  //-32 = both groups
 }
@@ -2483,9 +2509,11 @@ void AnalysisTool::mesh_warp_sample_changed() {
   auto shapes = session_->get_non_excluded_shapes();
   if (index < 0 || index >= shapes.size()) {
     ui_->template_mesh_name_label->setText("");
+    push_template_to_panels();
     return;
   }
   ui_->template_mesh_name_label->setText(QString::fromStdString(shapes[index]->get_subject()->get_display_name()));
+  push_template_to_panels();
 }
 
 //---------------------------------------------------------------------------
