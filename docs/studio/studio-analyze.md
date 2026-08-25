@@ -160,6 +160,8 @@ Click a row to show that sample on its own in the viewer, which is the quickest 
 
 *Show distance on surface* colors each sample by its per-vertex distance to the groomed surface, switching the view to the reconstructed surfaces where that field lives.  This shows *where* correspondence breaks down, not just which samples are worst.
 
+The particles are colored by the average distance over the part of the surface nearest to each one, rather than by the distance at the particle itself.  The reconstruction is warped through the particles and the particles lie on the surface, so the distance at a particle is zero whatever the state of the model; the error to look for is always in the gaps between them.
+
 Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
 
 The same metric is available outside Studio via the `shapeworks correspondence-quality` command and the Python API — see [Correspondence Quality](../workflow/analyze.md#correspondence-quality).  Studio reconstructs through its own warper, so its numbers can differ slightly from the command line's if you have changed the template sample or the warp method.

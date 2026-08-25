@@ -8,6 +8,8 @@
 #include <StudioMesh.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
 
 #include <cmath>
 
@@ -100,15 +102,37 @@ void CorrespondenceQualityJob::run() {
       reconstructed_poly_data->GetPointData()->AddArray(distance);
       distance_fields_[s].push_back(distance);
 
-      // sample the field at each particle so the glyphs are colored by the same value as the
-      // surface underneath them, rather than falling back to the particle index
+      // Color each particle by the error around it rather than at it.  The warp inserts the
+      // particles into the mesh as vertices and maps them onto this shape's particles, which lie on
+      // its surface, so the distance at a particle is zero by construction and sampling there would
+      // give every glyph the same value.  All the signal is in the gaps between particles, so
+      // assign every vertex to its nearest particle and average over that neighbourhood.
+      auto particles = shape->get_particles().get_local_points(d);
+
+      auto particle_points = vtkSmartPointer<vtkPoints>::New();
+      for (auto& particle : particles) {
+        particle_points->InsertNextPoint(particle[0], particle[1], particle[2]);
+      }
+      auto particle_poly_data = vtkSmartPointer<vtkPolyData>::New();
+      particle_poly_data->SetPoints(particle_points);
+
       auto locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-      locator->SetDataSet(reconstructed_poly_data);
+      locator->SetDataSet(particle_poly_data);
       locator->BuildLocator();
-      for (auto& particle : shape->get_particles().get_local_points(d)) {
-        double point[3] = {particle[0], particle[1], particle[2]};
-        vtkIdType id = locator->FindClosestPoint(point);
-        per_particle.push_back(id < 0 ? 0.0 : std::fabs(distance->GetTuple1(id)));
+
+      std::vector<double> sums(particles.size(), 0.0);
+      std::vector<int> counts(particles.size(), 0);
+      for (vtkIdType v = 0; v < reconstructed_poly_data->GetNumberOfPoints(); v++) {
+        double vertex[3];
+        reconstructed_poly_data->GetPoint(v, vertex);
+        vtkIdType id = locator->FindClosestPoint(vertex);
+        if (id >= 0 && id < static_cast<vtkIdType>(sums.size())) {
+          sums[id] += std::fabs(distance->GetTuple1(v));
+          counts[id]++;
+        }
+      }
+      for (size_t i = 0; i < particles.size(); i++) {
+        per_particle.push_back(counts[i] > 0 ? sums[i] / counts[i] : 0.0);
       }
     }
 
