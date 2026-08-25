@@ -144,7 +144,7 @@ The *Correspondence Quality* panel scores every sample by how well its particles
 
 The results are shown on the samples, so running the analysis switches you to the *Samples* tab (if you are not already on a sample view) and to the reconstructed surfaces.
 
-Press *Run* to compute.  Distances are reported per sample as mean, median and max over the reconstruction's vertices.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.
+Press *Run* to compute.  Distances are reported per sample as mean, median and max over the reconstruction's vertices.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.  Normalization applies to the summary, the table, the chart and the sort together.
 
 The chart plots the samples in the same order as the table, showing the chosen metric and the max distance together on a log axis, with the median and p95 marked. Two lines rather than one, because a mean-only chart hides the most common failure: when a few correspondence points get swapped, only a small patch of the surface is wrong, so the mean barely moves while the max spikes. The gap between the two lines is how localized the damage is — lines close together mean a diffusely poor reconstruction, a wide gap means a small bad region on an otherwise good one.
 
@@ -152,7 +152,7 @@ For the same reason *Sort by* offers **Localized (max / mean)**, which ranks by 
 
 The template sample is marked in the table and excluded from the summary statistics and the chart, since it is warped from itself and its reconstruction is near-identity.
 
-**Finding the challenging shapes.** Use *Sort by* to rank the table by mean, median or max distance (or by name), in descending order (worst first) or ascending (best first).  Checking *Sort samples in view* applies the same ranking to the *All Samples* view, so the most challenging shapes appear first in the grid.  For a multi-domain project a sample is ranked by its worst domain.  Unchecking it restores the original order.
+**Finding the challenging shapes.** Use *Sort by* to rank the table by mean, median or max distance, by how localized the error is, or by name, in descending order (worst first) or ascending (best first).  Checking *Sort samples in view* applies the same ranking to the *All Samples* view, so the most challenging shapes appear first in the grid.  For a multi-domain project a sample is ranked by its worst domain.  Unchecking it restores the original order.
 
 *Show distance on surface* colors each sample by its per-vertex distance to the groomed surface, switching the view to the reconstructed surfaces where that field lives.  This shows *where* correspondence breaks down, not just which samples are worst.
 
