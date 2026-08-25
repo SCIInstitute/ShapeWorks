@@ -8,15 +8,19 @@
 #include <vtkAppendPolyData.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
+#include <vtkOpenGLRenderWindow.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRendererCollection.h>
+#include <vtkTextureObject.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWindowToImageFilter.h>
 
+// std
 #include <QColor>
 #include <QPixmap>
 #include <QThread>
+#include <algorithm>
 
 namespace shapeworks {
 
@@ -616,7 +620,22 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
     }
   };
 
+  // Render in tiles within the GPU's maximum dimension: past it macOS aborts inside the Metal
+  // layer, uncatchably.  vtkWindowToImageFilter stitches them, which lifts the export size limit.
+  int max_tile = vtkTextureObject::GetMaximumTextureSize(vtkOpenGLRenderWindow::SafeDownCast(render_window));
+  if (max_tile < 1024) {  // the context could not be queried; every GL 3.2 implementation clears this
+    max_tile = 2048;
+  }
+  max_tile = std::min(max_tile, 16384);
+
+  int tile_scale = 1;
+  while (size.width() > max_tile * tile_scale || size.height() > max_tile * tile_scale) {
+    tile_scale++;
+  }
+  QSize tile_size((size.width() + tile_scale - 1) / tile_scale, (size.height() + tile_scale - 1) / tile_scale);
+
   auto window_to_image_filter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+  window_to_image_filter->SetScale(tile_scale, tile_scale);
 
   int original_size[2];
   original_size[0] = render_window->GetSize()[0];
@@ -657,12 +676,17 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
     renderer = collection->GetNextItem();
   }
 
-  off_render_window->SetSize(size.width(), size.height());
+  off_render_window->SetSize(tile_size.width(), tile_size.height());
   off_render_window->Modified();
   off_render_window->Render();
 
   window_to_image_filter->Update();
   auto qimage = StudioUtils::vtk_image_to_qimage(window_to_image_filter->GetOutput());
+
+  // tiles cover at least the requested size; trim the rounding when it does not divide evenly
+  if (!qimage.isNull() && qimage.size() != size) {
+    qimage = qimage.copy(0, 0, size.width(), size.height());
+  }
 
   // set back to the original render window
   collection->InitTraversal();
