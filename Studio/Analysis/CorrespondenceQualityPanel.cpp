@@ -377,7 +377,8 @@ void CorrespondenceQualityPanel::update_table() {
 
     int col = 0;
     auto name_item = new QTableWidgetItem(name);
-    name_item->setToolTip(QString("bounding box diagonal: %1").arg(row.bbox_diag));
+    // the column is narrow enough that most names elide, so the tooltip has to carry the full one
+    name_item->setToolTip(name + QString("\nbounding box diagonal: %1").arg(row.bbox_diag));
     table->setItem(i, col++, name_item);
 
     if (multi_domain) {
