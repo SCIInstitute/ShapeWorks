@@ -58,6 +58,10 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   connect(ui_->run_button, &QPushButton::clicked, this, &CorrespondenceQualityPanel::run_clicked);
   connect(ui_->show_distance, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::show_distance_clicked);
 
+  ui_->sort_metric_combo->setToolTip(
+      "How to rank the samples. Localized is the ratio of a sample's p99 distance to its mean: high "
+      "when most of the surface is fine and a small patch is badly wrong, which is what a few swapped "
+      "correspondence points look like.");
   connect(ui_->sort_metric_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &CorrespondenceQualityPanel::options_changed);
   connect(ui_->sort_order_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,

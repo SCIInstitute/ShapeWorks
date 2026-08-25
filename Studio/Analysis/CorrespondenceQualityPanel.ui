@@ -326,7 +326,7 @@ QWidget#panel {
               </item>
               <item>
                <property name="text">
-                <string>Localized (max / mean)</string>
+                <string>Localized (p99 / mean)</string>
                </property>
               </item>
               <item>
