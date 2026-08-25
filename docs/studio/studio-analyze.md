@@ -142,6 +142,8 @@ The *Particle Area Analysis* panel allows for the visualization of the area of e
 
 The *Correspondence Quality* panel scores every sample by how well its particles describe its own surface.  Each sample is reconstructed from its local particles through the mesh warper configured in the [Surface Reconstruction](surface-reconstruction.md) panel — the same reconstruction shown in the viewer, using your chosen template and warp method — and the distance from that reconstruction back to the sample's groomed mesh is measured.  A sample whose particles no longer follow its own surface (a failed split, a bad initialization, an outlier shape the model does not cover) shows a large distance.
 
+![ShapeWorks Studio Correspondence Quality Panel](../img/studio/studio_correspondence_quality.png)
+
 The results are shown on the samples, so running the analysis switches you to the *Samples* tab (if you are not already on a sample view) and to the reconstructed surfaces.
 
 Press *Run* to compute.  Distances are reported per sample as mean, median, p99 and max over the reconstruction's vertices.  The p99 column is the worst part of the surface without the sensitivity to a single stray vertex that max has.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.  Normalization applies to the summary, the table, the chart and the sort together.
