@@ -152,6 +152,8 @@ For the same reason *Sort by* offers **Localized (max / mean)**, which ranks by 
 
 The template sample is marked in the table and excluded from the summary statistics and the chart, since it is warped from itself and its reconstruction is near-identity.
 
+Right-click the table to copy it to the clipboard as CSV, in the order it is currently sorted.
+
 **Finding the challenging shapes.** Use *Sort by* to rank the table by mean, median or max distance, by how localized the error is, or by name, in descending order (worst first) or ascending (best first).  Checking *Sort samples in view* applies the same ranking to the *All Samples* view, so the most challenging shapes appear first in the grid.  For a multi-domain project a sample is ranked by its worst domain.  Unchecking it restores the original order.
 
 *Show distance on surface* colors each sample by its per-vertex distance to the groomed surface, switching the view to the reconstructed surfaces where that field lives.  This shows *where* correspondence breaks down, not just which samples are worst.

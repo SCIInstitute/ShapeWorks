@@ -10,6 +10,7 @@
 #include <Interface/Style.h>
 #include <Logging.h>
 #include <Utils/AnalysisUtils.h>
+#include <Utils/StudioUtils.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_CorrespondenceQualityPanel.h>
 
@@ -45,6 +46,7 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
 
   ui_->results_table->verticalHeader()->hide();
   ui_->results_table->horizontalHeader()->setStretchLastSection(true);
+  StudioUtils::add_table_copy_menu(ui_->results_table);
 
   update_run_button();
 

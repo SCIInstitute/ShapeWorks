@@ -11,8 +11,13 @@
 #include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 
+#include <QApplication>
+#include <QClipboard>
 #include <QComboBox>
+#include <QCursor>
+#include <QMenu>
 #include <QMessageBox>
+#include <QTableWidget>
 
 namespace shapeworks {
 
@@ -212,4 +217,56 @@ void StudioUtils::update_domain_combobox(QComboBox* combobox, QSharedPointer<Ses
     combobox->setCurrentIndex(currentIndex);
   }
 }
+//---------------------------------------------------------------------------
+static QString csv_escape(const QString& value) {
+  // a field containing a comma, quote or newline has to be quoted, with quotes doubled
+  if (value.contains(',') || value.contains('"') || value.contains('\n')) {
+    QString escaped = value;
+    escaped.replace("\"", "\"\"");
+    return "\"" + escaped + "\"";
+  }
+  return value;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::copy_table_to_clipboard(QTableWidget* table) {
+  if (!table) {
+    return;
+  }
+
+  QStringList lines;
+
+  QStringList header;
+  for (int c = 0; c < table->columnCount(); c++) {
+    auto item = table->horizontalHeaderItem(c);
+    header << csv_escape(item ? item->text() : QString());
+  }
+  lines << header.join(",");
+
+  for (int r = 0; r < table->rowCount(); r++) {
+    QStringList row;
+    for (int c = 0; c < table->columnCount(); c++) {
+      auto item = table->item(r, c);
+      row << csv_escape(item ? item->text() : QString());
+    }
+    lines << row.join(",");
+  }
+
+  QApplication::clipboard()->setText(lines.join("\n") + "\n");
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::add_table_copy_menu(QTableWidget* table) {
+  if (!table) {
+    return;
+  }
+  table->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(table, &QTableWidget::customContextMenuRequested, table, [table]() {
+    QMenu menu;
+    QAction* action = menu.addAction("Copy to Clipboard");
+    QObject::connect(action, &QAction::triggered, table, [table]() { copy_table_to_clipboard(table); });
+    menu.exec(QCursor::pos());
+  });
+}
+
 }  // namespace shapeworks

@@ -12,6 +12,7 @@ class QWidget;
 class vtkImageData;
 class vtkRenderer;
 class QComboBox;
+class QTableWidget;
 
 namespace shapeworks {
 
@@ -52,6 +53,12 @@ class StudioUtils {
   //! update a combobox with domain names
   static void update_domain_combobox(QComboBox* combobox, QSharedPointer<Session> session,
                                      const std::vector<QString>& filters = {});
+
+  //! copy the contents of a table, with its header row, to the clipboard as CSV
+  static void copy_table_to_clipboard(QTableWidget* table);
+
+  //! give a table a right click "Copy to Clipboard" menu
+  static void add_table_copy_menu(QTableWidget* table);
 };
 
 }  // namespace shapeworks

@@ -19,6 +19,7 @@
 #include <Shape.h>
 #include <StudioMesh.h>
 #include <Utils/AnalysisUtils.h>
+#include <Utils/StudioUtils.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
@@ -233,9 +234,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_samples_predicted_scalar_options);
 
   // add a right click menu to the samples table allowing the user to copy the table to the clipboard
-  ui_->samples_table->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui_->samples_table, &QTableWidget::customContextMenuRequested, this,
-          &AnalysisTool::samples_table_context_menu);
+  StudioUtils::add_table_copy_menu(ui_->samples_table);
 
   // disable editing of the table
   ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -2444,41 +2443,6 @@ void AnalysisTool::handle_samples_predicted_scalar_options() {
     AnalysisUtils::create_box_plot(ui_->samples_plot, diffs, "Difference to Predicted Scalar", "Sample");
   }
   Q_EMIT update_view();
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::samples_table_context_menu() {
-  QMenu menu;
-  QAction* action = menu.addAction("Copy to Clipboard");
-  connect(action, &QAction::triggered, this, &AnalysisTool::samples_table_copy_to_clipboard);
-  menu.exec(QCursor::pos());
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::samples_table_copy_to_clipboard() {
-  QTableWidget* table = ui_->samples_table;
-  QString text;
-  // start with headers
-  for (int i = 0; i < table->columnCount(); i++) {
-    text += table->horizontalHeaderItem(i)->text();
-    if (i < table->columnCount() - 1) {
-      text += ",";
-    }
-  }
-  text += "\n";
-  for (int i = 0; i < table->rowCount(); i++) {
-    for (int j = 0; j < table->columnCount(); j++) {
-      auto item = table->item(i, j);
-      if (item) {
-        text += item->text();
-      }
-      if (j < table->columnCount() - 1) {
-        text += ",";
-      }
-    }
-    text += "\n";
-  }
-  QApplication::clipboard()->setText(text);
 }
 
 //---------------------------------------------------------------------------
