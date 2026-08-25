@@ -45,7 +45,8 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   ui_->summary_label->setMargin(3);
 
   ui_->results_table->verticalHeader()->hide();
-  ui_->results_table->horizontalHeader()->setStretchLastSection(true);
+  // the sample name is what benefits from spare width, not the last numeric column
+  ui_->results_table->horizontalHeader()->setStretchLastSection(false);
   StudioUtils::add_table_copy_menu(ui_->results_table);
   ui_->results_table->setToolTip("Click a row to show that sample on its own, click it again to go back to all samples");
   connect(ui_->results_table, &QTableWidget::cellClicked, this, &CorrespondenceQualityPanel::handle_table_clicked);
@@ -308,6 +309,10 @@ void CorrespondenceQualityPanel::update_summary() {
           cell(value(stats.max)) + "</tr>";
   text += "</table>";
 
+  // these are percentiles across samples; the table's p99 column is across one sample's vertices
+  ui_->summary_label->setToolTip(
+      "Distribution across samples of each sample's mean distance. The p95 here is over samples, unlike the p99 "
+      "column in the table, which is over the vertices of a single sample.");
   ui_->summary_label->setText(text);
 }
 
@@ -339,6 +344,26 @@ void CorrespondenceQualityPanel::update_table() {
   table->setHorizontalHeaderLabels(headers);
   table->setRowCount(rows.size());
 
+  // the summary above reports percentiles across samples, these are across the vertices of one
+  // sample, so say which is which rather than leaving two similar looking percentiles side by side
+  const QStringList tips = {"Distance from this sample's reconstruction to its groomed mesh",
+                            multi_domain ? "Anatomy this row measures" : QString(),
+                            "Mean over this sample's reconstruction vertices",
+                            "Median over this sample's reconstruction vertices",
+                            "99th percentile of this sample's per-vertex distances: the worst part of the surface, "
+                            "without following a single stray vertex the way the max does",
+                            "Largest single per-vertex distance on this sample"};
+  int tip_index = 0;
+  for (int c = 0; c < headers.size(); c++) {
+    if (!multi_domain && tip_index == 1) {
+      tip_index++;  // no domain column to describe
+    }
+    if (auto header_item = table->horizontalHeaderItem(c)) {
+      header_item->setToolTip(tips.value(tip_index));
+    }
+    tip_index++;
+  }
+
   auto order = get_sorted_rows();
   const double scale = norm ? 100.0 : 1.0;
 
@@ -364,6 +389,7 @@ void CorrespondenceQualityPanel::update_table() {
     const double raw[4] = {row.mean_dist, row.median_dist, row.p99_dist, row.max_dist};
     for (int v = 0; v < 4; v++) {
       auto item = new QTableWidgetItem(QString::number(values[v] * scale, 'f', 4));
+      item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);  // so the decimal points line up
       if (norm) {
         item->setToolTip(QString("%1 in world units").arg(raw[v]));
       }
@@ -371,7 +397,13 @@ void CorrespondenceQualityPanel::update_table() {
     }
   }
 
-  table->resizeColumnsToContents();
+  // numbers take exactly what they need; the sample name takes whatever is left over, so long
+  // names are not elided while a numeric column sits half empty
+  auto header = table->horizontalHeader();
+  for (int c = 1; c < table->columnCount(); c++) {
+    header->setSectionResizeMode(c, QHeaderView::ResizeToContents);
+  }
+  header->setSectionResizeMode(0, QHeaderView::Stretch);
 }
 
 //---------------------------------------------------------------------------
