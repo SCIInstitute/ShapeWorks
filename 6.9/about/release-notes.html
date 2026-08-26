@@ -7258,7 +7258,7 @@
 <p><strong>ShapeWorks Back-end</strong></p>
 <ul>
 <li>Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)</li>
-<li>New <code>correspondence-quality</code> command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies (#2612)</li>
+<li>New <code>correspondence-quality</code> command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies. Reports mean, median, 99th percentile and max distance per subject; p99 measures the worst part of a surface without following a single stray vertex the way max does (#2612)</li>
 <li>Large-cohort optimization speedups: the per-iteration correspondence update drops an O(P·N²) identity multiply during initialization and uses a symmetric eigensolver instead of a single-threaded general SVD, restoring multi-core use on large cohorts with no change to the result (#2574)</li>
 <li>Geodesic remeshing fixes: <code>geodesic_remesh_percent</code> is now interpreted correctly as a percentage, geodesics are actually enabled on the remeshed surface (previously it silently fell back to Euclidean distances), and per-particle face lookups are cached against the query point (#2556)</li>
 <li>Contours are detected by cell type rather than by inspecting the first cell, and polyline cells with more than two points are split into segments, so single-polyline contours load and optimize instead of crashing (#2377, #2457)</li>
@@ -7281,6 +7281,11 @@
 <li>File → Export → Export All Meshes writes the reconstructed mesh for every subject in the project (#2281)</li>
 <li>The glyph-size slider and auto-sizing now scale to the shape's largest dimension instead of a fixed world-unit range, so very small or very large shapes get usable glyph sizes (#2459)</li>
 <li>Cutting-plane table edits to center and normal now take effect (#2567)</li>
+<li>New <em>Correspondence Quality</em> panel in the Analyze pane: scores every sample by reconstructing it from its local particles through Studio's own mesh warper — the same reconstruction shown in the viewer, using your chosen template and warp method — and measuring the distance back to that sample's groomed mesh</li>
+<li><em>Show distance on surface</em> colors each sample's surface and particles by the per-vertex distance, so a bad region can be located and not just detected</li>
+<li>Samples can be sorted by mean, median, p99 or max distance, or by how localized the error is, which surfaces swapped-correspondence cases whose mean distance still looks healthy; <em>Sort samples in view</em> applies the same ranking to the All Samples grid so the challenging shapes come up first, and clicking a row shows that sample on its own, or returns to all samples if it is already showing</li>
+<li>The quality chart plots the ranked metric together with the tail of the distribution on a log axis, with median and p95 marked, so a small badly reconstructed patch stays visible even when it barely moves the mean</li>
+<li>Result tables can be right-clicked to copy their contents to the clipboard as CSV, with the header row and proper quoting of values containing a comma or a quote</li>
 </ul>
 </li>
 </ul>
@@ -7296,11 +7301,15 @@
 <li>Fix initial landmarks and cutting-plane points rendering at near-zero size before optimization (#2276, #2595)</li>
 <li>Clear particle filenames when optimization fails, so saving the project no longer persists paths to files that were never written and the project reloads cleanly (#2455)</li>
 <li>Fix an intermittent race condition in debug instrumentation (#2530)</li>
+<li>Fix the Particle Area Analysis and Shape/Scalar Correlation progress bars never moving: the job's fractional progress was truncated to an integer before being scaled to a percentage</li>
+<li>Fix box plots showing an auto-assigned palette color rather than the color they were given, which made the plot color appear to change between runs</li>
+<li>Fix the lightbox not refitting its shared camera when the tile layout changes, which left samples small and off-centre after switching to the All Samples view until <em>Autoview</em> was pressed</li>
 </ul>
 <h3 id="platform-updates">Platform Updates</h3>
 <ul>
 <li>Bundled Python 3.12 (see above); VTK 9.5.0, ITK 5.4.4 and Qt 5.15.4 are unchanged from 6.7.0</li>
 <li>GitHub Actions updated to Node 20 runtimes (#1909)</li>
+<li>JKQTPlotter is pinned to a tag rather than a moving branch, and updated to skip minor tick labels that would collide with a neighbouring label on a log axis</li>
 </ul>
 <h2 id="shapeworks-670">ShapeWorks 6.7.0</h2>
 <p><img alt="" src="../img/about/release6.7.png" /></p>

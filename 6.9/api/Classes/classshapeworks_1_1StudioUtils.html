@@ -4615,6 +4615,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-copy_table_to_clipboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function copy_table_to_clipboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-add_table_copy_menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function add_table_copy_menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-wrap_tooltip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function wrap_tooltip
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4692,6 +4725,18 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1StudioUtils.html#function-update-domain-combobox">update_domain_combobox</a></strong>(QComboBox * combobox, QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, const std::vector&lt; QString &gt; &amp; filters ={})<br>update a combobox with domain names</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-copy-table-to-clipboard">copy_table_to_clipboard</a></strong>(QTableWidget * table)<br>copy the contents of a table, with its header row, to the clipboard as CSV</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-add-table-copy-menu">add_table_copy_menu</a></strong>(QTableWidget * table)<br>give a table a right click "Copy to Clipboard" menu</td>
+</tr>
+<tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1StudioUtils.html#function-wrap-tooltip">wrap_tooltip</a></strong>(const QString &amp; text, int wrap_chars =80)<br>break a long tooltip into multiple lines</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
@@ -4768,8 +4813,27 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>update a combobox with domain names </p>
+<h3 id="function-copy_table_to_clipboard">function copy_table_to_clipboard</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">copy_table_to_clipboard</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QTableWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">table</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>copy the contents of a table, with its header row, to the clipboard as CSV </p>
+<h3 id="function-add_table_copy_menu">function add_table_copy_menu</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">add_table_copy_menu</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QTableWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">table</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>give a table a right click "Copy to Clipboard" menu </p>
+<h3 id="function-wrap_tooltip">function wrap_tooltip</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">wrap_tooltip</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">text</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">wrap_chars</span><span class="w"> </span><span class="o">=</span><span class="mi">80</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>break a long tooltip into multiple lines </p>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:42 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
 
 
 

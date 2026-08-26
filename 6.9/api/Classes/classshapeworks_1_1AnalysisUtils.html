@@ -4483,6 +4483,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Classes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4490,6 +4512,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Types Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enum-keycorner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enum KeyCorner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4538,6 +4588,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-create_ranked_plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function create_ranked_plot
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4564,6 +4625,36 @@
 
 
 <h1 id="shapeworksanalysisutils">shapeworks::AnalysisUtils</h1>
+<h2 id="public-classes">Public Classes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>struct</td>
+<td><strong><a href="structshapeworks_1_1AnalysisUtils_1_1RankedSeries.html">RankedSeries</a></strong> <br>one line of a ranked plot</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum class</td>
+<td><strong><a href="classshapeworks_1_1AnalysisUtils.html#enum-keycorner">KeyCorner</a></strong> { BottomLeft, BottomRight}<br>which corner the key sits in, so it can be kept clear of the data</td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -4585,8 +4676,36 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisUtils.html#function-create-box-plot">create_box_plot</a></strong>(JKQTPlotter * plot, Eigen::VectorXd data, QString title, QString x_label, QColor color =Qt::blue)</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisUtils.html#function-create-ranked-plot">create_ranked_plot</a></strong>(JKQTPlotter * plot, const std::vector&lt; <a href="structshapeworks_1_1AnalysisUtils_1_1RankedSeries.html">RankedSeries</a> &gt; &amp; series, const std::vector&lt; double &gt; &amp; reference_lines, QString title, QString x_label, QString y_label, bool log_y, <a href="classshapeworks_1_1AnalysisUtils.html#enum-keycorner">KeyCorner</a> key_corner =KeyCorner::BottomLeft)</td>
+</tr>
 </tbody>
 </table>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="enum-keycorner">enum KeyCorner</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BottomLeft</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>BottomRight</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>which corner the key sits in, so it can be kept clear of the data </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-get_local_particle_system">function get_local_particle_system</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">get_local_particle_system</span><span class="p">(</span>
@@ -4612,8 +4731,21 @@
 <span class="w">    </span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="n">Qt</span><span class="o">::</span><span class="n">blue</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-create_ranked_plot">function create_ranked_plot</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">create_ranked_plot</span><span class="p">(</span>
+<span class="w">    </span><span class="n">JKQTPlotter</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">RankedSeries</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">series</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">reference_lines</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">y_label</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">log_y</span><span class="p">,</span>
+<span class="w">    </span><span class="n">KeyCorner</span><span class="w"> </span><span class="n">key_corner</span><span class="w"> </span><span class="o">=</span><span class="n">KeyCorner</span><span class="o">::</span><span class="n">BottomLeft</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Per-sample ranked plot: each series drawn as a line over the sample index, with optional horizontal reference lines. A log y axis keeps series of very different magnitude readable, and is ignored when any value is non-positive. </p>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:41 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
 
 
 

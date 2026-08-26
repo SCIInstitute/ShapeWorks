@@ -4562,6 +4562,10 @@
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1AnalysisUtils.html">shapeworks::AnalysisUtils</a></strong></td>
 </tr>
+<tr>
+<td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1AnalysisUtils_1_1RankedSeries.html">shapeworks::AnalysisUtils::RankedSeries</a></strong> <br>one line of a ranked plot</td>
+</tr>
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
@@ -4586,12 +4590,24 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_box_plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span>
 <span class="w">                              </span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Qt</span><span class="o">::</span><span class="n">blue</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">KeyCorner</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">BottomLeft</span><span class="p">,</span><span class="w"> </span><span class="n">BottomRight</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">RankedSeries</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">values</span><span class="p">;</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">label</span><span class="p">;</span>
+<span class="w">    </span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="p">{</span><span class="n">Qt</span><span class="o">::</span><span class="n">blue</span><span class="p">};</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">create_ranked_plot</span><span class="p">(</span><span class="n">JKQTPlotter</span><span class="o">*</span><span class="w"> </span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">RankedSeries</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">series</span><span class="p">,</span>
+<span class="w">                                 </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">reference_lines</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">x_label</span><span class="p">,</span>
+<span class="w">                                 </span><span class="n">QString</span><span class="w"> </span><span class="n">y_label</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">log_y</span><span class="p">,</span><span class="w"> </span><span class="n">KeyCorner</span><span class="w"> </span><span class="n">key_corner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KeyCorner</span><span class="o">::</span><span class="n">BottomLeft</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:43 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:05 +0000</p>
 
 
 

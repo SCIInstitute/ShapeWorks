@@ -5151,6 +5151,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_ordered_shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function get_ordered_shapes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_shape_display_order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function set_shape_display_order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_shape_display_order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function get_shape_display_order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-calculate_reconstructed_samples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6700,6 +6733,18 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-non-excluded-shapes">get_non_excluded_shapes</a></strong>()<br>return all non-excluded shapes</td>
 </tr>
 <tr>
+<td>ShapeList</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-ordered-shapes">get_ordered_shapes</a></strong>()<br>return all shapes in the current sample display order</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-shape-display-order">set_shape_display_order</a></strong>(const std::vector&lt; int &gt; &amp; order)</td>
+</tr>
+<tr>
+<td>std::vector&lt; int &gt;</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-get-shape-display-order">get_shape_display_order</a></strong>()<br>get the current sample display order (empty when natural)</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-calculate-reconstructed-samples">calculate_reconstructed_samples</a></strong>()</td>
 </tr>
@@ -7379,6 +7424,20 @@
 <div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_non_excluded_shapes</span><span class="p">()</span>
 </code></pre></div>
 <p>return all non-excluded shapes </p>
+<h3 id="function-get_ordered_shapes">function get_ordered_shapes</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_ordered_shapes</span><span class="p">()</span>
+</code></pre></div>
+<p>return all shapes in the current sample display order </p>
+<h3 id="function-set_shape_display_order">function set_shape_display_order</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shape_display_order</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">order</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>set an alternate ordering for the sample display, as indices into <a href="classshapeworks_1_1Session.html#function-get-shapes">get_shapes()</a>. An empty or invalid order restores the natural order. This affects only the all-samples display; indices used elsewhere (stats, PCA, warp template) are unchanged. </p>
+<h3 id="function-get_shape_display_order">function get_shape_display_order</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape_display_order</span><span class="p">()</span>
+</code></pre></div>
+<p>get the current sample display order (empty when natural) </p>
 <h3 id="function-calculate_reconstructed_samples">function calculate_reconstructed_samples</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">calculate_reconstructed_samples</span><span class="p">()</span>
 </code></pre></div>
@@ -7816,7 +7875,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MONAI_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:42 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
 
 
 

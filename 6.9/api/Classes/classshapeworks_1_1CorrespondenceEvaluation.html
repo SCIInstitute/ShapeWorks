@@ -4566,6 +4566,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-evaluate_reconstruction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function evaluate_reconstruction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-summarize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function summarize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-compute_aggregates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function compute_aggregates
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4622,13 +4655,26 @@
 <td><a href="structshapeworks_1_1CorrespondenceQualityReport.html">CorrespondenceQualityReport</a></td>
 <td><strong><a href="classshapeworks_1_1CorrespondenceEvaluation.html#function-evaluate">evaluate</a></strong>(ProjectHandle project, DistanceMethod method =DistanceMethod::PointToCell, const std::string &amp; output_meshes_dir ="")</td>
 </tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityRow.html">CorrespondenceQualityRow</a></td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceEvaluation.html#function-evaluate-reconstruction">evaluate_reconstruction</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; reconstructed, const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; groomed, DistanceMethod method, vtkSmartPointer&lt; vtkDataArray &gt; * out_distance =nullptr)</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceEvaluation.html#function-summarize">summarize</a></strong>(std::vector&lt; double &gt; values)<br>Summary statistics (mean/median/p95/max) over a set of values.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceEvaluation.html#function-compute-aggregates">compute_aggregates</a></strong>(<a href="structshapeworks_1_1CorrespondenceQualityReport.html">CorrespondenceQualityReport</a> &amp; report)<br>Fill num_evaluated, num_template_rows, agg_raw and agg_norm from report.rows.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceEvaluation</span><span class="p">;</span>
 </code></pre></div>
 <p>Per-subject correspondence-quality metric: reconstruct each subject's shape from its local particles via biharmonic mesh warp from the cohort L1-medoid template (matches Studio's median-subject selection), then measure distance from the reconstruction to that subject's groomed mesh. Distances are also normalized by each subject's bounding-box diagonal so the metric is scale-invariant.</p>
-<p>The template row itself is included in <code>rows</code> (with is_template=true) but excluded from aggregate statistics — its reconstruction is near-identity and would skew small cohorts. </p>
+<p>The template row itself is included in <code>rows</code> (with is_template=true) but excluded from aggregate statistics — its reconstruction is near-identity and would skew small cohorts.</p>
+<p><code>[evaluate()](../Classes/classshapeworks_1_1CorrespondenceEvaluation.md#function-evaluate)</code> drives the whole thing from a project file. Callers that already have reconstructions in memory (Studio, which reconstructs through its own configured mesh warper) should use <code>[evaluate_reconstruction()](../Classes/classshapeworks_1_1CorrespondenceEvaluation.md#function-evaluate-reconstruction)</code> and <code>[compute_aggregates()](../Classes/classshapeworks_1_1CorrespondenceEvaluation.md#function-compute-aggregates)</code> instead so the metric definition stays in one place. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="enum-distancemethod">enum DistanceMethod</h3>
 <table>
@@ -4663,8 +4709,31 @@
 <p>Evaluate. <a href="classshapeworks_1_1Project.html">Project</a> is expected to be already loaded, and the current working directory must be one from which the project's relative paths (groomed, local particles) resolve.</p>
 <p>If <code>output_meshes_dir</code> is non-empty, per-subject reconstructed meshes are written there as .vtk with an embedded per-vertex "distance" field. The path is used verbatim (interpreted relative to the current CWD if not absolute).</p>
 <p>Throws std::runtime_error on setup failures (no subjects, warp failure, mismatched particle counts across subjects). </p>
+<h3 id="function-evaluate_reconstruction">function evaluate_reconstruction</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">CorrespondenceQualityRow</span><span class="w"> </span><span class="n">evaluate_reconstruction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">reconstructed</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">groomed</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkDataArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_distance</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Score a single already-reconstructed mesh against its groomed target.</p>
+<p>Fills everything on the row except <code>subject</code>, <code>domain</code> and <code>is_template</code>, which the caller owns. If <code>out_distance</code> is non-null it receives the per-vertex distance field (named "distance"), for surface display or writing alongside the mesh.</p>
+<p>Returns a default-constructed row if <code>reconstructed</code> is null or empty. </p>
+<h3 id="function-summarize">function summarize</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">summarize</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Summary statistics (mean/median/p95/max) over a set of values. </p>
+<h3 id="function-compute_aggregates">function compute_aggregates</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute_aggregates</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CorrespondenceQualityReport</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">report</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Fill num_evaluated, num_template_rows, agg_raw and agg_norm from report.rows. </p>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:41 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
 
 
 

@@ -4539,6 +4539,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-median_dist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable median_dist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-p99_dist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable p99_dist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-max_dist" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4565,6 +4587,28 @@
     <span class="md-ellipsis">
       
         variable norm_mean
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-norm_median" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable norm_median
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-norm_p99" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable norm_p99
       
     </span>
   </a>
@@ -4644,6 +4688,14 @@
 </tr>
 <tr>
 <td>double</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-median-dist">median_dist</a></strong> <br>median per-vertex distance</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-p99-dist">p99_dist</a></strong> <br>99th percentile per-vertex distance, a max that ignores single outlier vertices</td>
+</tr>
+<tr>
+<td>double</td>
 <td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-max-dist">max_dist</a></strong> <br>max per-vertex distance</td>
 </tr>
 <tr>
@@ -4653,6 +4705,14 @@
 <tr>
 <td>double</td>
 <td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-norm-mean">norm_mean</a></strong> <br>mean_dist / bbox_diag (scale-invariant)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-norm-median">norm_median</a></strong> <br>median_dist / bbox_diag</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-norm-p99">norm_p99</a></strong> <br>p99_dist / bbox_diag</td>
 </tr>
 <tr>
 <td>double</td>
@@ -4675,6 +4735,14 @@
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">mean_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
 <p>mean point-to-cell (or point-to-point) distance, reconstructed -&gt; groomed </p>
+<h3 id="variable-median_dist">variable median_dist</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">median_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
+<p>median per-vertex distance </p>
+<h3 id="variable-p99_dist">variable p99_dist</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">p99_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
+<p>99th percentile per-vertex distance, a max that ignores single outlier vertices </p>
 <h3 id="variable-max_dist">variable max_dist</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
@@ -4687,6 +4755,14 @@
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">norm_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
 <p>mean_dist / bbox_diag (scale-invariant) </p>
+<h3 id="variable-norm_median">variable norm_median</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">norm_median</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
+<p>median_dist / bbox_diag </p>
+<h3 id="variable-norm_p99">variable norm_p99</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">norm_p99</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+</code></pre></div>
+<p>p99_dist / bbox_diag </p>
 <h3 id="variable-norm_max">variable norm_max</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">norm_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
@@ -4696,7 +4772,7 @@
 </code></pre></div>
 <p>true for the L1-medoid template row (excluded from aggregates) </p>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:41 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
 
 
 

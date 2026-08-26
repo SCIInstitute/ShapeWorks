@@ -4579,6 +4579,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkImageData</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkRenderer</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QComboBox</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QTableWidget</span><span class="p">;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
@@ -4609,12 +4610,18 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_combobox</span><span class="p">(</span><span class="n">QComboBox</span><span class="o">*</span><span class="w"> </span><span class="n">combobox</span><span class="p">,</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
 <span class="w">                                     </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QString</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">filters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">copy_table_to_clipboard</span><span class="p">(</span><span class="n">QTableWidget</span><span class="o">*</span><span class="w"> </span><span class="n">table</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_table_copy_menu</span><span class="p">(</span><span class="n">QTableWidget</span><span class="o">*</span><span class="w"> </span><span class="n">table</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">wrap_tooltip</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">wrap_chars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:43 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:05 +0000</p>
 
 
 

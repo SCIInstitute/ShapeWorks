@@ -4952,6 +4952,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#slot-push_template_to_panels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slot push_template_to_panels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#slot-group_p_values_clicked" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5176,28 +5187,6 @@
     <span class="md-ellipsis">
       
         slot handle_samples_predicted_scalar_options
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-samples_table_context_menu" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        slot samples_table_context_menu
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-samples_table_copy_to_clipboard" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        slot samples_table_copy_to_clipboard
       
     </span>
   </a>
@@ -5558,6 +5547,50 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-show_sample" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function show_sample
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_mesh_warp_template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function set_mesh_warp_template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_mesh_warp_template_to_median" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function set_mesh_warp_template_to_median
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-apply_mesh_warp_template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function apply_mesh_warp_template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-compute_stats" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5861,6 +5894,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#variable-mesh_warp_template_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable MESH_WARP_TEMPLATE_INDEX
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-mode_all_samples_c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6104,6 +6148,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-push-template-to-panels">push_template_to_panels</a></strong>()<br>mirror the current warp template into the panels that also present it</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-group-p-values-clicked">group_p_values_clicked</a></strong>()</td>
 </tr>
 <tr>
@@ -6185,14 +6233,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-samples-predicted-scalar-options">handle_samples_predicted_scalar_options</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-samples-table-context-menu">samples_table_context_menu</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-samples-table-copy-to-clipboard">samples_table_copy_to_clipboard</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -6333,6 +6373,22 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-sample-number">get_sample_number</a></strong>()</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-show-sample">show_sample</a></strong>(int index)<br>switch to the single sample view showing the given index into <a href="">Session::get_shapes()</a></td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-set-mesh-warp-template">set_mesh_warp_template</a></strong>(int index)<br>set the mesh warp template, as an index into the non-excluded shapes</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-set-mesh-warp-template-to-median">set_mesh_warp_template_to_median</a></strong>()<br>set the mesh warp template to the cohort median shape</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-apply-mesh-warp-template">apply_mesh_warp_template</a></strong>()<br>rebuild the mesh warper for the current template, discarding cached reconstructions</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-compute-stats">compute_stats</a></strong>()</td>
 </tr>
@@ -6447,6 +6503,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>constexpr const char *</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#variable-mesh-warp-template-index">MESH_WARP_TEMPLATE_INDEX</a></strong> <br>project parameter key holding the mesh-warp template index (an index into the non-excluded shapes)</td>
+</tr>
 <tr>
 <td>const std::string</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#variable-mode-all-samples-c">MODE_ALL_SAMPLES_C</a></strong></td>
@@ -6639,6 +6699,10 @@
 <h3 id="slot-initialize_mesh_warper">slot initialize_mesh_warper</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initialize_mesh_warper</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-push_template_to_panels">slot push_template_to_panels</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">push_template_to_panels</span><span class="p">()</span>
+</code></pre></div>
+<p>mirror the current warp template into the panels that also present it </p>
 <h3 id="slot-group_p_values_clicked">slot group_p_values_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">group_p_values_clicked</span><span class="p">()</span>
 </code></pre></div>
@@ -6720,12 +6784,6 @@
 <p>Compute the mean shape outside of the PCA in case we are using scalars only. </p>
 <h3 id="slot-handle_samples_predicted_scalar_options">slot handle_samples_predicted_scalar_options</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_samples_predicted_scalar_options</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-samples_table_context_menu">slot samples_table_context_menu</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">samples_table_context_menu</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="slot-samples_table_copy_to_clipboard">slot samples_table_copy_to_clipboard</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">samples_table_copy_to_clipboard</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="slot-mesh_warp_median_clicked">slot mesh_warp_median_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">mesh_warp_median_clicked</span><span class="p">()</span>
@@ -6836,6 +6894,26 @@
 <h3 id="function-get_sample_number">function get_sample_number</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_sample_number</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-show_sample">function show_sample</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_sample</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>switch to the single sample view showing the given index into <a href="">Session::get_shapes()</a></p>
+<h3 id="function-set_mesh_warp_template">function set_mesh_warp_template</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_warp_template</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>set the mesh warp template, as an index into the non-excluded shapes </p>
+<h3 id="function-set_mesh_warp_template_to_median">function set_mesh_warp_template_to_median</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_warp_template_to_median</span><span class="p">()</span>
+</code></pre></div>
+<p>set the mesh warp template to the cohort median shape </p>
+<h3 id="function-apply_mesh_warp_template">function apply_mesh_warp_template</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_mesh_warp_template</span><span class="p">()</span>
+</code></pre></div>
+<p>rebuild the mesh warper for the current template, discarding cached reconstructions </p>
 <h3 id="function-compute_stats">function compute_stats</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">compute_stats</span><span class="p">()</span>
 </code></pre></div>
@@ -6939,6 +7017,10 @@
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_shape_only_mode</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
+<h3 id="variable-mesh_warp_template_index">variable MESH_WARP_TEMPLATE_INDEX</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">MESH_WARP_TEMPLATE_INDEX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;mesh_warp_template_index&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>project parameter key holding the mesh-warp template index (an index into the non-excluded shapes) </p>
 <h3 id="variable-mode_all_samples_c">variable MODE_ALL_SAMPLES_C</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ALL_SAMPLES_C</span><span class="p">;</span>
 </code></pre></div>
@@ -6955,7 +7037,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:41 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
 
 
 

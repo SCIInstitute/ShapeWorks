@@ -4670,6 +4670,12 @@
 
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_non_excluded_shapes</span><span class="p">();</span>
 
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_ordered_shapes</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shape_display_order</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">order</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape_display_order</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">calculate_reconstructed_samples</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">();</span>
@@ -4897,6 +4903,8 @@
 
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape_display_order_</span><span class="p">;</span>
+
 <span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span>
@@ -4944,7 +4952,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-25 at 15:44:43 +0000</p>
+<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
 
 
 
