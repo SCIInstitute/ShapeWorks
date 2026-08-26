@@ -19,6 +19,7 @@
 #include <Shape.h>
 #include <StudioMesh.h>
 #include <Utils/AnalysisUtils.h>
+#include <Utils/StudioUtils.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
@@ -30,6 +31,7 @@
 
 #include <map>
 
+#include "CorrespondenceQualityPanel.h"
 #include "ParticleAreaPanel.h"
 #include "ShapeScalarPanel.h"
 
@@ -41,7 +43,6 @@ const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
-constexpr auto MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
 constexpr auto MESH_WARP_METHOD = "mesh_warp_method";
 
 //---------------------------------------------------------------------------
@@ -81,6 +82,28 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   shape_scalar_panel_ = new ShapeScalarPanel(this);
   layout()->addWidget(shape_scalar_panel_);
+
+  correspondence_quality_panel_ = new CorrespondenceQualityPanel(this);
+  layout()->addWidget(correspondence_quality_panel_);
+
+  // the correspondence distance and the sample ordering are only visible in the sample views, so
+  // take the user there rather than leaving them wondering why nothing changed
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_show_sample, this,
+          &AnalysisTool::show_sample);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_template, this,
+          &AnalysisTool::set_mesh_warp_template);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_template_median, this,
+          &AnalysisTool::set_mesh_warp_template_to_median);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_apply_template, this,
+          &AnalysisTool::apply_mesh_warp_template);
+  connect(correspondence_quality_panel_, &CorrespondenceQualityPanel::request_samples_view, this,
+          [this](bool all_samples) {
+            auto mode = get_analysis_mode();
+            if (mode == MODE_ALL_SAMPLES_C || (!all_samples && mode == MODE_SINGLE_SAMPLE_C)) {
+              return;  // already somewhere the results show
+            }
+            set_analysis_mode(MODE_ALL_SAMPLES_C);
+          });
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -219,9 +242,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_samples_predicted_scalar_options);
 
   // add a right click menu to the samples table allowing the user to copy the table to the clipboard
-  ui_->samples_table->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui_->samples_table, &QTableWidget::customContextMenuRequested, this,
-          &AnalysisTool::samples_table_context_menu);
+  StudioUtils::add_table_copy_menu(ui_->samples_table);
 
   // disable editing of the table
   ui_->samples_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -360,6 +381,28 @@ void AnalysisTool::set_labels(QString which, QString value) {
 int AnalysisTool::get_sample_number() { return ui_->sampleSpinBox->value(); }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::show_sample(int index) {
+  if (!session_ || index < 0 || index >= static_cast<int>(session_->get_shapes().size())) {
+    return;
+  }
+
+  // Asking for the sample that is already showing returns to the grid, so a results table can step
+  // in and out of samples without sending the user back up to the Samples tab to find the radio.
+  if (get_analysis_mode() == MODE_SINGLE_SAMPLE_C && ui_->sampleSpinBox->value() == index) {
+    ui_->allSamplesRadio->setChecked(true);
+    ui_->singleSamplesRadio->setChecked(false);
+    set_analysis_mode(MODE_ALL_SAMPLES_C);
+    handle_analysis_options();
+    return;
+  }
+
+  ui_->singleSamplesRadio->setChecked(true);
+  ui_->sampleSpinBox->setValue(index);
+  set_analysis_mode(MODE_SINGLE_SAMPLE_C);
+  handle_analysis_options();
+}
+
+//---------------------------------------------------------------------------
 AnalysisTool::~AnalysisTool() {}
 
 //---------------------------------------------------------------------------
@@ -367,6 +410,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   particle_area_panel_->set_session(session);
   shape_scalar_panel_->set_session(session);
+  correspondence_quality_panel_->set_session(session);
 
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
@@ -1460,6 +1504,7 @@ void AnalysisTool::reset_stats() {
 
   particle_area_panel_->reset();
   shape_scalar_panel_->reset();
+  correspondence_quality_panel_->reset();
   stats_ = ParticleShapeStatistics();
   evals_ready_ = false;
   stats_ready_ = false;
@@ -1548,6 +1593,7 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
   // the mesh warp template is chosen from the non-excluded shapes
   ui_->mesh_warp_sample_spinbox->setMaximum(static_cast<int>(session_->get_non_excluded_shapes().size()) - 1);
+  push_template_to_panels();
 }
 
 //---------------------------------------------------------------------------
@@ -1721,6 +1767,14 @@ std::string AnalysisTool::get_display_feature_map() {
     } else {
       return particle_area_panel_->get_computed_value_name();
     }
+  }
+
+  // the correspondence distance is a per-vertex field on each sample's reconstruction, so it
+  // only applies to the sample views
+  if (correspondence_quality_panel_->get_display_distance() &&
+      (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||
+       get_analysis_mode() == AnalysisTool::MODE_SINGLE_SAMPLE_C)) {
+    return correspondence_quality_panel_->get_display_feature_name();
   }
 
   if (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C &&
@@ -2423,39 +2477,23 @@ void AnalysisTool::handle_samples_predicted_scalar_options() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::samples_table_context_menu() {
-  QMenu menu;
-  QAction* action = menu.addAction("Copy to Clipboard");
-  connect(action, &QAction::triggered, this, &AnalysisTool::samples_table_copy_to_clipboard);
-  menu.exec(QCursor::pos());
+void AnalysisTool::push_template_to_panels() {
+  if (!correspondence_quality_panel_ || !session_) {
+    return;
+  }
+  correspondence_quality_panel_->set_template_info(ui_->mesh_warp_sample_spinbox->value(),
+                                                   ui_->mesh_warp_sample_spinbox->maximum(),
+                                                   ui_->template_mesh_name_label->text());
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::samples_table_copy_to_clipboard() {
-  QTableWidget* table = ui_->samples_table;
-  QString text;
-  // start with headers
-  for (int i = 0; i < table->columnCount(); i++) {
-    text += table->horizontalHeaderItem(i)->text();
-    if (i < table->columnCount() - 1) {
-      text += ",";
-    }
-  }
-  text += "\n";
-  for (int i = 0; i < table->rowCount(); i++) {
-    for (int j = 0; j < table->columnCount(); j++) {
-      auto item = table->item(i, j);
-      if (item) {
-        text += item->text();
-      }
-      if (j < table->columnCount() - 1) {
-        text += ",";
-      }
-    }
-    text += "\n";
-  }
-  QApplication::clipboard()->setText(text);
-}
+void AnalysisTool::set_mesh_warp_template(int index) { ui_->mesh_warp_sample_spinbox->setValue(index); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_mesh_warp_template_to_median() { mesh_warp_median_clicked(); }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::apply_mesh_warp_template() { mesh_warp_run_clicked(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::mesh_warp_median_clicked() {
@@ -2471,9 +2509,11 @@ void AnalysisTool::mesh_warp_sample_changed() {
   auto shapes = session_->get_non_excluded_shapes();
   if (index < 0 || index >= shapes.size()) {
     ui_->template_mesh_name_label->setText("");
+    push_template_to_panels();
     return;
   }
   ui_->template_mesh_name_label->setText(QString::fromStdString(shapes[index]->get_subject()->get_display_name()));
+  push_template_to_panels();
 }
 
 //---------------------------------------------------------------------------

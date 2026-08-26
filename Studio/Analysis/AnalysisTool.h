@@ -31,6 +31,7 @@ class StatsGroupLDAJob;
 class StatsGroupDWDJob;
 class ParticleAreaPanel;
 class ShapeScalarPanel;
+class CorrespondenceQualityPanel;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -83,6 +84,18 @@ class AnalysisTool : public QWidget {
 
   int get_sample_number();
 
+  //! switch to the single sample view showing the given index into Session::get_shapes()
+  void show_sample(int index);
+
+  //! set the mesh warp template, as an index into the non-excluded shapes
+  void set_mesh_warp_template(int index);
+
+  //! set the mesh warp template to the cohort median shape
+  void set_mesh_warp_template_to_median();
+
+  //! rebuild the mesh warper for the current template, discarding cached reconstructions
+  void apply_mesh_warp_template();
+
   bool compute_stats();
 
   void update_slider();
@@ -118,6 +131,9 @@ class AnalysisTool : public QWidget {
   bool export_variance_graph(QString filename);
 
   void compute_shape_evaluations();
+
+  //! project parameter key holding the mesh-warp template index (an index into the non-excluded shapes)
+  static constexpr const char* MESH_WARP_TEMPLATE_INDEX = "mesh_warp_template_index";
 
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
@@ -186,6 +202,9 @@ class AnalysisTool : public QWidget {
 
   void initialize_mesh_warper();
 
+  //! mirror the current warp template into the panels that also present it
+  void push_template_to_panels();
+
   void group_p_values_clicked();
   void network_analysis_clicked();
 
@@ -221,8 +240,7 @@ class AnalysisTool : public QWidget {
 
   void handle_samples_predicted_scalar_options();
 
-  void samples_table_context_menu();
-  void samples_table_copy_to_clipboard();
+
 
   // mesh warping options
   void mesh_warp_median_clicked();
@@ -339,6 +357,7 @@ class AnalysisTool : public QWidget {
 
   ParticleAreaPanel* particle_area_panel_{nullptr};
   ShapeScalarPanel* shape_scalar_panel_{nullptr};
+  CorrespondenceQualityPanel* correspondence_quality_panel_{nullptr};
 
   std::vector<QPointer<Worker>> workers_;
 };

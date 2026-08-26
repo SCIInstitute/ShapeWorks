@@ -16,6 +16,7 @@
 #include <vtkRenderer.h>
 
 #include <QPixmap>
+#include <QTimer>
 
 namespace shapeworks {
 
@@ -89,6 +90,7 @@ void Lightbox::handle_new_mesh() {
   }
   redraw();
   check_for_first_draw();
+  check_for_pending_camera_reset();
 }
 
 //-----------------------------------------------------------------------------
@@ -248,8 +250,21 @@ void Lightbox::set_tile_layout(int width, int height) {
   tile_layout_width_ = width;
   tile_layout_height_ = height;
 
+  // The viewers share one camera and setup_renderers() gives every viewer a new viewport, so the
+  // camera is still framed for the old layout.  Don't refit here: the layout is changed before the
+  // new shapes are handed over (AnalysisTool emits analysis_mode_changed before update_view), and
+  // the meshes are generated asynchronously, so there may be nothing yet worth framing.
+  camera_reset_pending_ = true;
+  camera_reset_attempts_ = 0;
+
   setup_renderers();
   display_shapes();
+
+  // Don't try to frame anything yet: the layout is changed before the new shapes are installed
+  // (AnalysisTool emits analysis_mode_changed before update_view), so shapes_ is still whatever the
+  // previous mode was showing.  Defer to the end of this update cycle, by which point set_shapes()
+  // has run.
+  QTimer::singleShot(0, this, [this]() { check_for_pending_camera_reset(); });
 }
 
 //-----------------------------------------------------------------------------
@@ -269,6 +284,7 @@ void Lightbox::set_start_row(int row) {
 void Lightbox::set_shapes(ShapeList shapes) {
   shapes_ = shapes;
   display_shapes();
+  check_for_pending_camera_reset();
 }
 
 //-----------------------------------------------------------------------------
@@ -419,6 +435,37 @@ void Lightbox::check_for_first_draw() {
       initPos_ = {{pos[0], pos[1], pos[2]}};
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::check_for_pending_camera_reset() {
+  if (!camera_reset_pending_ || viewers_.empty()) {
+    return;
+  }
+
+  // tiles are filled from position 0, so only the ones backed by a shape can be framed
+  const int start = get_start_shape();
+  const int filled = std::min<int>(viewers_.size(), std::max<int>(0, static_cast<int>(shapes_.size()) - start));
+
+  // is_viewer_ready() is not the right gate: display_shape() clears it when the mesh is missing but
+  // update_points() sets it straight back from the particles alone, so it goes true while only the
+  // glyphs are up.  Framing that gives the wrong result, so wait for the surface itself.
+  if (filled == 0 || !viewers_[0]->get_meshes().valid()) {
+    return;  // nothing to frame yet, try again when the next mesh arrives
+  }
+
+  reset_camera();
+
+  bool all_ready = true;
+  for (int i = 0; i < filled; i++) {
+    if (!viewers_[i]->get_meshes().valid()) {
+      all_ready = false;
+    }
+  }
+  // keep refitting as the remaining meshes arrive, then stop so the user's camera is left alone.
+  // The attempt cap makes sure a tile whose mesh never generates cannot leave this armed forever.
+  camera_reset_attempts_++;
+  camera_reset_pending_ = !all_ready && camera_reset_attempts_ < 2 * static_cast<int>(viewers_.size());
 }
 
 //-----------------------------------------------------------------------------

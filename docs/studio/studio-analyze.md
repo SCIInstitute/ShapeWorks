@@ -138,6 +138,45 @@ The *Particle Area Analysis* panel allows for the visualization of the area of e
 
 ![ShapeWorks Studio Particle Area Analysis Panel Standard Deviation Display](../img/studio/studio_particle_area_analysis_std.png)
 
+## Correspondence Quality ##
+
+The *Correspondence Quality* panel scores every sample by how well its particles describe its own surface.  Each sample is reconstructed from its local particles through the mesh warper configured in the [Surface Reconstruction](surface-reconstruction.md) panel — the same reconstruction shown in the viewer, using your chosen template and warp method — and the distance from that reconstruction back to the sample's groomed mesh is measured.  A sample whose particles no longer follow its own surface (a failed split, a bad initialization, an outlier shape the model does not cover) shows a large distance.
+
+Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
+
+![ShapeWorks Studio Correspondence Quality Panel](../img/studio/studio_correspondence_quality.png)
+
+The results are shown on the samples, so running the analysis switches you to the *Samples* tab (if you are not already on a sample view) and to the reconstructed surfaces.
+
+*Template* selects the sample everything is warped from.  It is the same template the [Surface Reconstruction](surface-reconstruction.md) panel uses, so changing it here changes it there as well, and pressing *Run* rebuilds the reconstructions before measuring.  *Median* picks the cohort median.  Changing the template discards any results already on screen, since they were measured against the previous one.
+
+### Reading the results
+
+Press *Run* to compute.  Distances are reported per sample as mean, median, p99 and max over the reconstruction's vertices.  The p99 column is the worst part of the surface without the sensitivity to a single stray vertex that max has.  With *Normalize by bounding box diagonal* checked (the default), each distance is divided by that sample's groomed bounding box diagonal and shown as a percentage, which makes samples of different size comparable.  Normalization applies to the summary, the table, the chart and the sort together.
+
+The chart plots the samples in the same order as the table, on a log axis with the median and p95 marked.  It draws two lines: the metric you are sorting by, and the tail of the distribution beside it — the max distance normally, p99 when sorting by *Localized* so the chart matches the ranking, and the mean when sorting by max.  Two lines rather than one, because a single-line chart hides the most common failure: when a few correspondence points get swapped, only a small patch of the surface is wrong, so the mean barely moves while the tail spikes.  The gap between the lines is how localized the damage is — close together means a diffusely poor reconstruction, a wide gap means a small bad region on an otherwise good one.
+
+For the same reason *Sort by* offers **Localized (p99 / mean)**, which ranks by how concentrated each sample's error is rather than how large it is, bringing swapped-particle cases to the top even when their mean distance looks healthy. A high ratio means most of the surface is fine and a small patch is badly wrong; a low one means the error is spread evenly and the reconstruction is uniformly mediocre. p99 rather than max, so one stray vertex cannot push a sample up the ranking, and the ratio is already scale-free, so the normalize option does not change it.
+
+The template sample is marked in the table and excluded from the summary statistics and the chart, since it is warped from itself and its reconstruction is near-identity.
+
+Click a row to show that sample on its own in the viewer, which is the quickest way to work down the ranking; click the same row again to return to all samples. Right-click the table to copy it to the clipboard as CSV, in the order it is currently sorted.
+
+### Finding the challenging shapes
+
+Use *Sort by* to rank the table by mean, median, p99 or max distance, by how localized the error is, or by name, in descending order (worst first) or ascending (best first).  Checking *Sort samples in view* applies the same ranking to the *All Samples* view, so the most challenging shapes appear first in the grid.  For a multi-domain project a sample is ranked by its worst domain.  Unchecking it restores the original order.
+
+### Seeing where it breaks down
+
+*Show distance on surface* colors each sample by its per-vertex distance to the groomed surface, switching the view to the reconstructed surfaces where that field lives.  This shows *where* correspondence breaks down, not just which samples are worst.
+
+The particles are colored by the average distance over the part of the surface nearest to each one, rather than by the distance at the particle itself.  The reconstruction is warped through the particles and the particles lie on the surface, so the distance at a particle is zero whatever the state of the model; the error to look for is always in the gaps between them.
+
+![ShapeWorks Studio Correspondence Quality Surface Distance](../img/studio/studio_correspondence_quality_surface.png)
+
+
+The same metric is available outside Studio via the `shapeworks correspondence-quality` command and the Python API — see [Correspondence Quality](../workflow/analyze.md#correspondence-quality).  Studio reconstructs through its own warper, so its numbers can differ slightly from the command line's if you have changed the template sample or the warp method.
+
 ## Shape/Scalar Correlation ##
 
 The *Shape/Scalar Correlation* panel uses 2 block PLS regression to identify the relationship between shape and scalar data. 

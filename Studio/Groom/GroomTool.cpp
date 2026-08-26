@@ -67,15 +67,15 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
 
   ui_->remesh_checkbox->setToolTip(
       "Enable remeshing to create a more uniform adaptive mesh.  Also fixes many mesh problems.");
-  ui_->remesh_percent_checkbox->setToolTip(
-      "Check this box to set the number of vertices based on a percentage of the mesh's current number of vertices");
+  ui_->remesh_percent_checkbox->setToolTip(StudioUtils::wrap_tooltip(
+      "Check this box to set the number of vertices based on a percentage of the mesh's current number of vertices"));
   ui_->remesh_percent_slider->setToolTip(
       "Set the amount of vertices as a percentage of the current number of vertices.");
   ui_->remesh_num_vertices->setToolTip("Set the desired number of vertices.");
-  ui_->remesh_gradation_slider->setToolTip(
-      "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
-  ui_->remesh_gradation_spinbox->setToolTip(
-      "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
+  ui_->remesh_gradation_slider->setToolTip(StudioUtils::wrap_tooltip(
+      "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature."));
+  ui_->remesh_gradation_spinbox->setToolTip(StudioUtils::wrap_tooltip(
+      "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature."));
 
   ui_->shared_boundary->setToolTip("Check this box to model the shared boundary between two domains.");
   ui_->shared_boundary_tolerance->setToolTip("Set the tolerance for the shared boundary.");

@@ -130,7 +130,9 @@ void ParticleAreaPanel::display_option_changed() {
 }
 
 //---------------------------------------------------------------------------
-void ParticleAreaPanel::handle_job_progress(int progress) { ui_->progress->setValue(progress * 100); }
+void ParticleAreaPanel::handle_job_progress(double progress) {
+  ui_->progress->setValue(static_cast<int>(progress * 100));
+}
 
 //---------------------------------------------------------------------------
 void ParticleAreaPanel::handle_job_complete() {

@@ -1401,9 +1401,13 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_readonly("subject", &CorrespondenceQualityRow::subject)
       .def_readonly("domain", &CorrespondenceQualityRow::domain)
       .def_readonly("mean_dist", &CorrespondenceQualityRow::mean_dist)
+      .def_readonly("median_dist", &CorrespondenceQualityRow::median_dist)
+      .def_readonly("p99_dist", &CorrespondenceQualityRow::p99_dist)
       .def_readonly("max_dist", &CorrespondenceQualityRow::max_dist)
       .def_readonly("bbox_diag", &CorrespondenceQualityRow::bbox_diag)
       .def_readonly("norm_mean", &CorrespondenceQualityRow::norm_mean)
+      .def_readonly("norm_median", &CorrespondenceQualityRow::norm_median)
+      .def_readonly("norm_p99", &CorrespondenceQualityRow::norm_p99)
       .def_readonly("norm_max", &CorrespondenceQualityRow::norm_max)
       .def_readonly("is_template", &CorrespondenceQualityRow::is_template);
 

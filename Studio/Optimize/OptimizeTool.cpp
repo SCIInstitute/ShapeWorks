@@ -21,6 +21,7 @@
 #include <Logging.h>
 #include <Optimize/OptimizeTool.h>
 #include <Shape.h>
+#include <Utils/StudioUtils.h>
 #include <ui_OptimizeTool.h>
 
 using namespace shapeworks;
@@ -89,9 +90,9 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->ending_regularization->setToolTip("Ending regularization of correspondence covariance matrix");
   ui_->iterations_per_split->setToolTip("Number of iterations for each particle split");
   ui_->optimization_iterations->setToolTip("Number of optimizations to run");
-  ui_->use_geodesic_distance->setToolTip(
+  ui_->use_geodesic_distance->setToolTip(StudioUtils::wrap_tooltip(
       "Use geodesic distances for sampling term: may be more effective for capturing thin features. "
-      "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs");
+      "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs"));
   ui_->geodesic_remesh_percent->setToolTip("Percent remesh reduction to use for geodesic distance");
   ui_->use_normals->setToolTip("Use surface normals as part of optimization");
   ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
@@ -102,27 +103,27 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   ui_->multiscale->setToolTip("Use multiscale optimization mode");
   ui_->multiscale_particles->setToolTip("Start multiscale optimization after this many particles");
   ui_->use_landmarks->setToolTip("Use landmarks as initial particles");
-  ui_->registration_initialization->setToolTip(
+  ui_->registration_initialization->setToolTip(StudioUtils::wrap_tooltip(
       "Spread particles over a single automatically chosen reference shape, then carry them onto every "
       "other shape by deformably registering the reference to it, instead of splitting particles on all "
-      "shapes at once. Cannot be combined with landmarks or fixed subjects");
-  ui_->registration_transform_type->setToolTip(
+      "shapes at once. Cannot be combined with landmarks or fixed subjects"));
+  ui_->registration_transform_type->setToolTip(StudioUtils::wrap_tooltip(
       "Registration stages to run when transferring particles. SyN runs rigid, then affine, then "
-      "symmetric normalization");
-  ui_->registration_band->setToolTip(
+      "symmetric normalization"));
+  ui_->registration_band->setToolTip(StudioUtils::wrap_tooltip(
       "Half-width, in physical units, of the band around the surface that registration considers. "
       "Leave empty to scale it automatically from the resolution of the groomed inputs (a few voxels), "
-      "which is the recommended default");
+      "which is the recommended default"));
   ui_->registration_band->setPlaceholderText("auto");
-  ui_->registration_grid_size->setToolTip(
+  ui_->registration_grid_size->setToolTip(StudioUtils::wrap_tooltip(
       "Rasterization resolution for mesh registration: voxels across the largest dimension. Lower is "
       "faster and coarser, higher is finer; 128 is the default. Above ~192 gives little benefit at "
-      "much higher time and cache cost. Ignored for image (distance-transform) inputs");
-  ui_->narrow_band->setToolTip(
+      "much higher time and cache cost. Ignored for image (distance-transform) inputs"));
+  ui_->narrow_band->setToolTip(StudioUtils::wrap_tooltip(
       "Narrow band around distance transforms.  "
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
-      "It has no effect on the optimization");
+      "It has no effect on the optimization"));
   ui_->shared_boundary->setToolTip("Use shared boundary optimization");
   ui_->shared_boundary_weight->setToolTip("Weight of shared boundary optimization");
   ui_->sampling_scale->setToolTip("Enable sampling gradient scaling");

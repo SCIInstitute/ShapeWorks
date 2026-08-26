@@ -48,7 +48,7 @@ class ParticleAreaPanel : public QWidget {
 
   void display_option_changed();
 
-  void handle_job_progress(int progress);
+  void handle_job_progress(double progress);
   void handle_job_complete();
 
  Q_SIGNALS:

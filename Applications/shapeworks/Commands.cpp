@@ -398,8 +398,8 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
         const auto& r = sorted_results[i];
         std::cout << "  " << r.subject << "  (domain " << r.domain << ")"
                   << "  norm_mean=" << r.norm_mean << "  (" << std::setprecision(3) << (r.norm_mean * 100.0) << "%)"
-                  << std::setprecision(6) << "  mean=" << r.mean_dist << "  max=" << r.max_dist
-                  << "  bbox_diag=" << r.bbox_diag << "\n";
+                  << std::setprecision(6) << "  mean=" << r.mean_dist << "  median=" << r.median_dist
+                  << "  max=" << r.max_dist << "  bbox_diag=" << r.bbox_diag << "\n";
       }
     }
 
@@ -414,11 +414,13 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
         boost::filesystem::current_path(oldBasePath);
         return false;
       }
-      csv << "subject,domain,is_template,mean_dist,max_dist,bbox_diag,norm_mean,norm_max\n";
+      csv << "subject,domain,is_template,mean_dist,median_dist,p99_dist,max_dist,bbox_diag,norm_mean,norm_median,"
+             "norm_p99,norm_max\n";
       csv << std::fixed << std::setprecision(8);
       for (const auto& r : report.rows) {
         csv << r.subject << "," << r.domain << "," << (r.is_template ? 1 : 0) << "," << r.mean_dist << ","
-            << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean << "," << r.norm_max << "\n";
+            << r.median_dist << "," << r.p99_dist << "," << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean
+            << "," << r.norm_median << "," << r.norm_p99 << "," << r.norm_max << "\n";
       }
       SW_LOG("Wrote per-subject CSV: {}", out_path.string());
     }

@@ -745,6 +745,28 @@ ShapeList Session::get_non_excluded_shapes() {
 }
 
 //---------------------------------------------------------------------------
+ShapeList Session::get_ordered_shapes() {
+  if (shape_display_order_.size() != shapes_.size()) {
+    return shapes_;
+  }
+  ShapeList ordered;
+  ordered.reserve(shapes_.size());
+  for (int index : shape_display_order_) {
+    if (index < 0 || index >= static_cast<int>(shapes_.size())) {
+      return shapes_;  // stale order, fall back to natural
+    }
+    ordered.push_back(shapes_[index]);
+  }
+  return ordered;
+}
+
+//---------------------------------------------------------------------------
+void Session::set_shape_display_order(const std::vector<int>& order) { shape_display_order_ = order; }
+
+//---------------------------------------------------------------------------
+std::vector<int> Session::get_shape_display_order() { return shape_display_order_; }
+
+//---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {
   std::sort(list.begin(), list.end(), std::greater<>());
   Q_FOREACH (int i, list) {

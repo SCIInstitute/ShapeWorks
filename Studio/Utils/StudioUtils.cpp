@@ -11,8 +11,13 @@
 #include <vtkRenderer.h>
 #include <vtkReverseSense.h>
 
+#include <QApplication>
+#include <QClipboard>
 #include <QComboBox>
+#include <QCursor>
+#include <QMenu>
 #include <QMessageBox>
+#include <QTableWidget>
 
 namespace shapeworks {
 
@@ -212,4 +217,86 @@ void StudioUtils::update_domain_combobox(QComboBox* combobox, QSharedPointer<Ses
     combobox->setCurrentIndex(currentIndex);
   }
 }
+//---------------------------------------------------------------------------
+static QString csv_escape(const QString& value) {
+  // a field containing a comma, quote or newline has to be quoted, with quotes doubled
+  if (value.contains(',') || value.contains('"') || value.contains('\n')) {
+    QString escaped = value;
+    escaped.replace("\"", "\"\"");
+    return "\"" + escaped + "\"";
+  }
+  return value;
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::copy_table_to_clipboard(QTableWidget* table) {
+  if (!table) {
+    return;
+  }
+
+  QStringList lines;
+
+  QStringList header;
+  for (int c = 0; c < table->columnCount(); c++) {
+    auto item = table->horizontalHeaderItem(c);
+    header << csv_escape(item ? item->text() : QString());
+  }
+  lines << header.join(",");
+
+  for (int r = 0; r < table->rowCount(); r++) {
+    QStringList row;
+    for (int c = 0; c < table->columnCount(); c++) {
+      auto item = table->item(r, c);
+      row << csv_escape(item ? item->text() : QString());
+    }
+    lines << row.join(",");
+  }
+
+  QApplication::clipboard()->setText(lines.join("\n") + "\n");
+}
+
+//---------------------------------------------------------------------------
+void StudioUtils::add_table_copy_menu(QTableWidget* table) {
+  if (!table) {
+    return;
+  }
+  table->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(table, &QTableWidget::customContextMenuRequested, table, [table]() {
+    QMenu menu;
+    QAction* action = menu.addAction("Copy to Clipboard");
+    QObject::connect(action, &QAction::triggered, table, [table]() { copy_table_to_clipboard(table); });
+    menu.exec(QCursor::pos());
+  });
+}
+
+//---------------------------------------------------------------------------
+QString StudioUtils::wrap_tooltip(const QString& text, int wrap_chars) {
+  QStringList lines;
+  for (const QString& paragraph : text.split('\n')) {  // keep any breaks the text already asked for
+    QString line;
+    for (const QString& word : paragraph.simplified().split(' ')) {
+      if (!line.isEmpty() && line.length() + 1 + word.length() > wrap_chars) {
+        lines << line;
+        line.clear();
+      }
+      if (!line.isEmpty()) {
+        line += " ";
+      }
+      line += word;
+    }
+    lines << line;
+  }
+
+  if (lines.size() < 2) {
+    return text;
+  }
+
+  // Qt only breaks a tooltip when it is rich text, and it re-wraps rich text into a narrow block of its own
+  // choosing unless the lines are marked unbreakable, so escape the text and give it explicit breaks
+  for (QString& line : lines) {
+    line = line.toHtmlEscaped();
+  }
+  return "<p style='white-space:pre'>" + lines.join("<br/>") + "</p>";
+}
+
 }  // namespace shapeworks

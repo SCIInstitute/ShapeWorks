@@ -104,7 +104,9 @@ void ShapeScalarPanel::run_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeScalarPanel::handle_job_progress(int progress) { ui_->progress->setValue(progress * 100); }
+void ShapeScalarPanel::handle_job_progress(double progress) {
+  ui_->progress->setValue(static_cast<int>(progress * 100));
+}
 
 //---------------------------------------------------------------------------
 void ShapeScalarPanel::handle_job_complete() {
