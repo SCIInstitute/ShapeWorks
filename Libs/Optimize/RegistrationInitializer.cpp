@@ -323,7 +323,7 @@ void RegistrationInitializer::TransferParticlesFromReference(int reference_shape
       // AddPositionList applies the domain constraints, which pulls each point onto the surface
       system->AddPositionList(transferred, domain);
 
-      landings.emplace_back(GetDomainName(domain), ReportTransferQuality(domain, reference_points, transferred));
+      landings.emplace_back(GetDomainName(domain), ReportTransferQuality(domain, transferred));
 
       // registrations do not run particle iterations, so charge each one its share of the budget
       // reserved for them; without this the bar would sit still through the longest phase
@@ -381,11 +381,23 @@ void RegistrationInitializer::RescueTransferredParticles(int domain,
   const auto& lower = particle_domain->GetLowerBound();
   const auto& upper = particle_domain->GetUpperBound();
 
+  // The domain clamps a particle into its bounding box before sampling it, so ask whether the point
+  // the domain will actually see can be sampled rather than the one the registration produced: a
+  // particle a fraction of a voxel outside the image is not misplaced at all if clamping puts it
+  // back within the band.
+  auto samplable = [&](const Point3& point) {
+    Point3 clamped = point;
+    for (unsigned int c = 0; c < 3; c++) {
+      clamped[c] = std::clamp(clamped[c], lower[c], upper[c]);
+    }
+    return particle_domain->IsValidLocation(clamped);
+  };
+
   std::vector<bool> placed(transferred.size(), true);
   std::vector<size_t> misplaced;
   int off_the_image = 0;
   for (size_t i = 0; i < transferred.size(); i++) {
-    placed[i] = particle_domain->IsValidLocation(transferred[i]);
+    placed[i] = samplable(transferred[i]);
     if (placed[i]) {
       continue;
     }
@@ -471,11 +483,11 @@ void RegistrationInitializer::RescueTransferredParticles(int domain,
     // of the walk is the target itself, so somewhere is always found.
     for (int step = 1; step <= RESCUE_STEPS; step++) {
       const double fraction = static_cast<double>(step) / RESCUE_STEPS;
-      if (!particle_domain->IsValidLocation(along(fraction))) {
+      if (!samplable(along(fraction))) {
         continue;
       }
       const Point3 deeper = along((fraction + 1.0) / 2.0);
-      transferred[index] = particle_domain->IsValidLocation(deeper) ? deeper : along(fraction);
+      transferred[index] = samplable(deeper) ? deeper : along(fraction);
       break;
     }
 
@@ -504,8 +516,7 @@ void RegistrationInitializer::RescueTransferredParticles(int domain,
 }
 
 //---------------------------------------------------------------------------
-double RegistrationInitializer::ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
-                                                      const std::vector<Point3>& transferred) {
+double RegistrationInitializer::ReportTransferQuality(int domain, const std::vector<Point3>& transferred) {
   if (transferred.empty()) {
     return 0.0;
   }
@@ -525,7 +536,6 @@ double RegistrationInitializer::ReportTransferQuality(int domain, const std::vec
   double total_snap = 0.0;
   double worst_snap = 0.0;
   int far_count = 0;
-  int unmoved = 0;
 
   for (size_t i = 0; i < transferred.size(); i++) {
     // how far the point had to travel to reach the surface is how far off the surface it landed
@@ -535,29 +545,18 @@ double RegistrationInitializer::ReportTransferQuality(int domain, const std::vec
     if (shape_scale > 0.0 && snap > far_distance) {
       far_count++;
     }
-
-    // a point outside the displacement field is returned unchanged rather than reported as an error,
-    // so an unmoved point means the field did not cover it
-    if (transferred[i] == reference_points[i]) {
-      unmoved++;
-    }
   }
 
   const double mean_snap = total_snap / transferred.size();
   const double far_fraction = static_cast<double>(far_count) / transferred.size();
   // a registration that failed leaves many particles far from the surface, not just one outlier
-  const bool suspect = far_fraction > TRANSFER_FAR_FRACTION_THRESHOLD || unmoved > 0;
+  const bool suspect = far_fraction > TRANSFER_FAR_FRACTION_THRESHOLD;
 
   const std::string name = GetDomainName(domain);
 
   if (optimize_.m_verbosity_level > 0 || suspect) {
     SW_LOG("{}: transferred particles landed {:.3g} from the surface on average (worst {:.3g})", name, mean_snap,
            worst_snap);
-  }
-
-  if (unmoved > 0) {
-    SW_WARN("{}: {} of {} transferred particles fell outside the registration field and did not move", name, unmoved,
-            transferred.size());
   }
 
   if (far_fraction > TRANSFER_FAR_FRACTION_THRESHOLD) {

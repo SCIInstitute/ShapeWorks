@@ -50,8 +50,7 @@ class RegistrationInitializer {
 
   //! Log how well a shape's transferred particles landed on its surface, and return how far from it
   //! they landed on average, so that the shapes can be compared with one another
-  double ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
-                               const std::vector<Point3>& transferred);
+  double ReportTransferQuality(int domain, const std::vector<Point3>& transferred);
 
   //! Log how the whole cohort landed, which is what gives any one shape's figure a scale to be read
   //! against
