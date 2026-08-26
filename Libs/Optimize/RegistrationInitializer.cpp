@@ -2,13 +2,13 @@
 
 #include <algorithm>
 #include <limits>
+#include <optional>
 #include <sstream>
 
 #include <boost/filesystem.hpp>
 
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
-#include <Utils/StringUtils.h>
 
 #include "Libs/Optimize/Domain/MeshDomain.h"
 #include "Optimize.h"
@@ -363,15 +363,19 @@ void RegistrationInitializer::ReportTransferSummary(const std::vector<std::pair<
 
   // One shape landing further out than the rest is what a failed registration looks like from here,
   // so give the typical figure and the outlier together: either number alone says nothing.
+  // one entry per domain of every registered subject, so say registrations rather than shapes: with
+  // more than one domain per shape these are not the same count, and on different anatomies they are
+  // not even the same scale
   SW_LOG(
-      "Registration based initialization: across {} registered shapes, particles landed a median of {:.3g} from the "
+      "Registration based initialization: across {} registrations, particles landed a median of {:.3g} from the "
       "surface, and furthest on {} at {:.3g}",
       landings.size(), *middle, furthest->first, furthest->second);
 }
 
 //---------------------------------------------------------------------------
-void RegistrationInitializer::RescueTransferredParticles(int domain, const std::vector<Point3>& reference_points,
-                                          std::vector<Point3>& transferred) const {
+void RegistrationInitializer::RescueTransferredParticles(int domain,
+                                                        const std::vector<Point3>& reference_points,
+                                                        std::vector<Point3>& transferred) const {
   auto* particle_domain = optimize_.m_sampler->GetParticleSystem()->GetDomain(domain);
 
   const auto& lower = particle_domain->GetLowerBound();
@@ -415,6 +419,18 @@ void RegistrationInitializer::RescueTransferredParticles(int domain, const std::
         "the optimization from. Check that this shape's groomed input covers the same anatomy as the rest, or "
         "choose a different reference shape with the initialization reference setting.",
         name, off_the_image, transferred.size()));
+  }
+
+  // The rescue walks each stray towards a particle that did land, so there has to be one.  Every
+  // particle being unplaceable means the band is too narrow to hold this registration at all, which
+  // no amount of walking will fix, and walking towards a stray would leave them where they were.
+  if (misplaced.size() == transferred.size()) {
+    throw std::runtime_error(fmt::format(
+        "Registration based initialization failed for {}: none of its {} particles landed within the narrow band of "
+        "the surface, so there is nowhere to move them back to. Registration based initialization starts particles "
+        "wherever the reference shape maps to, which can be much further from the surface than the split based "
+        "initialization the default narrow band is sized for; increase the narrow band optimization parameter.",
+        name, transferred.size()));
   }
 
   // Aim each stray at where its neighbours ended up rather than at some arbitrary point on the
@@ -489,7 +505,7 @@ void RegistrationInitializer::RescueTransferredParticles(int domain, const std::
 
 //---------------------------------------------------------------------------
 double RegistrationInitializer::ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
-                                       const std::vector<Point3>& transferred) {
+                                                      const std::vector<Point3>& transferred) {
   if (transferred.empty()) {
     return 0.0;
   }
@@ -557,11 +573,8 @@ void RegistrationInitializer::Run() {
   const int reference = ResolveRegistrationReference();
   optimize_.m_registration_reference_chosen = reference;
 
-  const int first_domain = reference * optimize_.m_domains_per_shape;
-  const std::string name = first_domain < static_cast<int>(optimize_.m_filenames.size())
-                               ? optimize_.m_filenames[first_domain]
-                               : std::to_string(reference);
-  SW_LOG("Spreading particles on reference shape {} ({})", reference, name);
+  SW_LOG("Spreading particles on reference shape {} ({})", reference,
+         GetDomainName(reference * optimize_.m_domains_per_shape));
 
   SpreadParticlesOnReference(reference);
 

@@ -232,11 +232,11 @@ class ImageDomain : public ParticleRegionDomain {
             << ". ";
 
     // a particle is clamped to the bounding box before it is sampled, so one that arrived from
-    // outside the image is now sitting exactly on one of its faces
-    const double tolerance = GetSpacing().GetVnlVector().max_value();
+    // outside the image is now sitting within a voxel of one of its faces
+    const double voxel = GetSpacing().GetVnlVector().max_value();
     bool on_edge = false;
     for (unsigned int i = 0; i < DIMENSION; i++) {
-      on_edge = on_edge || p[i] <= GetLowerBound()[i] + tolerance || p[i] >= GetUpperBound()[i] - tolerance;
+      on_edge = on_edge || p[i] <= GetLowerBound()[i] + voxel || p[i] >= GetUpperBound()[i] - voxel;
     }
 
     if (on_edge) {
@@ -246,7 +246,11 @@ class ImageDomain : public ParticleRegionDomain {
                  "begin with, usually by an initialization that did not converge or by shapes that grooming left "
                  "unaligned.";
     } else {
-      message << "It is inside the image but further than the narrow band (" << m_NarrowBand
+      // quoted in voxels, which is what the narrow band optimization parameter is set in; the domain
+      // keeps it as a width in world units, and telling someone to raise a number they never typed
+      // has them lower the one they did
+      message << "It is inside the image but further than the narrow band (" << m_NarrowBand / voxel
+              << " voxels, " << m_NarrowBand
               << ") from the surface, so no distance transform is kept there. Consider increasing the narrow band "
                  "optimization parameter.";
     }

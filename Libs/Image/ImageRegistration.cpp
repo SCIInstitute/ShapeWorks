@@ -105,12 +105,16 @@ std::vector<unsigned int> clamp_shrink_factors(const std::vector<unsigned int>& 
 struct ScaleSeed {
   bool usable{false};
   double scale{1.0};
-  ImageType::PointType center;
 };
 
 ScaleSeed estimate_scale_seed(const ImageType* fixed, const ImageType* moving) {
   using MomentsType = itk::ImageMomentsCalculator<ImageType>;
 
+  ScaleSeed seed;
+
+  // An image with nothing in it has no moments to take, and ITK says so by throwing rather than by
+  // returning a mass of zero.  There is no size to compare in that case, which is a reason to leave
+  // the stage as it was and not a reason to fail the registration.
   auto measure = [](const ImageType* image) {
     auto moments = MomentsType::New();
     moments->SetImage(const_cast<ImageType*>(image));
@@ -118,9 +122,14 @@ ScaleSeed estimate_scale_seed(const ImageType* fixed, const ImageType* moving) {
     return moments;
   };
 
-  ScaleSeed seed;
-  auto fixed_moments = measure(fixed);
-  auto moving_moments = measure(moving);
+  MomentsType::Pointer fixed_moments;
+  MomentsType::Pointer moving_moments;
+  try {
+    fixed_moments = measure(fixed);
+    moving_moments = measure(moving);
+  } catch (const itk::ExceptionObject&) {
+    return seed;
+  }
 
   const double fixed_mass = fixed_moments->GetTotalMass();
   const double moving_mass = moving_moments->GetTotalMass();
@@ -151,10 +160,6 @@ ScaleSeed estimate_scale_seed(const ImageType* fixed, const ImageType* moving) {
     return seed;
   }
 
-  const auto center_of_gravity = fixed_moments->GetCenterOfGravity();
-  for (unsigned int i = 0; i < 3; i++) {
-    seed.center[i] = center_of_gravity[i];
-  }
   seed.scale = scale;
   seed.usable = true;
   return seed;
@@ -401,13 +406,14 @@ void ImageRegistration::Impl::run_affine() {
   auto metric = LinearMetricType::New();
 
   using RegistrationType = itk::ImageRegistrationMethodv4<ImageType, ImageType, AffineTransformType>;
-  // Start from the size difference between the two shapes rather than from the identity.  The
-  // composite applies what it holds in reverse, so this affine acts on points still in fixed space,
-  // and the point to scale about is the fixed image's own centre of gravity.
+  // Start from the size difference between the two shapes rather than from the identity.  Only the
+  // matrix is set: ImageRegistrationMethodv4 initializes the centre of a linear output transform
+  // itself, from the last linear transform of the moving initial transform, so the scaling pivots
+  // about the rigid stage's centre whatever is set here.  That is the fixed image's centre of
+  // gravity, which is the point to scale about anyway.
   auto affine = AffineTransformType::New();
   const auto seed = estimate_scale_seed(fixed, moving);
   if (seed.usable) {
-    affine->SetCenter(seed.center);
     affine->Scale(seed.scale);
   }
 
@@ -720,11 +726,10 @@ void ImageRegistration::save_transform(const std::string& filename) const {
   }
 
   try {
-    auto writer = itk::TransformFileWriterTemplate<double>::New();
-    writer->SetFileName(filename);
-    writer->SetInput(linear);
-    writer->Update();
-
+    // The field goes first and the transform file last, because load_transform takes the transform
+    // file as the record that an entry exists and treats a missing field as a registration that had
+    // none.  Written the other way round, a run interrupted between the two leaves an entry that
+    // reads back as a deformable registration silently downgraded to a linear one.
     if (stored_field) {
       auto field_writer = itk::ImageFileWriter<StoredFieldType>::New();
       field_writer->SetFileName(displacement_field_path(filename));
@@ -732,6 +737,11 @@ void ImageRegistration::save_transform(const std::string& filename) const {
       field_writer->UseCompressionOn();
       field_writer->Update();
     }
+
+    auto writer = itk::TransformFileWriterTemplate<double>::New();
+    writer->SetFileName(filename);
+    writer->SetInput(linear);
+    writer->Update();
   } catch (const itk::ExceptionObject& e) {
     throw std::runtime_error(std::string("unable to write transform \"") + filename + "\": " + e.what());
   }
