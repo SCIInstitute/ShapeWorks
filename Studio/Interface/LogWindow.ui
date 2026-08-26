@@ -83,10 +83,10 @@ QLabel#warning_label_{
          </font>
         </property>
         <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="contextMenuPolicy">
-         <enum>Qt::DefaultContextMenu</enum>
+         <enum>Qt::ActionsContextMenu</enum>
         </property>
         <property name="midLineWidth">
          <number>1</number>
@@ -104,7 +104,10 @@ QLabel#warning_label_{
          <bool>true</bool>
         </property>
         <property name="selectionMode">
-         <enum>QAbstractItemView::NoSelection</enum>
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="textElideMode">
+         <enum>Qt::ElideNone</enum>
         </property>
         <property name="horizontalScrollMode">
          <enum>QAbstractItemView::ScrollPerItem</enum>
