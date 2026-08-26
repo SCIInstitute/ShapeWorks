@@ -68,6 +68,11 @@ constexpr double MAXIMUM_STEP_FRACTION = 0.1;
 // as having lost the shape it was registering.  See OverlapGuardCommand.
 constexpr double MINIMUM_OVERLAP_FRACTION = 0.5;
 
+// How many points the overlap guard maps each iteration to see how much of the fixed image is still
+// landing on the moving one.  Enough to measure a fraction to a percent or so, few enough that the
+// mapping costs nothing beside the metric evaluation it is watching over.
+constexpr unsigned int OVERLAP_SAMPLE_TARGET = 512;
+
 // The range of size differences the affine stage will be seeded with.  Shapes of the same anatomy do
 // not differ by more than this, so an estimate outside it is a sign that the images are not what the
 // estimate assumes -- and the seed is only ever a starting point worth having, never one worth
@@ -175,10 +180,18 @@ ScaleSeed estimate_scale_seed(const ImageType* fixed, const ImageType* moving) {
 /// that wanders into it stays, and the registration comes back mapping every point far outside the
 /// image it was supposed to land on.
 ///
-/// How many samples the metric still had to work with is the tell.  When that collapses, stop: the
-/// optimizer holds on to the best parameters it found, which are the ones from before the escape,
-/// and the remaining levels carry on from there.  Stopping a level that legitimately needed to give
-/// up half its overlap only costs some convergence, which is much the cheaper mistake.
+/// How much of the fixed image is still landing on the moving one is the tell.  This maps its own
+/// fixed set of points through the transform to measure that, rather than reading the metric's count
+/// of the samples it last found usable: with a line search that count belongs to whichever trial step
+/// the search happened to evaluate last, not to the step actually taken, so it can condemn a step
+/// that was fine and, worse, pass a step that was not.  A few hundred points cost nothing against the
+/// metric evaluation this is watching over, and being the same points every time makes the fractions
+/// comparable across iterations and across levels of the pyramid.
+///
+/// When the overlap collapses, stop: the optimizer holds on to the best parameters it found, which
+/// are the ones from before the escape, and the remaining levels carry on from there.  Stopping a
+/// level that legitimately needed to give up half its overlap only costs some convergence, which is
+/// much the cheaper mistake.
 template <typename TMetric>
 class OverlapGuardCommand : public itk::Command {
  public:
@@ -186,7 +199,24 @@ class OverlapGuardCommand : public itk::Command {
   using Pointer = itk::SmartPointer<Self>;
   itkNewMacro(Self);
 
-  void set_metric(const TMetric* metric) { metric_ = metric; }
+  //! the transform to watch, and the two images whose overlap is being measured
+  void set_images(const TMetric* metric, const ImageType* fixed, const ImageType* moving) {
+    metric_ = metric;
+    moving_ = moving;
+
+    const auto region = fixed->GetBufferedRegion();
+    const auto stride =
+        std::max(itk::SizeValueType{1}, itk::SizeValueType{region.GetNumberOfPixels() / OVERLAP_SAMPLE_TARGET});
+    itk::ImageRegionConstIteratorWithIndex<ImageType> it(fixed, region);
+    itk::SizeValueType counter = 0;
+    for (it.GoToBegin(); !it.IsAtEnd(); ++it, ++counter) {
+      if (counter % stride == 0) {
+        ImageType::PointType point;
+        fixed->TransformIndexToPhysicalPoint(it.GetIndex(), point);
+        samples_.push_back(point);
+      }
+    }
+  }
 
   void Execute(itk::Object* caller, const itk::EventObject& event) override {
     Execute(const_cast<const itk::Object*>(caller), event);
@@ -194,7 +224,7 @@ class OverlapGuardCommand : public itk::Command {
 
   void Execute(const itk::Object* caller, const itk::EventObject& event) override {
     auto* optimizer = const_cast<OptimizerType*>(dynamic_cast<const OptimizerType*>(caller));
-    if (!optimizer || !metric_) {
+    if (!optimizer || !metric_ || samples_.empty()) {
       return;
     }
 
@@ -202,12 +232,21 @@ class OverlapGuardCommand : public itk::Command {
       return;
     }
 
-    // the count rises as the registration moves up the pyramid, so compare against the most this
-    // registration has managed rather than against a fixed number
-    const auto valid = metric_->GetNumberOfValidPoints();
-    most_valid_ = std::max(most_valid_, valid);
+    const auto* transform = metric_->GetMovingTransform();
+    if (!transform) {
+      return;
+    }
 
-    if (valid < static_cast<itk::SizeValueType>(most_valid_ * MINIMUM_OVERLAP_FRACTION)) {
+    itk::SizeValueType inside = 0;
+    for (const auto& sample : samples_) {
+      ImageType::IndexType index;
+      if (moving_->TransformPhysicalPointToIndex(transform->TransformPoint(sample), index)) {
+        inside++;
+      }
+    }
+
+    most_inside_ = std::max(most_inside_, inside);
+    if (inside < static_cast<itk::SizeValueType>(most_inside_ * MINIMUM_OVERLAP_FRACTION)) {
       optimizer->StopOptimization();
     }
   }
@@ -217,14 +256,17 @@ class OverlapGuardCommand : public itk::Command {
 
  private:
   const TMetric* metric_{nullptr};
-  itk::SizeValueType most_valid_{0};
+  const ImageType* moving_{nullptr};
+  std::vector<ImageType::PointType> samples_;
+  itk::SizeValueType most_inside_{0};
 };
 
 //---------------------------------------------------------------------------
 /// Build an optimizer with the scale estimator wired to the given metric, so that rotation,
 /// translation and scaling parameters all step by a comparable physical distance.
 template <typename TMetric>
-OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, const ImageType* fixed) {
+OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, const ImageType* fixed,
+                                      const ImageType* moving) {
   using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift<TMetric>;
   auto scales_estimator = ScalesEstimatorType::New();
   scales_estimator->SetMetric(metric);
@@ -253,7 +295,7 @@ OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, 
   optimizer->SetReturnBestParametersAndValue(true);
 
   auto guard = OverlapGuardCommand<TMetric>::New();
-  guard->set_metric(metric);
+  guard->set_images(metric, fixed, moving);
   optimizer->AddObserver(itk::IterationEvent(), guard);
 
   return optimizer;
@@ -389,7 +431,7 @@ void ImageRegistration::Impl::run_rigid() {
   registration->SetMetric(metric);
   registration->SetInitialTransform(rigid);
   registration->InPlaceOn();
-  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed));
+  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed, moving));
   apply_multi_resolution_schedule(registration.GetPointer(), effective_linear_shrink_factors, linear_smoothing_sigmas);
 
   auto level_command = LevelIterationCommand<RegistrationType>::New();
@@ -425,7 +467,7 @@ void ImageRegistration::Impl::run_affine() {
   registration->SetMovingInitialTransform(composite);
   registration->SetInitialTransform(affine);
   registration->InPlaceOn();
-  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed));
+  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed, moving));
   apply_multi_resolution_schedule(registration.GetPointer(), effective_linear_shrink_factors, linear_smoothing_sigmas);
 
   auto level_command = LevelIterationCommand<RegistrationType>::New();
