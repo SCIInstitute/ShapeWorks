@@ -269,4 +269,34 @@ void StudioUtils::add_table_copy_menu(QTableWidget* table) {
   });
 }
 
+//---------------------------------------------------------------------------
+QString StudioUtils::wrap_tooltip(const QString& text, int wrap_chars) {
+  QStringList lines;
+  for (const QString& paragraph : text.split('\n')) {  // keep any breaks the text already asked for
+    QString line;
+    for (const QString& word : paragraph.simplified().split(' ')) {
+      if (!line.isEmpty() && line.length() + 1 + word.length() > wrap_chars) {
+        lines << line;
+        line.clear();
+      }
+      if (!line.isEmpty()) {
+        line += " ";
+      }
+      line += word;
+    }
+    lines << line;
+  }
+
+  if (lines.size() < 2) {
+    return text;
+  }
+
+  // Qt only breaks a tooltip when it is rich text, and it re-wraps rich text into a narrow block of its own
+  // choosing unless the lines are marked unbreakable, so escape the text and give it explicit breaks
+  for (QString& line : lines) {
+    line = line.toHtmlEscaped();
+  }
+  return "<p style='white-space:pre'>" + lines.join("<br/>") + "</p>";
+}
+
 }  // namespace shapeworks

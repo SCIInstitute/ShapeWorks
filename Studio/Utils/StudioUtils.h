@@ -59,6 +59,9 @@ class StudioUtils {
 
   //! give a table a right click "Copy to Clipboard" menu
   static void add_table_copy_menu(QTableWidget* table);
+
+  //! break a long tooltip into multiple lines
+  static QString wrap_tooltip(const QString& text, int wrap_chars = 80);
 };
 
 }  // namespace shapeworks

@@ -67,10 +67,10 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
           &CorrespondenceQualityPanel::template_changed);
   connect(ui_->show_distance, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::show_distance_clicked);
 
-  ui_->sort_metric_combo->setToolTip(
+  ui_->sort_metric_combo->setToolTip(StudioUtils::wrap_tooltip(
       "How to rank the samples. Localized is the ratio of a sample's p99 distance to its mean: high "
       "when most of the surface is fine and a small patch is badly wrong, which is what a few swapped "
-      "correspondence points look like.");
+      "correspondence points look like."));
   connect(ui_->sort_metric_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &CorrespondenceQualityPanel::options_changed);
   connect(ui_->sort_order_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -382,9 +382,9 @@ void CorrespondenceQualityPanel::update_summary() {
   text += "</table>";
 
   // these are percentiles across samples; the table's p99 column is across one sample's vertices
-  ui_->summary_label->setToolTip(
+  ui_->summary_label->setToolTip(StudioUtils::wrap_tooltip(
       "Distribution across samples of each sample's mean distance. The p95 here is over samples, unlike the p99 "
-      "column in the table, which is over the vertices of a single sample.");
+      "column in the table, which is over the vertices of a single sample."));
   ui_->summary_label->setText(text);
 }
 

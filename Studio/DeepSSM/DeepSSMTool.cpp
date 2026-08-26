@@ -23,6 +23,7 @@
 #include <Interface/Style.h>
 #include <Logging.h>
 #include <Shape.h>
+#include <Utils/StudioUtils.h>
 
 // vtk
 #include <vtkPointData.h>
@@ -49,20 +50,20 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tl_ae_epochs->setToolTip("Number of epochs to train the autoencoder");
   ui_->tl_tf_epochs->setToolTip("Number of epochs to train the T-flank");
   ui_->tl_joint_epochs->setToolTip("Number of epochs to train the whole model");
-  ui_->tl_alpha->setToolTip(
-      "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model.");
-  ui_->tl_ae_a->setToolTip(
+  ui_->tl_alpha->setToolTip(StudioUtils::wrap_tooltip(
+      "The weight applied to the T-flank with respect to the autoencoder loss when training the whole model."));
+  ui_->tl_ae_a->setToolTip(StudioUtils::wrap_tooltip(
       "The autoencoder focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate "
-      "the loss, while lower values dampen it.");
-  ui_->tl_ae_c->setToolTip(
+      "the loss, while lower values dampen it."));
+  ui_->tl_ae_c->setToolTip(StudioUtils::wrap_tooltip(
       "The autoencoder focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the "
-      "particle difference is below the threshold, the particle's impact on the overall loss is reduced.");
-  ui_->tl_lat_a->setToolTip(
+      "particle difference is below the threshold, the particle's impact on the overall loss is reduced."));
+  ui_->tl_lat_a->setToolTip(StudioUtils::wrap_tooltip(
       "The T-flank focal loss scaling factor adjusts the intensity of the focal loss.\nHigher values accentuate the "
-      "loss, while lower values dampen it.");
-  ui_->tl_lat_c->setToolTip(
+      "loss, while lower values dampen it."));
+  ui_->tl_lat_c->setToolTip(StudioUtils::wrap_tooltip(
       "The T-flank focal loss threshold parameter modulates the loss contribution of each particle.\nWhen the particle "
-      "difference is below the threshold, the particle's impact on the overall loss is reduced.");
+      "difference is below the threshold, the particle's impact on the overall loss is reduced."));
 
 #ifdef Q_OS_MACOS
   ui_->tab_widget->tabBar()->setMinimumWidth(300);
