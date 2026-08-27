@@ -72,6 +72,10 @@ class ParticleDomain {
    * PowerOfTwoPointTree. */
   virtual const PointType &GetUpperBound() const = 0;
 
+  /** Whether a particle placed here could be sampled by this domain. Domains that can be sampled
+      anywhere have nothing to check and keep the default. */
+  virtual bool IsValidLocation(const PointType &p) const { return true; }
+
   /** Get any valid point on the domain. This is used to place the first particle. */
   virtual PointType GetZeroCrossingPoint() const = 0;
   /** Use for neighborhood radius. */

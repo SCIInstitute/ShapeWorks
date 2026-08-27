@@ -46,6 +46,7 @@ class ImageDomain : public ParticleRegionDomain {
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType* I, double narrow_band) {
     this->m_FixedDomain = false;
+    m_NarrowBand = narrow_band;
     // this->Modified();
 
     openvdb::initialize();  // It is safe to initialize multiple times.
@@ -142,6 +143,19 @@ class ImageDomain : public ParticleRegionDomain {
     }
   }
 
+  /** Whether the distance transform is actually kept at this location: inside the image, and near
+      enough to the surface to fall within the narrow band, which is all that is retained. */
+  bool IsValidLocation(const PointType& p) const override {
+    if (!m_VDBImage) {
+      return true;
+    }
+    if (!this->IsInsideBuffer(p)) {
+      return false;
+    }
+    const auto idxCoord = this->transform()->worldToIndex(openvdb::Vec3R(p[0], p[1], p[2]));
+    return !m_VDBImage->tree().isValueOff(openvdb::Coord::round(idxCoord));
+  }
+
   inline double GetMaxDiameter() const override {
     double bestRadius = 0;
     double maxdim = 0;
@@ -198,21 +212,55 @@ class ImageDomain : public ParticleRegionDomain {
     // Make sure the coordinate is part of the narrow band
     if (m_VDBImage->tree().isValueOff(
             openvdb::Coord::round(idxCoord))) {  // `isValueOff` requires an integer coordinate
+      const std::string message = DescribeUnsampleablePoint(p);
       // If multiple threads crash here at the same time, the error message displayed is just "terminate called
       // recursively", which isn't helpful. So we std::cerr the error to make sure its printed to the console.
-      std::cerr << "Sampled point outside the narrow band: " << p << std::endl;
-
-      std::ostringstream message;
-      message << "Attempt to sample at a point outside the narrow band: " << p
-              << ". Consider increasing the narrow band";
-      throw std::runtime_error(message.str());
+      std::cerr << message << std::endl;
+      throw std::runtime_error(message);
     }
 
     return idxCoord;
   }
 
+  /// Explain why a point cannot be sampled.  Two quite different problems arrive here and they need
+  /// different answers: a particle that has drifted a little way off the surface wants a wider narrow
+  /// band, but one that has been clamped against the edge of the image started out somewhere else
+  /// entirely, and no width of band would have caught it.
+  std::string DescribeUnsampleablePoint(const PointType& p) const {
+    std::ostringstream message;
+    message << "Domain " << m_DomainID << " (" << m_DomainName << "): cannot sample the distance transform at " << p
+            << ". ";
+
+    // a particle is clamped to the bounding box before it is sampled, so one that arrived from
+    // outside the image is now sitting within a voxel of one of its faces
+    const double voxel = GetSpacing().GetVnlVector().max_value();
+    bool on_edge = false;
+    for (unsigned int i = 0; i < DIMENSION; i++) {
+      on_edge = on_edge || p[i] <= GetLowerBound()[i] + voxel || p[i] >= GetUpperBound()[i] - voxel;
+    }
+
+    if (on_edge) {
+      message << "It lies on the edge of the image (" << GetLowerBound() << " to " << GetUpperBound()
+              << "), which is where a particle ends up when it is placed outside the image altogether, nowhere near "
+                 "the surface. Widening the narrow band will not help. The particle was put in the wrong place to "
+                 "begin with, usually by an initialization that did not converge or by shapes that grooming left "
+                 "unaligned.";
+    } else {
+      // quoted in voxels, which is what the narrow band optimization parameter is set in; the domain
+      // keeps it as a width in world units, and telling someone to raise a number they never typed
+      // has them lower the one they did
+      message << "It is inside the image but further than the narrow band (" << m_NarrowBand / voxel
+              << " voxels, " << m_NarrowBand
+              << ") from the surface, so no distance transform is kept there. Consider increasing the narrow band "
+                 "optimization parameter.";
+    }
+
+    return message.str();
+  }
+
  private:
   openvdb::FloatGrid::Ptr m_VDBImage;
+  double m_NarrowBand{0.0};
   typename ImageType::SizeType m_Size;
   typename ImageType::SpacingType m_Spacing;
   PointType m_Origin;

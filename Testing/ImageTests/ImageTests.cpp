@@ -1232,6 +1232,71 @@ TEST(ImageTests, registrationTranslationTest) {
   }
 }
 
+TEST(ImageTests, registrationScaleTest) {
+  Image fixed_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
+  // Big enough that the affine stage does not find it unaided: left to search from a pose the rigid
+  // stage had no freedom to scale, it returns a scale of 1 and maps the shape onto part of its
+  // target.  Smaller differences it manages by itself and would not test anything.
+  const double scale = 2.0;
+
+  // the same shape at a different size: stretching the grid and the values alike is what keeps the
+  // result a valid distance transform rather than one whose values no longer match its geometry
+  Image moving_dt(fixed_dt);
+  const auto spacing = fixed_dt.spacing();
+  moving_dt.setSpacing(Vector3({spacing[0] * scale, spacing[1] * scale, spacing[2] * scale}));
+  moving_dt *= scale;
+
+  // the linear stages are what has to find a size difference, so leave the deformable one out of it
+  ImageRegistration registration;
+  registration.set_transform_type(ImageRegistration::TransformType::Affine);
+  registration.run(ImageRegistration::make_registration_image(fixed_dt),
+                   ImageRegistration::make_registration_image(moving_dt));
+
+  // How far apart mapped points end up is what says whether the size difference was found.  The
+  // bound is loose on purpose: the point is that most of the difference is recovered rather than
+  // none of it, and pinning the figure down would only make this brittle.
+  const std::vector<Point3> points = {Point3({-10.0, 0.0, 0.0}), Point3({10.0, 0.0, 0.0}),
+                                      Point3({0.0, 0.0, -12.0}), Point3({0.0, 0.0, 12.0})};
+  auto transformed = registration.transform_points(points);
+
+  for (size_t i = 0; i < points.size(); i += 2) {
+    const double before = points[i].EuclideanDistanceTo(points[i + 1]);
+    const double after = transformed[i].EuclideanDistanceTo(transformed[i + 1]);
+    ASSERT_GT(after / before, 1.0 + (scale - 1.0) / 2.0)
+        << "the affine stage recovered little of a " << scale << "x size difference";
+  }
+}
+
+//---------------------------------------------------------------------------
+TEST(ImageTests, registrationSettingsDescriptionTest) {
+  // Anything that changes the transform has to change the description, because that is what tells a
+  // caller holding a saved transform whether it is still the transform it would get today.  A
+  // setting missing from it is a stale transform served as a fresh one.
+  ImageRegistration reference;
+  const std::string description = reference.settings_description();
+
+  auto changed = [&](const std::function<void(ImageRegistration&)>& change) {
+    ImageRegistration registration;
+    change(registration);
+    return registration.settings_description() != description;
+  };
+
+  ASSERT_FALSE(changed([](ImageRegistration&) {})) << "identical settings must describe identically";
+
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_transform_type(ImageRegistration::TransformType::Rigid); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_gradient_step(0.5); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_update_field_variance(1.0); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_total_field_variance(1.0); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_iterations({1, 2, 3}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_shrink_factors({8, 4, 2}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_smoothing_sigmas({4.0, 2.0, 1.0}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_linear_iterations({1, 2, 3, 4}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_linear_shrink_factors({8, 6, 4, 2}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_linear_smoothing_sigmas({4.0, 3.0, 2.0, 1.0}); }));
+  ASSERT_TRUE(changed([](ImageRegistration& r) { r.set_correlation_radius(2); }));
+}
+
+//---------------------------------------------------------------------------
 TEST(ImageTests, registrationParticleTransferTest) {
   Image reference_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_00.DT.nrrd");
   Image target_dt(std::string(TEST_DATA_DIR) + "/ellipsoid_01.DT.nrrd");

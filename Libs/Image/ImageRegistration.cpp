@@ -19,6 +19,7 @@
 #include <itkCastImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
+#include <itkImageMomentsCalculator.h>
 #include <itkTransformFileReader.h>
 #include <itkTransformFileWriter.h>
 #include <itkSyNImageRegistrationMethod.h>
@@ -44,26 +45,48 @@ using LinearMetricType = itk::MeanSquaresImageToImageMetricv4<ImageType, ImageTy
 using CorrelationMetricType = itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<ImageType, ImageType>;
 using OptimizerType = itk::ConjugateGradientLineSearchOptimizerv4Template<double>;
 
-constexpr double kLineSearchLowerLimit = 0.0;
-constexpr double kLineSearchUpperLimit = 2.0;
-constexpr double kLineSearchEpsilon = 0.2;
+//! Names this registration, for callers that keep transforms between runs.  Change it whenever the
+//! algorithm changes, to a name that has not been used before: a bare version number invites reuse
+//! of one already written to somebody's cache, and a stale transform then reads back as a hit, which
+//! is far harder to notice than a miss.
+constexpr const char* ALGORITHM_NAME = "syn-overlap-guard-affine-scale-seed";
+
+constexpr double LINE_SEARCH_LOWER_LIMIT = 0.0;
+constexpr double LINE_SEARCH_UPPER_LIMIT = 2.0;
+constexpr double LINE_SEARCH_EPSILON = 0.2;
 
 // A heavily shrunk level of an already small image carries almost no signal, and the optimizer
 // responds by taking a large wrong step that the finer levels never recover from.  Never shrink a
 // dimension below this many voxels.
-constexpr unsigned int kMinimumLevelSize = 16;
+constexpr unsigned int MINIMUM_LEVEL_SIZE = 16;
 
 // The furthest a single optimizer step may move a point, as a fraction of the largest physical
 // dimension of the images being registered.
-constexpr double kMaximumStepFraction = 0.1;
+constexpr double MAXIMUM_STEP_FRACTION = 0.1;
+
+// How much of the overlap between the two images a step is allowed to give up before it is treated
+// as having lost the shape it was registering.  See OverlapGuardCommand.
+constexpr double MINIMUM_OVERLAP_FRACTION = 0.5;
+
+// How many points the overlap guard maps each iteration to see how much of the fixed image is still
+// landing on the moving one.  Enough to measure a fraction to a percent or so, few enough that the
+// mapping costs nothing beside the metric evaluation it is watching over.
+constexpr unsigned int OVERLAP_SAMPLE_TARGET = 512;
+
+// The range of size differences the affine stage will be seeded with.  Shapes of the same anatomy do
+// not differ by more than this, so an estimate outside it is a sign that the images are not what the
+// estimate assumes -- and the seed is only ever a starting point worth having, never one worth
+// insisting on.
+constexpr double MINIMUM_SEED_SCALE = 0.5;
+constexpr double MAXIMUM_SEED_SCALE = 2.0;
 
 //---------------------------------------------------------------------------
-/// Reduce the requested shrink factors so that no level shrinks the image below kMinimumLevelSize.
+/// Reduce the requested shrink factors so that no level shrinks the image below MINIMUM_LEVEL_SIZE.
 std::vector<unsigned int> clamp_shrink_factors(const std::vector<unsigned int>& shrink_factors,
                                                const ImageType* image) {
   const auto size = image->GetBufferedRegion().GetSize();
   const auto smallest = std::min({size[0], size[1], size[2]});
-  const auto largest_useful = std::max(1u, static_cast<unsigned int>(smallest / kMinimumLevelSize));
+  const auto largest_useful = std::max(1u, static_cast<unsigned int>(smallest / MINIMUM_LEVEL_SIZE));
 
   std::vector<unsigned int> clamped;
   clamped.reserve(shrink_factors.size());
@@ -74,10 +97,176 @@ std::vector<unsigned int> clamp_shrink_factors(const std::vector<unsigned int>& 
 }
 
 //---------------------------------------------------------------------------
+/// How much bigger the moving shape is than the fixed one, and the point to scale about, taken from
+/// the second moments of the two images.
+///
+/// The rigid stage runs first and cannot scale at all, so where the two shapes differ in size the
+/// best it can do is put the smaller somewhere inside the larger -- an underdetermined problem with
+/// no single answer.  The affine stage then starts from a pose that says nothing about the size
+/// difference, and on shapes far enough apart in size it never finds it: the registration comes back
+/// having mapped the reference onto part of the target and left the rest bare.  The size difference
+/// is the one thing here that can be measured directly rather than searched for, so measure it and
+/// hand it to the affine stage as its starting point.
+struct ScaleSeed {
+  bool usable{false};
+  double scale{1.0};
+};
+
+ScaleSeed estimate_scale_seed(const ImageType* fixed, const ImageType* moving) {
+  using MomentsType = itk::ImageMomentsCalculator<ImageType>;
+
+  ScaleSeed seed;
+
+  // An image with nothing in it has no moments to take, and ITK says so by throwing rather than by
+  // returning a mass of zero.  There is no size to compare in that case, which is a reason to leave
+  // the stage as it was and not a reason to fail the registration.
+  auto measure = [](const ImageType* image) {
+    auto moments = MomentsType::New();
+    moments->SetImage(const_cast<ImageType*>(image));
+    moments->Compute();
+    return moments;
+  };
+
+  MomentsType::Pointer fixed_moments;
+  MomentsType::Pointer moving_moments;
+  try {
+    fixed_moments = measure(fixed);
+    moving_moments = measure(moving);
+  } catch (const itk::ExceptionObject&) {
+    return seed;
+  }
+
+  const double fixed_mass = fixed_moments->GetTotalMass();
+  const double moving_mass = moving_moments->GetTotalMass();
+  if (!(fixed_mass > 0.0) || !(moving_mass > 0.0)) {
+    return seed;
+  }
+
+  // ITK returns each principal moment as the total mass times the mean squared radius about that
+  // axis, so dividing the mass back out leaves a length that the two images can be compared by
+  const auto fixed_moment = fixed_moments->GetPrincipalMoments();
+  const auto moving_moment = moving_moments->GetPrincipalMoments();
+
+  double product = 1.0;
+  for (unsigned int i = 0; i < 3; i++) {
+    const double fixed_radius = std::sqrt(fixed_moment[i] / fixed_mass);
+    const double moving_radius = std::sqrt(moving_moment[i] / moving_mass);
+    if (!(fixed_radius > 0.0) || !(moving_radius > 0.0)) {
+      return seed;
+    }
+    product *= moving_radius / fixed_radius;
+  }
+
+  // one scale for all three axes: pairing the axes individually would need to know which of the
+  // moving shape's axes answers to which of the fixed shape's, and on anything near round they
+  // cannot be told apart
+  const double scale = std::cbrt(product);
+  if (!std::isfinite(scale) || scale < MINIMUM_SEED_SCALE || scale > MAXIMUM_SEED_SCALE) {
+    return seed;
+  }
+
+  seed.scale = scale;
+  seed.usable = true;
+  return seed;
+}
+
+//---------------------------------------------------------------------------
+/// Stop a level as soon as a step throws most of the fixed image off the moving one.
+///
+/// The metric averages over only those samples that land inside the moving image; ones that fall
+/// outside are dropped rather than penalised.  Pulling the two images apart therefore *improves* the
+/// score, and in the limit leaves nothing being compared but background against background, which is
+/// a perfect match.  That dead zone is downhill all the way from a correct alignment, so an optimizer
+/// that wanders into it stays, and the registration comes back mapping every point far outside the
+/// image it was supposed to land on.
+///
+/// How much of the fixed image is still landing on the moving one is the tell.  This maps its own
+/// fixed set of points through the transform to measure that, rather than reading the metric's count
+/// of the samples it last found usable: with a line search that count belongs to whichever trial step
+/// the search happened to evaluate last, not to the step actually taken, so it can condemn a step
+/// that was fine and, worse, pass a step that was not.  A few hundred points cost nothing against the
+/// metric evaluation this is watching over, and being the same points every time makes the fractions
+/// comparable across iterations and across levels of the pyramid.
+///
+/// When the overlap collapses, stop: the optimizer holds on to the best parameters it found, which
+/// are the ones from before the escape, and the remaining levels carry on from there.  Stopping a
+/// level that legitimately needed to give up half its overlap only costs some convergence, which is
+/// much the cheaper mistake.
+template <typename TMetric>
+class OverlapGuardCommand : public itk::Command {
+ public:
+  using Self = OverlapGuardCommand;
+  using Pointer = itk::SmartPointer<Self>;
+  itkNewMacro(Self);
+
+  //! the transform to watch, and the two images whose overlap is being measured
+  void set_images(const TMetric* metric, const ImageType* fixed, const ImageType* moving) {
+    metric_ = metric;
+    moving_ = moving;
+
+    const auto region = fixed->GetBufferedRegion();
+    const auto stride =
+        std::max(itk::SizeValueType{1}, itk::SizeValueType{region.GetNumberOfPixels() / OVERLAP_SAMPLE_TARGET});
+    itk::ImageRegionConstIteratorWithIndex<ImageType> it(fixed, region);
+    itk::SizeValueType counter = 0;
+    for (it.GoToBegin(); !it.IsAtEnd(); ++it, ++counter) {
+      if (counter % stride == 0) {
+        ImageType::PointType point;
+        fixed->TransformIndexToPhysicalPoint(it.GetIndex(), point);
+        samples_.push_back(point);
+      }
+    }
+  }
+
+  void Execute(itk::Object* caller, const itk::EventObject& event) override {
+    Execute(const_cast<const itk::Object*>(caller), event);
+  }
+
+  void Execute(const itk::Object* caller, const itk::EventObject& event) override {
+    auto* optimizer = const_cast<OptimizerType*>(dynamic_cast<const OptimizerType*>(caller));
+    if (!optimizer || !metric_ || samples_.empty()) {
+      return;
+    }
+
+    if (!itk::IterationEvent().CheckEvent(&event)) {
+      return;
+    }
+
+    const auto* transform = metric_->GetMovingTransform();
+    if (!transform) {
+      return;
+    }
+
+    itk::SizeValueType inside = 0;
+    for (const auto& sample : samples_) {
+      ImageType::IndexType index;
+      if (moving_->TransformPhysicalPointToIndex(transform->TransformPoint(sample), index)) {
+        inside++;
+      }
+    }
+
+    most_inside_ = std::max(most_inside_, inside);
+    if (inside < static_cast<itk::SizeValueType>(most_inside_ * MINIMUM_OVERLAP_FRACTION)) {
+      optimizer->StopOptimization();
+    }
+  }
+
+ protected:
+  OverlapGuardCommand() = default;
+
+ private:
+  const TMetric* metric_{nullptr};
+  const ImageType* moving_{nullptr};
+  std::vector<ImageType::PointType> samples_;
+  itk::SizeValueType most_inside_{0};
+};
+
+//---------------------------------------------------------------------------
 /// Build an optimizer with the scale estimator wired to the given metric, so that rotation,
 /// translation and scaling parameters all step by a comparable physical distance.
 template <typename TMetric>
-OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, const ImageType* fixed) {
+OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, const ImageType* fixed,
+                                      const ImageType* moving) {
   using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift<TMetric>;
   auto scales_estimator = ScalesEstimatorType::New();
   scales_estimator->SetMetric(metric);
@@ -96,14 +285,19 @@ OptimizerType::Pointer make_optimizer(TMetric* metric, unsigned int iterations, 
   auto optimizer = OptimizerType::New();
   optimizer->SetNumberOfIterations(iterations);
   optimizer->SetScalesEstimator(scales_estimator);
-  optimizer->SetMaximumStepSizeInPhysicalUnits(largest_extent * kMaximumStepFraction);
+  optimizer->SetMaximumStepSizeInPhysicalUnits(largest_extent * MAXIMUM_STEP_FRACTION);
   optimizer->SetDoEstimateLearningRateOnce(false);
   optimizer->SetDoEstimateLearningRateAtEachIteration(true);
-  optimizer->SetLowerLimit(kLineSearchLowerLimit);
-  optimizer->SetUpperLimit(kLineSearchUpperLimit);
-  optimizer->SetEpsilon(kLineSearchEpsilon);
+  optimizer->SetLowerLimit(LINE_SEARCH_LOWER_LIMIT);
+  optimizer->SetUpperLimit(LINE_SEARCH_UPPER_LIMIT);
+  optimizer->SetEpsilon(LINE_SEARCH_EPSILON);
   // keep whatever scored best rather than wherever the last step happened to land
   optimizer->SetReturnBestParametersAndValue(true);
+
+  auto guard = OverlapGuardCommand<TMetric>::New();
+  guard->set_images(metric, fixed, moving);
+  optimizer->AddObserver(itk::IterationEvent(), guard);
+
   return optimizer;
 }
 
@@ -237,7 +431,7 @@ void ImageRegistration::Impl::run_rigid() {
   registration->SetMetric(metric);
   registration->SetInitialTransform(rigid);
   registration->InPlaceOn();
-  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed));
+  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed, moving));
   apply_multi_resolution_schedule(registration.GetPointer(), effective_linear_shrink_factors, linear_smoothing_sigmas);
 
   auto level_command = LevelIterationCommand<RegistrationType>::New();
@@ -254,15 +448,26 @@ void ImageRegistration::Impl::run_affine() {
   auto metric = LinearMetricType::New();
 
   using RegistrationType = itk::ImageRegistrationMethodv4<ImageType, ImageType, AffineTransformType>;
+  // Start from the size difference between the two shapes rather than from the identity.  Only the
+  // matrix is set: ImageRegistrationMethodv4 initializes the centre of a linear output transform
+  // itself, from the last linear transform of the moving initial transform, so the scaling pivots
+  // about the rigid stage's centre whatever is set here.  That is the fixed image's centre of
+  // gravity, which is the point to scale about anyway.
+  auto affine = AffineTransformType::New();
+  const auto seed = estimate_scale_seed(fixed, moving);
+  if (seed.usable) {
+    affine->Scale(seed.scale);
+  }
+
   auto registration = RegistrationType::New();
   registration->SetFixedImage(fixed);
   registration->SetMovingImage(moving);
   registration->SetMetric(metric);
   // the rigid result carries the coarse alignment; the affine stage only has to find the residual
   registration->SetMovingInitialTransform(composite);
-  registration->SetInitialTransform(AffineTransformType::New());
+  registration->SetInitialTransform(affine);
   registration->InPlaceOn();
-  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed));
+  registration->SetOptimizer(make_optimizer(metric.GetPointer(), linear_iterations.front(), fixed, moving));
   apply_multi_resolution_schedule(registration.GetPointer(), effective_linear_shrink_factors, linear_smoothing_sigmas);
 
   auto level_command = LevelIterationCommand<RegistrationType>::New();
@@ -508,6 +713,31 @@ static std::string displacement_field_path(const std::string& filename) { return
 
 
 //---------------------------------------------------------------------------
+std::string ImageRegistration::settings_description() const {
+  auto list = [](const auto& values) {
+    std::string text;
+    for (const auto& value : values) {
+      text += (text.empty() ? "" : ",") + std::to_string(value);
+    }
+    return text;
+  };
+
+  std::string description = ALGORITHM_NAME;
+  description += "|transform=" + std::to_string(static_cast<int>(impl_->transform_type));
+  description += "|step=" + std::to_string(impl_->gradient_step);
+  description += "|update=" + std::to_string(impl_->update_field_variance);
+  description += "|total=" + std::to_string(impl_->total_field_variance);
+  description += "|iterations=" + list(impl_->iterations);
+  description += "|shrink=" + list(impl_->shrink_factors);
+  description += "|sigmas=" + list(impl_->smoothing_sigmas);
+  description += "|linear_iterations=" + list(impl_->linear_iterations);
+  description += "|linear_shrink=" + list(impl_->linear_shrink_factors);
+  description += "|linear_sigmas=" + list(impl_->linear_smoothing_sigmas);
+  description += "|radius=" + std::to_string(impl_->correlation_radius);
+  return description;
+}
+
+//---------------------------------------------------------------------------
 void ImageRegistration::save_transform(const std::string& filename) const {
   if (!impl_->composite) {
     throw std::runtime_error("save_transform called before run()");
@@ -538,11 +768,10 @@ void ImageRegistration::save_transform(const std::string& filename) const {
   }
 
   try {
-    auto writer = itk::TransformFileWriterTemplate<double>::New();
-    writer->SetFileName(filename);
-    writer->SetInput(linear);
-    writer->Update();
-
+    // The field goes first and the transform file last, because load_transform takes the transform
+    // file as the record that an entry exists and treats a missing field as a registration that had
+    // none.  Written the other way round, a run interrupted between the two leaves an entry that
+    // reads back as a deformable registration silently downgraded to a linear one.
     if (stored_field) {
       auto field_writer = itk::ImageFileWriter<StoredFieldType>::New();
       field_writer->SetFileName(displacement_field_path(filename));
@@ -550,6 +779,11 @@ void ImageRegistration::save_transform(const std::string& filename) const {
       field_writer->UseCompressionOn();
       field_writer->Update();
     }
+
+    auto writer = itk::TransformFileWriterTemplate<double>::New();
+    writer->SetFileName(filename);
+    writer->SetInput(linear);
+    writer->Update();
   } catch (const itk::ExceptionObject& e) {
     throw std::runtime_error(std::string("unable to write transform \"") + filename + "\": " + e.what());
   }

@@ -92,6 +92,17 @@ class ImageRegistration {
   CompositeTransformType::Pointer get_transform() const;
 
   /**
+   * @brief Describe the algorithm and the settings a transform would be computed with.
+   *
+   * Anything that would change the transform appears here, so a caller keeping transforms between
+   * runs can tell whether one it saved earlier is still the transform it would get today.  That
+   * belongs with the algorithm rather than with the caller: whoever changes how registration works
+   * is editing this class, and a description left behind in somebody else's file is one that gets
+   * forgotten, which turns a stale transform into a cache hit instead of a miss.
+   */
+  std::string settings_description() const;
+
+  /**
    * @brief Write the transform computed by run() so that it can be reused.
    *
    * The transform depends only on the two images and the registration settings, so a saved one can

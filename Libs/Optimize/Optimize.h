@@ -28,6 +28,8 @@
 
 namespace shapeworks {
 
+class RegistrationInitializer;
+
 class Project;
 class ParticleGoodBadAssessment;
 
@@ -394,40 +396,17 @@ class Optimize {
   void RunOptimize();
 
   //! Establish the initial correspondence by spreading particles over a single reference shape and
-  //! then registering that shape to each of the others
+  //! then registering that shape to each of the others.  RegistrationInitializer does the work; it
+  //! reaches into this class because the particles, the domains and the settings it needs all live
+  //! here, and moving them would be a larger change than the one it is worth.
   void InitializeFromRegistration();
-
-  //! Pick the shape used as the registration template, honoring an explicitly requested one
-  int ResolveRegistrationReference();
-
-  //! Split and optimize particles on the reference shape alone, until it holds the requested counts
-  void SpreadParticlesOnReference(int reference_shape);
-
-  //! Register the reference to every other shape and carry its particles across
-  void TransferParticlesFromReference(int reference_shape);
+  friend class RegistrationInitializer;
 
   //! Give the host a chance to refresh during the transfer phase, which runs no optimizer iterations
   //! and so would otherwise not drive any of the normal per-iteration UI updates.  The base
   //! implementation does nothing; Studio overrides it to redraw the particles and status.
   virtual void RefreshDuringTransfer() {}
 
-  //! Log how well a shape's transferred particles landed on its surface
-  void ReportTransferQuality(int domain, const std::vector<Point3>& reference_points,
-                             const std::vector<Point3>& transferred);
-
-  //! Path a registration's transform is cached at, or "" when caching is off.  The name covers
-  //! everything the transform depends on, so a stale one is never mistaken for a hit.
-  std::string GetRegistrationCachePath(int reference_domain, int domain) const;
-
-  //! Build the image used to register the given domain.  Mesh domains are rasterized to a distance
-  //! transform; image domains are read back from their groomed path.
-  Image GetRegistrationImage(int domain);
-
-  //! Return the band to retain around the surface, defaulting to a few voxels of the given spacing
-  double GetRegistrationBand(double spacing) const;
-
-  //! Return the surface of the given domain, reading it back from disk for image domains
-  Mesh GetDomainSurface(int domain);
 
   //! Return the number of shapes (subjects), as opposed to the total number of domains
   int GetNumberOfSubjects() const;
