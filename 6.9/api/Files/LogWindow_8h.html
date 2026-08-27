@@ -4568,6 +4568,7 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QListWidget&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StatusBarWidget.h&gt;</span>
 
@@ -4586,7 +4587,15 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">add_message</span><span class="p">(</span><span class="n">MessageType</span><span class="w"> </span><span class="n">message_type</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
 
+<span class="k">private</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">copy_selected_messages</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">copy_all_messages</span><span class="p">();</span>
+
 <span class="k">private</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">copy_messages</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QListWidgetItem</span><span class="o">*&gt;&amp;</span><span class="w"> </span><span class="n">items</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">Ui_LogWindow</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
 
@@ -4595,7 +4604,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:07 +0000</p>
 
 
 

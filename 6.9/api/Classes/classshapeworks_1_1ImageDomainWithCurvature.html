@@ -4998,6 +4998,10 @@
 <td><strong><a href="classshapeworks_1_1ImageDomain.html#function-sample">Sample</a></strong>(const <a href="classshapeworks_1_1ImageDomain.html#using-pointtype">PointType</a> &amp; p) const</td>
 </tr>
 <tr>
+<td>virtual bool</td>
+<td><strong><a href="classshapeworks_1_1ImageDomain.html#function-isvalidlocation">IsValidLocation</a></strong>(const <a href="classshapeworks_1_1ImageDomain.html#using-pointtype">PointType</a> &amp; p) const override</td>
+</tr>
+<tr>
 <td>virtual double</td>
 <td><strong><a href="classshapeworks_1_1ImageDomain.html#function-getmaxdiameter">GetMaxDiameter</a></strong>() const override</td>
 </tr>
@@ -5039,6 +5043,10 @@
 <tr>
 <td>openvdb::Vec3R</td>
 <td><strong><a href="classshapeworks_1_1ImageDomain.html#function-tovdbcoord">ToVDBCoord</a></strong>(const <a href="classshapeworks_1_1ImageDomain.html#using-pointtype">PointType</a> &amp; p) const</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1ImageDomain.html#function-describeunsampleablepoint">DescribeUnsampleablePoint</a></strong>(const <a href="classshapeworks_1_1ImageDomain.html#using-pointtype">PointType</a> &amp; p) const</td>
 </tr>
 </tbody>
 </table>
@@ -5200,6 +5208,10 @@
 <td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-getupperbound">GetUpperBound</a></strong>() const =0</td>
 </tr>
 <tr>
+<td>virtual bool</td>
+<td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-isvalidlocation">IsValidLocation</a></strong>(const <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a> &amp; p) const</td>
+</tr>
+<tr>
 <td>virtual <a href="classshapeworks_1_1ParticleDomain.html#using-pointtype">PointType</a></td>
 <td><strong><a href="classshapeworks_1_1ParticleDomain.html#function-getzerocrossingpoint">GetZeroCrossingPoint</a></strong>() const =0</td>
 </tr>
@@ -5357,7 +5369,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ImageDomainWithCurvature</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:05 +0000</p>
 
 
 

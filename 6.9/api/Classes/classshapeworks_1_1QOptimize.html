@@ -5365,38 +5365,6 @@
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-resolveregistrationreference">ResolveRegistrationReference</a></strong>()<br>Pick the shape used as the registration template, honoring an explicitly requested one.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-spreadparticlesonreference">SpreadParticlesOnReference</a></strong>(int reference_shape)<br>Split and optimize particles on the reference shape alone, until it holds the requested counts.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-transferparticlesfromreference">TransferParticlesFromReference</a></strong>(int reference_shape)<br>Register the reference to every other shape and carry its particles across.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-reporttransferquality">ReportTransferQuality</a></strong>(int domain, const std::vector&lt; Point3 &gt; &amp; reference_points, const std::vector&lt; Point3 &gt; &amp; transferred)<br>Log how well a shape's transferred particles landed on its surface.</td>
-</tr>
-<tr>
-<td>std::string</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationcachepath">GetRegistrationCachePath</a></strong>(int reference_domain, int domain) const</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Image.html">Image</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationimage">GetRegistrationImage</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationband">GetRegistrationBand</a></strong>(double spacing) const<br>Return the band to retain around the surface, defaulting to a few voxels of the given spacing.</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomainsurface">GetDomainSurface</a></strong>(int domain)<br>Return the surface of the given domain, reading it back from disk for image domains.</td>
-</tr>
-<tr>
-<td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getnumberofsubjects">GetNumberOfSubjects</a></strong>() const<br>Return the number of shapes (subjects), as opposed to the total number of domains.</td>
 </tr>
 <tr>
@@ -5900,6 +5868,21 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Friends inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#friend-registrationinitializer">RegistrationInitializer</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-progress">signal progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
@@ -5952,7 +5935,7 @@
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-refreshduringtransfer">shapeworks::Optimize::RefreshDuringTransfer</a></p>
 <p>Registration based initialization runs no optimizer iterations, so reuse the per-iteration refresh to redraw particles and flush the status during the transfer phase. </p>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:06 +0000</p>
 
 
 

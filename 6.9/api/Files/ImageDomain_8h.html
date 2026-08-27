@@ -4602,6 +4602,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_NarrowBand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">// this-&gt;Modified();</span>
 
 <span class="w">    </span><span class="n">openvdb</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span><span class="w">  </span><span class="c1">// It is safe to initialize multiple times.</span>
@@ -4697,6 +4698,17 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsValidLocation</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_VDBImage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">IsInsideBuffer</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">idxCoord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">transform</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">worldToIndex</span><span class="p">(</span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3R</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">().</span><span class="n">isValueOff</span><span class="p">(</span><span class="n">openvdb</span><span class="o">::</span><span class="n">Coord</span><span class="o">::</span><span class="n">round</span><span class="p">(</span><span class="n">idxCoord</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+
 <span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">bestRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxdim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -4752,21 +4764,51 @@
 <span class="w">    </span><span class="c1">// Make sure the coordinate is part of the narrow band</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_VDBImage</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">().</span><span class="n">isValueOff</span><span class="p">(</span>
 <span class="w">            </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Coord</span><span class="o">::</span><span class="n">round</span><span class="p">(</span><span class="n">idxCoord</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// `isValueOff` requires an integer coordinate</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DescribeUnsampleablePoint</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
 <span class="w">      </span><span class="c1">// If multiple threads crash here at the same time, the error message displayed is just &quot;terminate called</span>
 <span class="w">      </span><span class="c1">// recursively&quot;, which isn&#39;t helpful. So we std::cerr the error to make sure its printed to the console.</span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Sampled point outside the narrow band: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
-<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Attempt to sample at a point outside the narrow band: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span>
-<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;. Consider increasing the narrow band&quot;</span><span class="p">;</span>
-<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">());</span>
+<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">idxCoord</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">DescribeUnsampleablePoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
+<span class="w">    </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Domain &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainID</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; (&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_DomainName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;): cannot sample the distance transform at &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span>
+<span class="w">            </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;. &quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// a particle is clamped to the bounding box before it is sampled, so one that arrived from</span>
+<span class="w">    </span><span class="c1">// outside the image is now sitting within a voxel of one of its faces</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">voxel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetSpacing</span><span class="p">().</span><span class="n">GetVnlVector</span><span class="p">().</span><span class="n">max_value</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">on_edge</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DIMENSION</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">on_edge</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">on_edge</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">GetLowerBound</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">voxel</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">GetUpperBound</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">voxel</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">on_edge</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;It lies on the edge of the image (&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; to &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">GetUpperBound</span><span class="p">()</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;), which is where a particle ends up when it is placed outside the image altogether, nowhere near &quot;</span>
+<span class="w">                 </span><span class="s">&quot;the surface. Widening the narrow band will not help. The particle was put in the wrong place to &quot;</span>
+<span class="w">                 </span><span class="s">&quot;begin with, usually by an initialization that did not converge or by shapes that grooming left &quot;</span>
+<span class="w">                 </span><span class="s">&quot;unaligned.&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// quoted in voxels, which is what the narrow band optimization parameter is set in; the domain</span>
+<span class="w">      </span><span class="c1">// keeps it as a width in world units, and telling someone to raise a number they never typed</span>
+<span class="w">      </span><span class="c1">// has them lower the one they did</span>
+<span class="w">      </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;It is inside the image but further than the narrow band (&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_NarrowBand</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">voxel</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; voxels, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_NarrowBand</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;) from the surface, so no distance transform is kept there. Consider increasing the narrow band &quot;</span>
+<span class="w">                 </span><span class="s">&quot;optimization parameter.&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBImage</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_NarrowBand</span><span class="p">{</span><span class="mf">0.0</span><span class="p">};</span>
 <span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_Size</span><span class="p">;</span>
 <span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">m_Spacing</span><span class="p">;</span>
 <span class="w">  </span><span class="n">PointType</span><span class="w"> </span><span class="n">m_Origin</span><span class="p">;</span>
@@ -4803,7 +4845,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// end namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:06 +0000</p>
 
 
 

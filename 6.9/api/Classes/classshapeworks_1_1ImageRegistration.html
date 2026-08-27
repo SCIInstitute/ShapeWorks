@@ -4754,6 +4754,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-settings_description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function settings_description
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-save_transform" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4912,6 +4923,10 @@
 <td><strong><a href="classshapeworks_1_1ImageRegistration.html#function-get-transform">get_transform</a></strong>() const<br>the composed transform from all stages, mapping fixed space to moving space</td>
 </tr>
 <tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1ImageRegistration.html#function-settings-description">settings_description</a></strong>() const<br>Describe the algorithm and the settings a transform would be computed with.</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ImageRegistration.html#function-save-transform">save_transform</a></strong>(const std::string &amp; filename) const<br>Write the transform computed by <a href="classshapeworks_1_1ImageRegistration.html#function-run">run()</a> so that it can be reused.</td>
 </tr>
@@ -5056,6 +5071,11 @@
 <div class="highlight"><pre><span></span><code><span class="n">CompositeTransformType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">get_transform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>the composed transform from all stages, mapping fixed space to moving space </p>
+<h3 id="function-settings_description">function settings_description</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">settings_description</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Describe the algorithm and the settings a transform would be computed with. </p>
+<p>Anything that would change the transform appears here, so a caller keeping transforms between runs can tell whether one it saved earlier is still the transform it would get today. That belongs with the algorithm rather than with the caller: whoever changes how registration works is editing this class, and a description left behind in somebody else's file is one that gets forgotten, which turns a stale transform into a cache hit instead of a miss. </p>
 <h3 id="function-save_transform">function save_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save_transform</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
@@ -5086,7 +5106,7 @@
 <p><strong>Return</strong>: the clamped and rescaled image </p>
 <p>Values are clamped to +/- band and then mapped to [0,1]. This keeps the metric focused on the region near the surface, where the distance transform is informative, instead of on the unbounded values far away from it.</p>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:04 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:06 +0000</p>
 
 
 

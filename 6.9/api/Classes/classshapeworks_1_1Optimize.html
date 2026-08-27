@@ -4527,6 +4527,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#friends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Friends
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#detailed-description" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6080,98 +6091,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-resolveregistrationreference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function ResolveRegistrationReference
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-spreadparticlesonreference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function SpreadParticlesOnReference
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-transferparticlesfromreference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function TransferParticlesFromReference
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-refreshduringtransfer" class="md-nav__link">
     <span class="md-ellipsis">
       
         function RefreshDuringTransfer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-reporttransferquality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function ReportTransferQuality
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getregistrationcachepath" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function GetRegistrationCachePath
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getregistrationimage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function GetRegistrationImage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getregistrationband" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function GetRegistrationBand
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getdomainsurface" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function GetDomainSurface
       
     </span>
   </a>
@@ -7575,6 +7498,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#friends_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Friends
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Friends">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#friend-registrationinitializer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        friend RegistrationInitializer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -8175,40 +8126,8 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-initializefromregistration">InitializeFromRegistration</a></strong>()</td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-resolveregistrationreference">ResolveRegistrationReference</a></strong>()<br>Pick the shape used as the registration template, honoring an explicitly requested one.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-spreadparticlesonreference">SpreadParticlesOnReference</a></strong>(int reference_shape)<br>Split and optimize particles on the reference shape alone, until it holds the requested counts.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-transferparticlesfromreference">TransferParticlesFromReference</a></strong>(int reference_shape)<br>Register the reference to every other shape and carry its particles across.</td>
-</tr>
-<tr>
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-refreshduringtransfer">RefreshDuringTransfer</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-reporttransferquality">ReportTransferQuality</a></strong>(int domain, const std::vector&lt; Point3 &gt; &amp; reference_points, const std::vector&lt; Point3 &gt; &amp; transferred)<br>Log how well a shape's transferred particles landed on its surface.</td>
-</tr>
-<tr>
-<td>std::string</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationcachepath">GetRegistrationCachePath</a></strong>(int reference_domain, int domain) const</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Image.html">Image</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationimage">GetRegistrationImage</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getregistrationband">GetRegistrationBand</a></strong>(double spacing) const<br>Return the band to retain around the surface, defaulting to a few voxels of the given spacing.</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-getdomainsurface">GetDomainSurface</a></strong>(int domain)<br>Return the surface of the given domain, reading it back from disk for image domains.</td>
 </tr>
 <tr>
 <td>int</td>
@@ -8720,6 +8639,21 @@
 <tr>
 <td>std::string</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-remaining-time-message">m_remaining_time_message</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="friends">Friends</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#friend-registrationinitializer">RegistrationInitializer</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -9442,61 +9376,12 @@
 <h3 id="function-initializefromregistration">function InitializeFromRegistration</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InitializeFromRegistration</span><span class="p">()</span>
 </code></pre></div>
-<p>Establish the initial correspondence by spreading particles over a single reference shape and then registering that shape to each of the others </p>
-<h3 id="function-resolveregistrationreference">function ResolveRegistrationReference</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ResolveRegistrationReference</span><span class="p">()</span>
-</code></pre></div>
-<p>Pick the shape used as the registration template, honoring an explicitly requested one. </p>
-<h3 id="function-spreadparticlesonreference">function SpreadParticlesOnReference</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SpreadParticlesOnReference</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">reference_shape</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Split and optimize particles on the reference shape alone, until it holds the requested counts. </p>
-<h3 id="function-transferparticlesfromreference">function TransferParticlesFromReference</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TransferParticlesFromReference</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">reference_shape</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Register the reference to every other shape and carry its particles across. </p>
+<p>Establish the initial correspondence by spreading particles over a single reference shape and then registering that shape to each of the others. <a href="classshapeworks_1_1RegistrationInitializer.html">RegistrationInitializer</a> does the work; it reaches into this class because the particles, the domains and the settings it needs all live here, and moving them would be a larger change than the one it is worth. </p>
 <h3 id="function-refreshduringtransfer">function RefreshDuringTransfer</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RefreshDuringTransfer</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-refreshduringtransfer">shapeworks::QOptimize::RefreshDuringTransfer</a></p>
 <p>Give the host a chance to refresh during the transfer phase, which runs no optimizer iterations and so would otherwise not drive any of the normal per-iteration UI updates. The base implementation does nothing; Studio overrides it to redraw the particles and status. </p>
-<h3 id="function-reporttransferquality">function ReportTransferQuality</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReportTransferQuality</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">reference_points</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transferred</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Log how well a shape's transferred particles landed on its surface. </p>
-<h3 id="function-getregistrationcachepath">function GetRegistrationCachePath</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GetRegistrationCachePath</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">reference_domain</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<p>Path a registration's transform is cached at, or "" when caching is off. The name covers everything the transform depends on, so a stale one is never mistaken for a hit. </p>
-<h3 id="function-getregistrationimage">function GetRegistrationImage</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Image</span><span class="w"> </span><span class="n">GetRegistrationImage</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Build the image used to register the given domain. <a href="classshapeworks_1_1Mesh.html">Mesh</a> domains are rasterized to a distance transform; image domains are read back from their groomed path. </p>
-<h3 id="function-getregistrationband">function GetRegistrationBand</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">GetRegistrationBand</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">spacing</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<p>Return the band to retain around the surface, defaulting to a few voxels of the given spacing. </p>
-<h3 id="function-getdomainsurface">function GetDomainSurface</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="n">GetDomainSurface</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Return the surface of the given domain, reading it back from disk for image domains. </p>
 <h3 id="function-getnumberofsubjects">function GetNumberOfSubjects</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfSubjects</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -9903,8 +9788,14 @@
 <h3 id="variable-m_remaining_time_message">variable m_remaining_time_message</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
+<h2 id="friends_1">Friends</h2>
+<h3 id="friend-registrationinitializer">friend RegistrationInitializer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">RegistrationInitializer</span><span class="p">(</span>
+<span class="w">    </span><span class="n">RegistrationInitializer</span><span class="w"> </span>
+<span class="p">);</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2026-08-26 at 08:25:03 +0000</p>
+<p>Updated on 2026-08-27 at 15:58:05 +0000</p>
 
 
 
