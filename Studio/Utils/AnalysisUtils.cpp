@@ -148,7 +148,8 @@ void AnalysisUtils::create_ranked_plot(JKQTPlotter* plot, const std::vector<Rank
     if (use_log && value <= 0) {
       continue;
     }
-    auto* line = new JKQTPGeoInfiniteLine(plot->getPlotter(), 0, value, 1, 0, QColor(120, 120, 120), 1, Qt::DashLine);
+    // anchored on the first sample so zoomToFit() does not stretch the axis back to zero
+    auto* line = new JKQTPGeoInfiniteLine(plot->getPlotter(), 1, value, 1, 0, QColor(120, 120, 120), 1, Qt::DashLine);
     line->setTwoSided(true);
     plot->addGraph(line);
   }
