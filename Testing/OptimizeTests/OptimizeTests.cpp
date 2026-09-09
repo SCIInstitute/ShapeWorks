@@ -6,6 +6,8 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
+#include <vtkFloatArray.h>
+
 #include <cstdio>
 
 #include "../Testing.h"
@@ -441,6 +443,87 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 750.0);
   ASSERT_LT(values[values.size() - 2], 10);
+}
+
+//---------------------------------------------------------------------------
+//! Give every mesh a scalar field and optimize with it as an attribute
+static ProjectHandle prep_mesh_scalar_project() {
+  ProjectHandle project = std::make_shared<Project>();
+  if (!project->load("optimize.swproj")) {
+    return nullptr;
+  }
+
+  for (auto& subject : project->get_subjects()) {
+    std::vector<std::string> filenames;
+    for (const auto& filename : subject->get_groomed_filenames()) {
+      Mesh mesh = MeshUtils::threadSafeReadMesh(filename);
+
+      // deliberately a float field: that is how scalars usually arrive on a mesh
+      auto height = vtkSmartPointer<vtkFloatArray>::New();
+      height->SetName("height");
+      height->SetNumberOfValues(mesh.numPoints());
+      for (int i = 0; i < mesh.numPoints(); i++) {
+        height->SetValue(i, mesh.getPoint(i)[2]);
+      }
+      mesh.setField("height", height, Mesh::Point);
+
+      // .ply cannot carry fields, so keep the copy with the field in a format that can
+      auto name = StringUtils::getBaseFilenameWithoutExtension(filename) + "_scalars.vtk";
+      mesh.write(name);
+      filenames.push_back(name);
+    }
+    subject->set_original_filenames(filenames);
+    subject->set_groomed_filenames(filenames);
+  }
+  project->update_subjects();
+
+  return project;
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_scalars_test) {
+  prep_temp("/optimize/mesh_use_normals", "mesh_scalars");
+
+  auto project = prep_mesh_scalar_project();
+  ASSERT_TRUE(project != nullptr);
+
+  OptimizeParameters params(project);
+  params.set_field_attributes({"height"});
+  params.set_field_attribute_weights({1.0});
+  params.set_number_of_particles({32});
+  params.set_optimization_iterations(20);
+
+  Optimize app;
+  ASSERT_TRUE(params.set_up_optimize(&app));
+
+  // a scalar attribute is matched through the mesh-based correspondence path
+  ASSERT_TRUE(app.GetUseMeshBasedAttributes());
+  ASSERT_EQ(app.GetAttributesPerDomain()[0], 1);
+
+  ASSERT_TRUE(app.Run());
+
+  auto points = app.GetLocalPoints();
+  ASSERT_EQ(points.size(), 4);
+  for (const auto& shape : points) {
+    ASSERT_EQ(shape.size(), 32);
+  }
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_scalars_missing_field_test) {
+  prep_temp("/optimize/mesh_use_normals", "mesh_scalars_missing_field");
+
+  auto project = prep_mesh_scalar_project();
+  ASSERT_TRUE(project != nullptr);
+
+  OptimizeParameters params(project);
+  params.set_field_attributes({"not_a_field"});
+  params.set_field_attribute_weights({1.0});
+  params.set_number_of_particles({32});
+
+  // a field the meshes don't carry has to be reported, not interpolated as garbage
+  Optimize app;
+  ASSERT_THROW(params.set_up_optimize(&app), std::invalid_argument);
 }
 
 //---------------------------------------------------------------------------

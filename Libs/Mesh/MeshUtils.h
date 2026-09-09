@@ -95,5 +95,11 @@ class MeshUtils {
   /// A surface mesh has polygon or triangle-strip cells; a contour has only line cells. This is more
   /// robust than inspecting the first cell, whose type/point-count can vary within a mesh.
   static bool is_contour(vtkSmartPointer<vtkPolyData> poly_data);
+
+  /// Carry the scalar fields of one mesh onto the points of another.  Each target point takes the
+  /// value interpolated across the closest triangle of the source, so the two meshes need not share
+  /// a vertex count or a topology.  Normals are not carried over: they describe the geometry, which
+  /// is the part that changed.
+  static void transfer_point_data(vtkSmartPointer<vtkPolyData> source, vtkSmartPointer<vtkPolyData> target);
 };
 }  // namespace shapeworks

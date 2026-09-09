@@ -12,6 +12,8 @@
 
 class Ui_OptimizeTool;
 
+class QCheckBox;
+class QLabel;
 class QLineEdit;
 
 namespace shapeworks {
@@ -61,6 +63,8 @@ public Q_SLOTS:
 
   void update_ui_elements();
 
+  void handle_session_modified();
+
   bool validate_inputs();
 
 Q_SIGNALS:
@@ -74,12 +78,21 @@ private:
 
   void setup_domain_boxes();
 
+  void setup_mesh_scalar_boxes();
+
   void update_run_button();
 
   void handle_load_progress(int count);
 
   std::vector<QLineEdit*> particle_boxes_;
   std::vector<QWidget*> domain_grid_widgets_;
+
+  //! one row per scalar field the meshes carry: name, "use it" box, and its weight
+  std::vector<std::string> mesh_scalar_names_;
+  std::vector<QCheckBox*> mesh_scalar_checks_;
+  std::vector<QLabel*> mesh_scalar_weight_labels_;
+  std::vector<QLineEdit*> mesh_scalar_weights_;
+  std::vector<QWidget*> mesh_scalar_widgets_;
 
   Preferences& preferences_;
   Telemetry& telemetry_;

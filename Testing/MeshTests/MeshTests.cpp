@@ -1,11 +1,14 @@
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
 #include <vtkPoints.h>
 #include <vtkSphereSource.h>
 #include <vtksys/SystemTools.hxx>
 
 #include <chrono>
 #include <fstream>
+#include <map>
 
 #include "Image.h"
 #include "Mesh.h"
@@ -353,6 +356,107 @@ TEST(MeshTests, remeshPercentTest2) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent2.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, fieldGradientFloatTest) {
+  // fields arrive on meshes as floats as often as doubles, and the gradient has to be computed for
+  // either: a missing gradient array used to be read as a null pointer
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+
+  auto height = vtkSmartPointer<vtkFloatArray>::New();
+  height->SetName("height");
+  height->SetNumberOfValues(ellipsoid.numPoints());
+  for (int i = 0; i < ellipsoid.numPoints(); i++) {
+    height->SetValue(i, ellipsoid.getPoint(i)[2]);
+  }
+  ellipsoid.setField("height", height, Mesh::Point);
+
+  auto gradient = ellipsoid.computeFieldGradientAtPoint("height", ellipsoid.getPoint(100));
+
+  ASSERT_TRUE(gradient.allFinite());
+  ASSERT_GT(gradient.norm(), 0.0);
+
+  auto names = ellipsoid.getFieldNames();
+  ASSERT_NE(std::find(names.begin(), names.end(), "gradient_height"), names.end());
+}
+
+TEST(MeshTests, repairKeepsFieldsTest) {
+  // grooming repairs every mesh before anything else, so the fields have to survive it
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femurThreeFields.vtk");
+
+  auto values = femur.getField("distance", Mesh::Point);
+  std::map<std::array<double, 3>, double> before;
+  for (int i = 0; i < femur.numPoints(); i++) {
+    auto point = femur.getPoint(i);
+    before[{point[0], point[1], point[2]}] = values->GetTuple1(i);
+  }
+
+  Mesh repaired(MeshUtils::repair_mesh(femur.getVTKMesh()));
+
+  auto names = repaired.getFieldNames();
+  ASSERT_NE(std::find(names.begin(), names.end(), "distance"), names.end());
+  ASSERT_NE(std::find(names.begin(), names.end(), "bloop"), names.end());
+
+  // repair renumbers points, so check that each one kept the value belonging to its position
+  int checked = 0;
+  for (int i = 0; i < repaired.numPoints(); i++) {
+    auto point = repaired.getPoint(i);
+    auto match = before.find({point[0], point[1], point[2]});
+    if (match != before.end()) {
+      ASSERT_EQ(repaired.getFieldValue("distance", i), match->second);
+      checked++;
+    }
+  }
+  ASSERT_GT(checked, 0);
+}
+
+TEST(MeshTests, remeshKeepsFieldsTest) {
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femurThreeFields.vtk");
+
+  // the third field of this mesh holds a single value rather than one per point, so it is not
+  // something that can be carried onto different vertices
+  std::vector<std::string> fields{"distance", "bloop"};
+
+  std::vector<double> minimums;
+  std::vector<double> maximums;
+  for (const auto& field : fields) {
+    double range[2];
+    femur.getField(field, Mesh::Point)->GetRange(range);
+    minimums.push_back(range[0]);
+    maximums.push_back(range[1]);
+  }
+
+  femur.remeshPercent(0.25, 1.0);
+
+  auto remeshed = femur.getFieldNames();
+  for (int i = 0; i < fields.size(); i++) {
+    ASSERT_NE(std::find(remeshed.begin(), remeshed.end(), fields[i]), remeshed.end());
+    // a value for every new vertex, not just the ones that happen to line up with an old one
+    for (int p = 0; p < femur.numPoints(); p++) {
+      double value = femur.getFieldValue(fields[i], p);
+      ASSERT_GE(value, minimums[i]);
+      ASSERT_LE(value, maximums[i]);
+    }
+  }
+}
+
+TEST(MeshTests, remeshInterpolatesFieldsTest) {
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+
+  // a field that follows the geometry, so the values carried onto the new vertices can be checked
+  auto height = vtkSmartPointer<vtkDoubleArray>::New();
+  height->SetName("height");
+  height->SetNumberOfValues(ellipsoid.numPoints());
+  for (int i = 0; i < ellipsoid.numPoints(); i++) {
+    height->SetValue(i, ellipsoid.getPoint(i)[2]);
+  }
+  ellipsoid.setField("height", height, Mesh::Point);
+
+  ellipsoid.remesh(300, 1.0);
+
+  for (int i = 0; i < ellipsoid.numPoints(); i++) {
+    ASSERT_NEAR(ellipsoid.getFieldValue("height", i), ellipsoid.getPoint(i)[2], 1.0);
+  }
 }
 
 TEST(MeshTests, smoothTest1) {

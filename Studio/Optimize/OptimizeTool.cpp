@@ -1,14 +1,19 @@
 #include <Optimize/QOptimize.h>
 
 // qt
+#include <QCheckBox>
 #include <QFileDialog>
 #include <QFontMetrics>
+#include <QGridLayout>
 #include <QIntValidator>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QResizeEvent>
 #include <QThread>
 #include <QTimer>
+
+#include <algorithm>
 
 // shapeworks
 #include <Optimize/OptimizeParameters.h>
@@ -27,6 +32,9 @@
 using namespace shapeworks;
 
 namespace {
+//! How far the fields of a section are set in from the checkbox that switches the section on
+const int kSubItemIndent = 20;
+
 // QLabel that elides its text with "..." when it's narrower than the text.
 // The full text is kept as a tooltip so the user can see it on hover.
 // sizeHint() reports the full-text width so the layout gives the label its natural
@@ -79,6 +87,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
   connect(ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesics_from_landmarks, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+  connect(ui_->mesh_scalars, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->use_geodesic_distance, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->sampling_scale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->registration_initialization, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
@@ -95,6 +104,10 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "Requires ~10x more time, and larger memory footprint. Only supported for mesh inputs"));
   ui_->geodesic_remesh_percent->setToolTip("Percent remesh reduction to use for geodesic distance");
   ui_->use_normals->setToolTip("Use surface normals as part of optimization");
+  ui_->mesh_scalars->setToolTip(StudioUtils::wrap_tooltip(
+      "Use scalar fields carried by the meshes (thickness, curvature, and the like) as part of "
+      "optimization.  A selected field is matched across shapes along with position, so particles "
+      "line up on the values as well as on the surface"));
   ui_->normals_strength->setToolTip("Strength of surface normals relative to position");
   ui_->procrustes->setToolTip("Use procrustes registration during optimization");
   ui_->procrustes_interval->setToolTip("How often to run procrustes during optimization (0 = disabled)");
@@ -178,20 +191,13 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
     connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
   }
 
-  auto set_session_modified = [this]() {
-    if (!session_) {
-      return;
-    }
-    session_->set_modified(true);
-  };
-
   auto line_edits = findChildren<QLineEdit*>();
   for (auto line_edit : line_edits) {
-    connect(line_edit, &QLineEdit::textChanged, this, set_session_modified);
+    connect(line_edit, &QLineEdit::textChanged, this, &OptimizeTool::handle_session_modified);
   }
   auto check_boxes = findChildren<QCheckBox*>();
   for (auto check_box : check_boxes) {
-    connect(check_box, &QCheckBox::toggled, this, set_session_modified);
+    connect(check_box, &QCheckBox::toggled, this, &OptimizeTool::handle_session_modified);
   }
 
   Style::apply_normal_button_style(ui_->restoreDefaults);
@@ -339,6 +345,7 @@ void OptimizeTool::set_session(QSharedPointer<Session> session) { session_ = ses
 //---------------------------------------------------------------------------
 void OptimizeTool::load_params() {
   setup_domain_boxes();
+  setup_mesh_scalar_boxes();
   auto params = OptimizeParameters(session_->get_project());
 
   auto num_particles = params.get_number_of_particles();
@@ -363,6 +370,24 @@ void OptimizeTool::load_params() {
   ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
   ui_->use_geodesics_from_landmarks->setChecked(params.get_use_geodesics_to_landmarks());
   ui_->geodesics_to_landmarks_weight->setText(QString::number(params.get_geodesic_to_landmarks_weight()));
+
+  auto field_attributes = params.get_field_attributes();
+  auto field_weights = params.get_field_attribute_weights();
+  ui_->mesh_scalars->setChecked(!field_attributes.empty());
+  for (int i = 0; i < mesh_scalar_names_.size(); i++) {
+    auto position = std::find(field_attributes.begin(), field_attributes.end(), mesh_scalar_names_[i]);
+    bool chosen = position != field_attributes.end();
+    double weight = 1.0;
+    if (chosen) {
+      size_t index = position - field_attributes.begin();
+      if (index < field_weights.size()) {
+        weight = field_weights[index];
+      }
+    }
+    mesh_scalar_checks_[i]->setChecked(chosen);
+    mesh_scalar_weights_[i]->setText(QString::number(weight));
+  }
+
   ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
@@ -417,6 +442,24 @@ void OptimizeTool::store_params() {
   params.set_normals_strength(ui_->normals_strength->text().toDouble());
   params.set_use_geodesics_to_landmarks(ui_->use_geodesics_from_landmarks->isChecked());
   params.set_geodesic_to_landmarks_weight(ui_->geodesics_to_landmarks_weight->text().toDouble());
+
+  // with no rows there is nothing the user could have chosen here, so leave whatever the project
+  // was given elsewhere alone
+  if (!mesh_scalar_names_.empty()) {
+    std::vector<std::string> field_attributes;
+    std::vector<double> field_weights;
+    if (ui_->mesh_scalars->isChecked()) {
+      for (int i = 0; i < mesh_scalar_names_.size(); i++) {
+        if (mesh_scalar_checks_[i]->isChecked()) {
+          field_attributes.push_back(mesh_scalar_names_[i]);
+          field_weights.push_back(mesh_scalar_weights_[i]->text().toDouble());
+        }
+      }
+    }
+    params.set_field_attributes(field_attributes);
+    params.set_field_attribute_weights(field_weights);
+  }
+
   params.set_use_disentangled_ssm(ui_->use_disentangled_ssm->isChecked());
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
@@ -469,6 +512,14 @@ void OptimizeTool::shutdown_threads() {
 //---------------------------------------------------------------------------
 void OptimizeTool::update_ui_elements() {
   ui_->normals_strength->setEnabled(ui_->use_normals->isChecked());
+  bool mesh_scalars_enabled = ui_->mesh_scalars->isChecked();
+  for (int i = 0; i < mesh_scalar_weights_.size(); i++) {
+    bool weight_enabled = mesh_scalars_enabled && mesh_scalar_checks_[i]->isChecked();
+    mesh_scalar_checks_[i]->setEnabled(mesh_scalars_enabled);
+    // the label fades with the box it belongs to
+    mesh_scalar_weight_labels_[i]->setEnabled(weight_enabled);
+    mesh_scalar_weights_[i]->setEnabled(weight_enabled);
+  }
   ui_->procrustes_scaling->setEnabled(ui_->procrustes->isChecked());
   ui_->procrustes_rotation_translation->setEnabled(ui_->procrustes->isChecked());
   ui_->procrustes_interval->setEnabled(ui_->procrustes->isChecked());
@@ -516,6 +567,7 @@ bool OptimizeTool::validate_inputs() {
   std::vector<QLineEdit*> combined = line_edits_;
 
   combined.insert(combined.end(), particle_boxes_.begin(), particle_boxes_.end());
+  combined.insert(combined.end(), mesh_scalar_weights_.begin(), mesh_scalar_weights_.end());
 
   for (QLineEdit* line_edit : combined) {
     QString text = line_edit->text();
@@ -531,6 +583,97 @@ bool OptimizeTool::validate_inputs() {
     line_edit->setStyleSheet(ss);
   }
   return all_valid;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::setup_mesh_scalar_boxes() {
+  for (auto* widget : mesh_scalar_widgets_) {
+    widget->setParent(nullptr);
+    delete widget;
+  }
+  mesh_scalar_widgets_.clear();
+  mesh_scalar_checks_.clear();
+  mesh_scalar_weight_labels_.clear();
+  mesh_scalar_weights_.clear();
+  mesh_scalar_names_.clear();
+
+  auto params = OptimizeParameters(session_->get_project());
+
+  mesh_scalar_names_ = session_->get_project()->get_mesh_scalar_names();
+
+  // a field the project already asks for gets a row even when it wasn't found on the meshes, so
+  // that opening this panel can't quietly drop it
+  for (const auto& name : params.get_field_attributes()) {
+    if (std::find(mesh_scalar_names_.begin(), mesh_scalar_names_.end(), name) == mesh_scalar_names_.end()) {
+      mesh_scalar_names_.push_back(name);
+    }
+  }
+
+  // the section is dividers and all, so it disappears completely when there is nothing to show
+  bool any_scalars = !mesh_scalar_names_.empty();
+  ui_->line_mesh_scalars_top->setVisible(any_scalars);
+  ui_->mesh_scalars->setVisible(any_scalars);
+  ui_->mesh_scalar_widget->setVisible(any_scalars);
+  ui_->line_mesh_scalars_bottom->setVisible(any_scalars);
+  if (!any_scalars) {
+    return;
+  }
+
+  auto grid = qobject_cast<QGridLayout*>(ui_->mesh_scalar_widget->layout());
+  auto positive = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
+
+  // the fields are options of the checkbox above them, so set them in from it
+  grid->setContentsMargins(kSubItemIndent, 0, 0, 0);
+
+  auto add_widget = [&](QWidget* widget, int row, int column) {
+    grid->addWidget(widget, row, column);
+    mesh_scalar_widgets_.push_back(widget);
+  };
+
+  for (int i = 0; i < mesh_scalar_names_.size(); i++) {
+    auto name = QString::fromStdString(mesh_scalar_names_[i]);
+
+    auto check = new QCheckBox(name, this);
+    check->setToolTip(QString("Use the \"%1\" field as part of optimization").arg(name));
+    connect(check, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
+    connect(check, &QCheckBox::toggled, this, &OptimizeTool::handle_session_modified);
+    mesh_scalar_checks_.push_back(check);
+    add_widget(check, i, 0);
+
+    auto weight_label = new QLabel("Weight:", this);
+    weight_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    mesh_scalar_weight_labels_.push_back(weight_label);
+    add_widget(weight_label, i, 1);
+
+    auto weight = new QLineEdit(this);
+    weight->setAlignment(Qt::AlignHCenter);
+    weight->setMinimumWidth(50);
+    weight->setMaximumWidth(100);
+    weight->setValidator(positive);
+    weight->setToolTip("Strength of this field relative to position");
+    connect(weight, &QLineEdit::textChanged, this, &OptimizeTool::update_run_button);
+    connect(weight, &QLineEdit::textChanged, this, &OptimizeTool::handle_session_modified);
+    mesh_scalar_weights_.push_back(weight);
+    add_widget(weight, i, 2);
+  }
+
+  grid->setColumnStretch(0, 1);
+
+  QWidget::setTabOrder(ui_->geodesics_to_landmarks_weight, ui_->mesh_scalars);
+  QWidget* previous = ui_->mesh_scalars;
+  for (int i = 0; i < mesh_scalar_checks_.size(); i++) {
+    QWidget::setTabOrder(previous, mesh_scalar_checks_[i]);
+    QWidget::setTabOrder(mesh_scalar_checks_[i], mesh_scalar_weights_[i]);
+    previous = mesh_scalar_weights_[i];
+  }
+  QWidget::setTabOrder(previous, ui_->multiscale);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::handle_session_modified() {
+  if (session_) {
+    session_->set_modified(true);
+  }
 }
 
 //---------------------------------------------------------------------------

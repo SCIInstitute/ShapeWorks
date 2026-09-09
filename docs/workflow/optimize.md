@@ -214,6 +214,22 @@ When geodesic distances are enabled on mesh domains, `geodesic_remesh_percent` (
 
 Reducing it trades geodesic accuracy for speed on dense meshes. Note that before 6.8 this value was misinterpreted, which inflated the mesh instead of decimating it and silently fell back to Euclidean distances; if you carried a value over from an older project, re-check it.
 
+### Mesh Scalar Attributes
+
+A scalar field carried by the meshes -- thickness, curvature, a per-vertex measurement of your own -- can be used as a correspondence feature alongside particle position. The value is interpolated from the surface at each particle, so particles line up on the field as well as on the geometry.
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `field_attributes` | *(empty)* | Names of the point data arrays to use, separated by spaces (write a space in a name as `%20`). |
+| `field_attribute_weights` | *(empty)* | One weight per attribute, scaling it relative to XYZ. There must be exactly as many weights as attributes. |
+
+In Studio these appear as a **Mesh Scalars** row per field found on the meshes, in the Optimize panel.
+
+Two things to know:
+
+- Mesh domains only. Image and contour domains have no field to sample, and a project that mixes them is rejected.
+- The field has to be on the **groomed** meshes, which is what optimization reads. Grooming carries fields through its steps, including remeshing, but a mesh built from a segmentation starts without any.
+
 ## Optimizing Correspondences 
 
 You can use either ShapeWorks Studio or `shapeworks optimize <parameters.xml>` or `shapeworks optimize <project.xlsx>` command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.

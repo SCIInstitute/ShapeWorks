@@ -22,6 +22,8 @@ Optimization Parameters
 | Normals Strength | Amount to scale surface normals feature to give it enough weight relative to XYZ |
 | Geodesic from Landmarks | Compute geodesic distance fields from landmarks and use as a correspondence attribute |
 | Geodesic Landmarks Weight | Weight for the geodesic-from-landmarks correspondence term (default: 1.0) |
+| Mesh Scalars | Scalar fields carried by the meshes (thickness, curvature, and the like) that can be used as correspondence features.  A row appears for each field found on the meshes; check the ones to use.  Mesh inputs only |
+| Mesh Scalar Weight | Amount to scale a mesh scalar field to give it enough weight relative to XYZ (default: 1.0) |
 | Multiscale Mode | Enable multiscale optimization where each particle split level after the multiscale start number runs in both initialization and optimization modes |
 | Multiscale Start | Number of particles to begin multiscale mode |
 | Shared Boundary | Enable shared boundary correspondence for multi-domain models with shared surfaces |

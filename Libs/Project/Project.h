@@ -113,6 +113,9 @@ class Project {
   //! Get image names
   std::vector<std::string> get_image_names();
 
+  //! Get the names of the scalar fields carried by the meshes (e.g. thickness, curvature)
+  std::vector<std::string> get_mesh_scalar_names();
+
   //! Get group names
   std::vector<std::string> get_group_names();
 
@@ -191,6 +194,7 @@ class Project {
   bool images_present_{false};
 
   std::vector<std::string> feature_names_;
+  std::vector<std::string> mesh_scalar_names_;
   std::vector<std::string> image_names_;
 
   std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
