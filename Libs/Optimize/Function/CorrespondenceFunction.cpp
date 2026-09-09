@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#include <Logging.h>
+
 #include "Libs/Utils/Utils.h"
 #include "Profiling.h"
 #include "vnl/algo/vnl_svd.h"
@@ -235,6 +237,12 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   {
     vnl_matrix_type Jmatrix;
     vnl_matrix_type v;
+    // How much of each particle's update comes from the attribute rows rather than from position.
+    // A scalar field enters through both its value and its gradient, so its influence is easy to
+    // get wrong by orders of magnitude; this reports what it actually contributed.
+    double update_from_position = 0.0;
+    double update_from_attributes = 0.0;
+    int update_count = 0;
     for (int j = 0; j < num_samples; j++) {
       int num = 0;
       int num2 = 0;
@@ -256,6 +264,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
           if (m_UseNormals[d]) {
             num_attr += 3;
           }
+          const int num_geometry = num_attr - m_AttributesPerDomain[d];
 
           Jmatrix.clear();
           Jmatrix.set_size(num_attr, VDimension);
@@ -272,9 +281,43 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
             for (unsigned int vd = 0; vd < VDimension; vd++) {
               m_PointsUpdate->put(num2 + p * VDimension + vd, j, dx(vd, 0));
             }
+
+            if (m_AttributesPerDomain[d] > 0) {
+              vnl_matrix_type dx_geometry =
+                  Jmatrix.extract(num_geometry, VDimension, 0, 0).transpose() * v.extract(num_geometry, 1, 0, 0);
+              vnl_matrix_type dx_attributes =
+                  Jmatrix.extract(m_AttributesPerDomain[d], VDimension, num_geometry, 0).transpose() *
+                  v.extract(m_AttributesPerDomain[d], 1, num_geometry, 0);
+              update_from_position += dx_geometry.frobenius_norm();
+              update_from_attributes += dx_attributes.frobenius_norm();
+              update_count++;
+            }
           }
         }
       }
+    }
+
+    if (update_count > 0 && ++m_UpdateReportCounter % 100 == 1) {
+      SW_DEBUG("Correspondence update per particle: position {:.4g}, attributes {:.4g} ({:.1f}% of the total)",
+               update_from_position / update_count, update_from_attributes / update_count,
+               100.0 * update_from_attributes / std::max(1e-30, update_from_position + update_from_attributes));
+    }
+    if (++m_ScaleReportCounter % 100 == 1) {
+      // What sets the size of this term: the ensemble's spread, its covariance eigenvalues, and the
+      // regularization added to them.  None of it is normalized, so the term's magnitude -- and with
+      // it what relative_weighting means -- moves with the cohort.
+      const double rms = points_minus_mean.frobenius_norm() / std::sqrt((double)num_dims * num_samples);
+      double lambda_max = 0.0;
+      if (!m_UseMeanEnergy) {
+        for (int i = 0; i < num_samples; i++) {
+          lambda_max = std::max(lambda_max, W(i));
+        }
+      }
+      SW_DEBUG(
+          "Correspondence scale: {} dims x {} samples, rms deviation {:.4g}, max eigenvalue {:.4g}, "
+          "regularization {:.4g}, update per particle {:.4g}",
+          num_dims, num_samples, rms, lambda_max, m_MinimumVariance,
+          (update_from_position + update_from_attributes) / std::max(1, update_count));
     }
   }
   m_CurrentEnergy = 0.0;

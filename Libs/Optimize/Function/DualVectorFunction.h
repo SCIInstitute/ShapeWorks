@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Logging.h>
+
 #include "ParticleSystemEvaluation.h"
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
@@ -64,6 +66,7 @@ class DualVectorFunction : public VectorFunction {
     if (a_on_ && b_on_) {
       maxmove = maxA;  // always driven by the sampling to decrease the sensitivity to covariance regularization
       predictedMove = ansA + relative_gradient_scaling_ * ansB;
+      report_balance();
       return predictedMove;
     }
 
@@ -190,6 +193,7 @@ class DualVectorFunction : public VectorFunction {
 
         maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
 
+        report_balance();
         predictedMove = ansA + relative_gradient_scaling_ * ansB;
 
         return (predictedMove);
@@ -219,6 +223,21 @@ class DualVectorFunction : public VectorFunction {
     if (b_on_ == true) {
       function_b_->before_evaluate(idx, d, system);
     }
+  }
+
+  /// The two terms are gradients of quantities with different units, so how they compare is not
+  /// fixed by relative_gradient_scaling_ alone: it also moves with the scale of the data.  Report
+  /// it periodically, so that a correspondence term scaled into irrelevance is visible.
+  void report_balance() const {
+    // counter_ is cleared every iteration, so pace the report on a count of its own
+    auto* self = const_cast<DualVectorFunction*>(this);
+    if (!a_on_ || !b_on_ || counter_ < 1.0 || ++self->report_counter_ % 200000 != 1) {
+      return;
+    }
+    const double mag_a = average_grad_mag_a_ / counter_;
+    const double mag_b = relative_gradient_scaling_ * average_grad_mag_b_ / counter_;
+    SW_DEBUG("Per-particle gradient: sampling {:.4g}, correspondence {:.4g} ({:.2g}% of the total)", mag_a, mag_b,
+             100.0 * mag_b / std::max(1e-30, mag_a + mag_b));
   }
 
   /// This method is called by a solver after each iteration
@@ -376,6 +395,7 @@ class DualVectorFunction : public VectorFunction {
   double relative_energy_scaling_;
   double average_grad_mag_a_;
   double average_grad_mag_b_;
+  int report_counter_{0};
   double average_energy_a_;
   double average_energy_b_;
   double counter_;
