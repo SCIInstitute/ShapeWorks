@@ -32,10 +32,27 @@ MeshGenerator::~MeshGenerator() {}
 
 //---------------------------------------------------------------------------
 MeshHandle MeshGenerator::build_mesh(const MeshWorkItem& item) {
-  if (item.filename != "") {
-    return this->build_mesh_from_file(item.filename);
-  } else {
-    return this->build_mesh_from_points(item.points, item.domain);
+  // Meshes are built on a thread pool, and an exception that reaches it takes the whole
+  // application down rather than losing one mesh.  Reconstruction from particles is the
+  // usual source: a point set the method cannot handle can ask for an impossible volume.
+  try {
+    if (item.filename != "") {
+      return this->build_mesh_from_file(item.filename);
+    } else {
+      return this->build_mesh_from_points(item.points, item.domain);
+    }
+  } catch (const std::exception& e) {
+    MeshHandle mesh(new StudioMesh);
+    std::string message = std::string("Unable to build mesh: ") + e.what();
+    SW_ERROR(message);
+    mesh->set_error_message(message);
+    return mesh;
+  } catch (...) {
+    MeshHandle mesh(new StudioMesh);
+    std::string message = "Unable to build mesh: unknown error";
+    SW_ERROR(message);
+    mesh->set_error_message(message);
+    return mesh;
   }
 }
 
@@ -88,7 +105,15 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     mesh->set_poly_data(poly_data);
   } else {
     LegacyMeshGenerator legacy;
-    mesh->set_poly_data(legacy.buildMesh(shape));
+    auto poly_data = legacy.buildMesh(shape);
+    if (!poly_data) {
+      std::string message = "Unable to reconstruct a surface from the particles";
+      SW_ERROR(message);
+      mesh->set_poly_data(vtkSmartPointer<vtkPolyData>::New());
+      mesh->set_error_message(message);
+      return mesh;
+    }
+    mesh->set_poly_data(poly_data);
   }
   return mesh;
 }
