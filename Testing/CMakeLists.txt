@@ -55,6 +55,7 @@ target_include_directories(Testing PUBLIC
 target_link_libraries(Testing
   gtest
   gtest_main
+  Common
   ${Boost_LIBRARIES}
   )
 set_target_properties(Testing PROPERTIES PUBLIC_HEADER

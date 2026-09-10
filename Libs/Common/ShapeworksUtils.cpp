@@ -4,8 +4,11 @@
 #include <sys/stat.h>
 #include <tbb/global_control.h>
 #include <tbb/info.h>
+#include <vtksys/SystemTools.hxx>
 
 #include <boost/filesystem.hpp>
+#include <boost/nowide/utf8_codecvt.hpp>
+#include <locale>
 
 namespace shapeworks {
 
@@ -20,15 +23,32 @@ void ShapeWorksUtils::set_rng_seed(const unsigned seed) {
 }
 
 //-----------------------------------------------------------------------------
+void ShapeWorksUtils::initialize_path_handling() {
+  // boost::filesystem stores a path in the character type the OS API uses: char on POSIX, but
+  // wchar_t on Windows.  There every narrow string is converted using the codecvt facet imbued
+  // into boost::filesystem::path, which by default comes from the global locale rather than being
+  // UTF-8.  The rest of ShapeWorks (Qt, VTK, ITK) speaks UTF-8, so without this a path holding
+  // non-ASCII characters is mangled on the way in and no longer resolves.  On POSIX no conversion
+  // takes place and this only affects the wide-string accessors.
+  boost::filesystem::path::imbue(std::locale(std::locale(), new boost::nowide::utf8_codecvt<wchar_t>));
+}
+
+//-----------------------------------------------------------------------------
 bool ShapeWorksUtils::is_directory(const std::string& pathname) {
-  boost::system::error_code ec;
-  return boost::filesystem::is_directory(pathname, ec);
+  return vtksys::SystemTools::FileIsDirectory(pathname);
 }
 
 //-----------------------------------------------------------------------------
 bool ShapeWorksUtils::file_exists(const std::string& filename) {
-  boost::system::error_code ec;
-  return boost::filesystem::is_regular_file(filename, ec);
+  // vtksys rather than boost::filesystem: on Windows it decodes UTF-8 and applies the \\?\ prefix,
+  // so it agrees with the VTK and ITK readers about which paths exist.  boost::filesystem does
+  // neither, and rejects long or non-ASCII paths that those readers open without complaint.
+  return vtksys::SystemTools::FileExists(filename, true);
+}
+
+//-----------------------------------------------------------------------------
+bool ShapeWorksUtils::path_exists(const std::string& pathname) {
+  return vtksys::SystemTools::PathExists(pathname);
 }
 
 //-----------------------------------------------------------------------------

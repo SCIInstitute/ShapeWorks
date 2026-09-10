@@ -1,5 +1,7 @@
 #include "Testing.h"
 
+#include <ShapeworksUtils.h>
+
 #include <boost/filesystem.hpp>
 #include <cstdlib>
 
@@ -31,7 +33,7 @@ TestUtils& TestUtils::Instance() {
 }
 
 //-----------------------------------------------------------------------------
-TestUtils::TestUtils() {}
+TestUtils::TestUtils() { ShapeWorksUtils::initialize_path_handling(); }
 
 //-----------------------------------------------------------------------------
 TestUtils::~TestUtils() {

@@ -117,7 +117,7 @@ Image::ImageType::Pointer Image::read(const std::string& pathname) {
   }
 
   // check if it exists
-  if (!boost::filesystem::exists(pathname)) {
+  if (!ShapeWorksUtils::file_exists(pathname)) {
     throw std::runtime_error("File does not exist: " + pathname);
   }
 

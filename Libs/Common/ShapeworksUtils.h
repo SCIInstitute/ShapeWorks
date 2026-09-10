@@ -31,13 +31,18 @@ class ShapeWorksUtils {
   /// generates random number
   static unsigned get_random_number() { return mt_(); }
 
+  //! Configure process-wide filesystem path handling.  Call this once at startup, before any path
+  //! is constructed from a narrow string.
+  static void initialize_path_handling();
+
   /// returns true if pathname is a directory
-  // TODO: in C++17 this is a standard function
   static bool is_directory(const std::string& pathname);
 
-  /// returns true if filename exists
-  // TODO: in C++17 this is a standard function
+  /// returns true if filename exists and can be read
   static bool file_exists(const std::string& filename);
+
+  /// returns true if a file or a directory exists at pathname
+  static bool path_exists(const std::string& pathname);
 
   //! Set up the console logging options
   static void setup_console_logging(bool show_progress, bool xml_status);

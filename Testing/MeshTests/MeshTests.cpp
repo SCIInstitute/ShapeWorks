@@ -1,6 +1,7 @@
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
+#include <vtksys/SystemTools.hxx>
 
 #include <chrono>
 #include <fstream>
@@ -11,6 +12,7 @@
 #include "MeshWarper.h"
 #include "ParticleSystem.h"
 #include "ParticleSystemEvaluation.h"
+#include "ShapeworksUtils.h"
 #include "Testing.h"
 
 using namespace shapeworks;
@@ -1162,4 +1164,38 @@ TEST(MeshTests, extractLargestComponentSingleComponentTest) {
   // (even though VTK may reorder vertices internally)
   ASSERT_EQ(femur.numPoints(), original_points);
   ASSERT_EQ(femur.numFaces(), original_faces);
+}
+
+TEST(MeshTests, nonAsciiPathTest) {
+  // Mesh's existence check has to agree with the reader underneath it about which paths are
+  // readable.  On Windows boost::filesystem did not, and meshes that VTK opened without trouble
+  // were rejected as missing before the reader ever saw them. (#2648)
+  auto dir = TestUtils::Instance().get_output_dir("non_ascii_path_test");
+  std::string unicode_dir = dir + "/Ünïcode Dätä";
+  ASSERT_TRUE(vtksys::SystemTools::MakeDirectory(unicode_dir));
+
+  std::string path = unicode_dir + "/mesh.vtk";
+  Mesh(std::string(TEST_DATA_DIR) + "/femur.vtk").write(path);
+
+  ASSERT_TRUE(ShapeWorksUtils::file_exists(path));
+  ASSERT_NO_THROW(Mesh mesh(path));
+}
+
+TEST(MeshTests, longPathTest) {
+  // Paths beyond MAX_PATH need the \\?\ prefix on Windows.  The readers apply it; the existence
+  // check in front of them did not. (#2648)
+  auto dir = TestUtils::Instance().get_output_dir("long_path_test");
+
+  std::string deep = dir;
+  while (deep.size() < 300) {
+    deep += "/a_directory_with_a_deliberately_long_name";
+  }
+  ASSERT_TRUE(vtksys::SystemTools::MakeDirectory(deep));
+
+  std::string path = deep + "/mesh.vtk";
+  ASSERT_GT(path.size(), 260u);
+  Mesh(std::string(TEST_DATA_DIR) + "/femur.vtk").write(path);
+
+  ASSERT_TRUE(ShapeWorksUtils::file_exists(path));
+  ASSERT_NO_THROW(Mesh mesh(path));
 }
