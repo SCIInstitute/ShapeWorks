@@ -1,3 +1,8 @@
+// boost::nowide's utf8_codecvt is header-only, but including it pulls in the auto-link pragma
+// that asks MSVC for boost_nowide.lib, which the dependency build does not produce.  This must
+// precede every Boost header.
+#define BOOST_NOWIDE_NO_LIB
+
 #include "ShapeworksUtils.h"
 
 #include <Logging.h>
