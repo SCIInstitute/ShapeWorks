@@ -1182,8 +1182,9 @@ TEST(MeshTests, nonAsciiPathTest) {
 }
 
 TEST(MeshTests, longPathTest) {
-  // Paths beyond MAX_PATH need the \\?\ prefix on Windows.  The readers apply it; the existence
-  // check in front of them did not. (#2648)
+  // Paths beyond MAX_PATH need the \\?\ prefix on Windows.  The STL reader applies it; the
+  // existence check in front of it did not. (#2648)  This uses .stl deliberately: VTK's legacy .vtk
+  // reader stats the file without the prefix first, so it can't open such a path on Windows at all.
   auto dir = TestUtils::Instance().get_output_dir("long_path_test");
 
   std::string deep = dir;
@@ -1192,7 +1193,7 @@ TEST(MeshTests, longPathTest) {
   }
   ASSERT_TRUE(vtksys::SystemTools::MakeDirectory(deep));
 
-  std::string path = deep + "/mesh.vtk";
+  std::string path = deep + "/mesh.stl";
   ASSERT_GT(path.size(), 260u);
   Mesh(std::string(TEST_DATA_DIR) + "/femur.vtk").write(path);
 
