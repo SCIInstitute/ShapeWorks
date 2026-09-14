@@ -59,6 +59,8 @@ namespace fs = boost::filesystem;
 using namespace shapeworks;
 
 PYBIND11_MODULE(shapeworks_py, m) {
+  ShapeWorksUtils::initialize_path_handling();
+
   m.doc() = "ShapeWorks Python API";
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
