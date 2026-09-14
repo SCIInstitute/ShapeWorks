@@ -1397,6 +1397,16 @@ PYBIND11_MODULE(shapeworks_py, m) {
                   "progress_callback"_a = nullptr, "check_abort"_a = nullptr, "surface_distance_mode"_a = false);
 
   // CorrespondenceEvaluation
+  py::class_<CorrespondenceDistanceStats>(m, "CorrespondenceDistanceStats")
+      .def_readonly("mean", &CorrespondenceDistanceStats::mean)
+      .def_readonly("median", &CorrespondenceDistanceStats::median)
+      .def_readonly("p99", &CorrespondenceDistanceStats::p99)
+      .def_readonly("max", &CorrespondenceDistanceStats::max)
+      .def_readonly("norm_mean", &CorrespondenceDistanceStats::norm_mean)
+      .def_readonly("norm_median", &CorrespondenceDistanceStats::norm_median)
+      .def_readonly("norm_p99", &CorrespondenceDistanceStats::norm_p99)
+      .def_readonly("norm_max", &CorrespondenceDistanceStats::norm_max);
+
   py::class_<CorrespondenceQualityRow>(m, "CorrespondenceQualityRow")
       .def_readonly("subject", &CorrespondenceQualityRow::subject)
       .def_readonly("domain", &CorrespondenceQualityRow::domain)
@@ -1409,7 +1419,9 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_readonly("norm_median", &CorrespondenceQualityRow::norm_median)
       .def_readonly("norm_p99", &CorrespondenceQualityRow::norm_p99)
       .def_readonly("norm_max", &CorrespondenceQualityRow::norm_max)
-      .def_readonly("is_template", &CorrespondenceQualityRow::is_template);
+      .def_readonly("is_template", &CorrespondenceQualityRow::is_template)
+      .def_readonly("push", &CorrespondenceQualityRow::push)
+      .def_readonly("disagreement", &CorrespondenceQualityRow::disagreement);
 
   py::class_<CorrespondenceQualityStats>(m, "CorrespondenceQualityStats")
       .def_readonly("mean", &CorrespondenceQualityStats::mean)
@@ -1423,7 +1435,11 @@ PYBIND11_MODULE(shapeworks_py, m) {
       .def_readonly("num_evaluated", &CorrespondenceQualityReport::num_evaluated)
       .def_readonly("num_template_rows", &CorrespondenceQualityReport::num_template_rows)
       .def_readonly("agg_raw", &CorrespondenceQualityReport::agg_raw)
-      .def_readonly("agg_norm", &CorrespondenceQualityReport::agg_norm);
+      .def_readonly("agg_norm", &CorrespondenceQualityReport::agg_norm)
+      .def_readonly("agg_push_raw", &CorrespondenceQualityReport::agg_push_raw)
+      .def_readonly("agg_push_norm", &CorrespondenceQualityReport::agg_push_norm)
+      .def_readonly("agg_disagreement_raw", &CorrespondenceQualityReport::agg_disagreement_raw)
+      .def_readonly("agg_disagreement_norm", &CorrespondenceQualityReport::agg_disagreement_norm);
 
   py::class_<CorrespondenceEvaluation> corresp_eval(m, "CorrespondenceEvaluation");
 

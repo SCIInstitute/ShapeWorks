@@ -29,6 +29,7 @@ void CorrespondenceQualityJob::run() {
   row_shape_indices_.clear();
   particle_values_.clear();
   distance_fields_.clear();
+  disagreement_fields_.clear();
 
   auto shapes = session_->get_shapes();
   auto non_excluded = session_->get_non_excluded_shapes();
@@ -61,6 +62,20 @@ void CorrespondenceQualityJob::run() {
     auto reconstructed = shape->get_reconstructed_meshes(true);
     auto groomed = shape->get_groomed_meshes(true);
 
+    // a previous run's fields stay on the cached meshes, so clear them before anything below can skip
+    // this sample, or the viewer would go on showing values measured against the old template
+    // copies, since MeshGroup's accessors are not const; they share the same meshes
+    for (auto group : {reconstructed, groomed}) {
+      if (!group.valid()) {
+        continue;
+      }
+      for (const auto& mesh : group.meshes()) {
+        if (mesh && mesh->get_poly_data()) {
+          mesh->get_poly_data()->GetPointData()->RemoveArray(FEATURE_NAME);
+        }
+      }
+    }
+
     if (!reconstructed.valid() || !groomed.valid()) {
       SW_LOG("Correspondence quality: skipping '{}', reconstructed or groomed mesh unavailable",
              shape->get_display_name());
@@ -72,22 +87,31 @@ void CorrespondenceQualityJob::run() {
     const int num_domains =
         std::min(reconstructed.meshes().size(), groomed.meshes().size());
 
-    // the distance sampled at each particle, all domains concatenated, which is the order
-    // Shape stores point features in
+    // the disagreement around each particle, all domains concatenated, which is the order Shape stores
+    // point features in
     std::vector<double> per_particle;
 
+    // indexed by domain, with a null where a domain could not be scored, so each field lands on its own
+    // domain's mesh
+    distance_fields_[s].assign(num_domains, vtkSmartPointer<vtkDataArray>());
+    disagreement_fields_[s].assign(num_domains, vtkSmartPointer<vtkDataArray>());
+
     for (int d = 0; d < num_domains; d++) {
+      auto particles = shape->get_particles().get_local_points(d);
       auto reconstructed_poly_data = reconstructed.meshes()[d]->get_poly_data();
       auto groomed_poly_data = groomed.meshes()[d]->get_poly_data();
       if (!reconstructed_poly_data || !groomed_poly_data) {
+        per_particle.insert(per_particle.end(), particles.size(), 0.0);  // keep later domains aligned
         continue;
       }
 
       Mesh groomed_mesh(groomed_poly_data);
       vtkSmartPointer<vtkDataArray> distance;
+      vtkSmartPointer<vtkDataArray> disagreement;
       auto row = CorrespondenceEvaluation::evaluate_reconstruction(reconstructed_poly_data, groomed_mesh, method_,
-                                                                   &distance);
-      if (!distance) {
+                                                                   &distance, &disagreement);
+      if (!distance || !disagreement) {
+        per_particle.insert(per_particle.end(), particles.size(), 0.0);  // keep later domains aligned
         continue;
       }
 
@@ -97,17 +121,21 @@ void CorrespondenceQualityJob::run() {
       report_.rows.push_back(row);
       row_shape_indices_.push_back(s);
 
-      // leave the per-vertex field on the reconstructed mesh so it can be shown as a surface scalar
+      // leave the fields on the surfaces so they can be shown as surface scalars: the disagreement on the
+      // groomed mesh, the only surface a gap in the reconstruction can show on, and the one-directional
+      // pull distance on the reconstruction itself
+      disagreement->SetName(FEATURE_NAME);
+      groomed_poly_data->GetPointData()->AddArray(disagreement);
+      disagreement_fields_[s][d] = disagreement;
+
       distance->SetName(FEATURE_NAME);
       reconstructed_poly_data->GetPointData()->AddArray(distance);
-      distance_fields_[s].push_back(distance);
+      distance_fields_[s][d] = distance;
 
-      // Color each particle by the error around it rather than at it.  The warp inserts the
-      // particles into the mesh as vertices and maps them onto this shape's particles, which lie on
-      // its surface, so the distance at a particle is zero by construction and sampling there would
-      // give every glyph the same value.  All the signal is in the gaps between particles, so
-      // assign every vertex to its nearest particle and average over that neighbourhood.
-      auto particles = shape->get_particles().get_local_points(d);
+      // Color each particle by the disagreement around it rather than at it.  The reconstruction is
+      // warped through the particles, which lie on the groomed surface, so the two surfaces are pinned
+      // together at every particle and the error to look for is in the gaps between them.  Assign every
+      // groomed vertex to its nearest particle and average over that neighbourhood.
 
       auto particle_points = vtkSmartPointer<vtkPoints>::New();
       for (auto& particle : particles) {
@@ -122,12 +150,12 @@ void CorrespondenceQualityJob::run() {
 
       std::vector<double> sums(particles.size(), 0.0);
       std::vector<int> counts(particles.size(), 0);
-      for (vtkIdType v = 0; v < reconstructed_poly_data->GetNumberOfPoints(); v++) {
+      for (vtkIdType v = 0; v < groomed_poly_data->GetNumberOfPoints(); v++) {
         double vertex[3];
-        reconstructed_poly_data->GetPoint(v, vertex);
+        groomed_poly_data->GetPoint(v, vertex);
         vtkIdType id = locator->FindClosestPoint(vertex);
         if (id >= 0 && id < static_cast<vtkIdType>(sums.size())) {
-          sums[id] += std::fabs(distance->GetTuple1(v));
+          sums[id] += std::fabs(disagreement->GetTuple1(v));
           counts[id]++;
         }
       }
