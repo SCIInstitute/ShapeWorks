@@ -4561,6 +4561,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-initialize_path_handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function initialize_path_handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-is_directory" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4576,6 +4587,17 @@
     <span class="md-ellipsis">
       
         function file_exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-path_exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function path_exists
       
     </span>
   </a>
@@ -4693,12 +4715,20 @@
 <td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-get-random-number">get_random_number</a></strong>()<br>generates random number</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-initialize-path-handling">initialize_path_handling</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-is-directory">is_directory</a></strong>(const std::string &amp; pathname)<br>returns true if pathname is a directory</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-file-exists">file_exists</a></strong>(const std::string &amp; filename)<br>returns true if filename exists</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-file-exists">file_exists</a></strong>(const std::string &amp; filename)<br>returns true if filename exists and can be read</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-path-exists">path_exists</a></strong>(const std::string &amp; pathname)<br>returns true if a file or a directory exists at pathname</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4749,6 +4779,10 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_random_number</span><span class="p">()</span>
 </code></pre></div>
 <p>generates random number </p>
+<h3 id="function-initialize_path_handling">function initialize_path_handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize_path_handling</span><span class="p">()</span>
+</code></pre></div>
+<p>Configure process-wide filesystem path handling. Call this once at startup, before any path is constructed from a narrow string. </p>
 <h3 id="function-is_directory">function is_directory</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_directory</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
@@ -4760,7 +4794,13 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>returns true if filename exists </p>
+<p>returns true if filename exists and can be read </p>
+<h3 id="function-path_exists">function path_exists</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">path_exists</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pathname</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>returns true if a file or a directory exists at pathname </p>
 <h3 id="function-setup_console_logging">function setup_console_logging</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setup_console_logging</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_progress</span><span class="p">,</span>
@@ -4790,7 +4830,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-09-13 at 03:37:22 +0000</p>
+<p>Updated on 2026-09-14 at 23:40:09 +0000</p>
 
 
 
