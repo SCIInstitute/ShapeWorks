@@ -68,9 +68,9 @@ CorrespondenceQualityPanel::CorrespondenceQualityPanel(QWidget* parent)
   connect(ui_->show_distance, &QCheckBox::clicked, this, &CorrespondenceQualityPanel::show_distance_clicked);
 
   ui_->sort_metric_combo->setToolTip(StudioUtils::wrap_tooltip(
-      "How to rank the samples. Localized is the ratio of a sample's p99 distance to its mean: high "
-      "when most of the surface is fine and a small patch is badly wrong, which is what a few swapped "
-      "correspondence points look like."));
+      "How to rank the samples by disagreement. Localized is the ratio of a sample's p99 disagreement to its "
+      "mean: high when most of the surface is fine and a small patch is badly wrong, which is what a few "
+      "swapped correspondence points look like."));
   connect(ui_->sort_metric_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &CorrespondenceQualityPanel::options_changed);
   connect(ui_->sort_order_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -142,19 +142,22 @@ bool CorrespondenceQualityPanel::normalized() const { return ui_->normalize_chec
 //---------------------------------------------------------------------------
 double CorrespondenceQualityPanel::get_sort_value(const CorrespondenceQualityRow& row) const {
   const bool norm = normalized();
+  // the panel ranks, reports and draws the two-way disagreement: the one-way pull distance cannot see
+  // surface the reconstruction never reaches
+  const auto& stats = row.disagreement;
   switch (ui_->sort_metric_combo->currentIndex()) {
     case SORT_MEDIAN:
-      return norm ? row.norm_median : row.median_dist;
+      return norm ? stats.norm_median : stats.median;
     case SORT_MAX:
-      return norm ? row.norm_max : row.max_dist;
+      return norm ? stats.norm_max : stats.max;
     case SORT_LOCALIZED:
       // how concentrated the error is: a few swapped particles leave most of the surface intact,
       // so the mean stays low while the tail spikes.  p99 rather than max, which is a single
       // vertex and moves with one bad triangle.  Scale free, so normalization does not apply.
-      return row.mean_dist > 0 ? row.p99_dist / row.mean_dist : 0.0;
+      return stats.mean > 0 ? stats.p99 / stats.mean : 0.0;
     case SORT_MEAN:
     default:
-      return norm ? row.norm_mean : row.mean_dist;
+      return norm ? stats.norm_mean : stats.mean;
   }
 }
 
@@ -252,8 +255,8 @@ void CorrespondenceQualityPanel::show_distance_clicked() {
     return;
   }
   if (get_display_distance()) {
-    // the distance field lives on the reconstructed surfaces of each sample
-    session_->set_display_mode(DisplayMode::Reconstructed);
+    // the disagreement lives on the groomed surfaces, the only ones a gap in the reconstruction can show on
+    session_->set_display_mode(DisplayMode::Groomed);
     Q_EMIT request_samples_view(false);
   }
   session_->trigger_reinsert_shapes();
@@ -299,25 +302,31 @@ void CorrespondenceQualityPanel::handle_job_complete() {
     }
   }
 
-  // now put the measured per-vertex distances back on the surfaces
-  for (const auto& [shape_index, fields] : job_->get_distance_fields()) {
-    if (shape_index < 0 || shape_index >= static_cast<int>(shapes.size())) {
-      continue;
-    }
-    auto meshes = shapes[shape_index]->get_reconstructed_meshes(true);
-    for (int d = 0; d < static_cast<int>(fields.size()) && d < static_cast<int>(meshes.meshes().size()); d++) {
-      auto poly_data = meshes.meshes()[d]->get_poly_data();
-      if (poly_data && fields[d]) {
-        poly_data->GetPointData()->AddArray(fields[d]);
+  // now put the measured fields back on the surfaces: the pull distance on the reconstructions, and the
+  // disagreement on the groomed meshes, which set_point_features() leaves alone
+  auto apply_fields = [&shapes](const std::map<int, std::vector<vtkSmartPointer<vtkDataArray>>>& fields_by_shape,
+                                DisplayMode mode) {
+    for (const auto& [shape_index, fields] : fields_by_shape) {
+      if (shape_index < 0 || shape_index >= static_cast<int>(shapes.size())) {
+        continue;
+      }
+      auto meshes = shapes[shape_index]->get_meshes(mode, true);
+      for (int d = 0; d < static_cast<int>(fields.size()) && d < static_cast<int>(meshes.meshes().size()); d++) {
+        auto poly_data = meshes.meshes()[d]->get_poly_data();
+        if (poly_data && fields[d]) {
+          poly_data->GetPointData()->AddArray(fields[d]);
+        }
       }
     }
-  }
+  };
+  apply_fields(job_->get_distance_fields(), DisplayMode::Reconstructed);
+  apply_fields(job_->get_disagreement_fields(), DisplayMode::Groomed);
 
   ui_->show_distance->setEnabled(true);
   ui_->show_distance->setChecked(true);
   ui_->normalize_checkbox->setEnabled(true);
   ui_->sort_group->setEnabled(true);
-  session_->set_display_mode(DisplayMode::Reconstructed);
+  session_->set_display_mode(DisplayMode::Groomed);
   Q_EMIT request_samples_view(false);
 
   update_summary();
@@ -356,8 +365,8 @@ void CorrespondenceQualityPanel::update_summary() {
   ui_->summary_label->show();
 
   const auto& report = job_->get_report();
-  // the aggregates are always over the per-sample *mean* distance, whatever the sort metric is
-  const auto& stats = normalized() ? report.agg_norm : report.agg_raw;
+  // the aggregates are always over the per-sample *mean* disagreement, whatever the sort metric is
+  const auto& stats = normalized() ? report.agg_disagreement_norm : report.agg_disagreement_raw;
   const double scale = normalized() ? 100.0 : 1.0;
   const QString units = normalized() ? "% of bbox diagonal" : "world units";
 
@@ -373,7 +382,7 @@ void CorrespondenceQualityPanel::update_summary() {
   text += "<tr><td>Template (excluded)</td>" + cell(template_name.toHtmlEscaped()) + "</tr>";
   text += "</table>";
 
-  text += "<p style='margin-top:8px; margin-bottom:4px;'>Mean distance across samples (" + units + ")</p>";
+  text += "<p style='margin-top:8px; margin-bottom:4px;'>Mean disagreement across samples (" + units + ")</p>";
 
   text += "<table width='100%' border='1' cellspacing='0' cellpadding='3'>";
   text += "<tr>" + heading("Mean") + heading("Median") + heading("p95") + heading("Max") + "</tr>";
@@ -383,8 +392,9 @@ void CorrespondenceQualityPanel::update_summary() {
 
   // these are percentiles across samples; the table's p99 column is across one sample's vertices
   ui_->summary_label->setToolTip(StudioUtils::wrap_tooltip(
-      "Distribution across samples of each sample's mean distance. The p95 here is over samples, unlike the p99 "
-      "column in the table, which is over the vertices of a single sample."));
+      "Distribution across samples of each sample's mean disagreement, which measures the reconstruction against "
+      "the groomed surface in both directions. The p95 here is over samples, unlike the p99 column in the table, "
+      "which is over the surface of a single sample."));
   ui_->summary_label->setText(text);
 }
 
@@ -418,13 +428,13 @@ void CorrespondenceQualityPanel::update_table() {
 
   // the summary above reports percentiles across samples, these are across the vertices of one
   // sample, so say which is which rather than leaving two similar looking percentiles side by side
-  const QStringList tips = {"Distance from this sample's reconstruction to its groomed mesh",
+  const QStringList tips = {"How far this sample's reconstruction and groomed mesh disagree, in either direction",
                             multi_domain ? "Anatomy this row measures" : QString(),
-                            "Mean over this sample's reconstruction vertices",
-                            "Median over this sample's reconstruction vertices",
-                            "99th percentile of this sample's per-vertex distances: the worst part of the surface, "
+                            "Mean over this sample's groomed surface, weighted by area",
+                            "Median over this sample's groomed surface, weighted by area",
+                            "99th percentile over this sample's groomed surface: the worst part of the surface, "
                             "without following a single stray vertex the way the max does",
-                            "Largest single per-vertex distance on this sample"};
+                            "Largest disagreement anywhere on this sample"};
   int tip_index = 0;
   for (int c = 0; c < headers.size(); c++) {
     if (!multi_domain && tip_index == 1) {
@@ -450,16 +460,25 @@ void CorrespondenceQualityPanel::update_table() {
     int col = 0;
     auto name_item = new QTableWidgetItem(name);
     // the column is narrow enough that most names elide, so the tooltip has to carry the full one
-    name_item->setToolTip(name + QString("\nbounding box diagonal: %1").arg(row.bbox_diag));
+    // which direction the disagreement comes from says what kind of failure it is: pull for folds and
+    // flaps, push for tears and missing surface
+    name_item->setToolTip(name + QString("\nbounding box diagonal: %1"
+                                         "\nmean pull (reconstruction to groomed): %2%3"
+                                         "\nmean push (groomed to reconstruction): %4%3")
+                                     .arg(row.bbox_diag)
+                                     .arg((norm ? row.norm_mean : row.mean_dist) * scale)
+                                     .arg(norm ? QString(" %") : QString())
+                                     .arg((norm ? row.push.norm_mean : row.push.mean) * scale));
     table->setItem(i, col++, name_item);
 
     if (multi_domain) {
       table->setItem(i, col++, new QTableWidgetItem(QString::number(row.domain)));
     }
 
-    const double values[4] = {norm ? row.norm_mean : row.mean_dist, norm ? row.norm_median : row.median_dist,
-                              norm ? row.norm_p99 : row.p99_dist, norm ? row.norm_max : row.max_dist};
-    const double raw[4] = {row.mean_dist, row.median_dist, row.p99_dist, row.max_dist};
+    const auto& stats = row.disagreement;
+    const double values[4] = {norm ? stats.norm_mean : stats.mean, norm ? stats.norm_median : stats.median,
+                              norm ? stats.norm_p99 : stats.p99, norm ? stats.norm_max : stats.max};
+    const double raw[4] = {stats.mean, stats.median, stats.p99, stats.max};
     for (int v = 0; v < 4; v++) {
       auto item = new QTableWidgetItem(QString::number(values[v] * scale, 'f', 4));
       item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);  // so the decimal points line up
@@ -502,16 +521,17 @@ void CorrespondenceQualityPanel::update_graphs() {
     if (row.is_template) {  // near-identity reconstruction, would flatten the rest of the chart
       continue;
     }
+    const auto& stats = row.disagreement;
     if (sorting_by_ratio()) {
       // the ratio is built from p99, so plot that rather than max
-      primary.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
-      companion.push_back((norm ? row.norm_p99 : row.p99_dist) * scale);
+      primary.push_back((norm ? stats.norm_mean : stats.mean) * scale);
+      companion.push_back((norm ? stats.norm_p99 : stats.p99) * scale);
     } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
-      primary.push_back((norm ? row.norm_max : row.max_dist) * scale);
-      companion.push_back((norm ? row.norm_mean : row.mean_dist) * scale);
+      primary.push_back((norm ? stats.norm_max : stats.max) * scale);
+      companion.push_back((norm ? stats.norm_mean : stats.mean) * scale);
     } else {
       primary.push_back(get_sort_value(row) * scale);
-      companion.push_back((norm ? row.norm_max : row.max_dist) * scale);
+      companion.push_back((norm ? stats.norm_max : stats.max) * scale);
     }
   }
 
@@ -529,14 +549,14 @@ void CorrespondenceQualityPanel::update_graphs() {
   };
 
   QString primary_label = ui_->sort_metric_combo->currentText();
-  QString companion_label = "Max distance";
+  QString companion_label = "Max disagreement";
   if (sorting_by_ratio()) {
-    primary_label = "Mean distance";
-    companion_label = "p99 distance";
+    primary_label = "Mean disagreement";
+    companion_label = "p99 disagreement";
   } else if (sorting_by_name()) {
-    primary_label = "Mean distance";
+    primary_label = "Mean disagreement";
   } else if (ui_->sort_metric_combo->currentIndex() == SORT_MAX) {
-    companion_label = "Mean distance";
+    companion_label = "Mean disagreement";
   }
 
   std::vector<AnalysisUtils::RankedSeries> series;
@@ -544,10 +564,10 @@ void CorrespondenceQualityPanel::update_graphs() {
   series.push_back({to_vector(companion), companion_label, QColor(200, 60, 40)});
 
   // median and p95 of the per-sample mean, matching the summary above
-  const auto& stats = norm ? job_->get_report().agg_norm : job_->get_report().agg_raw;
-  std::vector<double> reference_lines{stats.median * scale, stats.p95 * scale};
+  const auto& aggregate = norm ? job_->get_report().agg_disagreement_norm : job_->get_report().agg_disagreement_raw;
+  std::vector<double> reference_lines{aggregate.median * scale, aggregate.p95 * scale};
 
-  const QString y_label = norm ? "Distance (% of bbox diag)" : "Distance (world units)";
+  const QString y_label = norm ? "Disagreement (% of bbox diag)" : "Disagreement (world units)";
   const QString x_label = sorting_by_name() ? "Sample (name order)" : "Sample (table order)";
 
   // the two series differ by more than an order of magnitude, so a linear axis would flatten the

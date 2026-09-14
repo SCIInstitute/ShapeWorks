@@ -8,6 +8,10 @@
 #include <Project/Project.h>
 #include <Project/Subject.h>
 #include <Utils/StringUtils.h>
+#include <vtkDoubleArray.h>
+#include <vtkIdList.h>
+#include <vtkMath.h>
+#include <vtkPolyData.h>
 
 #include <boost/filesystem.hpp>
 
@@ -43,6 +47,91 @@ Eigen::MatrixXd load_particles_matrix(const std::string& filename) {
   return m;
 }
 
+//! Surface area each vertex stands for: every cell's area shared evenly among its corners.  Cells are
+//! fan-triangulated, so polygons other than triangles are handled too.
+std::vector<double> vertex_areas(vtkPolyData* poly_data) {
+  std::vector<double> areas(poly_data->GetNumberOfPoints(), 0.0);
+  auto ids = vtkSmartPointer<vtkIdList>::New();
+  for (vtkIdType cell = 0; cell < poly_data->GetNumberOfCells(); cell++) {
+    poly_data->GetCellPoints(cell, ids);
+    const vtkIdType corners = ids->GetNumberOfIds();
+    if (corners < 3) {
+      continue;
+    }
+    double origin[3];
+    poly_data->GetPoint(ids->GetId(0), origin);
+    double cell_area = 0.0;
+    for (vtkIdType k = 1; k + 1 < corners; k++) {
+      double a[3];
+      double b[3];
+      poly_data->GetPoint(ids->GetId(k), a);
+      poly_data->GetPoint(ids->GetId(k + 1), b);
+      double edge_a[3];
+      double edge_b[3];
+      vtkMath::Subtract(a, origin, edge_a);
+      vtkMath::Subtract(b, origin, edge_b);
+      double cross[3];
+      vtkMath::Cross(edge_a, edge_b, cross);
+      cell_area += 0.5 * vtkMath::Norm(cross);
+    }
+    for (vtkIdType k = 0; k < corners; k++) {
+      areas[ids->GetId(k)] += cell_area / corners;
+    }
+  }
+  return areas;
+}
+
+//! Mean, median, p99 and max of per-vertex values, each vertex weighted by the area it stands for, so
+//! a region counts in proportion to its size however finely it happens to be meshed.
+CorrespondenceDistanceStats weighted_stats(const std::vector<double>& values, std::vector<double> weights,
+                                           double bbox_diag) {
+  CorrespondenceDistanceStats stats;
+  if (values.empty() || weights.size() != values.size()) {
+    return stats;
+  }
+
+  double total = std::accumulate(weights.begin(), weights.end(), 0.0);
+  if (!(total > 0.0)) {
+    // nothing to weight by (no cells), so every vertex counts the same
+    std::fill(weights.begin(), weights.end(), 1.0);
+    total = static_cast<double>(weights.size());
+  }
+
+  std::vector<size_t> order(values.size());
+  std::iota(order.begin(), order.end(), 0);
+  std::sort(order.begin(), order.end(), [&values](size_t a, size_t b) { return values[a] < values[b]; });
+
+  // the smallest value with at least this fraction of the total area at or below it
+  auto percentile = [&](double fraction) {
+    const double target = fraction * total;
+    double cumulative = 0.0;
+    for (size_t i : order) {
+      cumulative += weights[i];
+      if (cumulative >= target) {
+        return values[i];
+      }
+    }
+    return values[order.back()];
+  };
+
+  double weighted_sum = 0.0;
+  for (size_t i = 0; i < values.size(); i++) {
+    weighted_sum += weights[i] * values[i];
+  }
+  stats.mean = weighted_sum / total;
+  stats.median = percentile(0.5);
+  stats.p99 = percentile(0.99);
+  stats.max = values[order.back()];
+
+  if (bbox_diag > 0.0) {
+    stats.norm_mean = stats.mean / bbox_diag;
+    stats.norm_median = stats.median / bbox_diag;
+    stats.norm_p99 = stats.p99 / bbox_diag;
+    stats.norm_max = stats.max / bbox_diag;
+  }
+  return stats;
+}
+
 }  // namespace
 
 //---------------------------------------------------------------------------
@@ -61,7 +150,8 @@ CorrespondenceQualityStats CorrespondenceEvaluation::summarize(std::vector<doubl
 //---------------------------------------------------------------------------
 CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
     vtkSmartPointer<vtkPolyData> reconstructed, const Mesh& groomed, DistanceMethod method,
-    vtkSmartPointer<vtkDataArray>* out_distance) {
+    vtkSmartPointer<vtkDataArray>* out_distance, vtkSmartPointer<vtkDataArray>* out_disagreement,
+    vtkSmartPointer<vtkDataArray>* out_push) {
   CorrespondenceQualityRow row;
   if (!reconstructed || reconstructed->GetNumberOfPoints() == 0) {
     return row;
@@ -70,8 +160,12 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
   const Mesh::DistanceMethod distance_method =
       (method == DistanceMethod::PointToPoint) ? Mesh::DistanceMethod::PointToPoint : Mesh::DistanceMethod::PointToCell;
 
+  // pull: each reconstructed vertex to the groomed surface, with the groomed cell (point-to-cell) or
+  // vertex (point-to-point) it is nearest
   Mesh recon_mesh(reconstructed);
-  auto field = recon_mesh.distance(groomed, distance_method)[0];
+  auto pull_fields = recon_mesh.distance(groomed, distance_method);
+  auto field = pull_fields[0];
+  auto nearest = pull_fields[1];
 
   const int n = field->GetNumberOfTuples();
   if (n == 0) {
@@ -109,9 +203,66 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
     row.norm_max = row.max_dist / row.bbox_diag;
   }
 
+  // push: each groomed vertex to the reconstructed surface
+  auto push = groomed.distance(recon_mesh, distance_method)[0];
+  push->SetName("push");
+
+  // Disagreement lives on the groomed vertices: the push distance, raised wherever a reconstructed vertex
+  // lands alongside with a larger pull distance.  Each pull distance is carried onto the corners of the
+  // groomed cell that reconstructed vertex is nearest (or onto that vertex, point-to-point).  There is no
+  // check that the two surfaces face the same way, because a fold in the reconstruction has reversed
+  // normals and is exactly what the pull term is there to catch.
+  auto groomed_poly_data = groomed.getVTKMesh();
+  const vtkIdType num_groomed = groomed_poly_data->GetNumberOfPoints();
+  std::vector<double> push_values(num_groomed);
+  std::vector<double> disagreement_values(num_groomed);
+  for (vtkIdType v = 0; v < num_groomed; v++) {
+    push_values[v] = std::fabs(push->GetTuple1(v));
+    disagreement_values[v] = push_values[v];
+  }
+
+  auto corners = vtkSmartPointer<vtkIdList>::New();
+  for (int k = 0; k < n; ++k) {
+    const double pull = std::fabs(field->GetTuple1(k));
+    const auto target = static_cast<vtkIdType>(nearest->GetTuple1(k));
+    if (distance_method == Mesh::DistanceMethod::PointToPoint) {
+      if (target >= 0 && target < num_groomed) {
+        disagreement_values[target] = std::max(disagreement_values[target], pull);
+      }
+      continue;
+    }
+    if (target < 0 || target >= groomed_poly_data->GetNumberOfCells()) {
+      continue;
+    }
+    groomed_poly_data->GetCellPoints(target, corners);
+    for (vtkIdType c = 0; c < corners->GetNumberOfIds(); c++) {
+      const vtkIdType corner = corners->GetId(c);
+      disagreement_values[corner] = std::max(disagreement_values[corner], pull);
+    }
+  }
+
+  const auto areas = vertex_areas(groomed_poly_data);
+  row.push = weighted_stats(push_values, areas, row.bbox_diag);
+  row.disagreement = weighted_stats(disagreement_values, areas, row.bbox_diag);
+
   if (out_distance) {
     field->SetName("distance");
     *out_distance = field;
+  }
+
+  if (out_disagreement) {
+    auto disagreement = vtkSmartPointer<vtkDoubleArray>::New();
+    disagreement->SetName("disagreement");
+    disagreement->SetNumberOfComponents(1);
+    disagreement->SetNumberOfTuples(num_groomed);
+    for (vtkIdType v = 0; v < num_groomed; v++) {
+      disagreement->SetValue(v, disagreement_values[v]);
+    }
+    *out_disagreement = disagreement;
+  }
+
+  if (out_push) {
+    *out_push = push;
   }
 
   return row;
@@ -121,6 +272,10 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
 void CorrespondenceEvaluation::compute_aggregates(CorrespondenceQualityReport& report) {
   std::vector<double> means;
   std::vector<double> norm_means;
+  std::vector<double> push_means;
+  std::vector<double> push_norm_means;
+  std::vector<double> disagreement_means;
+  std::vector<double> disagreement_norm_means;
   int num_template_rows = 0;
   for (const auto& r : report.rows) {
     if (r.is_template) {
@@ -129,11 +284,19 @@ void CorrespondenceEvaluation::compute_aggregates(CorrespondenceQualityReport& r
     }
     means.push_back(r.mean_dist);
     norm_means.push_back(r.norm_mean);
+    push_means.push_back(r.push.mean);
+    push_norm_means.push_back(r.push.norm_mean);
+    disagreement_means.push_back(r.disagreement.mean);
+    disagreement_norm_means.push_back(r.disagreement.norm_mean);
   }
   report.num_template_rows = num_template_rows;
   report.num_evaluated = static_cast<int>(means.size());
   report.agg_raw = summarize(means);
   report.agg_norm = summarize(norm_means);
+  report.agg_push_raw = summarize(push_means);
+  report.agg_push_norm = summarize(push_norm_means);
+  report.agg_disagreement_raw = summarize(disagreement_means);
+  report.agg_disagreement_norm = summarize(disagreement_norm_means);
 }
 
 //---------------------------------------------------------------------------
@@ -265,7 +428,10 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
 
       Mesh groomed_mesh = load_groomed_as_mesh(groomed_per_subject_domain[i][domain]);
       vtkSmartPointer<vtkDataArray> field;
-      CorrespondenceQualityRow row = evaluate_reconstruction(reconstructed, groomed_mesh, method, &field);
+      vtkSmartPointer<vtkDataArray> disagreement;
+      vtkSmartPointer<vtkDataArray> push;
+      CorrespondenceQualityRow row =
+          evaluate_reconstruction(reconstructed, groomed_mesh, method, &field, &disagreement, &push);
       if (!field) continue;
 
       row.subject = name_per_subject[i];
@@ -274,14 +440,18 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
       report.rows.push_back(row);
 
       if (!meshes_dir.empty()) {
+        const std::string stem = name_per_subject[i] + "_domain" + std::to_string(domain);
+        const std::string template_suffix = row.is_template ? "_TEMPLATE" : "";
+
         Mesh recon_mesh(reconstructed);
         recon_mesh.setField("distance", field, Mesh::FieldType::Point);
-        std::string fname = name_per_subject[i] + "_domain" + std::to_string(domain) + "_reconstructed.vtk";
-        if (row.is_template) {
-          fname = name_per_subject[i] + "_domain" + std::to_string(domain) + "_reconstructed_TEMPLATE.vtk";
-        }
-        boost::filesystem::path out_mesh = meshes_dir / fname;
-        recon_mesh.write(out_mesh.string());
+        recon_mesh.write((meshes_dir / (stem + "_reconstructed" + template_suffix + ".vtk")).string());
+
+        // the groomed surface too, carrying the fields only it can show: a gap in the reconstruction has
+        // no reconstructed surface to color
+        groomed_mesh.setField("disagreement", disagreement, Mesh::FieldType::Point);
+        groomed_mesh.setField("push", push, Mesh::FieldType::Point);
+        groomed_mesh.write((meshes_dir / (stem + "_groomed_disagreement" + template_suffix + ".vtk")).string());
       }
     }
   }

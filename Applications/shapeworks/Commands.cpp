@@ -290,7 +290,8 @@ void CorrespondenceQualityCommand::buildParser() {
   const std::string desc =
       "Evaluate per-subject correspondence quality by reconstructing each shape from its local particles "
       "(biharmonic mesh warp from the cohort L1-medoid template, matching Studio's median selection) and "
-      "measuring distance to the groomed mesh. Reports per-subject and aggregate statistics.";
+      "measuring how far the reconstruction and the groomed mesh disagree, in both directions. Reports per-subject "
+      "and aggregate statistics.";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help(
@@ -298,7 +299,8 @@ void CorrespondenceQualityCommand::buildParser() {
   parser.add_option("--output").action("store").type("string").set_default("").help(
       "Optional path to write per-subject CSV.");
   parser.add_option("--output_meshes").action("store").type("string").set_default("").help(
-      "Optional directory; write reconstructed meshes with per-vertex distance field for visual inspection.");
+      "Optional directory; write reconstructed meshes with the per-vertex pull distance, and groomed meshes with "
+      "the per-vertex disagreement and push fields, for visual inspection.");
   std::list<std::string> methods{"point-to-cell", "point-to-point"};
   parser.add_option("--method")
       .action("store")
@@ -381,6 +383,26 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
     std::cout << "  p95    = " << report.agg_norm.p95 << "\n";
     std::cout << "  max    = " << report.agg_norm.max << "\n";
 
+    // The pull block above keeps its original wording, which existing scripts parse, so the blocks
+    // below use headings that cannot be mistaken for it.
+    auto print_stats = [](const std::string& heading, const CorrespondenceQualityStats& raw,
+                          const CorrespondenceQualityStats& norm) {
+      auto line = [](const char* label, double value, double fraction) {
+        std::cout << "  " << label << " = " << std::setprecision(6) << value << "  (" << std::setprecision(3)
+                  << (fraction * 100.0) << "% of bbox diagonal)\n";
+      };
+      std::cout << heading << "\n";
+      line("mean  ", raw.mean, norm.mean);
+      line("median", raw.median, norm.median);
+      line("p95   ", raw.p95, norm.p95);
+      line("max   ", raw.max, norm.max);
+      std::cout << std::setprecision(6);
+    };
+    print_stats("Per-subject mean push distance (groomed -> reconstructed, area-weighted):", report.agg_push_raw,
+                report.agg_push_norm);
+    print_stats("Per-subject mean disagreement, max(push, pull) on the groomed surface (area-weighted; rank by this):",
+                report.agg_disagreement_raw, report.agg_disagreement_norm);
+
     // Worst-N (sorted by normalized mean; template excluded)
     if (worst_n > 0) {
       std::vector<CorrespondenceQualityRow> sorted_results;
@@ -390,16 +412,18 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
       }
       std::sort(sorted_results.begin(), sorted_results.end(),
                 [](const CorrespondenceQualityRow& a, const CorrespondenceQualityRow& b) {
-                  return a.norm_mean > b.norm_mean;
+                  return a.disagreement.norm_mean > b.disagreement.norm_mean;
                 });
       const int limit = std::min(worst_n, static_cast<int>(sorted_results.size()));
-      std::cout << "\nWorst " << limit << " subjects (ranked by normalized mean; template excluded):\n";
+      std::cout << "\nWorst " << limit << " subjects (ranked by normalized disagreement mean; template excluded):\n";
       for (int i = 0; i < limit; ++i) {
         const auto& r = sorted_results[i];
         std::cout << "  " << r.subject << "  (domain " << r.domain << ")"
-                  << "  norm_mean=" << r.norm_mean << "  (" << std::setprecision(3) << (r.norm_mean * 100.0) << "%)"
-                  << std::setprecision(6) << "  mean=" << r.mean_dist << "  median=" << r.median_dist
-                  << "  max=" << r.max_dist << "  bbox_diag=" << r.bbox_diag << "\n";
+                  << "  disagreement=" << std::setprecision(3) << (r.disagreement.norm_mean * 100.0) << "%"
+                  << "  push=" << (r.push.norm_mean * 100.0) << "%"
+                  << "  pull=" << (r.norm_mean * 100.0) << "%" << std::setprecision(6)
+                  << "  disagreement_p99=" << r.disagreement.p99 << "  disagreement_max=" << r.disagreement.max
+                  << "  bbox_diag=" << r.bbox_diag << "\n";
       }
     }
 
@@ -414,13 +438,29 @@ bool CorrespondenceQualityCommand::execute(const optparse::Values& options, Shar
         boost::filesystem::current_path(oldBasePath);
         return false;
       }
+      // new columns go at the end, so readers that index the original columns by position still work
+      auto stats_header = [](const std::string& prefix) {
+        std::string header;
+        for (const char* name : {"mean", "median", "p99", "max", "norm_mean", "norm_median", "norm_p99", "norm_max"}) {
+          header += "," + prefix + name;
+        }
+        return header;
+      };
+      auto write_stats = [&csv](const CorrespondenceDistanceStats& stats) {
+        csv << "," << stats.mean << "," << stats.median << "," << stats.p99 << "," << stats.max << ","
+            << stats.norm_mean << "," << stats.norm_median << "," << stats.norm_p99 << "," << stats.norm_max;
+      };
       csv << "subject,domain,is_template,mean_dist,median_dist,p99_dist,max_dist,bbox_diag,norm_mean,norm_median,"
-             "norm_p99,norm_max\n";
+             "norm_p99,norm_max"
+          << stats_header("push_") << stats_header("disagreement_") << "\n";
       csv << std::fixed << std::setprecision(8);
       for (const auto& r : report.rows) {
         csv << r.subject << "," << r.domain << "," << (r.is_template ? 1 : 0) << "," << r.mean_dist << ","
             << r.median_dist << "," << r.p99_dist << "," << r.max_dist << "," << r.bbox_diag << "," << r.norm_mean
-            << "," << r.norm_median << "," << r.norm_p99 << "," << r.norm_max << "\n";
+            << "," << r.norm_median << "," << r.norm_p99 << "," << r.norm_max;
+        write_stats(r.push);
+        write_stats(r.disagreement);
+        csv << "\n";
       }
       SW_LOG("Wrote per-subject CSV: {}", out_path.string());
     }

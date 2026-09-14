@@ -19,7 +19,15 @@ You can scroll through the dataset and zoom in and out to inspect fewer or more 
 
 Scrolling through the model tells you whether correspondence *looks* right. To quantify it per subject, use the `correspondence-quality` command, or the [Correspondence Quality panel](../studio/studio-analyze.md#correspondence-quality) in Studio, which additionally lets you sort the samples worst-first so the challenging shapes come up front.
 
-For each subject, ShapeWorks reconstructs the surface from that subject's **local** particles by biharmonic mesh warp from the cohort template, and then measures the distance from the reconstruction back to that subject's groomed mesh. A subject whose particles no longer describe its own surface — a failed split, a bad initialization, an outlier shape the model does not cover — shows up as a large distance.
+For each subject, ShapeWorks reconstructs the surface from that subject's **local** particles by biharmonic mesh warp from the cohort template, and then measures how far the reconstruction and that subject's groomed mesh disagree. A subject whose particles no longer describe its own surface — a failed split, a bad initialization, an outlier shape the model does not cover — shows up as a large disagreement.
+
+The disagreement is measured in both directions, because each one is blind to a different failure:
+
+* **Pull** measures from each reconstructed vertex to the groomed surface. It catches reconstruction that departs from the surface — folds, flaps, spikes — but not surface the reconstruction never reaches: a torn opening or a missing appendage leaves every reconstructed vertex sitting on the groomed mesh, so pull reports nothing wrong.
+* **Push** measures from each groomed vertex to the reconstruction. It catches those gaps, but not a flap that sticks out while the groomed surface stays covered.
+* **Disagreement** combines the two on the groomed mesh: at each groomed vertex, the larger of its push distance and the pull distance of any reconstructed vertex that lands beside it. Its area-weighted mean is the number to rank by, and it is the field to color by, since the groomed mesh is the only surface on which a gap can be shown.
+
+The original pull statistics are still reported, unchanged, alongside push and disagreement.
 
 The template is the cohort L1-medoid (the same subject Studio picks as the median shape). Its own reconstruction is near-identity, so its row is reported but excluded from the aggregate statistics, which would otherwise be skewed on small cohorts.
 
@@ -39,13 +47,13 @@ shapeworks correspondence-quality --name <project.swproj|project.xlsx>
 | --- | --- |
 | `--name` | Path to the project file (`.swproj` or `.xlsx`). Required. |
 | `--output` | Write the per-subject table to CSV. |
-| `--output_meshes` | Write each reconstructed mesh as `.vtk` with a per-vertex `distance` field, for visual inspection of *where* correspondence breaks down. |
+| `--output_meshes` | Write each reconstructed mesh as `<subject>_domain<d>_reconstructed.vtk` with the per-vertex pull `distance` field, and each groomed mesh as `<subject>_domain<d>_groomed_disagreement.vtk` with per-vertex `disagreement` and `push` fields, for visual inspection of *where* correspondence breaks down. |
 | `--method` | `point-to-cell` (default) or `point-to-point`. |
 | `--worst` | How many worst-ranked subjects to print. Default 5. |
 
-The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — followed by the worst-ranked subjects. The CSV has one row per subject per domain with the columns `subject`, `domain`, `is_template`, `mean_dist`, `median_dist`, `p99_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_median`, `norm_p99`, `norm_max`. `p99_dist` is the 99th percentile of the per-vertex distances: a measure of the worst part of the surface that, unlike `max_dist`, does not move with a single bad vertex.
+The command prints a summary — mean, median, p95 and max of the per-subject mean distance, raw and normalized — for pull, push and disagreement, followed by the subjects with the worst disagreement. The CSV has one row per subject per domain. Its first columns are the pull statistics, as before: `subject`, `domain`, `is_template`, `mean_dist`, `median_dist`, `p99_dist`, `max_dist`, `bbox_diag`, `norm_mean`, `norm_median`, `norm_p99`, `norm_max`. They are followed by the same eight statistics for push and then for disagreement, prefixed `push_` and `disagreement_` (`push_mean`, `push_median`, `push_p99`, `push_max`, `push_norm_mean`, … `disagreement_norm_max`). Push and disagreement are weighted by surface area over the groomed mesh, so a region counts in proportion to its size however finely it is meshed. The p99 statistics are the 99th percentile of the per-vertex distances: a measure of the worst part of the surface that, unlike max, does not move with a single bad vertex.
 
-*A reconstructed mesh written by `--output_meshes`, coloured by the `distance` field. Load it in Studio and select `distance` from the scalar dropdown to see where the reconstruction departs from the groomed surface.*
+*A reconstructed mesh written by `--output_meshes`, coloured by the pull `distance` field. The groomed meshes written alongside carry the `disagreement` field, which also shows where the reconstruction fails to cover the groomed surface. Load either in Studio and select the field from the scalar dropdown.*
 ![Correspondence quality distance field](../img/workflow/correspondence_quality.png)
 
 Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
@@ -61,11 +69,16 @@ project.load("project.swproj")
 report = sw.CorrespondenceEvaluation.evaluate(project)
 
 print(report.template_subject, report.num_evaluated)
-print(report.agg_norm.mean, report.agg_norm.p95)
+print(report.agg_disagreement_norm.mean, report.agg_disagreement_norm.p95)
 
 for row in report.rows:
-    print(row.subject, row.domain, row.mean_dist, row.median_dist, row.p99_dist, row.max_dist, row.is_template)
+    print(row.subject, row.domain, row.is_template)
+    print("  disagreement", row.disagreement.mean, row.disagreement.p99, row.disagreement.max)
+    print("  push        ", row.push.mean, row.push.p99, row.push.max)
+    print("  pull        ", row.mean_dist, row.p99_dist, row.max_dist)
 ```
+
+`row.push` and `row.disagreement` each have `mean`, `median`, `p99` and `max`, plus `norm_` versions divided by the bounding-box diagonal. `report.agg_push_raw`/`agg_push_norm` and `report.agg_disagreement_raw`/`agg_disagreement_norm` summarize them across subjects the way `agg_raw`/`agg_norm` summarize pull.
 
 `evaluate()` also takes `method` (`sw.CorrespondenceEvaluation.DistanceMethod.PointToCell` or `PointToPoint`) and `output_meshes_dir`. The project's relative paths are resolved against the current working directory, so run from the project's directory.
 
