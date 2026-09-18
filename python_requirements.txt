@@ -8,7 +8,7 @@ annotated-types==0.7.0
     # via
     #   -r requirements.in
     #   pydantic
-anyio==4.10.0
+anyio==4.14.2
     # via
     #   -r requirements.in
     #   httpx
