@@ -1769,7 +1769,7 @@ std::string AnalysisTool::get_display_feature_map() {
     }
   }
 
-  // the correspondence distance is a per-vertex field on each sample's reconstruction, so it
+  // the correspondence disagreement is a per-vertex field on each sample's own meshes, so it
   // only applies to the sample views
   if (correspondence_quality_panel_->get_display_distance() &&
       (get_analysis_mode() == AnalysisTool::MODE_ALL_SAMPLES_C ||

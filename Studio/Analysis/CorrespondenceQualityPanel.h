@@ -17,8 +17,8 @@ class Session;
 //! Panel for the correspondence quality analysis
 /*!
  * Runs CorrespondenceQualityJob and presents the result: a per-sample table that
- * can be sorted by mean, median or max distance, a box plot of the distribution,
- * and options to color the surface by the per-vertex distance and to reorder the
+ * can be sorted by mean, median or max disagreement, a box plot of the distribution,
+ * and options to color the groomed surface by the per-vertex disagreement and to reorder the
  * All Samples view worst-first so the challenging shapes come up front.
  */
 class CorrespondenceQualityPanel : public QWidget {
@@ -32,7 +32,7 @@ class CorrespondenceQualityPanel : public QWidget {
   void set_session(QSharedPointer<Session> session);
   void reset();
 
-  //! should the per-vertex distance be shown on the surface?
+  //! should the per-vertex disagreement be shown on the surface?
   bool get_display_distance() const;
 
   //! name of the surface scalar to display

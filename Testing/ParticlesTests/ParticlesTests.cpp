@@ -1,3 +1,5 @@
+#include <vtkDataArray.h>
+
 #include <string>
 #include <vector>
 
@@ -300,26 +302,29 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
 //---------------------------------------------------------------------------
 namespace {
 
-//! flat NxN grid of triangles in the z=0 plane, spanning [0,1] in x and y
-Mesh make_grid_mesh(int n) {
-  Eigen::MatrixXd points(n * n, 3);
+//! the first `columns` columns of the NxN grid below, so the spacing is the same whatever the width
+Mesh make_grid_strip_mesh(int n, int columns) {
+  Eigen::MatrixXd points(n * columns, 3);
   for (int y = 0; y < n; y++) {
-    for (int x = 0; x < n; x++) {
-      points.row(y * n + x) << static_cast<double>(x) / (n - 1), static_cast<double>(y) / (n - 1), 0.0;
+    for (int x = 0; x < columns; x++) {
+      points.row(y * columns + x) << static_cast<double>(x) / (n - 1), static_cast<double>(y) / (n - 1), 0.0;
     }
   }
 
-  Eigen::MatrixXi faces(2 * (n - 1) * (n - 1), 3);
+  Eigen::MatrixXi faces(2 * (n - 1) * (columns - 1), 3);
   int f = 0;
   for (int y = 0; y < n - 1; y++) {
-    for (int x = 0; x < n - 1; x++) {
-      const int i = y * n + x;
-      faces.row(f++) << i, i + 1, i + n;
-      faces.row(f++) << i + 1, i + n + 1, i + n;
+    for (int x = 0; x < columns - 1; x++) {
+      const int i = y * columns + x;
+      faces.row(f++) << i, i + 1, i + columns;
+      faces.row(f++) << i + 1, i + columns + 1, i + columns;
     }
   }
   return Mesh(points, faces);
 }
+
+//! flat NxN grid of triangles in the z=0 plane, spanning [0,1] in x and y
+Mesh make_grid_mesh(int n) { return make_grid_strip_mesh(n, n); }
 
 }  // namespace
 
@@ -410,4 +415,123 @@ TEST(CorrespondenceEvaluationTests, aggregatesExcludeTheTemplate) {
   ASSERT_EQ(report.num_template_rows, 1);
   ASSERT_NEAR(report.agg_raw.mean, 2.0, 1e-9);  // the template row would have dominated this
   ASSERT_NEAR(report.agg_raw.max, 3.0, 1e-9);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, identicalMeshesHaveNoDisagreement) {
+  Mesh mesh = make_grid_mesh(10);
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(mesh.getVTKMesh(), mesh,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  ASSERT_NEAR(row.push.max, 0.0, 1e-9);
+  ASSERT_NEAR(row.disagreement.max, 0.0, 1e-9);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, uniformOffsetIsTheSameFromEitherSide) {
+  const double offset = 0.25;
+  Mesh groomed = make_grid_mesh(10);
+  Mesh shifted = make_grid_mesh(10);
+  shifted.translate(makeVector({0, 0, offset}));
+
+  for (auto method : {CorrespondenceEvaluation::DistanceMethod::PointToCell,
+                      CorrespondenceEvaluation::DistanceMethod::PointToPoint}) {
+    auto row = CorrespondenceEvaluation::evaluate_reconstruction(shifted.getVTKMesh(), groomed, method);
+
+    ASSERT_NEAR(row.push.mean, offset, 1e-6);
+    ASSERT_NEAR(row.push.max, offset, 1e-6);
+    ASSERT_NEAR(row.disagreement.mean, offset, 1e-6);
+    ASSERT_NEAR(row.disagreement.norm_mean, offset / std::sqrt(2.0), 1e-6);
+  }
+}
+
+//---------------------------------------------------------------------------
+// What pull alone misses: a reconstruction that covers only part of the groomed surface lies exactly
+// on it, so every reconstructed vertex is at distance zero however much surface is missing.
+TEST(CorrespondenceEvaluationTests, missingRegionIsCaughtByPushNotPull) {
+  const int n = 21;  // puts a column of vertices at x = 0.5
+  Mesh groomed = make_grid_mesh(n);
+  Mesh half = make_grid_strip_mesh(n, 11);  // x <= 0.5 only
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(half.getVTKMesh(), groomed,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  ASSERT_NEAR(row.max_dist, 0.0, 1e-9);  // pull sees nothing wrong
+
+  // each groomed vertex beyond x = 0.5 is (x - 0.5) from the edge of the reconstruction
+  ASSERT_NEAR(row.push.max, 0.5, 1e-6);
+  ASSERT_NEAR(row.disagreement.max, 0.5, 1e-6);
+
+  // weighted by area over the unit square, the mean of max(0, x - 0.5) is 1/8; unweighted, the
+  // grid's half-area boundary vertices would pull it away from that
+  ASSERT_NEAR(row.push.mean, 0.125, 1e-6);
+  ASSERT_NEAR(row.disagreement.mean, 0.125, 1e-6);
+}
+
+//---------------------------------------------------------------------------
+// And what push alone misses: one reconstructed vertex dragged off the surface leaves the groomed
+// surface covered, so only its pull distance, carried onto the groomed vertices beneath it, sees it.
+TEST(CorrespondenceEvaluationTests, offSurfaceSpikeIsCaughtByPullNotPush) {
+  const int n = 20;
+  Mesh groomed = make_grid_mesh(n);
+
+  Mesh damaged = make_grid_mesh(n);
+  auto poly_data = damaged.getVTKMesh();
+  double point[3];
+  poly_data->GetPoint(0, point);
+  point[2] += 1.0;
+  poly_data->GetPoints()->SetPoint(0, point);
+  poly_data->Modified();
+
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(poly_data, groomed,
+                                                               CorrespondenceEvaluation::DistanceMethod::PointToCell);
+
+  ASSERT_NEAR(row.max_dist, 1.0, 1e-6);  // pull sees the spike
+  ASSERT_LT(row.push.max, 0.1);          // the groomed surface is still covered
+  ASSERT_NEAR(row.disagreement.max, 1.0, 1e-6);
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, disagreementFieldLivesOnTheGroomedMesh) {
+  const int n = 21;
+  Mesh groomed = make_grid_mesh(n);
+  Mesh half = make_grid_strip_mesh(n, 11);
+
+  vtkSmartPointer<vtkDataArray> pull;
+  vtkSmartPointer<vtkDataArray> disagreement;
+  vtkSmartPointer<vtkDataArray> push;
+  CorrespondenceEvaluation::evaluate_reconstruction(
+      half.getVTKMesh(), groomed, CorrespondenceEvaluation::DistanceMethod::PointToCell, &pull, &disagreement, &push);
+
+  // pull belongs to the reconstruction's vertices; the other two to the groomed mesh's, where a gap can show
+  ASSERT_TRUE(pull && disagreement && push);
+  ASSERT_EQ(pull->GetNumberOfTuples(), static_cast<vtkIdType>(half.numPoints()));
+  ASSERT_EQ(disagreement->GetNumberOfTuples(), static_cast<vtkIdType>(groomed.numPoints()));
+  ASSERT_EQ(push->GetNumberOfTuples(), static_cast<vtkIdType>(groomed.numPoints()));
+  ASSERT_EQ(std::string(disagreement->GetName()), "disagreement");
+  ASSERT_EQ(std::string(push->GetName()), "push");
+}
+
+//---------------------------------------------------------------------------
+TEST(CorrespondenceEvaluationTests, disagreementAggregatesExcludeTheTemplate) {
+  CorrespondenceQualityReport report;
+  auto add_row = [&report](const std::string& subject, double value, bool is_template) {
+    CorrespondenceQualityRow row;
+    row.subject = subject;
+    row.is_template = is_template;
+    row.push.mean = value / 2.0;
+    row.disagreement.mean = value;
+    row.disagreement.norm_mean = value / 10.0;
+    report.rows.push_back(row);
+  };
+  add_row("a", 1.0, false);
+  add_row("b", 3.0, false);
+  add_row("t", 99.0, true);
+
+  CorrespondenceEvaluation::compute_aggregates(report);
+
+  ASSERT_NEAR(report.agg_disagreement_raw.mean, 2.0, 1e-9);
+  ASSERT_NEAR(report.agg_disagreement_norm.max, 0.3, 1e-9);
+  ASSERT_NEAR(report.agg_push_raw.mean, 1.0, 1e-9);
 }
