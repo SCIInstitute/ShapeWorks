@@ -6989,12 +6989,12 @@
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>shapeworks  correspondence-quality [args]...
 </code></pre></div>
-<p><strong>Description:</strong> Evaluate per-subject correspondence quality by reconstructing each shape from its local particles (biharmonic mesh warp from the cohort L1-medoid template, matching Studio's median selection) and measuring distance to the groomed mesh. Reports per-subject and aggregate statistics.</p>
+<p><strong>Description:</strong> Evaluate per-subject correspondence quality by reconstructing each shape from its local particles (biharmonic mesh warp from the cohort L1-medoid template, matching Studio's median selection) and measuring how far the reconstruction and the groomed mesh disagree, in both directions. Reports per-subject and aggregate statistics.</p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
 <p><strong>--name=STRING:</strong> Path to project file (.swproj or .xlsx).</p>
 <p><strong>--output=STRING:</strong> Optional path to write per-subject CSV.</p>
-<p><strong>--output_meshes=STRING:</strong>  Optional directory; write reconstructed meshes with per-vertex distance field for visual inspection.</p>
+<p><strong>--output_meshes=STRING:</strong>  Optional directory; write reconstructed meshes with the per-vertex pull distance, and groomed meshes with the per-vertex disagreement and push fields, for visual inspection.</p>
 <p><strong>--method=CHOICE:</strong> Distance method [default: point-to-cell]. (choose from 'point-to-cell', 'point-to-point')</p>
 <p><strong>--worst=INT:</strong> Number of worst-ranked subjects to print [default: 5].</p>
 <p><a href="#top">Back to Top</a></p>

@@ -4560,6 +4560,10 @@
 <tbody>
 <tr>
 <td>struct</td>
+<td><strong><a href="../Classes/structshapeworks_1_1CorrespondenceDistanceStats.html">shapeworks::CorrespondenceDistanceStats</a></strong></td>
+</tr>
+<tr>
+<td>struct</td>
 <td><strong><a href="../Classes/structshapeworks_1_1CorrespondenceQualityRow.html">shapeworks::CorrespondenceQualityRow</a></strong> <br>Per-subject-per-domain correspondence quality result row.</td>
 </tr>
 <tr>
@@ -4595,6 +4599,18 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
 <span class="k">using</span><span class="w"> </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="p">;</span>
 
+<span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondenceDistanceStats</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">median</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">p99</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w">  </span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_median</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_p99</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="p">};</span>
+
+
 <span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondenceQualityRow</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">subject</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -4608,6 +4624,12 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_p99</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w">     </span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">norm_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w">     </span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span>
+
+<span class="w">  </span><span class="c1">// appended after is_template so that existing brace initializers keep their meaning</span>
+
+<span class="w">  </span><span class="n">CorrespondenceDistanceStats</span><span class="w"> </span><span class="n">push</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">CorrespondenceDistanceStats</span><span class="w"> </span><span class="n">disagreement</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondenceQualityStats</span><span class="w"> </span><span class="p">{</span>
@@ -4620,10 +4642,14 @@
 <span class="k">struct</span><span class="w"> </span><span class="nc">CorrespondenceQualityReport</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CorrespondenceQualityRow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">template_subject</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_evaluated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                 </span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_evaluated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_template_rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_raw</span><span class="p">;</span><span class="w">    </span>
-<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_norm</span><span class="p">;</span><span class="w">   </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_raw</span><span class="p">;</span><span class="w">                </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_norm</span><span class="p">;</span><span class="w">               </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_push_raw</span><span class="p">;</span><span class="w">           </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_push_norm</span><span class="p">;</span><span class="w">          </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_disagreement_raw</span><span class="p">;</span><span class="w">   </span>
+<span class="w">  </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_disagreement_norm</span><span class="p">;</span><span class="w">  </span>
 <span class="p">};</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CorrespondenceEvaluation</span><span class="w"> </span><span class="p">{</span>
@@ -4636,7 +4662,9 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">CorrespondenceQualityRow</span><span class="w"> </span><span class="nf">evaluate_reconstruction</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reconstructed</span><span class="p">,</span>
 <span class="w">                                                          </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">groomed</span><span class="p">,</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="p">,</span>
-<span class="w">                                                          </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">out_distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
+<span class="w">                                                          </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">out_distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">                                                          </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">out_disagreement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">                                                          </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">out_push</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
 
@@ -4646,7 +4674,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:30 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:02 +0000</p>
 
 
 

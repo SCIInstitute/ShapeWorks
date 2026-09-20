@@ -4907,7 +4907,7 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1CorrespondenceQualityPanel.html#function-get-display-distance">get_display_distance</a></strong>() const<br>should the per-vertex distance be shown on the surface?</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceQualityPanel.html#function-get-display-distance">get_display_distance</a></strong>() const<br>should the per-vertex disagreement be shown on the surface?</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -4923,7 +4923,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceQualityPanel</span><span class="p">;</span>
 </code></pre></div>
 <p>Panel for the correspondence quality analysis. </p>
-<p>Runs <a href="classshapeworks_1_1CorrespondenceQualityJob.html">CorrespondenceQualityJob</a> and presents the result: a per-sample table that can be sorted by mean, median or max distance, a box plot of the distribution, and options to color the surface by the per-vertex distance and to reorder the All Samples view worst-first so the challenging shapes come up front. </p>
+<p>Runs <a href="classshapeworks_1_1CorrespondenceQualityJob.html">CorrespondenceQualityJob</a> and presents the result: a per-sample table that can be sorted by mean, median or max disagreement, a box plot of the distribution, and options to color the groomed surface by the per-vertex disagreement and to reorder the All Samples view worst-first so the challenging shapes come up front. </p>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-run_clicked">slot run_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_clicked</span><span class="p">()</span>
@@ -5000,7 +5000,7 @@
 <h3 id="function-get_display_distance">function get_display_distance</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_display_distance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
-<p>should the per-vertex distance be shown on the surface? </p>
+<p>should the per-vertex disagreement be shown on the surface? </p>
 <h3 id="function-get_display_feature_name">function get_display_feature_name</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_feature_name</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -5014,7 +5014,7 @@
 </code></pre></div>
 <p>mirror the analysis tool's warp template into this panel's controls </p>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:29 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:01 +0000</p>
 
 
 

@@ -4599,6 +4599,10 @@
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">distance_fields_</span><span class="p">;</span>
 <span class="w">  </span><span class="p">}</span>
 
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;&gt;&gt;&amp;</span><span class="w"> </span><span class="n">get_disagreement_fields</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">disagreement_fields_</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">CorrespondenceEvaluation</span><span class="o">::</span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method_</span><span class="p">;</span>
@@ -4607,12 +4611,13 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">row_shape_indices_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particle_values_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">distance_fields_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDataArray</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">disagreement_fields_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:30 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:02 +0000</p>
 
 
 

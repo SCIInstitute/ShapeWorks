@@ -4494,6 +4494,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#detailed-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-attributes-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4637,6 +4648,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#variable-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable push
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-disagreement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable disagreement
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4663,7 +4696,7 @@
 
 
 <h1 id="shapeworkscorrespondencequalityrow">shapeworks::CorrespondenceQualityRow</h1>
-<p>Per-subject-per-domain correspondence quality result row. </p>
+<p>Per-subject-per-domain correspondence quality result row.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;CorrespondenceEvaluation.h&gt;</code></p>
 <h2 id="public-attributes">Public Attributes</h2>
 <table>
@@ -4684,19 +4717,19 @@
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-mean-dist">mean_dist</a></strong> <br>mean point-to-cell (or point-to-point) distance, reconstructed -&gt; groomed</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-mean-dist">mean_dist</a></strong> <br>pull: mean distance from the reconstructed vertices to the groomed surface</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-median-dist">median_dist</a></strong> <br>median per-vertex distance</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-median-dist">median_dist</a></strong> <br>pull: median per-vertex distance</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-p99-dist">p99_dist</a></strong> <br>99th percentile per-vertex distance, a max that ignores single outlier vertices</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-p99-dist">p99_dist</a></strong> <br>pull: 99th percentile per-vertex distance, a max that ignores single outlier vertices</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-max-dist">max_dist</a></strong> <br>max per-vertex distance</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-max-dist">max_dist</a></strong> <br>pull: max per-vertex distance</td>
 </tr>
 <tr>
 <td>double</td>
@@ -4722,8 +4755,21 @@
 <td>bool</td>
 <td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-is-template">is_template</a></strong> <br>true for the L1-medoid template row (excluded from aggregates)</td>
 </tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceDistanceStats.html">CorrespondenceDistanceStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-push">push</a></strong> <br>from each groomed vertex to the reconstructed surface, weighted by the area each vertex stands for</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceDistanceStats.html">CorrespondenceDistanceStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityRow.html#variable-disagreement">disagreement</a></strong></td>
+</tr>
 </tbody>
 </table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceQualityRow</span><span class="p">;</span>
+</code></pre></div>
+<p>Per-subject-per-domain correspondence quality result row. </p>
+<p>The unprefixed distances measure one direction only, from each reconstructed vertex to the groomed surface ("pull"). Any part of the groomed surface the reconstruction never reaches &ndash; a tear, a collapsed opening, a missing appendage &ndash; leaves every reconstructed vertex on the groomed surface, so pull cannot see it. <code>push</code> measures the other direction, and <code>disagreement</code> combines the two on the groomed surface; it is the one to rank by. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-subject">variable subject</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">subject</span><span class="p">;</span>
@@ -4734,19 +4780,19 @@
 <h3 id="variable-mean_dist">variable mean_dist</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">mean_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
-<p>mean point-to-cell (or point-to-point) distance, reconstructed -&gt; groomed </p>
+<p>pull: mean distance from the reconstructed vertices to the groomed surface </p>
 <h3 id="variable-median_dist">variable median_dist</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">median_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
-<p>median per-vertex distance </p>
+<p>pull: median per-vertex distance </p>
 <h3 id="variable-p99_dist">variable p99_dist</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">p99_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
-<p>99th percentile per-vertex distance, a max that ignores single outlier vertices </p>
+<p>pull: 99th percentile per-vertex distance, a max that ignores single outlier vertices </p>
 <h3 id="variable-max_dist">variable max_dist</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
-<p>max per-vertex distance </p>
+<p>pull: max per-vertex distance </p>
 <h3 id="variable-bbox_diag">variable bbox_diag</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">bbox_diag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 </code></pre></div>
@@ -4771,8 +4817,16 @@
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 </code></pre></div>
 <p>true for the L1-medoid template row (excluded from aggregates) </p>
+<h3 id="variable-push">variable push</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceDistanceStats</span><span class="w"> </span><span class="n">push</span><span class="p">;</span>
+</code></pre></div>
+<p>from each groomed vertex to the reconstructed surface, weighted by the area each vertex stands for </p>
+<h3 id="variable-disagreement">variable disagreement</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceDistanceStats</span><span class="w"> </span><span class="n">disagreement</span><span class="p">;</span>
+</code></pre></div>
+<p>on each groomed vertex, the larger of its push distance and the pull distance of any reconstructed vertex that lands beside it, weighted by area </p>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:29 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:01 +0000</p>
 
 
 

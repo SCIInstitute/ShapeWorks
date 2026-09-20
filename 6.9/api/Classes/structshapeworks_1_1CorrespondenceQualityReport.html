@@ -4571,6 +4571,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#variable-agg_push_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable agg_push_raw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-agg_push_norm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable agg_push_norm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-agg_disagreement_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable agg_disagreement_raw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-agg_disagreement_norm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable agg_disagreement_norm
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4626,11 +4670,27 @@
 </tr>
 <tr>
 <td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-raw">agg_raw</a></strong> <br>aggregates over raw mean_dist (template excluded)</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-raw">agg_raw</a></strong> <br>aggregates over raw pull mean_dist (template excluded)</td>
 </tr>
 <tr>
 <td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
-<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-norm">agg_norm</a></strong> <br>aggregates over bbox-normalized values (template excluded)</td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-norm">agg_norm</a></strong> <br>aggregates over bbox-normalized pull (template excluded)</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-push-raw">agg_push_raw</a></strong> <br>aggregates over push.mean</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-push-norm">agg_push_norm</a></strong> <br>aggregates over push.norm_mean</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-disagreement-raw">agg_disagreement_raw</a></strong> <br>aggregates over disagreement.mean</td>
+</tr>
+<tr>
+<td><a href="structshapeworks_1_1CorrespondenceQualityStats.html">CorrespondenceQualityStats</a></td>
+<td><strong><a href="structshapeworks_1_1CorrespondenceQualityReport.html#variable-agg-disagreement-norm">agg_disagreement_norm</a></strong> <br>aggregates over disagreement.norm_mean</td>
 </tr>
 </tbody>
 </table>
@@ -4651,13 +4711,29 @@
 <h3 id="variable-agg_raw">variable agg_raw</h3>
 <div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_raw</span><span class="p">;</span>
 </code></pre></div>
-<p>aggregates over raw mean_dist (template excluded) </p>
+<p>aggregates over raw pull mean_dist (template excluded) </p>
 <h3 id="variable-agg_norm">variable agg_norm</h3>
 <div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_norm</span><span class="p">;</span>
 </code></pre></div>
-<p>aggregates over bbox-normalized values (template excluded) </p>
+<p>aggregates over bbox-normalized pull (template excluded) </p>
+<h3 id="variable-agg_push_raw">variable agg_push_raw</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_push_raw</span><span class="p">;</span>
+</code></pre></div>
+<p>aggregates over push.mean </p>
+<h3 id="variable-agg_push_norm">variable agg_push_norm</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_push_norm</span><span class="p">;</span>
+</code></pre></div>
+<p>aggregates over push.norm_mean </p>
+<h3 id="variable-agg_disagreement_raw">variable agg_disagreement_raw</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_disagreement_raw</span><span class="p">;</span>
+</code></pre></div>
+<p>aggregates over disagreement.mean </p>
+<h3 id="variable-agg_disagreement_norm">variable agg_disagreement_norm</h3>
+<div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityStats</span><span class="w"> </span><span class="n">agg_disagreement_norm</span><span class="p">;</span>
+</code></pre></div>
+<p>aggregates over disagreement.norm_mean </p>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:29 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:01 +0000</p>
 
 
 

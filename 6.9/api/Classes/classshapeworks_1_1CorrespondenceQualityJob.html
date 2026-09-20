@@ -4615,6 +4615,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-get_disagreement_fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function get_disagreement_fields
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4709,6 +4720,10 @@
 <td>const std::map&lt; int, std::vector&lt; vtkSmartPointer&lt; vtkDataArray &gt; &gt; &gt; &amp;</td>
 <td><strong><a href="classshapeworks_1_1CorrespondenceQualityJob.html#function-get-distance-fields">get_distance_fields</a></strong>() const</td>
 </tr>
+<tr>
+<td>const std::map&lt; int, std::vector&lt; vtkSmartPointer&lt; vtkDataArray &gt; &gt; &gt; &amp;</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceQualityJob.html#function-get-disagreement-fields">get_disagreement_fields</a></strong>() const</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -4722,7 +4737,7 @@
 <tbody>
 <tr>
 <td>constexpr const char *</td>
-<td><strong><a href="classshapeworks_1_1CorrespondenceQualityJob.html#variable-feature-name">FEATURE_NAME</a></strong> <br>name of the per-vertex distance array attached to each reconstructed mesh</td>
+<td><strong><a href="classshapeworks_1_1CorrespondenceQualityJob.html#variable-feature-name">FEATURE_NAME</a></strong> <br>name of the per-vertex arrays: disagreement on each groomed mesh, pull distance on each reconstructed mesh</td>
 </tr>
 </tbody>
 </table>
@@ -4825,7 +4840,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceQualityJob</span><span class="p">;</span>
 </code></pre></div>
 <p>Scores each sample's correspondence quality. </p>
-<p>Reconstructs each sample through Studio's own configured mesh warper (the same reconstruction shown in the viewer, using the user's chosen template and warp method) and measures the distance from that reconstruction back to the sample's groomed mesh. The per-vertex distance field is left on each reconstructed mesh under FEATURE_NAME so it can be displayed as a surface scalar. </p>
+<p>Reconstructs each sample through Studio's own configured mesh warper (the same reconstruction shown in the viewer, using the user's chosen template and warp method) and measures how far that reconstruction and the sample's groomed mesh disagree, in both directions. The disagreement is left on each groomed mesh, and the one-directional pull distance on each reconstructed mesh, both under FEATURE_NAME so either view can display it as a surface scalar. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-correspondencequalityjob">function CorrespondenceQualityJob</h3>
 <div class="highlight"><pre><span></span><code><span class="n">CorrespondenceQualityJob</span><span class="p">(</span>
@@ -4853,18 +4868,22 @@
 <h3 id="function-get_particle_values">function get_particle_values</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_particle_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
-<p>the distance field sampled at each particle, keyed by index into <a href="classshapeworks_1_1Session.html#function-get-shapes">Session::get_shapes()</a>. The glyphs are colored from these, so they need to be applied to the shapes (on the GUI thread) with Shape::set_point_features() before the field can be displayed. </p>
+<p>the disagreement averaged around each particle, keyed by index into <a href="classshapeworks_1_1Session.html#function-get-shapes">Session::get_shapes()</a>. The glyphs are colored from these, so they need to be applied to the shapes (on the GUI thread) with Shape::set_point_features() before the field can be displayed. </p>
 <h3 id="function-get_distance_fields">function get_distance_fields</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkDataArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_distance_fields</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
-<p>the per-vertex distance field for each domain of each shape, keyed by index into <a href="classshapeworks_1_1Session.html#function-get-shapes">Session::get_shapes()</a>. Shape::set_point_features() interpolates the particle values back over the mesh under the same name, so these have to be re-applied after it to survive. </p>
+<p>the per-vertex pull distance on the reconstructed mesh, for each domain of each shape, keyed by index into <a href="classshapeworks_1_1Session.html#function-get-shapes">Session::get_shapes()</a>. Shape::set_point_features() interpolates the particle values back over the reconstructed mesh under the same name, so these have to be re-applied after it to survive. </p>
+<h3 id="function-get_disagreement_fields">function get_disagreement_fields</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkDataArray</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_disagreement_fields</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>the per-vertex disagreement on the groomed mesh, for each domain of each shape, keyed by index into <a href="classshapeworks_1_1Session.html#function-get-shapes">Session::get_shapes()</a></p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-feature_name">variable FEATURE_NAME</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">FEATURE_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;correspondence_distance&quot;</span><span class="p">;</span>
 </code></pre></div>
-<p>name of the per-vertex distance array attached to each reconstructed mesh </p>
+<p>name of the per-vertex arrays: disagreement on each groomed mesh, pull distance on each reconstructed mesh </p>
 <hr />
-<p>Updated on 2026-09-20 at 03:46:29 +0000</p>
+<p>Updated on 2026-09-20 at 15:51:01 +0000</p>
 
 
 
