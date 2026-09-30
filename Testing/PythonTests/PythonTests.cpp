@@ -258,6 +258,10 @@ TEST(pythonTests, fillholesTest) {
   run_test("fillHoles.py");
 }
 
+TEST(pythonTests, cleanTest) {
+  run_test("clean.py");
+}
+
 TEST(pythonTests, probevolumeTest) {
   run_test("probeVolume.py");
 }

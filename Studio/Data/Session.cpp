@@ -923,13 +923,17 @@ std::string Session::get_default_feature_map() {
     auto subject = get_project()->get_subjects()[0];
     if (!subject->get_original_filenames().empty()) {
       if (project_->get_original_domain_types()[0] == DomainType::Mesh) {
-        Mesh m = MeshUtils::threadSafeReadMesh(subject->get_original_filenames()[0]);
-        auto poly_data = m.getVTKMesh();
-        if (poly_data) {
-          auto scalars = poly_data->GetPointData()->GetScalars();
-          if (scalars) {
-            return scalars->GetName();
+        try {
+          Mesh m = MeshUtils::threadSafeReadMesh(subject->get_original_filenames()[0]);
+          auto poly_data = m.getVTKMesh();
+          if (poly_data) {
+            auto scalars = poly_data->GetPointData()->GetScalars();
+            if (scalars) {
+              return scalars->GetName();
+            }
           }
+        } catch (std::exception& e) {
+          SW_ERROR("{}", e.what());
         }
       }
     }
