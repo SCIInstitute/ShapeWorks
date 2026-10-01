@@ -95,6 +95,18 @@ CONFIG_SCHEMA = {
             "c_lat": {"type": (int, float), "required": False},
         }
     },
+    "intensity_augmentation": {
+        "type": dict,
+        "required": False,
+        "children": {
+            "enabled": {"type": bool, "required": True},
+            "scale": {"type": (int, float), "required": False, "min": 0},
+            "shift": {"type": (int, float), "required": False, "min": 0},
+            "noise": {"type": (int, float), "required": False, "min": 0},
+            "gamma": {"type": (int, float), "required": False, "min": 0},
+            "blur": {"type": (int, float), "required": False, "min": 0},
+        }
+    },
 }
 
 

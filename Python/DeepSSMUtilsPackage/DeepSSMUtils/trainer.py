@@ -16,6 +16,7 @@ from DeepSSMUtils import loaders
 from DeepSSMUtils import net_utils
 from DeepSSMUtils import constants as C
 from DeepSSMUtils import config_validation
+from DeepSSMUtils import intensity_augmentation
 import DeepSSMUtils
 from shapeworks.utils import *
 
@@ -93,9 +94,38 @@ def restart_scheduler(opt, sched_params, learning_rate):
     return set_scheduler(opt, sched_params)
 
 
+def apply_project_settings(project, config_file):
+    """ Copy settings not in the standard config (focal loss, regularization, intensity augmentation) from the
+    project's deepssm parameters into the config file """
+    params = project.get_parameters("deepssm")
+    with open(config_file) as f:
+        config = json.load(f)
+    for key in ("focal_a", "focal_c"):
+        value = params.get("train_" + key, "")
+        if value != "":
+            config["loss"][key] = float(value)
+    pool_size = params.get("train_encoder_pool_size", "")
+    if pool_size != "":
+        config["encoder"]["pool_size"] = [int(v) for v in pool_size.split()]
+    if params.get("train_encoder_dropout", "") != "":
+        config["encoder"]["dropout"] = float(params.get("train_encoder_dropout", ""))
+    if params.get("train_weight_decay", "") != "":
+        config["trainer"]["weight_decay"] = float(params.get("train_weight_decay", ""))
+    if str(params.get("train_intensity_augmentation", "false")).lower() in ("true", "1"):
+        intensity = {"enabled": True}
+        for key in intensity_augmentation.DEFAULTS:
+            value = params.get("train_intensity_" + key, "")
+            if value != "":
+                intensity[key] = float(value)
+        config["intensity_augmentation"] = intensity
+    with open(config_file, "w") as f:
+        json.dump(config, f, indent=2)
+
+
 def train(project, config_file):
     net_utils.set_seed(42)
     sw.utils.initialize_project_mesh_warper(project)
+    apply_project_settings(project, config_file)
 
     # Validate config file before training
     parameters = config_validation.validate_config(config_file)
@@ -114,6 +144,25 @@ Network training method
 '''
 
 
+def get_loss_function(parameters, name):
+    """ Loss by name; Focal uses optional focal_a/focal_c (c in the particle units, mm) from the loss config """
+    loss = getattr(losses, name)
+    if name == "Focal":
+        a = parameters["loss"].get("focal_a", 1.32)
+        c = parameters["loss"].get("focal_c", 10)
+        print(f"Focal loss: a={a}, c={c}")
+        return lambda predicted, ground_truth: loss(predicted, ground_truth, a=a, c=c)
+    return loss
+
+
+def make_optimizer(parameters, train_params, learning_rate):
+    """ Adam, or AdamW when the trainer config sets weight_decay """
+    weight_decay = parameters['trainer'].get('weight_decay', 0)
+    if weight_decay:
+        return torch.optim.AdamW(train_params, learning_rate, weight_decay=weight_decay)
+    return torch.optim.Adam(train_params, learning_rate)
+
+
 def supervised_train(config_file):
     with open(config_file) as json_file:
         parameters = json.load(json_file)
@@ -126,7 +175,7 @@ def supervised_train(config_file):
     eval_freq = parameters['trainer']['val_freq']
     decay_lr = parameters['trainer']['decay_lr']['enabled']
     fine_tune = parameters['fine_tune']['enabled']
-    loss_func = method_to_call = getattr(losses, parameters["loss"]["function"])
+    loss_func = get_loss_function(parameters, parameters["loss"]["function"])
     # load the loaders
     train_loader_path = loader_dir + C.TRAIN_LOADER
     validation_loader_path = loader_dir + C.VALIDATION_LOADER
@@ -154,6 +203,11 @@ def supervised_train(config_file):
         temp = np.loadtxt(aug_dir + '/PCA_Particle_Info/pcamode' + str(i) + '.particles')
         orig_pc[i, :] = temp.flatten()
 
+    intensity_augmenter = None
+    if intensity_augmentation.is_enabled(parameters):
+        intensity_augmenter = intensity_augmentation.IntensityAugmenter(parameters)
+        print(f"Intensity augmentation enabled: {parameters['intensity_augmentation']}")
+
     bias = torch.from_numpy(orig_mean.flatten()).to(device)  # load the mean here
     weight = torch.from_numpy(orig_pc.T).to(device)  # load the PCA vectors here
     net.decoder.fc_fine.bias.data.copy_(bias)
@@ -165,7 +219,7 @@ def supervised_train(config_file):
         param.requires_grad = False
 
     train_params = net.parameters()
-    opt = torch.optim.Adam(train_params, learning_rate)
+    opt = make_optimizer(parameters, train_params, learning_rate)
     opt.zero_grad()
     if decay_lr:
         scheduler = set_scheduler(opt, parameters['trainer']['decay_lr'])
@@ -214,6 +268,8 @@ def supervised_train(config_file):
             img = img.to(device)
             pca = pca.to(device)
             mdl = mdl.to(device)
+            if intensity_augmenter:
+                img = intensity_augmenter(img)
             [pred_pca, pred_mdl] = net(img)
             loss = loss_func(pred_mdl, mdl)
             loss.backward()
@@ -300,12 +356,15 @@ def supervised_train(config_file):
         ft_epochs = parameters['fine_tune']['epochs']
         learning_rate = parameters['fine_tune']['learning_rate']
         eval_freq = parameters['fine_tune']['val_freq']
-        loss_func = method_to_call = getattr(losses, parameters['fine_tune']["loss"])
+        loss_func = get_loss_function(parameters, parameters['fine_tune']["loss"])
 
         # Initialize optimizer
         train_params = net.parameters()
-        opt = torch.optim.Adam(train_params, learning_rate)
+        opt = make_optimizer(parameters, train_params, learning_rate)
         opt.zero_grad()
+        ft_scheduler = None
+        if parameters['fine_tune'].get('decay_lr', False):
+            ft_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=ft_epochs, eta_min=0)
 
         # Initialize fine-tuning training plot
         train_plot = plt.figure()
@@ -349,6 +408,8 @@ def supervised_train(config_file):
                 img = img.to(device)
                 pca = pca.to(device)
                 mdl = mdl.to(device)
+                if intensity_augmenter:
+                    img = intensity_augmenter(img)
                 [pred_pca, pred_mdl] = net(img)
                 loss = loss_func(pred_mdl, mdl)
                 loss.backward()
@@ -393,7 +454,7 @@ def supervised_train(config_file):
                 train_rel_err = np.mean(train_rel_losses)
                 val_rel_err = np.mean(val_rel_losses)
                 log_print(logger,
-                          ["Fine_Tuning", e, learning_rate, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
+                          ["Fine_Tuning", e, opt.param_groups[0]['lr'], train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err,
                            time.time() - t0])
                 # plot
                 epochs.append(e)
@@ -406,6 +467,8 @@ def supervised_train(config_file):
                 train_plot.savefig(model_dir + C.TRAINING_PLOT_FT_FILE)
 
                 t0 = time.time()
+            if ft_scheduler:
+                ft_scheduler.step()
 
         logger.close()
         torch.save(net.state_dict(), os.path.join(model_dir, C.FINAL_MODEL_FT_FILE))

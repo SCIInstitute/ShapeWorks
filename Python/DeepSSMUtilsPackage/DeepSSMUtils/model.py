@@ -9,7 +9,7 @@ from DeepSSMUtils import loaders
 
 
 class ConvolutionalBackbone(nn.Module):
-	def __init__(self, img_dims):
+	def __init__(self, img_dims, pool_size=None, dropout=0.0):
 		super(ConvolutionalBackbone, self).__init__()
 		self.img_dims = img_dims
 		# basically using the number of dims and the number of poolings to be used 
@@ -24,6 +24,13 @@ class ConvolutionalBackbone(nn.Module):
 
 		if (self.out_fc_dim[0] < 1) or (self.out_fc_dim[1] < 1) or (self.out_fc_dim[2] < 1):
 			raise Exception("Image dimensions are too small for the network.  Try reducing the image spacing.  ")
+		# optional average pooling of the conv features to a small grid, which shrinks the first fully connected
+		# layer, and optional dropout before the fully connected layers (neither adds parameters)
+		pool = []
+		if pool_size is not None:
+			pool = [('avgpool', nn.AdaptiveAvgPool3d(tuple(int(v) for v in pool_size)))]
+			self.out_fc_dim = np.array(pool_size, dtype=int)
+		drop = lambda name: [(name, nn.Dropout(dropout))] if dropout > 0 else []
 
 		self.features = nn.Sequential(OrderedDict([
 			('conv1', nn.Conv3d(1, 12, 5)),
@@ -46,11 +53,12 @@ class ConvolutionalBackbone(nn.Module):
 			('bn5', nn.BatchNorm3d(192)),
 			('relu5', nn.PReLU()),
 			('mp3', nn.MaxPool3d(2)),
-
+		] + pool + [
 			('flatten', net_utils.Flatten()),
-			
+		] + drop('drop1') + [
 			('fc1', nn.Linear(self.out_fc_dim[0]*self.out_fc_dim[1]*self.out_fc_dim[2]*192, 384)),
 			('relu6', nn.PReLU()),
+		] + drop('drop2') + [
 			('fc2', nn.Linear(384,96)),
 			('relu7', nn.PReLU()),
 		]))
@@ -59,13 +67,13 @@ class ConvolutionalBackbone(nn.Module):
 		return x_features
 
 class DeterministicEncoder(nn.Module):
-	def __init__(self, num_latent, img_dims, loader_dir):
+	def __init__(self, num_latent, img_dims, loader_dir, pool_size=None, dropout=0.0):
 		super(DeterministicEncoder, self).__init__()
 		self.device = net_utils.get_device()
 		self.num_latent = num_latent
 		self.img_dims = img_dims
 		self.loader_dir = loader_dir
-		self.ConvolutionalBackbone = ConvolutionalBackbone(self.img_dims)
+		self.ConvolutionalBackbone = ConvolutionalBackbone(self.img_dims, pool_size, dropout)
 		self.pca_pred = nn.Sequential(OrderedDict([
 			('linear', nn.Linear(96, self.num_latent))
 		]))
@@ -103,7 +111,9 @@ class DeepSSMNet(nn.Module):
 		self.img_dims = loader_info['img_dims']
 		# encoder
 		if parameters['encoder']['deterministic']:
-			self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir )
+			self.encoder = DeterministicEncoder(self.num_latent, self.img_dims, self.loader_dir,
+												parameters['encoder'].get('pool_size'),
+												parameters['encoder'].get('dropout', 0.0))
 		if not self.encoder:
 			print("Error: Encoder not implemented.")
 		# decoder
