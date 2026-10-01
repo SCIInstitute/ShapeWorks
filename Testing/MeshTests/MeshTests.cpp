@@ -410,6 +410,31 @@ TEST(MeshTests, fillHolesTest) {
   ASSERT_TRUE(femur == ground_truth);
 }
 
+TEST(MeshTests, cleanDuplicateFacesTest) {
+  // closed tetrahedron
+  Eigen::MatrixXd points(5, 3);
+  points << 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.5, 0.2;
+  Eigen::MatrixXi tet(4, 3);
+  tet << 0, 2, 1, 0, 1, 3, 1, 2, 3, 0, 3, 2;
+
+  // a doubled fin triangle hanging off edge (0,1) is removed entirely, along with its tip point
+  Eigen::MatrixXi fin(6, 3);
+  fin << tet, Eigen::RowVector3i(0, 1, 4), Eigen::RowVector3i(1, 4, 0);
+  Mesh fin_mesh(points, fin);
+  fin_mesh.clean();
+  ASSERT_EQ(fin_mesh.numFaces(), 4);
+  ASSERT_EQ(fin_mesh.numPoints(), 4);
+  ASSERT_FALSE(fin_mesh.detectNonManifold());
+
+  // a duplicate of a real surface face keeps one copy rather than opening a hole
+  Eigen::MatrixXi dup(5, 3);
+  dup << tet, Eigen::RowVector3i(1, 0, 2);
+  Mesh dup_mesh(points.topRows(4), dup);
+  dup_mesh.clean();
+  ASSERT_EQ(dup_mesh.numFaces(), 4);
+  ASSERT_EQ(dup_mesh.numPoints(), 4);
+}
+
 TEST(MeshTests, probeVolumeTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.probeVolume(Image(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd"));

@@ -104,7 +104,7 @@ class Mesh {
   /// finds holes in a mesh and closes them
   Mesh& fillHoles(double hole_size = 1000.0);
 
-  /// clean mesh
+  /// clean mesh: merges duplicate points, removes unused points, and removes duplicated faces
   Mesh& clean();
 
   /// samples image data values at point locations specified by image
