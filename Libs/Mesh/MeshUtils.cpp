@@ -192,23 +192,26 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
     random_subset_size = 30;
   }
   bool use_random_subset = random_subset_size > 0 && random_subset_size < meshes.size();
-  int num_meshes = use_random_subset ? random_subset_size : meshes.size();
 
-  std::vector<int> subset;
+  // indices of the meshes that are compared, only these are candidates for the reference
+  std::vector<int> candidates;
   if (use_random_subset) {
-    subset = get_random_subset(random_subset_size, meshes.size());
+    candidates = get_random_subset(random_subset_size, meshes.size());
+  } else {
+    candidates.resize(meshes.size());
+    std::iota(candidates.begin(), candidates.end(), 0);
+  }
+
+  if (candidates.empty()) {
+    return 0;
   }
 
   std::vector<std::pair<int, int> > pairs;
 
-  // enumerate all pairs of meshes
-  for (size_t i = 0; i < num_meshes; i++) {
-    for (size_t j = i + 1; j < num_meshes; j++) {
-      if (use_random_subset) {
-        pairs.push_back(std::make_pair(subset[i], subset[j]));
-      } else {
-        pairs.push_back(std::make_pair(i, j));
-      }
+  // enumerate all pairs of candidate meshes
+  for (size_t i = 0; i < candidates.size(); i++) {
+    for (size_t j = i + 1; j < candidates.size(); j++) {
+      pairs.push_back(std::make_pair(candidates[i], candidates[j]));
     }
   }
 
@@ -246,7 +249,7 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
 
   std::vector<double> means(meshes.size(), 0);
 
-  double count = meshes.size() - 1;
+  double count = candidates.size() - 1;
   for (size_t i = 0; i < pairs.size(); i++) {
     auto pair = pairs[i];
     double result = results[i];
@@ -254,9 +257,11 @@ int MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes, int random_subset_si
     means[pair.second] += result / count;
   }
 
-  auto smallest = std::min_element(means.begin(), means.end());
+  // only the candidates have a mean, the rest were never compared
+  auto smallest = std::min_element(candidates.begin(), candidates.end(),
+                                   [&](int a, int b) { return means[a] < means[b]; });
 
-  return std::distance(means.begin(), smallest);
+  return *smallest;
 }
 
 /*
