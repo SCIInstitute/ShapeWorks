@@ -24,6 +24,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include <itkImportImageFilter.h>
+#include <itkMultiThreaderBase.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 
@@ -72,6 +73,15 @@ PYBIND11_MODULE(shapeworks_py, m) {
         "show_progress"_a = true, "xml_status"_a = false);
 
   m.def("set_progress_callback", &ShapeWorksUtils::set_progress_callback, "sets up a progress callback", "callback"_a);
+
+  m.def(
+      "set_num_threads",
+      [](int num_threads) {
+        itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(num_threads);
+        Eigen::setNbThreads(num_threads);
+      },
+      "sets the number of threads ITK filters and Eigen use, e.g. to avoid oversubscription in multiprocessing workers",
+      "num_threads"_a);
 
   // Axis
   py::enum_<Axis>(m, "Axis")

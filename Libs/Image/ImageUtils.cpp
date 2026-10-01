@@ -1,6 +1,8 @@
 #include "ImageUtils.h"
 
+#include <Eigen/Dense>
 #include <itkPointSet.h>
+#include <pthread.h>
 
 // ITK image factories
 #include <itkMetaImageIOFactory.h>
@@ -144,6 +146,62 @@ ImageType::Pointer ImageUtils::make_axis_aligned(ImageType::Pointer input) {
 
   resampler->Update();
   return resampler->GetOutput();
+}
+
+//------------------------------------------------------------------------------
+// libgomp can't start threads in a forked child once the parent has used OpenMP, so Eigen's parallel products hang
+// there (e.g. the DataAugmentation multiprocessing pool). Keep Eigen single threaded in forked children.
+[[maybe_unused]] static const int eigen_fork_handler =
+    pthread_atfork(nullptr, nullptr, [] { Eigen::setNbThreads(1); });
+
+//------------------------------------------------------------------------------
+void EigenThinPlateSplineKernelTransform::ComputeWMatrix() {
+  const Eigen::Index num_landmarks = m_SourceLandmarks->GetNumberOfPoints();
+  const Eigen::Index n = num_landmarks + 4;
+
+  ComputeD();
+
+  std::vector<InputPointType> points;
+  points.reserve(num_landmarks);
+  for (auto it = m_SourceLandmarks->GetPoints()->Begin(); it != m_SourceLandmarks->GetPoints()->End(); ++it) {
+    points.push_back(it.Value());
+  }
+
+  // L = [K P; P^T 0] with K(i,j) = |p_i - p_j| and P rows [p_i 1]. Y holds one column of displacements per axis.
+  Eigen::MatrixXd l_matrix = Eigen::MatrixXd::Zero(n, n);
+  Eigen::MatrixXd y_matrix = Eigen::MatrixXd::Zero(n, 3);
+  auto displacement = m_Displacements->Begin();
+  for (Eigen::Index i = 0; i < num_landmarks; ++i, ++displacement) {
+    l_matrix(i, i) = m_Stiffness;
+    for (Eigen::Index j = i + 1; j < num_landmarks; ++j) {
+      l_matrix(i, j) = l_matrix(j, i) = (points[i] - points[j]).GetNorm();
+    }
+    for (int d = 0; d < 3; ++d) {
+      l_matrix(i, num_landmarks + d) = l_matrix(num_landmarks + d, i) = points[i][d];
+      y_matrix(i, d) = displacement.Value()[d];
+    }
+    l_matrix(i, num_landmarks + 3) = l_matrix(num_landmarks + 3, i) = 1.0;
+  }
+
+  Eigen::MatrixXd weights = l_matrix.partialPivLu().solve(y_matrix);
+
+  // LU needs L to be invertible, which duplicate or coplanar landmarks break. Fall back to the minimum norm solution,
+  // matching the SVD pseudo-inverse that KernelTransform::ComputeWMatrix uses.
+  if (!weights.allFinite() || (l_matrix * weights - y_matrix).norm() > 1e-6 * y_matrix.norm()) {
+    weights = l_matrix.completeOrthogonalDecomposition().solve(y_matrix);
+  }
+
+  // Same layout as KernelTransform::ReorganizeW
+  m_DMatrix.set_size(3, num_landmarks);
+  for (int d = 0; d < 3; ++d) {
+    for (Eigen::Index i = 0; i < num_landmarks; ++i) {
+      m_DMatrix(d, i) = weights(i, d);
+    }
+    for (int j = 0; j < 3; ++j) {
+      m_AMatrix(d, j) = weights(num_landmarks + j, d);
+    }
+    m_BVector(d) = weights(num_landmarks + 3, d);
+  }
 }
 
 //------------------------------------------------------------------------------

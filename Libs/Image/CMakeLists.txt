@@ -22,6 +22,7 @@ target_include_directories(Image PUBLIC
 target_link_libraries(Image
   Common
   Mesh
+  Eigen3::Eigen
   ${ITK_LIBRARIES}
   )
 

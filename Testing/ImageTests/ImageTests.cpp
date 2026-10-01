@@ -576,6 +576,52 @@ TEST(ImageTests, warpTest2) {
   ASSERT_TRUE(image.compare(ground_truth, true, 0.0, 1e-5));
 }
 
+// Check that EigenThinPlateSplineKernelTransform matches ITK's SVD based solve
+static void expectSameWarp(ImageUtils::TPSTransform* eigen_tps, double tolerance) {
+  auto itk_tps = itk::ThinPlateSplineKernelTransform<double, 3>::New();
+  itk_tps->SetSourceLandmarks(eigen_tps->GetSourceLandmarks());
+  itk_tps->SetTargetLandmarks(eigen_tps->GetTargetLandmarks());
+  itk_tps->ComputeWMatrix();
+
+  // compare at the landmarks and midway between consecutive landmarks
+  auto points = eigen_tps->GetSourceLandmarks()->GetPoints();
+  for (unsigned i = 0; i < points->Size(); i++) {
+    auto p = points->ElementAt(i);
+    auto q = points->ElementAt((i + 1) % points->Size());
+    for (auto point : {p, p + (q - p) * 0.5}) {
+      auto expected = itk_tps->TransformPoint(point);
+      auto actual = eigen_tps->TransformPoint(point);
+      ASSERT_LT(expected.EuclideanDistanceTo(actual), tolerance) << "landmark " << i;
+    }
+  }
+}
+
+TEST(ImageTests, warpEigenMatchesITKTest) {
+  std::string src_filename(std::string(TEST_DATA_DIR) + "/source.particles");
+  std::string dst_filename(std::string(TEST_DATA_DIR) + "/target.particles");
+
+  auto transform = ImageUtils::createWarpTransform(src_filename, dst_filename, 3);
+  expectSameWarp(transform.GetPointer(), 1e-6);
+}
+
+TEST(ImageTests, warpEigenDuplicateLandmarksTest) {
+  // duplicate landmarks make the system singular, which the Eigen solve must handle like ITK's pseudo-inverse
+  std::string src_filename(std::string(TEST_DATA_DIR) + "/source.particles");
+  std::string dst_filename(std::string(TEST_DATA_DIR) + "/target.particles");
+  auto transform = ImageUtils::createWarpTransform(src_filename, dst_filename, 8);
+
+  auto source = transform->GetSourceLandmarks();
+  auto target = transform->GetTargetLandmarks();
+  auto num_points = source->GetNumberOfPoints();
+  for (unsigned i = 0; i < num_points; i += 5) {
+    source->SetPoint(num_points + i, source->GetPoint(i));
+    target->SetPoint(num_points + i, target->GetPoint(i));
+  }
+  transform->ComputeWMatrix();
+
+  expectSameWarp(transform.GetPointer(), 1e-4);
+}
+
 TEST(ImageTests, warpTest3) {
   std::string src_filename(std::string(TEST_DATA_DIR) + "/bogus_src.pts");
   std::string dst_filename(std::string(TEST_DATA_DIR) + "/bogus_dst.pts");
