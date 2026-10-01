@@ -1,6 +1,7 @@
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
+#include <vtkSphereSource.h>
 #include <vtksys/SystemTools.hxx>
 
 #include <chrono>
@@ -1022,6 +1023,28 @@ TEST(MeshTests, findReferenceMeshTest) {
   meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03.vtk"));
   int ref = MeshUtils::findReferenceMesh(meshes);
   ASSERT_EQ(ref, 2);
+}
+
+TEST(MeshTests, findReferenceMeshSubsetTest) {
+  // more meshes than the default subset size, with outliers at the lowest indices
+  const int num_meshes = 100;
+  const int num_outliers = 10;
+  std::vector<Mesh> meshes;
+  for (int i = 0; i < num_meshes; i++) {
+    auto sphere = vtkSmartPointer<vtkSphereSource>::New();
+    sphere->SetRadius(i < num_outliers ? 100.0 + 10.0 * i : 10.0);
+    sphere->SetThetaResolution(16);
+    sphere->SetPhiResolution(16);
+    sphere->Update();
+    meshes.push_back(Mesh(sphere->GetOutput()));
+  }
+
+  // the reference must come from the compared subset, never an outlier
+  int ref = MeshUtils::findReferenceMesh(meshes);
+  ASSERT_GE(ref, num_outliers);
+
+  ref = MeshUtils::findReferenceMesh(meshes, 20);
+  ASSERT_GE(ref, num_outliers);
 }
 
 TEST(MeshTests, addMesh) {
