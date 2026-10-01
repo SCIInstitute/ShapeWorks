@@ -2,7 +2,10 @@
 
 #include <Eigen/Dense>
 #include <itkPointSet.h>
+
+#ifndef _WIN32
 #include <pthread.h>
+#endif
 
 // ITK image factories
 #include <itkMetaImageIOFactory.h>
@@ -150,9 +153,12 @@ ImageType::Pointer ImageUtils::make_axis_aligned(ImageType::Pointer input) {
 
 //------------------------------------------------------------------------------
 // libgomp can't start threads in a forked child once the parent has used OpenMP, so Eigen's parallel products hang
-// there (e.g. the DataAugmentation multiprocessing pool). Keep Eigen single threaded in forked children.
+// there (e.g. the DataAugmentation multiprocessing pool). Keep Eigen single threaded in forked children. Windows has
+// no fork (multiprocessing spawns fresh processes there), so this is POSIX only.
+#ifndef _WIN32
 [[maybe_unused]] static const int eigen_fork_handler =
     pthread_atfork(nullptr, nullptr, [] { Eigen::setNbThreads(1); });
+#endif
 
 //------------------------------------------------------------------------------
 void EigenThinPlateSplineKernelTransform::ComputeWMatrix() {
