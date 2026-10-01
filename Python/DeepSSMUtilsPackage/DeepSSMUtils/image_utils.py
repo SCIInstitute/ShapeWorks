@@ -2,7 +2,8 @@ import itk
 import SimpleITK
 import numpy as np
 
-def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid', max_iterations=1024):
+def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid', max_iterations=1024,
+                                     mask_file=None):
     # Prepare parameter map
     parameter_object = itk.ParameterObject.New()
     parameter_map = parameter_object.GetDefaultParameterMap('rigid')
@@ -11,15 +12,22 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
     elif transform_type == 'translation':
         parameter_map['Transform'] = ['TranslationTransform']
     parameter_map['MaximumNumberOfIterations'] = [str(max_iterations)]
+    if mask_file is not None:
+        # the default RandomCoordinate sampler can't find enough samples inside a small mask
+        parameter_map['ImageSampler'] = ['RandomSparseMask']
+        parameter_map['ErodeMask'] = ['false']
     parameter_object.AddParameterMap(parameter_map)
 
     # Load images
     fixed_image = itk.imread(fixed_image_file, itk.F)
     moving_image = itk.imread(moving_image_file, itk.F)
-    
+    mask_args = {}
+    if mask_file is not None:
+        mask_args['fixed_mask'] = itk.imread(mask_file, itk.UC)
+
     # Call registration method
     result_image, result_transform_parameters = itk.elastix_registration_method(
-        fixed_image, moving_image, parameter_object=parameter_object)
+        fixed_image, moving_image, parameter_object=parameter_object, **mask_args)
     
     # Get transform matrix
     parameter_map = result_transform_parameters.GetParameterMap(0)
