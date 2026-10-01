@@ -500,7 +500,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
       // reload groom parameters because iso spacing depends on the images loaded
       groom_tool_->load_params();
     }
-  } catch (std::runtime_error& e) {
+  } catch (std::exception& e) {
     handle_error(e.what());
   }
 

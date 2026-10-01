@@ -995,6 +995,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("fillHoles", &Mesh::fillHoles, "finds holes in a mesh and closes them", "hole_size"_a = 1000)
 
+      .def("clean", &Mesh::clean, "merges duplicate points, removes unused points, and removes duplicated faces")
+
       .def("probeVolume", &Mesh::probeVolume, "samples image data values at point locations specified by image",
            "image"_a)
 

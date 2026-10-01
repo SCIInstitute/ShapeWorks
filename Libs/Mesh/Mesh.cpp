@@ -5,7 +5,9 @@
 #include <tbb/parallel_for.h>
 
 #include <algorithm>
+#include <numeric>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // libigl
@@ -20,6 +22,7 @@
 #include <vtkAlgorithm.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
+#include <vtkCellArrayIterator.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
 #include <vtkClipClosedSurface.h>
@@ -29,6 +32,7 @@
 #include <vtkFeatureEdges.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkGenericCell.h>
+#include <vtkGeometryFilter.h>
 #include <vtkGradientFilter.h>
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
@@ -57,6 +61,7 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkStaticCellLocator.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkUnstructuredGridReader.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -113,6 +118,78 @@ vtkSmartPointer<vtkPolyData> update_and_check(vtkAlgorithm* reader, const std::s
   }
   return vtkPolyData::SafeDownCast(reader->GetOutputDataObject(0));
 }
+
+//! Remove polygons that appear more than once (same point ids, in any order or winding). Duplicated
+//! faces typically form zero-thickness fins hanging off the surface, which create non-manifold edges
+//! and corrupt normals. All copies are removed unless that would open a hole in the surface, in which
+//! case one copy is kept. Returns the number of faces removed.
+vtkIdType remove_duplicate_faces(vtkPolyData* poly_data) {
+  auto polys = poly_data->GetPolys();
+  const vtkIdType num_polys = polys->GetNumberOfCells();
+  if (num_polys == 0) {
+    return 0;
+  }
+
+  auto edge_key = [](vtkIdType a, vtkIdType b) {
+    return (static_cast<uint64_t>(std::min(a, b)) << 32) | static_cast<uint64_t>(std::max(a, b));
+  };
+
+  std::vector<std::vector<vtkIdType>> faces(num_polys);
+  std::unordered_map<uint64_t, int> edge_count;
+  auto iter = vtk::TakeSmartPointer(polys->NewIterator());
+  vtkIdType index = 0;
+  for (iter->GoToFirstCell(); !iter->IsDoneWithTraversal(); iter->GoToNextCell(), index++) {
+    vtkIdType num_points;
+    const vtkIdType* points;
+    iter->GetCurrentCell(num_points, points);
+    faces[index].assign(points, points + num_points);
+    for (vtkIdType i = 0; i < num_points; i++) {
+      edge_count[edge_key(points[i], points[(i + 1) % num_points])]++;
+    }
+    std::sort(faces[index].begin(), faces[index].end());
+  }
+
+  std::vector<vtkIdType> order(num_polys);
+  std::iota(order.begin(), order.end(), 0);
+  std::sort(order.begin(), order.end(), [&](vtkIdType a, vtkIdType b) { return faces[a] < faces[b]; });
+
+  // polys follow verts and lines in the cell id ordering
+  const vtkIdType poly_offset = poly_data->GetNumberOfVerts() + poly_data->GetNumberOfLines();
+  std::vector<vtkIdType> to_delete;
+  for (vtkIdType start = 0; start < num_polys;) {
+    vtkIdType end = start + 1;
+    while (end < num_polys && faces[order[end]] == faces[order[start]]) {
+      end++;
+    }
+    const int copies = end - start;
+    if (copies > 1) {
+      // if removing every copy would leave an edge with a single face, this duplicates a real surface face
+      const auto& face = faces[order[start]];
+      bool opens_hole = false;
+      for (size_t i = 0; i < face.size(); i++) {
+        for (size_t j = i + 1; j < face.size(); j++) {
+          auto it = edge_count.find(edge_key(face[i], face[j]));
+          if (it != edge_count.end() && it->second - copies == 1) {
+            opens_hole = true;
+          }
+        }
+      }
+      for (vtkIdType k = opens_hole ? start + 1 : start; k < end; k++) {
+        to_delete.push_back(poly_offset + order[k]);
+      }
+    }
+    start = end;
+  }
+
+  if (!to_delete.empty()) {
+    poly_data->BuildCells();
+    for (auto id : to_delete) {
+      poly_data->DeleteCell(id);
+    }
+    poly_data->RemoveDeletedCells();
+  }
+  return to_delete.size();
+}
 }  // namespace
 
 vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
@@ -125,6 +202,17 @@ vtkSmartPointer<vtkPolyData> MeshReader::read(const std::string& pathname) {
 
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {
+      // legacy VTK files may store a surface as an unstructured grid; extract its surface as polydata
+      auto ug_reader = vtkSmartPointer<vtkUnstructuredGridReader>::New();
+      ug_reader->SetFileName(pathname.c_str());
+      if (ug_reader->IsFileUnstructuredGrid()) {
+        ug_reader->SetReadAllScalars(1);
+        update_and_check(ug_reader, pathname);
+        auto geometry = vtkSmartPointer<vtkGeometryFilter>::New();
+        geometry->SetInputConnection(ug_reader->GetOutputPort());
+        return update_and_check(geometry, pathname);
+      }
+
       auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(pathname.c_str());
       reader->SetReadAllScalars(1);
@@ -499,14 +587,22 @@ Mesh& Mesh::fillHoles(double hole_size) {
 
 Mesh& Mesh::clean() {
   TIME_SCOPE("Mesh::clean");
-  auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
-  clean->ConvertPolysToLinesOff();
-  clean->ConvertLinesToPointsOff();
-  clean->ConvertStripsToPolysOff();
-  clean->PointMergingOn();
-  clean->SetInputData(poly_data_);
-  clean->Update();
-  poly_data_ = clean->GetOutput();
+  auto run_clean = [](vtkPolyData* input) {
+    auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
+    clean->ConvertPolysToLinesOff();
+    clean->ConvertLinesToPointsOff();
+    clean->ConvertStripsToPolysOff();
+    clean->PointMergingOn();
+    clean->SetInputData(input);
+    clean->Update();
+    return vtkSmartPointer<vtkPolyData>(clean->GetOutput());
+  };
+
+  poly_data_ = run_clean(poly_data_);
+  if (remove_duplicate_faces(poly_data_) > 0) {
+    // drop points left unused by the removed faces
+    poly_data_ = run_clean(poly_data_);
+  }
   invalidateLocators();
   return *this;
 }
