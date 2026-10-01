@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QThread>
+#include <QTimer>
 
 // shapeworks
 #include <Libs/Application/Job/PythonWorker.h>
@@ -33,6 +34,45 @@
 
 namespace shapeworks {
 
+namespace {
+//---------------------------------------------------------------------------
+void update_focal_visibility(Ui_DeepSSMTool* ui) {
+  bool focal = ui->loss_function->currentText() == "Focal";
+  ui->focal_threshold_label->setVisible(focal);
+  ui->focal_threshold->setVisible(focal);
+}
+
+//---------------------------------------------------------------------------
+void update_intensity_visibility(Ui_DeepSSMTool* ui) {
+  bool enabled = ui->intensity_augmentation->isChecked();
+  for (QWidget* widget : {static_cast<QWidget*>(ui->intensity_scale_label), static_cast<QWidget*>(ui->intensity_scale),
+                          static_cast<QWidget*>(ui->intensity_shift_label), static_cast<QWidget*>(ui->intensity_shift),
+                          static_cast<QWidget*>(ui->intensity_noise_label), static_cast<QWidget*>(ui->intensity_noise),
+                          static_cast<QWidget*>(ui->intensity_gamma_label), static_cast<QWidget*>(ui->intensity_gamma),
+                          static_cast<QWidget*>(ui->intensity_blur_label), static_cast<QWidget*>(ui->intensity_blur)}) {
+    widget->setVisible(enabled);
+  }
+}
+
+//---------------------------------------------------------------------------
+// The grouped training settings have their own grid layouts, which size their label column to their own labels.
+// Widen those label columns so the fields line up with the main rows.
+void align_training_groups(Ui_DeepSSMTool* ui) {
+  QWidget* tab = ui->training_tab;
+  if (!tab->isVisible()) {
+    return;
+  }
+  int main_x = ui->training_epochs->mapTo(tab, QPoint(0, 0)).x();
+  for (auto [layout, field] : {std::pair<QGridLayout*, QWidget*>{ui->regularization_layout, ui->compact_network_widget},
+                               std::pair<QGridLayout*, QWidget*>{ui->intensity_layout, ui->intensity_augmentation_widget}}) {
+    int offset = main_x - field->mapTo(tab, QPoint(0, 0)).x();
+    if (offset != 0) {
+      layout->setColumnMinimumWidth(0, std::max(0, layout->cellRect(0, 0).width() + offset));
+    }
+  }
+}
+}  // namespace
+
 //---------------------------------------------------------------------------
 DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_DeepSSMTool;
@@ -47,6 +87,24 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->training_fine_tuning_learning_rate->setToolTip("Learning rate for fine tuning");
   ui_->training_batch_size->setToolTip("Batch size for training and fine tuning");
   ui_->tl_net_enabled->setToolTip("Enable TL-DeepSSM network");
+  ui_->mask_registration->setToolTip(StudioUtils::wrap_tooltip(
+      "Register validation/test images using only the region near the reference shape, and match the "
+      "reference to the Procrustes space of the training images. Turn off for the previous registration."));
+  ui_->focal_threshold->setToolTip(
+      "Focal loss threshold (mm). Particle errors below it get less weight, errors above it more.");
+  ui_->compact_network->setToolTip(StudioUtils::wrap_tooltip(
+      "Average pool the convolutional features before the fully connected layers, which greatly reduces the "
+      "number of network parameters (less overfitting on small training sets)"));
+  ui_->dropout->setToolTip("Dropout probability before the fully connected layers (0 = off)");
+  ui_->weight_decay->setToolTip("Weight decay (AdamW) for training and fine tuning (0 = off)");
+  ui_->intensity_augmentation->setToolTip(StudioUtils::wrap_tooltip(
+      "Randomly vary the intensities of training images every epoch (contrast, brightness, noise, "
+      "optionally gamma and blur) so the network relies less on scanner-specific intensities"));
+  ui_->intensity_scale->setToolTip("Maximum relative contrast change, e.g. 0.1 = +/-10%");
+  ui_->intensity_shift->setToolTip("Maximum brightness shift, in units of the normalized image intensity");
+  ui_->intensity_noise->setToolTip("Maximum standard deviation of added Gaussian noise (normalized intensity)");
+  ui_->intensity_gamma->setToolTip("Maximum |log(gamma)| of a random gamma curve (0 = off)");
+  ui_->intensity_blur->setToolTip("Maximum Gaussian blur sigma in voxels (0 = off)");
   ui_->tl_ae_epochs->setToolTip("Number of epochs to train the autoencoder");
   ui_->tl_tf_epochs->setToolTip("Number of epochs to train the T-flank");
   ui_->tl_joint_epochs->setToolTip("Number of epochs to train the whole model");
@@ -104,6 +162,10 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->spacing_x->setValidator(double_validator);
   ui_->spacing_y->setValidator(double_validator);
   ui_->spacing_z->setValidator(double_validator);
+  for (auto edit : {ui_->focal_threshold, ui_->dropout, ui_->weight_decay, ui_->intensity_scale, ui_->intensity_shift,
+                    ui_->intensity_noise, ui_->intensity_gamma, ui_->intensity_blur}) {
+    edit->setValidator(double_validator);
+  }
 
   connect(ui_->training_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
   connect(ui_->validation_split, &QLineEdit::editingFinished, this, &DeepSSMTool::update_split);
@@ -112,6 +174,9 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->tl_net_enabled, &QCheckBox::stateChanged, this,
           [=]() { ui_->tl_net_options->setVisible(ui_->tl_net_enabled->isChecked()); });
+
+  connect(ui_->loss_function, &QComboBox::currentTextChanged, this, [=]() { update_focal_visibility(ui_); });
+  connect(ui_->intensity_augmentation, &QCheckBox::stateChanged, this, [=]() { update_intensity_visibility(ui_); });
 
   ui_->tab_widget->setCurrentIndex(0);
   tab_changed(0);
@@ -133,6 +198,7 @@ void DeepSSMTool::tab_changed(int tab) {
       break;
     case 2:
       current_tool_ = DeepSSMJob::JobType::DeepSSM_TrainingType;
+      QTimer::singleShot(0, this, [=]() { align_training_groups(ui_); });
       break;
     case 3:
       current_tool_ = DeepSSMJob::JobType::DeepSSM_TestingType;
@@ -194,6 +260,23 @@ void DeepSSMTool::load_params() {
   ui_->tl_lat_c->setText(QString::number(params.get_tl_net_c_lat()));
 
   ui_->loss_function->setCurrentText(QString::fromStdString(params.get_loss_function()));
+  ui_->focal_threshold->setText(QString::number(params.get_focal_threshold()));
+  update_focal_visibility(ui_);
+
+  ui_->mask_registration->setChecked(params.get_mask_registration());
+
+  ui_->compact_network->setChecked(params.get_compact_network());
+  ui_->dropout->setText(QString::number(params.get_dropout()));
+  ui_->weight_decay->setText(QString::number(params.get_weight_decay()));
+
+  ui_->intensity_augmentation->setChecked(params.get_intensity_augmentation());
+  update_intensity_visibility(ui_);
+  ui_->intensity_scale->setText(QString::number(params.get_intensity_scale()));
+  ui_->intensity_shift->setText(QString::number(params.get_intensity_shift()));
+  ui_->intensity_noise->setText(QString::number(params.get_intensity_noise()));
+  ui_->intensity_gamma->setText(QString::number(params.get_intensity_gamma()));
+  ui_->intensity_blur->setText(QString::number(params.get_intensity_blur()));
+
   update_split();
   update_panels();
   update_meshes();
@@ -233,6 +316,20 @@ void DeepSSMTool::store_params() {
   params.set_tl_net_c_lat(ui_->tl_lat_c->text().toDouble());
 
   params.set_loss_function(ui_->loss_function->currentText().toStdString());
+  params.set_focal_threshold(ui_->focal_threshold->text().toDouble());
+
+  params.set_mask_registration(ui_->mask_registration->isChecked());
+
+  params.set_compact_network(ui_->compact_network->isChecked());
+  params.set_dropout(ui_->dropout->text().toDouble());
+  params.set_weight_decay(ui_->weight_decay->text().toDouble());
+
+  params.set_intensity_augmentation(ui_->intensity_augmentation->isChecked());
+  params.set_intensity_scale(ui_->intensity_scale->text().toDouble());
+  params.set_intensity_shift(ui_->intensity_shift->text().toDouble());
+  params.set_intensity_noise(ui_->intensity_noise->text().toDouble());
+  params.set_intensity_gamma(ui_->intensity_gamma->text().toDouble());
+  params.set_intensity_blur(ui_->intensity_blur->text().toDouble());
 
   params.save_to_project();
 }

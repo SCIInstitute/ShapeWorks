@@ -104,8 +104,10 @@ def apply_project_settings(project, config_file):
         value = params.get("train_" + key, "")
         if value != "":
             config["loss"][key] = float(value)
-    pool_size = params.get("train_encoder_pool_size", "")
-    if pool_size != "":
+    pool_size = params.get("train_encoder_pool_size", "").strip()
+    if pool_size == "auto":
+        config["encoder"]["pool_size"] = "auto"
+    elif pool_size != "":
         config["encoder"]["pool_size"] = [int(v) for v in pool_size.split()]
     if params.get("train_encoder_dropout", "") != "":
         config["encoder"]["dropout"] = float(params.get("train_encoder_dropout", ""))
@@ -145,11 +147,13 @@ Network training method
 
 
 def get_loss_function(parameters, name):
-    """ Loss by name; Focal uses optional focal_a/focal_c (c in the particle units, mm) from the loss config """
+    """ Loss by name; Focal uses optional focal_a/focal_c (c in the particle units, mm) from the loss config.
+    The default threshold c is 3 mm: at the loss function's own default of 10, errors below ~6 mm get almost no
+    weight. """
     loss = getattr(losses, name)
     if name == "Focal":
         a = parameters["loss"].get("focal_a", 1.32)
-        c = parameters["loss"].get("focal_c", 10)
+        c = parameters["loss"].get("focal_c", 3.0)
         print(f"Focal loss: a={a}, c={c}")
         return lambda predicted, ground_truth: loss(predicted, ground_truth, a=a, c=c)
     return loss

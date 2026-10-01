@@ -446,7 +446,8 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="2">
+<item row="5" column="0"><widget class="QLabel" name="mask_registration_label"><property name="text"><string>Mask registration</string></property></widget></item><item row="5" column="1"><widget class="QWidget" name="mask_registration_widget" native="true"><layout class="QHBoxLayout" name="mask_registration_layout"><property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property><property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property><item><spacer name="mask_registration_spacer_left"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item><item><widget class="QCheckBox" name="mask_registration"><property name="text"><string/></property></widget></item><item><spacer name="mask_registration_spacer_right"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item></layout></widget></item>
+                <item row="6" column="0" colspan="2">
                  <widget class="QWidget" name="prep_widget" native="true">
                   <property name="minimumSize">
                    <size>
@@ -787,7 +788,7 @@ Preserved</string>
                 <property name="bottomMargin">
                  <number>6</number>
                 </property>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_13">
                   <property name="text">
                    <string>Batch size</string>
@@ -808,14 +809,14 @@ Preserved</string>
                   </item>
                  </widget>
                 </item>
-                <item row="7" column="1">
+                <item row="8" column="1">
                  <widget class="QLineEdit" name="training_fine_tuning_learning_rate">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="0">
+                <item row="9" column="0">
                  <widget class="QLabel" name="label_24">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -828,21 +829,21 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="0">
+                <item row="7" column="0">
                  <widget class="QLabel" name="label_16">
                   <property name="text">
                    <string>Fine tuning epochs</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLineEdit" name="training_learning_rate">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_8">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -855,7 +856,7 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <widget class="QWidget" name="decay_widget" native="true">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -912,28 +913,28 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QLineEdit" name="training_batch_size">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="1">
                  <widget class="QLineEdit" name="training_epochs">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="7" column="1">
                  <widget class="QLineEdit" name="training_fine_tuning_epochs">
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="1">
+                <item row="9" column="1">
                  <widget class="QWidget" name="decay_widget_3" native="true">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -990,14 +991,14 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_6">
                   <property name="text">
                    <string>Epochs</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
+                <item row="6" column="1">
                  <widget class="QWidget" name="decay_widget_2" native="true">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1061,21 +1062,21 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="0">
+                <item row="8" column="0">
                  <widget class="QLabel" name="label_17">
                   <property name="text">
                    <string>Fine tuning learning rate</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_7">
                   <property name="text">
                    <string>Learning rate</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_9">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1088,7 +1089,7 @@ Preserved</string>
                   </property>
                  </widget>
                 </item>
-                <item row="9" column="0" colspan="2">
+                <item row="10" column="0" colspan="2">
                  <widget class="QGroupBox" name="tl_net_options">
                   <property name="minimumSize">
                    <size>
@@ -1287,6 +1288,10 @@ Preserved</string>
                   </layout>
                  </widget>
                 </item>
+                <item row="1" column="0"><widget class="QLabel" name="focal_threshold_label"><property name="text"><string>Focal threshold (mm)</string></property></widget></item>
+                <item row="1" column="1"><widget class="QLineEdit" name="focal_threshold"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
+                <item row="11" column="0" colspan="2"><widget class="QGroupBox" name="regularization_options"><property name="title"><string>Regularization</string></property><layout class="QGridLayout" name="regularization_layout"><item row="0" column="0"><widget class="QLabel" name="compact_network_label"><property name="text"><string>Compact network</string></property></widget></item><item row="0" column="1"><widget class="QWidget" name="compact_network_widget" native="true"><layout class="QHBoxLayout" name="compact_network_layout"><property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property><property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property><item><spacer name="compact_network_spacer_left"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item><item><widget class="QCheckBox" name="compact_network"><property name="text"><string/></property></widget></item><item><spacer name="compact_network_spacer_right"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item></layout></widget></item><item row="1" column="0"><widget class="QLabel" name="dropout_label"><property name="text"><string>Dropout</string></property></widget></item><item row="1" column="1"><widget class="QLineEdit" name="dropout"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item row="2" column="0"><widget class="QLabel" name="weight_decay_label"><property name="text"><string>Weight decay</string></property></widget></item><item row="2" column="1"><widget class="QLineEdit" name="weight_decay"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
+                <item row="12" column="0" colspan="2"><widget class="QGroupBox" name="intensity_augmentation_options"><property name="title"><string>Intensity Augmentation</string></property><layout class="QGridLayout" name="intensity_layout"><item row="0" column="0"><widget class="QLabel" name="intensity_augmentation_label"><property name="text"><string>Enabled</string></property></widget></item><item row="0" column="1"><widget class="QWidget" name="intensity_augmentation_widget" native="true"><layout class="QHBoxLayout" name="intensity_augmentation_layout"><property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property><property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property><item><spacer name="intensity_augmentation_spacer_left"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item><item><widget class="QCheckBox" name="intensity_augmentation"><property name="text"><string/></property></widget></item><item><spacer name="intensity_augmentation_spacer_right"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item></layout></widget></item><item row="1" column="0"><widget class="QLabel" name="intensity_scale_label"><property name="text"><string>Contrast scale</string></property></widget></item><item row="1" column="1"><widget class="QLineEdit" name="intensity_scale"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item row="2" column="0"><widget class="QLabel" name="intensity_shift_label"><property name="text"><string>Brightness shift</string></property></widget></item><item row="2" column="1"><widget class="QLineEdit" name="intensity_shift"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item row="3" column="0"><widget class="QLabel" name="intensity_noise_label"><property name="text"><string>Noise</string></property></widget></item><item row="3" column="1"><widget class="QLineEdit" name="intensity_noise"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item row="4" column="0"><widget class="QLabel" name="intensity_gamma_label"><property name="text"><string>Gamma</string></property></widget></item><item row="4" column="1"><widget class="QLineEdit" name="intensity_gamma"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item><item row="5" column="0"><widget class="QLabel" name="intensity_blur_label"><property name="text"><string>Blur (voxels)</string></property></widget></item><item row="5" column="1"><widget class="QLineEdit" name="intensity_blur"><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item></layout></widget></item>
                </layout>
               </widget>
               <widget class="QWidget" name="testing_tab">

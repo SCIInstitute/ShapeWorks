@@ -107,6 +107,43 @@ class DeepSSMParameters {
   double get_tl_net_c_lat();
   void set_tl_net_c_lat(double c_lat);
 
+  // masked registration of validation/test images to the reference shape
+  bool get_mask_registration();
+  void set_mask_registration(bool value);
+
+  // focal loss threshold (mm)
+  double get_focal_threshold();
+  void set_focal_threshold(double value);
+
+  // regularization
+  bool get_compact_network();
+  void set_compact_network(bool value);
+
+  double get_dropout();
+  void set_dropout(double value);
+
+  double get_weight_decay();
+  void set_weight_decay(double value);
+
+  // live intensity augmentation of training images
+  bool get_intensity_augmentation();
+  void set_intensity_augmentation(bool value);
+
+  double get_intensity_scale();
+  void set_intensity_scale(double value);
+
+  double get_intensity_shift();
+  void set_intensity_shift(double value);
+
+  double get_intensity_noise();
+  void set_intensity_noise(double value);
+
+  double get_intensity_gamma();
+  void set_intensity_gamma(double value);
+
+  double get_intensity_blur();
+  void set_intensity_blur(double value);
+
   void restore_split_defaults();
   void restore_augmentation_defaults();
   void restore_training_defaults();

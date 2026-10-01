@@ -28,6 +28,8 @@ class ConvolutionalBackbone(nn.Module):
 		# layer, and optional dropout before the fully connected layers (neither adds parameters)
 		pool = []
 		if pool_size is not None:
+			if isinstance(pool_size, str) and pool_size == "auto":
+				pool_size = np.maximum(self.out_fc_dim // 4, 1)
 			pool = [('avgpool', nn.AdaptiveAvgPool3d(tuple(int(v) for v in pool_size)))]
 			self.out_fc_dim = np.array(pool_size, dtype=int)
 		drop = lambda name: [(name, nn.Dropout(dropout))] if dropout > 0 else []

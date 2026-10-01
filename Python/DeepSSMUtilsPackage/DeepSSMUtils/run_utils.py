@@ -362,15 +362,25 @@ def create_registration_mask(mesh, image_file, dilation, mask_file):
     os.remove(seg_file)
 
 
-def groom_val_test_images(project, indices, mask_registration=True):
+def use_mask_registration(project):
+    """ Project setting for masked val/test image registration (default on) """
+    value = project.get_parameters("deepssm").get("mask_registration", "true")
+    return str(value).lower() in ("true", "1")
+
+
+def groom_val_test_images(project, indices, mask_registration=None):
     """ Groom the validation and test images
 
     With mask_registration, the rigid and similarity stages only sample the image near the reference
     shape (so neighboring anatomy that moves independently doesn't pull the fit), and a final rigid
     stage registers against a reference in procrustes (world) space, matching the training images.
+    If not given, it comes from the project's mask_registration setting.
     """
     subjects = project.get_subjects()
     deepssm_dir = get_deepssm_dir(project)
+    if mask_registration is None:
+        mask_registration = use_mask_registration(project)
+    sw_message(f"Masked val/test image registration: {'on' if mask_registration else 'off'}")
 
     # Get reference image
     ref_image_file = deepssm_dir + 'reference_image.nrrd'
