@@ -14,6 +14,7 @@ import DeepSSMUtils
 import DeepSSMUtils.eval_utils as eval_utils
 
 import itk
+import SimpleITK
 # this is here to cause the ITK libraries to be loaded at a safe time when other threads won't be doing file I/O
 # See #2315
 temporary_parameter_object = itk.ParameterObject.New()
@@ -348,10 +349,38 @@ def transform_to_string(transform):
     return transform_string
 
 
-def groom_val_test_images(project, indices):
-    """ Groom the validation and test images """
+def create_registration_mask(mesh, image_file, dilation, mask_file):
+    """ Rasterize a mesh onto the grid of image_file and dilate it (in mm) to create a registration mask """
+    seg_file = mask_file.replace(".nrrd", "_seg.nrrd")
+    image = sw.Image(image_file)
+    mesh.toImage(image.physicalBoundingBox(), image.spacing()).write(seg_file)
+    grid = SimpleITK.ReadImage(image_file)
+    seg = SimpleITK.Cast(SimpleITK.ReadImage(seg_file) > 0.5, SimpleITK.sitkUInt8)
+    seg = SimpleITK.Resample(seg, grid, SimpleITK.Transform(), SimpleITK.sitkNearestNeighbor, 0, SimpleITK.sitkUInt8)
+    radius = [int(round(dilation / s)) for s in grid.GetSpacing()]
+    SimpleITK.WriteImage(SimpleITK.BinaryDilate(seg, radius), mask_file)
+    os.remove(seg_file)
+
+
+def use_mask_registration(project):
+    """ Project setting for masked val/test image registration (default on) """
+    value = project.get_parameters("deepssm").get("mask_registration", "true")
+    return str(value).lower() in ("true", "1")
+
+
+def groom_val_test_images(project, indices, mask_registration=None):
+    """ Groom the validation and test images
+
+    With mask_registration, the rigid and similarity stages only sample the image near the reference
+    shape (so neighboring anatomy that moves independently doesn't pull the fit), and a final rigid
+    stage registers against a reference in procrustes (world) space, matching the training images.
+    If not given, it comes from the project's mask_registration setting.
+    """
     subjects = project.get_subjects()
     deepssm_dir = get_deepssm_dir(project)
+    if mask_registration is None:
+        mask_registration = use_mask_registration(project)
+    sw_message(f"Masked val/test image registration: {'on' if mask_registration else 'off'}")
 
     # Get reference image
     ref_image_file = deepssm_dir + 'reference_image.nrrd'
@@ -375,6 +404,32 @@ def groom_val_test_images(project, indices):
     # Fully cropped ref image
     cropped_ref_image_file = deepssm_dir + 'cropped_reference_image.nrrd'
     cropped_ref_image = sw.Image(ref_image_file).fitRegion(bounding_box).write(cropped_ref_image_file)
+
+    medium_mask_file = None
+    cropped_mask_file = None
+    if mask_registration:
+        # Masks from the reference shape (reference_mesh.vtk is in reference image space)
+        ref_mesh = sw.Mesh(deepssm_dir + "reference_mesh.vtk")
+        medium_mask_file = deepssm_dir + 'medium_cropped_reference_mask.nrrd'
+        create_registration_mask(ref_mesh, medium_cropped_ref_image_file, 20, medium_mask_file)
+        cropped_mask_file = deepssm_dir + 'cropped_reference_mask.nrrd'
+        create_registration_mask(ref_mesh, cropped_ref_image_file, 20, cropped_mask_file)
+
+        # The reference image is only translated, but the training images and particles are in procrustes
+        # (world) space, so build a world space reference resampled the same way as the training images
+        ref_index = sw.utils.get_reference_index(project)
+        ref_alignment = convert_transform_to_numpy(subjects[ref_index].get_groomed_transforms()[0])
+        ref_procrustes = convert_transform_to_numpy(subjects[ref_index].get_procrustes_transforms()[0])
+        world_ref_image_file = deepssm_dir + 'world_cropped_reference_image.nrrd'
+        world_ref_image = sw.Image(sw.utils.get_image_filename(subjects[ref_index]))
+        world_ref_image.applyTransform(np.matmul(ref_procrustes, ref_alignment), ref_image.origin(),
+                                       ref_image.dims(), ref_image.spacing(), ref_image.coordsys(),
+                                       sw.InterpolationType.Linear, meshTransform=True)
+        world_ref_image.fitRegion(bounding_box).write(world_ref_image_file)
+        world_ref_mesh = sw.Mesh(deepssm_dir + "reference_mesh.vtk")
+        world_ref_mesh.applyTransform(ref_procrustes)
+        world_mask_file = deepssm_dir + 'world_cropped_reference_mask.nrrd'
+        create_registration_mask(world_ref_mesh, world_ref_image_file, 10, world_mask_file)
 
     # Make dirs
     val_test_images_dir = deepssm_dir + 'val_and_test_images/'
@@ -433,7 +488,8 @@ def groom_val_test_images(project, indices):
         # 5. Crop with medium bounding box and find rigid transform
         image.fitRegion(medium_bb).write(image_file)
         itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file,
-                                                                            image_file, transform_type='rigid')
+                                                                            image_file, transform_type='rigid',
+                                                                            mask_file=medium_mask_file)
 
         # 6. Apply transform
         image.applyTransform(itk_rigid_transform,
@@ -447,7 +503,8 @@ def groom_val_test_images(project, indices):
         image.fitRegion(bounding_box).write(image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file,
                                                                                  image_file,
-                                                                                 transform_type='similarity')
+                                                                                 transform_type='similarity',
+                                                                                 mask_file=cropped_mask_file)
         image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(), cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
@@ -456,7 +513,29 @@ def groom_val_test_images(project, indices):
         vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
         transform = np.matmul(vtk_similarity_transform, transform)
 
-        # 8. Save transform
+        if mask_registration:
+            # 8. Move to world space with the reference procrustes transform, then refine with a masked
+            #    rigid registration against the world space reference
+            transform = np.matmul(ref_procrustes, transform)
+            image = sw.Image(image_name)
+            image.applyTransform(transform, world_ref_image.origin(), world_ref_image.dims(),
+                                 world_ref_image.spacing(), world_ref_image.coordsys(),
+                                 sw.InterpolationType.Linear, meshTransform=True)
+            image.write(image_file)
+            itk_world_rigid_transform = DeepSSMUtils.get_image_registration_transform(world_ref_image_file,
+                                                                                      image_file,
+                                                                                      transform_type='rigid',
+                                                                                      mask_file=world_mask_file)
+            transform = np.matmul(sw.utils.getVTKtransform(itk_world_rigid_transform), transform)
+
+            # resample the original image once with the final transform
+            image = sw.Image(image_name)
+            image.applyTransform(transform, world_ref_image.origin(), world_ref_image.dims(),
+                                 world_ref_image.spacing(), world_ref_image.coordsys(),
+                                 sw.InterpolationType.Linear, meshTransform=True)
+            image.write(image_file)
+
+        # 9. Save transform
         val_test_transforms.append(transform)
         extra_values = subjects[i].get_extra_values()
         extra_values["registration_transform"] = transform_to_string(transform)

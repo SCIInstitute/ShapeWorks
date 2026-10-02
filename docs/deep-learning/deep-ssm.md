@@ -54,7 +54,7 @@ PyTorch is used in constructing and training DeepSSM. We have implemented two di
 
 ### 4. Testing
 
-The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.
+Test images are first registered to a reference image. By default the registration only uses the region near the reference shape (the `mask_registration` project setting), so neighboring anatomy that moves independently doesn't pull the fit. The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.
 
 ### 5. Evaluation
 
@@ -196,12 +196,15 @@ Training requires a JSON config file which defines all model architecture and tr
     * `aug_dir`: The directory that has the augmented data.
 * `encoder`: A dictionary with information about the encoder. 
     * `deterministic`: If true indicates the _encoder_ should be deterministic. If false indicates the encoder should be stochastic.
+    * `pool_size`: Optional. Average pool the convolutional features to this grid (e.g. `[3, 3, 5]`, or `"auto"` for the convolution output size divided by 4) before the fully connected layers, which greatly reduces the number of parameters.
+    * `dropout`: Optional. Dropout probability before the fully connected layers. Default: 0.
 * `decoder`: A dictionary with information about the decoder.
     * `deterministic`: If true indicates the _decoder_ should be deterministic. If false indicates the decoder should be stochastic.
     * `linear`: If true indicates the decoder should be linear. If false indicates the decoder should be non-linear.
 * `loss`: A dictionary with info about the loss. 
     * `function`: The loss function to be used in training. Options: `MSE` or `Focal`. Default: `MSE`.
     * `supervised_latent`:  If true then the latent space is supervised during training. For example, the PCA scores in the original DeepSSM model. If false then the latent space is unsupervised. 
+    * `focal_a`, `focal_c`: Optional focal loss parameters. Particle errors (mm) below `c` get less weight. Defaults: 1.32 and 3.
 * `trainer`: A dictionary with info about training.
     * `epochs`: The number of training epochs.
     * `learning_rate`: The learning rate to use in training.
@@ -210,13 +213,18 @@ Training requires a JSON config file which defines all model architecture and tr
         * `type`: The type of learning rate scheduler to be used.  Options: `CosineAnnealing` or `Step`. Default: `CosineAnnealing`.
         * `parameters`: A dictionary with the information about the learning rate scheduler.
     * `val_freq`: How often to evaluate the error on the validation set in training (i.e., one means every epoch, two means every other, etc.)
+    * `weight_decay`: Optional. Weight decay (AdamW) for training and fine tuning. Default: 0.
 * `fine_tune`: A dictionary with the information about fine tuning.
     * `enabled`: If true the model should be fine tuned after general training. If false fine tuning should not be done and the following fine tuning parameters need not be set.
     * `loss`: The loss function to be used in fine tuning.
     * `epochs`: The number of fine tuning epochs.
     * `learning_rate`: The learning rate to use in fine tuning.
-    * `decay_lr`: If true the learning rate should decay during fine tuning.
+    * `decay_lr`: If true the learning rate decays (cosine) over the fine tuning epochs.
     * `val_freq`: How often to evaluate the error on the validation set in fine tuning (i.e., one means every epoch, two means every other, etc.)
+* `intensity_augmentation`: Optional. Live intensity augmentation of the training images.
+    * `enabled`: If true, each training image gets a random intensity change every epoch.
+    * `scale`, `shift`, `noise`: Maximum contrast change (relative), brightness shift and Gaussian noise standard deviation, on the normalized image. Defaults: 0.1, 0.1, 0.05.
+    * `gamma`, `blur`: Maximum |log(gamma)| of a random gamma curve and maximum Gaussian blur sigma in voxels. Defaults: 0 (off).
 * `tl_net`: A dictionary with the information about the TL-DeepSSM model.
     * `enabled`: If true the model will be trained using TL-DeepSSM model. If false the Base DeepSSM will be used.
     * `ae_epochs`: The number of epochs to train the autoencoder.

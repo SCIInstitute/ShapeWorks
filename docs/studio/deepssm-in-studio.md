@@ -30,6 +30,7 @@ Two other parameters to define for DeepSSM are the Percent of Variability Preser
 | --------- | ----------- |
 | Percent of Variability Preserved | This parameter is used in data augmentation to determine how many PCA dimensions to use.  DeepSSM will use the number of dimension required to meet the percent of variability requested.|
 | Image Spacing | This parameter defines the image spacing to use for the images.  Images will be resampled to this spacing. |
+| Mask Registration | When registering validation and test images to the reference image, only use the region near the reference shape, and match the reference to the Procrustes space of the training images. On by default. |
 
 ## Prep
 
@@ -59,6 +60,16 @@ While data augmentation is running a progress bar is displayed across the bottom
 ## Training
 
 The next step is to train the DeepSSM model. Some training parameters are exposed which are explained in detail here: [SSMs Directly from Images](../deep-learning/deep-ssm.md).
+
+| Parameter | Description |
+| --------- | ----------- |
+| Focal Threshold | Shown for the Focal loss. Particle errors (mm) below this threshold get less weight, errors above it more. Default 3. |
+| Compact Network | Average pools the convolutional features before the fully connected layers, which greatly reduces the number of network parameters. |
+| Dropout | Dropout probability before the fully connected layers (0 = off). |
+| Weight Decay | Weight decay (AdamW) for training and fine tuning (0 = off). |
+| Intensity Augmentation | Randomly varies the contrast, brightness and noise (optionally gamma and blur) of the training images every epoch. |
+
+On small training sets, compact network, dropout, weight decay and intensity augmentation together reduce overfitting considerably.
 
 ![Studio DeepSSM - Train Params](../img/studio/studio_deepssm_train1.png){: width="300" }
 

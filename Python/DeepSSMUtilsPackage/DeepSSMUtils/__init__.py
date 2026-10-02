@@ -171,7 +171,8 @@ def analyzeResults(
 def get_image_registration_transform(
     fixed_image_file: str,
     moving_image_file: str,
-    transform_type: str = 'rigid'
+    transform_type: str = 'rigid',
+    mask_file: Optional[str] = None
 ) -> Any:
     """
     Compute image registration transform between two images.
@@ -180,12 +181,13 @@ def get_image_registration_transform(
         fixed_image_file: Path to the fixed/reference image
         moving_image_file: Path to the moving image to be registered
         transform_type: Type of transform ('rigid', 'affine', etc.)
+        mask_file: Optional binary mask on the fixed image grid restricting where the metric is sampled
 
     Returns:
         ITK transform object
     """
     itk_transform = image_utils.get_image_registration_transform(fixed_image_file, moving_image_file,
-                                                                 transform_type=transform_type)
+                                                                 transform_type=transform_type, mask_file=mask_file)
     return itk_transform
 
 

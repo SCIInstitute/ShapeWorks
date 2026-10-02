@@ -34,7 +34,7 @@ def prepare_config_file(config_file, model_name, embedded_dim, out_dir, loader_d
                 "enabled": decay_lr,
                 "type": "CosineAnnealing",
                 "parameters": {
-                    "T_max": 10,
+                    "T_max": epochs,
                     "eta_min": 0,
                     "step_size": 1,
                     "gamma": 0.99

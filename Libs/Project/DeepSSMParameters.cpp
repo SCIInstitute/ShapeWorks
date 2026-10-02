@@ -44,6 +44,17 @@ const std::string TL_NET_A_AE = "tl_net_a_ae";
 const std::string TL_NET_C_AE = "tl_net_c_ae";
 const std::string TL_NET_A_LAT = "tl_net_a_lat";
 const std::string TL_NET_C_LAT = "tl_net_c_lat";
+const std::string MASK_REGISTRATION = "mask_registration";
+const std::string TRAIN_FOCAL_C = "train_focal_c";
+const std::string TRAIN_ENCODER_POOL_SIZE = "train_encoder_pool_size";
+const std::string TRAIN_ENCODER_DROPOUT = "train_encoder_dropout";
+const std::string TRAIN_WEIGHT_DECAY = "train_weight_decay";
+const std::string TRAIN_INTENSITY_AUGMENTATION = "train_intensity_augmentation";
+const std::string TRAIN_INTENSITY_SCALE = "train_intensity_scale";
+const std::string TRAIN_INTENSITY_SHIFT = "train_intensity_shift";
+const std::string TRAIN_INTENSITY_NOISE = "train_intensity_noise";
+const std::string TRAIN_INTENSITY_GAMMA = "train_intensity_gamma";
+const std::string TRAIN_INTENSITY_BLUR = "train_intensity_blur";
 
 }  // namespace Keys
 
@@ -91,6 +102,17 @@ const double TL_NET_A_AE = 10.0;
 const double TL_NET_C_AE = 1.32;
 const double TL_NET_A_LAT = 10.0;
 const double TL_NET_C_LAT = 6.3;
+// registration / loss / regularization / intensity augmentation defaults
+const bool MASK_REGISTRATION = true;
+const double TRAIN_FOCAL_C = 3.0;
+const double TRAIN_ENCODER_DROPOUT = 0.0;
+const double TRAIN_WEIGHT_DECAY = 0.0;
+const bool TRAIN_INTENSITY_AUGMENTATION = false;
+const double TRAIN_INTENSITY_SCALE = 0.1;
+const double TRAIN_INTENSITY_SHIFT = 0.1;
+const double TRAIN_INTENSITY_NOISE = 0.05;
+const double TRAIN_INTENSITY_GAMMA = 0.0;
+const double TRAIN_INTENSITY_BLUR = 0.0;
 
 }  // namespace Defaults
 
@@ -352,12 +374,89 @@ double DeepSSMParameters::get_tl_net_c_lat() { return params_.get(Keys::TL_NET_C
 void DeepSSMParameters::set_tl_net_c_lat(double c_lat) { params_.set(Keys::TL_NET_C_LAT, c_lat); }
 
 //---------------------------------------------------------------------------
+bool DeepSSMParameters::get_mask_registration() { return params_.get(Keys::MASK_REGISTRATION, Defaults::MASK_REGISTRATION); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_mask_registration(bool value) { params_.set(Keys::MASK_REGISTRATION, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_focal_threshold() { return params_.get(Keys::TRAIN_FOCAL_C, Defaults::TRAIN_FOCAL_C); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_focal_threshold(double value) { params_.set(Keys::TRAIN_FOCAL_C, value); }
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_compact_network() {
+  std::string pool_size = params_.get(Keys::TRAIN_ENCODER_POOL_SIZE, std::string(""));
+  return !pool_size.empty();
+}
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_compact_network(bool value) {
+  if (!value) {
+    params_.remove_entry(Keys::TRAIN_ENCODER_POOL_SIZE);
+  } else if (!get_compact_network()) {
+    // pooling grid chosen automatically from the convolution output size (an explicit grid is kept)
+    params_.set(Keys::TRAIN_ENCODER_POOL_SIZE, std::string("auto"));
+  }
+}
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_dropout() { return params_.get(Keys::TRAIN_ENCODER_DROPOUT, Defaults::TRAIN_ENCODER_DROPOUT); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_dropout(double value) { params_.set(Keys::TRAIN_ENCODER_DROPOUT, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_weight_decay() { return params_.get(Keys::TRAIN_WEIGHT_DECAY, Defaults::TRAIN_WEIGHT_DECAY); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_weight_decay(double value) { params_.set(Keys::TRAIN_WEIGHT_DECAY, value); }
+
+//---------------------------------------------------------------------------
+bool DeepSSMParameters::get_intensity_augmentation() { return params_.get(Keys::TRAIN_INTENSITY_AUGMENTATION, Defaults::TRAIN_INTENSITY_AUGMENTATION); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_augmentation(bool value) { params_.set(Keys::TRAIN_INTENSITY_AUGMENTATION, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_intensity_scale() { return params_.get(Keys::TRAIN_INTENSITY_SCALE, Defaults::TRAIN_INTENSITY_SCALE); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_scale(double value) { params_.set(Keys::TRAIN_INTENSITY_SCALE, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_intensity_shift() { return params_.get(Keys::TRAIN_INTENSITY_SHIFT, Defaults::TRAIN_INTENSITY_SHIFT); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_shift(double value) { params_.set(Keys::TRAIN_INTENSITY_SHIFT, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_intensity_noise() { return params_.get(Keys::TRAIN_INTENSITY_NOISE, Defaults::TRAIN_INTENSITY_NOISE); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_noise(double value) { params_.set(Keys::TRAIN_INTENSITY_NOISE, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_intensity_gamma() { return params_.get(Keys::TRAIN_INTENSITY_GAMMA, Defaults::TRAIN_INTENSITY_GAMMA); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_gamma(double value) { params_.set(Keys::TRAIN_INTENSITY_GAMMA, value); }
+
+//---------------------------------------------------------------------------
+double DeepSSMParameters::get_intensity_blur() { return params_.get(Keys::TRAIN_INTENSITY_BLUR, Defaults::TRAIN_INTENSITY_BLUR); }
+
+//---------------------------------------------------------------------------
+void DeepSSMParameters::set_intensity_blur(double value) { params_.set(Keys::TRAIN_INTENSITY_BLUR, value); }
+
+//---------------------------------------------------------------------------
 void DeepSSMParameters::restore_split_defaults() {
   params_.remove_entry(Keys::TRAINING_SPLIT);
   params_.remove_entry(Keys::VALIDATION_SPLIT);
   params_.remove_entry(Keys::TESTING_SPLIT);
   params_.remove_entry(Keys::AUG_PERCENT_VARIABILITY);
   params_.remove_entry(Keys::SPACING);
+  params_.remove_entry(Keys::MASK_REGISTRATION);
 }
 
 //---------------------------------------------------------------------------
@@ -386,5 +485,16 @@ void DeepSSMParameters::restore_training_defaults() {
   params_.remove_entry(Keys::TL_NET_C_AE);
   params_.remove_entry(Keys::TL_NET_A_LAT);
   params_.remove_entry(Keys::TL_NET_C_LAT);
+
+  params_.remove_entry(Keys::TRAIN_FOCAL_C);
+  params_.remove_entry(Keys::TRAIN_ENCODER_POOL_SIZE);
+  params_.remove_entry(Keys::TRAIN_ENCODER_DROPOUT);
+  params_.remove_entry(Keys::TRAIN_WEIGHT_DECAY);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_AUGMENTATION);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_SCALE);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_SHIFT);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_NOISE);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_GAMMA);
+  params_.remove_entry(Keys::TRAIN_INTENSITY_BLUR);
 }
 }  // namespace shapeworks
