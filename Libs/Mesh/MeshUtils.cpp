@@ -1287,6 +1287,16 @@ vtkSmartPointer<vtkPolyData> MeshUtils::extract_largest_edge_connected_component
 }
 
 //---------------------------------------------------------------------------
+//! Drop the arrays that do not have one tuple per point (or cell)
+static void remove_mismatched_arrays(vtkDataSetAttributes* attributes, vtkIdType count) {
+  for (int i = attributes->GetNumberOfArrays() - 1; i >= 0; i--) {
+    auto array = attributes->GetAbstractArray(i);
+    if (array && array->GetNumberOfTuples() != count) {
+      attributes->RemoveArray(i);
+    }
+  }
+}
+
 vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
   // Line-only / vertex-only polydata (e.g. contours) has no polygons to repair;
   // the triangulation and cleanup steps below would discard its cells.
@@ -1294,8 +1304,15 @@ vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData>
     return mesh;
   }
 
+  // An array without a value for every point cannot follow the mesh through the steps below.  They
+  // copy the fields point by point and would read past the end of it, so leave such arrays behind.
+  auto input = vtkSmartPointer<vtkPolyData>::New();
+  input->ShallowCopy(mesh);
+  remove_mismatched_arrays(input->GetPointData(), input->GetNumberOfPoints());
+  remove_mismatched_arrays(input->GetCellData(), input->GetNumberOfCells());
+
   auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(mesh);
+  triangle_filter->SetInputData(input);
   triangle_filter->PassLinesOff();
   triangle_filter->Update();
 

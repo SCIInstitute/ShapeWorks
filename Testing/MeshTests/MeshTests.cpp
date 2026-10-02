@@ -396,6 +396,8 @@ TEST(MeshTests, repairKeepsFieldsTest) {
   auto names = repaired.getFieldNames();
   ASSERT_NE(std::find(names.begin(), names.end(), "distance"), names.end());
   ASSERT_NE(std::find(names.begin(), names.end(), "bloop"), names.end());
+  // "max" holds a single value, not one per point, so it cannot be carried and must not be read as if it could
+  ASSERT_EQ(std::find(names.begin(), names.end(), "max"), names.end());
 
   // repair renumbers points, so check that each one kept the value belonging to its position
   int checked = 0;
