@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """
 Build the Mesh Scalars example: ellipsoids that are nearly the same shape, each carrying a
-scalar field ("activation") with a patch whose position differs from subject to subject.
+scalar field ("scalar_value") with a patch whose position differs from subject to subject.
 
 Geometry alone cannot tell where the patch is, so a model built from position only leaves the
 patch smeared across particles.  Using the field as a correspondence attribute makes the particles
-follow it: untick "activation" under Mesh Scalars in the Optimize panel and run again to compare.
+follow it: untick "scalar_value" under Mesh Scalars in the Optimize panel and run again to compare.
 
     python make_example.py [output_dir]
 """
@@ -21,7 +21,7 @@ from vtk.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 NUM_SUBJECTS = 10
 RADII = np.array([20.0, 14.0, 10.0])
 PATCH_WIDTH = np.radians(25.0)  # standard deviation of the patch, as an angle
-PATCH_RANGE = np.radians(35.0)  # the patch centre moves this far either side of the top
+PATCH_RANGE = np.radians(35.0)  # the patch center moves this far either side of the top
 
 
 def ellipsoid(radii, subdivisions=4):
@@ -51,11 +51,11 @@ def main(out_dir):
         radii = RADII * (1.0 + rng.uniform(-0.06, 0.06, 3))
         mesh, unit = ellipsoid(radii)
         # the patch sits on the top of the ellipsoid, shifted along its long axis
-        centre = np.array([np.sin(angle), 0.0, np.cos(angle)])
-        separation = np.arccos(np.clip(unit @ centre, -1.0, 1.0))
+        center = np.array([np.sin(angle), 0.0, np.cos(angle)])
+        separation = np.arccos(np.clip(unit @ center, -1.0, 1.0))
         field = np.exp(-0.5 * (separation / PATCH_WIDTH) ** 2).astype(np.float32)
         array = numpy_to_vtk(field, deep=True)
-        array.SetName("activation")
+        array.SetName("scalar_value")
         mesh.GetPointData().SetScalars(array)
         name = "ellipsoid_%02d.vtk" % (i + 1)
         writer = vtk.vtkPolyDataWriter()
@@ -76,7 +76,7 @@ def main(out_dir):
         "starting_regularization": "1000",
         "ending_regularization": "10",
         "procrustes": "false",
-        "field_attributes": "activation",
+        "field_attributes": "scalar_value",
         "field_attribute_weights": "100",
     }
     # the meshes are already clean and aligned; grooming only has to pass them (and the field) through
