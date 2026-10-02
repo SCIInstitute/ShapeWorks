@@ -5127,7 +5127,7 @@
 </ul>
 <p><img alt="DeepSSM Architecture" src="../img/deep-learning/TLNet-DeepSSM.jpg" /></p>
 <h3 id="4-testing">4. Testing</h3>
-<p>The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.</p>
+<p>Test images are first registered to a reference image. By default the registration only uses the region near the reference shape (the <code>mask_registration</code> project setting), so neighboring anatomy that moves independently doesn't pull the fit. The trained model is then used to predict the PCA score from the images in the test set. These PCA scores are then un-whitened and mapped back to the particle coordinates using the eigenvalues and eigenvectors from PCA. Thus a PDM is acquired for each test image.</p>
 <h3 id="5-evaluation">5. Evaluation</h3>
 <p>To evaluate the accuracy of DeepSSM output, we compare a mesh created from the ground truth segmentation to a mesh created from the predicted PDM. To obtain the original mesh, we use the ShapeWorks <code>MeshFromDistanceTransforms</code> command to the isosurface mesh from the distance transform created from the true segmentation. To obtain the predicted mesh, we use the ShapeWorks <code>ReconstructSurface</code> command with the mean and predicted particles to reconstruct a surface.</p>
 <p>We then compare the original mesh to the predicted mesh via surface-to-surface distance. To find the distance from the original to the predicted, we consider each vertex in the original and find the shortest distance to the predicted mesh's surface. This process is not symmetric as it depends on the vertices of one mesh, so the distance from the predicted to the original will be slightly different. We compute the Hausdorff distance that takes the max of these vertex-wise distances to return a single value as a measure of accuracy. We also consider the vertex-wise distances as a scalar field on the mesh vertices and visualize them as a heat map on the surface. This provides us with a way of seeing where the predicted PDM was more or less accurate.</p>
@@ -5251,6 +5251,8 @@
 </li>
 <li><code>encoder</code>: A dictionary with information about the encoder. <ul>
 <li><code>deterministic</code>: If true indicates the <em>encoder</em> should be deterministic. If false indicates the encoder should be stochastic.</li>
+<li><code>pool_size</code>: Optional. Average pool the convolutional features to this grid (e.g. <code>[3, 3, 5]</code>, or <code>"auto"</code> for the convolution output size divided by 4) before the fully connected layers, which greatly reduces the number of parameters.</li>
+<li><code>dropout</code>: Optional. Dropout probability before the fully connected layers. Default: 0.</li>
 </ul>
 </li>
 <li><code>decoder</code>: A dictionary with information about the decoder.<ul>
@@ -5261,6 +5263,7 @@
 <li><code>loss</code>: A dictionary with info about the loss. <ul>
 <li><code>function</code>: The loss function to be used in training. Options: <code>MSE</code> or <code>Focal</code>. Default: <code>MSE</code>.</li>
 <li><code>supervised_latent</code>:  If true then the latent space is supervised during training. For example, the PCA scores in the original DeepSSM model. If false then the latent space is unsupervised. </li>
+<li><code>focal_a</code>, <code>focal_c</code>: Optional focal loss parameters. Particle errors (mm) below <code>c</code> get less weight. Defaults: 1.32 and 3.</li>
 </ul>
 </li>
 <li><code>trainer</code>: A dictionary with info about training.<ul>
@@ -5273,6 +5276,7 @@
 </ul>
 </li>
 <li><code>val_freq</code>: How often to evaluate the error on the validation set in training (i.e., one means every epoch, two means every other, etc.)</li>
+<li><code>weight_decay</code>: Optional. Weight decay (AdamW) for training and fine tuning. Default: 0.</li>
 </ul>
 </li>
 <li><code>fine_tune</code>: A dictionary with the information about fine tuning.<ul>
@@ -5280,8 +5284,14 @@
 <li><code>loss</code>: The loss function to be used in fine tuning.</li>
 <li><code>epochs</code>: The number of fine tuning epochs.</li>
 <li><code>learning_rate</code>: The learning rate to use in fine tuning.</li>
-<li><code>decay_lr</code>: If true the learning rate should decay during fine tuning.</li>
+<li><code>decay_lr</code>: If true the learning rate decays (cosine) over the fine tuning epochs.</li>
 <li><code>val_freq</code>: How often to evaluate the error on the validation set in fine tuning (i.e., one means every epoch, two means every other, etc.)</li>
+</ul>
+</li>
+<li><code>intensity_augmentation</code>: Optional. Live intensity augmentation of the training images.<ul>
+<li><code>enabled</code>: If true, each training image gets a random intensity change every epoch.</li>
+<li><code>scale</code>, <code>shift</code>, <code>noise</code>: Maximum contrast change (relative), brightness shift and Gaussian noise standard deviation, on the normalized image. Defaults: 0.1, 0.1, 0.05.</li>
+<li><code>gamma</code>, <code>blur</code>: Maximum |log(gamma)| of a random gamma curve and maximum Gaussian blur sigma in voxels. Defaults: 0 (off).</li>
 </ul>
 </li>
 <li><code>tl_net</code>: A dictionary with the information about the TL-DeepSSM model.<ul>

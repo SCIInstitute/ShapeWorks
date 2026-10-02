@@ -4674,6 +4674,43 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_tl_net_c_lat</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tl_net_c_lat</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">c_lat</span><span class="p">);</span>
 
+<span class="w">  </span><span class="c1">// masked registration of validation/test images to the reference shape</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mask_registration</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mask_registration</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// focal loss threshold (mm)</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_focal_threshold</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_focal_threshold</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// regularization</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_compact_network</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compact_network</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_dropout</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_dropout</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_weight_decay</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_weight_decay</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// live intensity augmentation of training images</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_intensity_augmentation</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_augmentation</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_intensity_scale</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_scale</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_intensity_shift</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_shift</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_intensity_noise</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_noise</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_intensity_gamma</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_gamma</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_intensity_blur</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_intensity_blur</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_split_defaults</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_augmentation_defaults</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_training_defaults</span><span class="p">();</span>
@@ -4693,7 +4730,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-10-01 at 15:21:41 +0000</p>
+<p>Updated on 2026-10-02 at 01:10:12 +0000</p>
 
 
 

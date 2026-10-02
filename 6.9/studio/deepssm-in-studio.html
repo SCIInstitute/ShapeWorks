@@ -4738,6 +4738,10 @@
 <td>Image Spacing</td>
 <td>This parameter defines the image spacing to use for the images.  Images will be resampled to this spacing.</td>
 </tr>
+<tr>
+<td>Mask Registration</td>
+<td>When registering validation and test images to the reference image, only use the region near the reference shape, and match the reference to the Procrustes space of the training images. On by default.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="prep">Prep</h2>
@@ -4777,6 +4781,37 @@
 <p><img alt="Studio DeepSSM - Augmentation" src="../img/studio/studio_deepssm_aug2.png" width="600" /></p>
 <h2 id="training">Training</h2>
 <p>The next step is to train the DeepSSM model. Some training parameters are exposed which are explained in detail here: <a href="../deep-learning/deep-ssm.html">SSMs Directly from Images</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Focal Threshold</td>
+<td>Shown for the Focal loss. Particle errors (mm) below this threshold get less weight, errors above it more. Default 3.</td>
+</tr>
+<tr>
+<td>Compact Network</td>
+<td>Average pools the convolutional features before the fully connected layers, which greatly reduces the number of network parameters.</td>
+</tr>
+<tr>
+<td>Dropout</td>
+<td>Dropout probability before the fully connected layers (0 = off).</td>
+</tr>
+<tr>
+<td>Weight Decay</td>
+<td>Weight decay (AdamW) for training and fine tuning (0 = off).</td>
+</tr>
+<tr>
+<td>Intensity Augmentation</td>
+<td>Randomly varies the contrast, brightness and noise (optionally gamma and blur) of the training images every epoch.</td>
+</tr>
+</tbody>
+</table>
+<p>On small training sets, compact network, dropout, weight decay and intensity augmentation together reduce overfitting considerably.</p>
 <p><img alt="Studio DeepSSM - Train Params" src="../img/studio/studio_deepssm_train1.png" width="300" /></p>
 <p>As the model trains, each epoch the display updates. The "Training Output" table logs the epochs, learning rate, and training and validation errors. The training and validation error are also plotted over epochs in a scatterplot below. To the right, examples of training andvalidation predictions are displayed and updated every epoch. Here we can see the examples with the greatest, smallest, and median error. The distance from the predicted particles to the true particles is displayed as a heat map with a corresponding scale. This gives an idea of model prediction quality as the model trains. </p>
 <p><img alt="Studio DeepSSM - Training" src="../img/studio/studio_deepssm_train2.png" width="600" /></p>

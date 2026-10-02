@@ -12,7 +12,7 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.9/api/Classes/classshapeworks_1_1MeshSlice.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.9/api/Classes/classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">
       
       
       
@@ -25,7 +25,7 @@
     
     
       
-        <title>shapeworks::MeshSlice - ShapeWorks</title>
+        <title>shapeworks::EigenThinPlateSplineKernelTransform - ShapeWorks</title>
       
     
     
@@ -90,7 +90,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shapeworksmeshslice" class="md-skip">
+        <a href="#shapeworkseigenthinplatesplinekerneltransform" class="md-skip">
           Skip to content
         </a>
       
@@ -129,7 +129,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::MeshSlice
+              shapeworks::EigenThinPlateSplineKernelTransform
             
           </span>
         </div>
@@ -4483,10 +4483,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
         Public Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protected-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected Functions
       
     </span>
   </a>
@@ -4505,6 +4527,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public Types Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-self" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using Self
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-superclass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using Superclass
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pointer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using Pointer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-constpointer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using ConstPointer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4517,10 +4600,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-meshslice" class="md-nav__link">
+  <a href="#function-itknewmacro" class="md-nav__link">
     <span class="md-ellipsis">
       
-        function MeshSlice
+        function itkNewMacro
       
     </span>
   </a>
@@ -4528,10 +4611,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_volume" class="md-nav__link">
+  <a href="#function-itkoverridegetnameofclassmacro" class="md-nav__link">
     <span class="md-ellipsis">
       
-        function set_volume
+        function itkOverrideGetNameOfClassMacro
       
     </span>
   </a>
@@ -4539,43 +4622,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-is_image_loaded" class="md-nav__link">
+  <a href="#function-computewmatrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        function is_image_loaded
+        function ComputeWMatrix
       
     </span>
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-update_renderer" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protected-functions-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        function update_renderer
+        Protected Functions Documentation
       
     </span>
   </a>
   
-</li>
+    <nav class="md-nav" aria-label="Protected Functions Documentation">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-update_camera" class="md-nav__link">
+  <a href="#function-eigenthinplatesplinekerneltransform" class="md-nav__link">
     <span class="md-ellipsis">
       
-        function update_camera
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-handle_key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        function handle_key
+        function EigenThinPlateSplineKernelTransform
       
     </span>
   </a>
@@ -4607,9 +4685,37 @@
   
 
 
-<h1 id="shapeworksmeshslice">shapeworks::MeshSlice</h1>
-<p><a href="">MeshSlice</a>.  <a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;MeshSlice.h&gt;</code></p>
+<h1 id="shapeworkseigenthinplatesplinekerneltransform">shapeworks::EigenThinPlateSplineKernelTransform</h1>
+<p><a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;ImageUtils.h&gt;</code></p>
+<p>Inherits from itk::ThinPlateSplineKernelTransform&lt; double, 3 &gt;</p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using <a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">EigenThinPlateSplineKernelTransform</a></td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#using-self">Self</a></strong></td>
+</tr>
+<tr>
+<td>using itk::ThinPlateSplineKernelTransform&lt; double, 3 &gt;</td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#using-superclass">Superclass</a></strong></td>
+</tr>
+<tr>
+<td>using itk::SmartPointer&lt; <a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">Self</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#using-pointer">Pointer</a></strong></td>
+</tr>
+<tr>
+<td>using itk::SmartPointer&lt; const <a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">Self</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#using-constpointer">ConstPointer</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -4621,59 +4727,69 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-meshslice">MeshSlice</a></strong>(<a href="classshapeworks_1_1Viewer.html">Viewer</a> * viewer)</td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#function-itknewmacro">itkNewMacro</a></strong>(<a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">Self</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#function-itkoverridegetnameofclassmacro">itkOverrideGetNameOfClassMacro</a></strong>(<a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html">EigenThinPlateSplineKernelTransform</a> )</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-set-volume">set_volume</a></strong>(vtkSmartPointer&lt; vtkImageData &gt; volume)</td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#function-computewmatrix">ComputeWMatrix</a></strong>()<br>Hides the (non-virtual) KernelTransform::ComputeWMatrix.</td>
 </tr>
+</tbody>
+</table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
 <tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-is-image-loaded">is_image_loaded</a></strong>()</td>
+<th></th>
+<th>Name</th>
 </tr>
+</thead>
+<tbody>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-update-renderer">update_renderer</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-update-camera">update_camera</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshSlice.html#function-handle-key">handle_key</a></strong>(std::string key)</td>
+<td></td>
+<td><strong><a href="classshapeworks_1_1EigenThinPlateSplineKernelTransform.html#function-eigenthinplatesplinekerneltransform">EigenThinPlateSplineKernelTransform</a></strong>() =default</td>
 </tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshSlice</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="p">;</span>
 </code></pre></div>
-<p><a href="">MeshSlice</a>. </p>
-<p>Provide slice viewing to the <a href="classshapeworks_1_1Viewer.html">Viewer</a></p>
+<p>Thin plate spline transform whose weights are solved with Eigen.</p>
+<p>ITK builds a 3(N+4) square system and solves it with a netlib SVD, which takes about an hour at N=2048. The TPS kernel is |r| times the identity, so that system is three independent (N+4) square systems sharing one matrix. Factoring that matrix once is several thousand times faster and gives the same weights. </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-self">using Self</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="o">::</span><span class="n">Self</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="using-superclass">using Superclass</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="o">::</span><span class="n">Superclass</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="using-pointer">using Pointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="using-constpointer">using ConstPointer</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-meshslice">function MeshSlice</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshSlice</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span>
+<h3 id="function-itknewmacro">function itkNewMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Self</span><span class="w"> </span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-set_volume">function set_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_volume</span><span class="p">(</span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume</span>
+<h3 id="function-itkoverridegetnameofclassmacro">function itkOverrideGetNameOfClassMacro</h3>
+<div class="highlight"><pre><span></span><code><span class="n">itkOverrideGetNameOfClassMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">EigenThinPlateSplineKernelTransform</span><span class="w"> </span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-is_image_loaded">function is_image_loaded</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_image_loaded</span><span class="p">()</span>
+<h3 id="function-computewmatrix">function ComputeWMatrix</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeWMatrix</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-update_renderer">function update_renderer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_renderer</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-update_camera">function update_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_camera</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-handle_key">function handle_key</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
-<span class="p">)</span>
+<p>Hides the (non-virtual) KernelTransform::ComputeWMatrix. </p>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-eigenthinplatesplinekerneltransform">function EigenThinPlateSplineKernelTransform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">EigenThinPlateSplineKernelTransform</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <hr />
 <p>Updated on 2026-10-02 at 01:10:11 +0000</p>
