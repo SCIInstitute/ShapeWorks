@@ -30,7 +30,7 @@ Before the mesh grooming pipeline runs, each mesh is automatically repaired. Thi
 | Smooth | Perform either Laplacian or Windowed Sinc smoothing |
 | Laplacian Smoothing | Laplacian smoothing option with specified iterations and relaxation factor.  In general, it is recommended to use smaller relaxation factors and more iterations rather than larger relaxation and fewer iterations |
 | Windowed Sinc Smoothing | Windowed Sinc smoothing with specified iterations and passband (typically between 0 and 2).  Lower passpand values produce more smoothing. |
-| Remesh | Enabled remeshing using ACVD library |
+| Remesh | Enabled remeshing using ACVD library.  Scalar fields carried by the mesh are interpolated onto the new vertices |
 | Remesh Percent | Specify target vertices as a percentage of existing vertices |
 | Remesh Vertices | Specify target vertices directly |
 | Remesh Adaptivity | Curvature adaptivity of remeshing (0 = uniform, 2.0 most adaptive).  This allocates more triangles/vertices to areas of higher curvature |

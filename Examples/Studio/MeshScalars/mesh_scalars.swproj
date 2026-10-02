@@ -1,0 +1,64 @@
+{
+ "data": [
+  {
+   "name": "ellipsoid_01",
+   "shape_1": "ellipsoid_01.vtk"
+  },
+  {
+   "name": "ellipsoid_02",
+   "shape_1": "ellipsoid_02.vtk"
+  },
+  {
+   "name": "ellipsoid_03",
+   "shape_1": "ellipsoid_03.vtk"
+  },
+  {
+   "name": "ellipsoid_04",
+   "shape_1": "ellipsoid_04.vtk"
+  },
+  {
+   "name": "ellipsoid_05",
+   "shape_1": "ellipsoid_05.vtk"
+  },
+  {
+   "name": "ellipsoid_06",
+   "shape_1": "ellipsoid_06.vtk"
+  },
+  {
+   "name": "ellipsoid_07",
+   "shape_1": "ellipsoid_07.vtk"
+  },
+  {
+   "name": "ellipsoid_08",
+   "shape_1": "ellipsoid_08.vtk"
+  },
+  {
+   "name": "ellipsoid_09",
+   "shape_1": "ellipsoid_09.vtk"
+  },
+  {
+   "name": "ellipsoid_10",
+   "shape_1": "ellipsoid_10.vtk"
+  }
+ ],
+ "groom": {
+  "1": {
+   "remesh": "false",
+   "fill_holes": "false",
+   "alignment_enabled": "false"
+  }
+ },
+ "optimize": {
+  "number_of_particles": "128",
+  "initialization_mode": "split",
+  "iterations_per_split": "1000",
+  "optimization_iterations": "1000",
+  "relative_weighting": "10",
+  "initial_relative_weighting": "0.05",
+  "starting_regularization": "1000",
+  "ending_regularization": "10",
+  "procrustes": "false",
+  "field_attributes": "scalar_value",
+  "field_attribute_weights": "100"
+ }
+}

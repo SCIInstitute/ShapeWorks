@@ -7,6 +7,7 @@
 #include <Utils/StringUtils.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+#include <vtkPointData.h>
 
 #include <atomic>
 #include <boost/algorithm/string.hpp>
@@ -702,6 +703,20 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     throw std::runtime_error("The number of field attribute weights does not match the number of field attributes");
   }
 
+  // scalar attributes are interpolated from the surface at each particle, so they are only defined
+  // where the domain is a mesh
+  if (!field_attributes.empty()) {
+    auto domain_types = project_->get_groomed_domain_types();
+    if (domain_types.empty()) {
+      domain_types = project_->get_original_domain_types();
+    }
+    for (auto domain_type : domain_types) {
+      if (domain_type != DomainType::Mesh) {
+        throw std::invalid_argument("Scalar field attributes are only supported for mesh domains");
+      }
+    }
+  }
+
   for (int j = 0; j < field_attributes.size(); j++) {
     SW_LOG("Using scalar field attribute: {} with weight {}", field_attributes[j], field_weights[j]);
   }
@@ -946,6 +961,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   double geodesic_remesh_percent = get_geodesic_remesh_percent();
   int geodesic_cache_multiplier = get_geodesic_cache_multiplier();
   bool use_geodesics_to_landmarks = get_use_geodesics_to_landmarks();
+  // the geodesic-to-landmark fields are computed here, but a scalar field the user picked has to
+  // already be on the mesh
+  auto required_fields = get_field_attributes();
 
   for (auto s : subjects) {
     if (abort_load_) {
@@ -1028,6 +1046,18 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         // Detect a contour by cell content (line cells, no faces) rather than inspecting the first
         // cell, whose type can vary within a mesh. (#2457)
         item.is_contour = MeshUtils::is_contour(pd);
+
+        if (!required_fields.empty() && item.is_contour) {
+          throw std::invalid_argument("Scalar field attributes are only supported for mesh domains");
+        }
+        for (const auto& field : required_fields) {
+          if (!pd->GetPointData()->GetArray(field.c_str())) {
+            throw std::invalid_argument("Groomed mesh has no scalar field \"" + field + "\": " + filename +
+                                        ".  If the field is on the original meshes, re-run grooming: meshes "
+                                        "groomed before 6.9 do not carry their fields");
+          }
+        }
+
         item.poly_data = pd;
       } else if (domain_type == DomainType::Contour) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());

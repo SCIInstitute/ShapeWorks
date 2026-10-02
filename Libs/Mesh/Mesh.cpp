@@ -470,6 +470,18 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   //  std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
+
+  // ACVD works on bare geometry, so hold on to the fields and put them back on the new vertices.
+  // Normals are excluded: they describe the surface, which is what remeshing replaces.
+  vtkSmartPointer<vtkPolyData> original;
+  for (const auto& name : getFieldNames()) {
+    if (name != "Normals" && name != "normals") {
+      original = vtkSmartPointer<vtkPolyData>::New();
+      original->DeepCopy(this->poly_data_);
+      break;
+    }
+  }
+
   surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
@@ -500,6 +512,9 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
     this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
   }
+
+  // the new vertices are not the old ones, so any scalar field has to be interpolated onto them
+  MeshUtils::transfer_point_data(original, this->poly_data_);
 
   // must regenerate normals after remeshing
   computeNormals();
@@ -1102,8 +1117,15 @@ void computeGradient(vtkDataSet* inputDataSet, const char* scalarFieldName, cons
   gradientData->SetNumberOfTuples(inputDataSet->GetNumberOfPoints());
   gradientData->SetName(gradientFieldName);
 */
-  vtkDoubleArray* gradPointArray = vtkArrayDownCast<vtkDoubleArray>(
-      vtkDataSet::SafeDownCast(gradientFilter->GetOutput())->GetPointData()->GetArray(gradientFieldName));
+  // The gradient comes back in the type of the field it was computed from, so take whatever array
+  // that is: a float field (a common way for scalars to arrive on a mesh) yields a float gradient,
+  // and insisting on a double one here left the mesh without a gradient array at all.
+  auto output = vtkDataSet::SafeDownCast(gradientFilter->GetOutput());
+  vtkDataArray* gradPointArray = output ? output->GetPointData()->GetArray(gradientFieldName) : nullptr;
+  if (!gradPointArray) {
+    throw std::runtime_error(std::string("Unable to compute the gradient of mesh field \"") + scalarFieldName +
+                             "\"");
+  }
 
   /*
     for (vtkIdType pointId = 0; pointId < inputDataSet->GetNumberOfPoints(); ++pointId) {

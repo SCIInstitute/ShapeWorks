@@ -136,8 +136,18 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
         point[2] = pt[2];
         Eigen::Vector3d gradient = mesh->computeFieldGradientAtPoint(field_attributes[aa], point);
 
+        // The gradient comes out of the mesh in its own frame, but this row of the Jacobian sits
+        // beside the position rows, which are in world space.  Without this the attribute pulls a
+        // particle in a direction rotated by however the shape was aligned during grooming.
+        ParticleSystem::VectorType field_gradient;
+        field_gradient[0] = gradient[0];
+        field_gradient[1] = gradient[1];
+        field_gradient[2] = gradient[2];
+        field_gradient = ps->TransformVector(field_gradient, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+
         for (int vd = 0; vd < 3; vd++) {
-          this->operator()(aa + k, vd + 3 * (d / m_DomainsPerShape)) = gradient[vd] * m_AttributeScales[num + aa + s];
+          this->operator()(aa + k, vd + 3 * (d / m_DomainsPerShape)) =
+              field_gradient[vd] * m_AttributeScales[num + aa + s];
         }
       }
     }

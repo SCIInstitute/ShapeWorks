@@ -52,6 +52,7 @@ nav:
    - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
    - 'Multi-Domain Reference Frames':        'studio/multi-domain-analysis-reference-frames.md'
    - 'Shared Boundaries':                    'studio/studio-shared-boundary.md'
+   - 'Mesh Scalars':                         'studio/studio-mesh-scalars.md'
    - 'Segmentation Tool':                    'studio/segmentation-tool.md'
    - 'AI Assisted Segmentation':             'studio/ai-assisted-segmentation.md'
 - ShapeWorks Cloud:

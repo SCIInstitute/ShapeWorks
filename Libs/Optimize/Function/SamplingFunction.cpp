@@ -1,6 +1,9 @@
 
 #include "SamplingFunction.h"
 
+#include <Logging.h>
+#include <atomic>
+
 #include "Libs/Common/Logging.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "vnl/vnl_vector_fixed.h"
@@ -269,6 +272,12 @@ SamplingFunction::VectorType SamplingFunction::evaluate(unsigned int idx, unsign
 
     // multiply by scaling value (whether auto is on or off)
     scale_factor *= m_SamplingScaleValue;
+
+    static std::atomic<int> report_counter{0};
+    if (++report_counter % 200000 == 1) {
+      SW_DEBUG("Sampling scale: domain surface area {:.4g}, scale factor {:.4g}",
+               system->GetDomain(d)->GetSurfaceArea(), scale_factor);
+    }
 
     gradE = gradE * scale_factor;
   }

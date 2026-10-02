@@ -225,6 +225,8 @@ class CorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
 
   double m_MinimumVariance;
+  int m_UpdateReportCounter{0};
+  int m_ScaleReportCounter{0};
   double m_MinimumEigenValue;
   //  double m_MinimumVarianceBase;
   bool m_HoldMinimumVariance;
