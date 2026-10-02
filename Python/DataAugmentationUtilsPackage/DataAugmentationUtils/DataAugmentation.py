@@ -75,7 +75,11 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 			sw_message("Aborted")
 			return 0
 		sw_message("Generating " +str(index)+'/'+str(num_samples))
-		sw_progress(index / (num_samples+1))
+		if processes == 1:
+			sw_progress(index / (num_samples+1))
+		else:
+			# images are generated afterwards in parallel and take much longer, so this stage gets only the first 10%
+			sw_progress(0.1 * index / num_samples)
 		name = 'Generated_sample_' + Utils.pad_index(index)
 		# Generate embedding
 		sampled_embedding, base_index = PointSampler.sample()
@@ -113,12 +117,26 @@ def point_based_aug(out_dir, orig_img_list, orig_point_list, num_samples, num_di
 		with open(out_dir + '/world_get_local_info.json', 'w') as f:
 			json.dump(world_get_local_info, f)
 	if processes!=1:
-		with mtps.Pool(processes=processes) as p:
-			gen_image_paths = p.map(generate_image, generate_image_params_list)
+		gen_image_paths = [None] * num_samples
+		# each worker would otherwise resample with every core, oversubscribing the machine processes-fold
+		threads_per_worker = max(1, (os.cpu_count() or 1) // processes)
+		with mtps.Pool(processes=processes, initializer=init_worker, initargs=(threads_per_worker,)) as p:
+			results = p.imap_unordered(generate_image, enumerate(generate_image_params_list))
+			for count, (index, gen_image_path) in enumerate(results, start=1):
+				gen_image_paths[index] = gen_image_path
+				sw_message("Generating images " + str(count) + '/' + str(num_samples))
+				sw_progress(0.1 + 0.9 * count / num_samples)
+				if sw_check_abort():
+					sw_message("Aborted")
+					return 0
 	csv_file = out_dir + "TotalData.csv"
 	Utils.make_CSV(out_dir + "TotalData.csv", orig_img_list, orig_point_list, embedded_matrix, gen_image_paths, gen_points_paths, gen_embeddings)
 	return num_dim
 
-def generate_image(param):
+def init_worker(num_threads):
+	sw.set_num_threads(num_threads)
+
+def generate_image(indexed_param):
+	index, param = indexed_param
 	gen_image_path = Utils.generate_image(param['out_dir'], param['gen_points_path'], param['base_image_path'], param['base_particles_path'])
-	return gen_image_path
+	return index, gen_image_path
