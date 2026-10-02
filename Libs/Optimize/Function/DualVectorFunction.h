@@ -2,6 +2,9 @@
 
 #include <Logging.h>
 
+#include <atomic>
+#include <memory>
+
 #include "ParticleSystemEvaluation.h"
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
@@ -229,9 +232,9 @@ class DualVectorFunction : public VectorFunction {
   /// fixed by relative_gradient_scaling_ alone: it also moves with the scale of the data.  Report
   /// it periodically, so that a correspondence term scaled into irrelevance is visible.
   void report_balance() const {
-    // counter_ is cleared every iteration, so pace the report on a count of its own
-    auto* self = const_cast<DualVectorFunction*>(this);
-    if (!a_on_ || !b_on_ || counter_ < 1.0 || ++self->report_counter_ % 200000 != 1) {
+    // counter_ is cleared every iteration, so pace the report on a count of its own.  The count is
+    // shared with the clones, which are made afresh for every shape on every iteration.
+    if (!a_on_ || !b_on_ || counter_ < 1.0 || report_counter_->fetch_add(1) % 200000 != 0) {
       return;
     }
     const double mag_a = average_grad_mag_a_ / counter_;
@@ -360,6 +363,7 @@ class DualVectorFunction : public VectorFunction {
     copy->average_energy_a_ = this->average_energy_a_;
     copy->average_energy_b_ = this->average_energy_b_;
     copy->counter_ = this->counter_;
+    copy->report_counter_ = this->report_counter_;
 
     if (this->function_a_) {
       copy->function_a_ = this->function_a_->clone();
@@ -395,7 +399,7 @@ class DualVectorFunction : public VectorFunction {
   double relative_energy_scaling_;
   double average_grad_mag_a_;
   double average_grad_mag_b_;
-  int report_counter_{0};
+  std::shared_ptr<std::atomic<long>> report_counter_{std::make_shared<std::atomic<long>>(0)};
   double average_energy_a_;
   double average_energy_b_;
   double counter_;
