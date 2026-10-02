@@ -230,6 +230,8 @@ Two things to know:
 - Mesh domains only. Image and contour domains have no field to sample, and a project that mixes them is rejected.
 - The field has to be on the **groomed** meshes, which is what optimization reads. Grooming carries fields through its steps, including remeshing, but a mesh built from a segmentation starts without any.
 
+See [Mesh Scalars in Studio](../studio/studio-mesh-scalars.md) for a worked example.
+
 ## Optimizing Correspondences 
 
 You can use either ShapeWorks Studio or `shapeworks optimize <parameters.xml>` or `shapeworks optimize <project.xlsx>` command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.
