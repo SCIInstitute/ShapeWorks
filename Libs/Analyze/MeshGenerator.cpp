@@ -104,6 +104,11 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
 
     mesh->set_poly_data(poly_data);
   } else {
+    if (shape.size() / 3 < 4) {
+      // the first splits of an optimization have too few particles for a surface: not an error
+      mesh->set_poly_data(vtkSmartPointer<vtkPolyData>::New());
+      return mesh;
+    }
     LegacyMeshGenerator legacy;
     auto poly_data = legacy.buildMesh(shape);
     if (!poly_data) {
