@@ -1571,6 +1571,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../studio/studio-mesh-scalars.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mesh Scalars
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../studio/segmentation-tool.html" class="md-nav__link">
         
   
@@ -4567,6 +4595,11 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Logging.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;atomic&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystemEvaluation.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkLightObject.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span>
@@ -4618,6 +4651,7 @@
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a_on_</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">b_on_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span><span class="w">  </span><span class="c1">// always driven by the sampling to decrease the sensitivity to covariance regularization</span>
 <span class="w">      </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">relative_gradient_scaling_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
+<span class="w">      </span><span class="n">report_balance</span><span class="p">();</span>
 <span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">predictedMove</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -4744,6 +4778,7 @@
 
 <span class="w">        </span><span class="n">maxmove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxA</span><span class="p">;</span><span class="w">  </span><span class="c1">// always driven by the sampling to decrease the senstivity to covariance regularization</span>
 
+<span class="w">        </span><span class="n">report_balance</span><span class="p">();</span>
 <span class="w">        </span><span class="n">predictedMove</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ansA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">relative_gradient_scaling_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ansB</span><span class="p">;</span>
 
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">predictedMove</span><span class="p">);</span>
@@ -4773,6 +4808,18 @@
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">b_on_</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">function_b_</span><span class="o">-&gt;</span><span class="n">before_evaluate</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">system</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">report_balance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// counter_ is cleared every iteration, so pace the report on a count of its own.  The count is</span>
+<span class="w">    </span><span class="c1">// shared with the clones, which are made afresh for every shape on every iteration.</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">a_on_</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">b_on_</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">counter_</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">report_counter_</span><span class="o">-&gt;</span><span class="n">fetch_add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">200000</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">mag_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">average_grad_mag_a_</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">counter_</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">mag_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">relative_gradient_scaling_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">average_grad_mag_b_</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">counter_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">SW_DEBUG</span><span class="p">(</span><span class="s">&quot;Per-particle gradient: sampling {:.4g}, correspondence {:.4g} ({:.2g}% of the total)&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mag_a</span><span class="p">,</span><span class="w"> </span><span class="n">mag_b</span><span class="p">,</span>
+<span class="w">             </span><span class="mf">100.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mag_b</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">(</span><span class="mf">1e-30</span><span class="p">,</span><span class="w"> </span><span class="n">mag_a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mag_b</span><span class="p">));</span>
 <span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">after_iteration</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
@@ -4890,6 +4937,7 @@
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">average_energy_a_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">average_energy_a_</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">average_energy_b_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">average_energy_b_</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">counter_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">report_counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">report_counter_</span><span class="p">;</span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">function_a_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">function_a_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">function_a_</span><span class="o">-&gt;</span><span class="n">clone</span><span class="p">();</span>
@@ -4925,6 +4973,7 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">relative_energy_scaling_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">average_grad_mag_a_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">average_grad_mag_b_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">report_counter_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)};</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">average_energy_a_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">average_energy_b_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">counter_</span><span class="p">;</span>
@@ -4936,7 +4985,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-10-04 at 04:31:25 +0000</p>
+<p>Updated on 2026-10-06 at 05:04:03 +0000</p>
 
 
 

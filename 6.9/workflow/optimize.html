@@ -1000,6 +1000,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mesh-scalar-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mesh Scalar Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1850,6 +1861,34 @@
     
   
     Shared Boundaries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-mesh-scalars.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mesh Scalars
   
 
     
@@ -4931,6 +4970,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mesh-scalar-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mesh Scalar Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5220,6 +5270,36 @@ cohorts whose shapes differ substantially.</p>
 <h3 id="geodesic-remeshing">Geodesic Remeshing</h3>
 <p>When geodesic distances are enabled on mesh domains, <code>geodesic_remesh_percent</code> (default <code>100</code>) controls the resolution of the surface geodesics are computed on. It is a percentage of the original vertex count, so <code>100</code> uses the mesh as-is and smaller values compute geodesics on a decimated copy while particles remain on the full-resolution surface.</p>
 <p>Reducing it trades geodesic accuracy for speed on dense meshes. Note that before 6.8 this value was misinterpreted, which inflated the mesh instead of decimating it and silently fell back to Euclidean distances; if you carried a value over from an older project, re-check it.</p>
+<h3 id="mesh-scalar-attributes">Mesh Scalar Attributes</h3>
+<p>A scalar field carried by the meshes -- thickness, curvature, a per-vertex measurement of your own -- can be used as a correspondence feature alongside particle position. The value is interpolated from the surface at each particle, so particles line up on the field as well as on the geometry.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>field_attributes</code></td>
+<td><em>(empty)</em></td>
+<td>Names of the point data arrays to use, separated by spaces (write a space in a name as <code>%20</code>).</td>
+</tr>
+<tr>
+<td><code>field_attribute_weights</code></td>
+<td><em>(empty)</em></td>
+<td>One weight per attribute, scaling it relative to XYZ. There must be exactly as many weights as attributes.</td>
+</tr>
+</tbody>
+</table>
+<p>In Studio these appear as a <strong>Mesh Scalars</strong> row per field found on the meshes, in the Optimize panel.</p>
+<p>Two things to know:</p>
+<ul>
+<li>Mesh domains only. Image and contour domains have no field to sample, and a project that mixes them is rejected.</li>
+<li>The field has to be on the <strong>groomed</strong> meshes, which is what optimization reads. Grooming carries fields through its steps, including remeshing, but a mesh built from a segmentation starts without any.</li>
+</ul>
+<p>See <a href="../studio/studio-mesh-scalars.html">Mesh Scalars in Studio</a> for a worked example.</p>
 <h2 id="optimizing-correspondences">Optimizing Correspondences</h2>
 <p>You can use either ShapeWorks Studio or <code>shapeworks optimize &lt;parameters.xml&gt;</code> or <code>shapeworks optimize &lt;project.xlsx&gt;</code> command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.</p>
 <p>See the <img alt="parameters page" src="parameters.html" /> for details regarding the XML file and project file format. </p>

@@ -1571,6 +1571,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../studio/studio-mesh-scalars.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mesh Scalars
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../studio/segmentation-tool.html" class="md-nav__link">
         
   
@@ -4677,6 +4705,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-report_balance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function report_balance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-after_iteration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5135,6 +5174,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#variable-report_counter_" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        variable report_counter_
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#variable-average_energy_a_" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5269,6 +5319,10 @@
 <tr>
 <td>virtual void</td>
 <td><strong><a href="classshapeworks_1_1DualVectorFunction.html#function-before-evaluate">before_evaluate</a></strong>(unsigned int , unsigned int , const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> * )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1DualVectorFunction.html#function-report-balance">report_balance</a></strong>() const</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -5452,6 +5506,10 @@
 <td><strong><a href="classshapeworks_1_1DualVectorFunction.html#variable-average-grad-mag-b-">average_grad_mag_b_</a></strong></td>
 </tr>
 <tr>
+<td>std::shared_ptr&lt; std::atomic&lt; long &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1DualVectorFunction.html#variable-report-counter-">report_counter_</a></strong></td>
+</tr>
+<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1DualVectorFunction.html#variable-average-energy-a-">average_energy_a_</a></strong></td>
 </tr>
@@ -5604,6 +5662,10 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1VectorFunction.html#function-before-evaluate">shapeworks::VectorFunction::before_evaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the energy as well as the gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
+<h3 id="function-report_balance">function report_balance</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">report_balance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>The two terms are gradients of quantities with different units, so how they compare is not fixed by relative_gradient_scaling_ alone: it also moves with the scale of the data. Report it periodically, so that a correspondence term scaled into irrelevance is visible. </p>
 <h3 id="function-after_iteration">function after_iteration</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">after_iteration</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
@@ -5750,6 +5812,9 @@
 <h3 id="variable-average_grad_mag_b_">variable average_grad_mag_b_</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_grad_mag_b_</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-report_counter_">variable report_counter_</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">report_counter_</span><span class="w"> </span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)};</span>
+</code></pre></div>
 <h3 id="variable-average_energy_a_">variable average_energy_a_</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">average_energy_a_</span><span class="p">;</span>
 </code></pre></div>
@@ -5766,7 +5831,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VectorFunction</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">function_b_</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-10-04 at 04:31:24 +0000</p>
+<p>Updated on 2026-10-06 at 05:04:02 +0000</p>
 
 
 
