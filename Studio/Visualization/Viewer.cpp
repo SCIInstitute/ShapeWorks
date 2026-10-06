@@ -1201,6 +1201,10 @@ void Viewer::update_points() {
     shape_->load_feature(session_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);
   }
+  // a shape with no values for the feature (a shape-only PCA mode, say) keeps the usual particle
+  // colors: an index pushed through the feature's color scale means nothing
+  glyphs_show_feature_ =
+      showing_feature_map() && (scalar_values.size() > 0 || session_->should_difference_vectors_show());
 
   auto domain_visibility = visualizer_->get_domain_particle_visibilities();
   if (domain_visibility.size() != correspondence_points.size()) {
@@ -1243,13 +1247,15 @@ void Viewer::update_points() {
     }
   }
 
-  if (showing_feature_map()) {
+  if (glyphs_show_feature_) {
     glyph_mapper_->SetScalarRange(surface_lut_->GetRange());
     glyph_point_set_->GetPointData()->SetScalars(scalars);
     glyphs_->SetColorModeToColorByScalar();
     glyph_mapper_->SetColorModeToMapScalars();
     glyph_mapper_->ScalarVisibilityOn();
     glyph_mapper_->SetLookupTable(surface_lut_);
+  } else if (!arrows_visible_) {
+    glyph_mapper_->SetLookupTable(glyph_lut_);
   }
 
   int alignment_domain = visualizer_->get_alignment_domain();
@@ -1573,7 +1579,7 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
 //-----------------------------------------------------------------------------
 void Viewer::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
   glyph_lut_ = lut;
-  if (!arrows_visible_ && !showing_feature_map()) {
+  if (!arrows_visible_ && !glyphs_show_feature_) {
     glyph_mapper_->SetLookupTable(glyph_lut_);
   }
 }
@@ -1600,7 +1606,9 @@ void Viewer::update_difference_lut(float r0, float r1) {
 
   arrow_glyph_mapper_->SetLookupTable(surface_lut_);
   arrow_glyph_mapper_->SetScalarRange(range);
-  glyph_mapper_->SetScalarRange(range);
+  if (glyphs_show_feature_ || arrows_visible_ || !showing_feature_map()) {
+    glyph_mapper_->SetScalarRange(range);
+  }
   scalar_bar_actor_->SetLookupTable(surface_lut_);
   slice_view_.update_colormap();
   if (rd > 100) {

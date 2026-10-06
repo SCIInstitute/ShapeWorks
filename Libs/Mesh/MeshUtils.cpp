@@ -4,8 +4,11 @@
 #include <igl/matrix_to_list.h>
 #include <vtkArrowSource.h>
 #include <vtkCellData.h>
+#include <vtkCellLocator.h>
 #include <vtkCleanPolyData.h>
 #include <vtkDoubleArray.h>
+#include <vtkGenericCell.h>
+#include <vtkIdList.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkLookupTable.h>
@@ -1166,6 +1169,8 @@ vtkSmartPointer<vtkPolyData> MeshUtils::recreate_mesh(vtkSmartPointer<vtkPolyDat
 
   poly_data->SetPoints(points);
   poly_data->SetPolys(polys);
+  // every point is carried over in the same order, so the fields map straight across
+  poly_data->GetPointData()->ShallowCopy(mesh->GetPointData());
   return poly_data;
 }
 
@@ -1253,6 +1258,9 @@ vtkSmartPointer<vtkPolyData> MeshUtils::extract_largest_edge_connected_component
   std::vector<vtkIdType> point_map(mesh->GetNumberOfPoints(), -1);
   std::vector<vtkIdType> new_ids;
 
+  // the fields follow their points through the renumbering
+  result->GetPointData()->CopyAllocate(mesh->GetPointData());
+
   for (vtkIdType cell_id = 0; cell_id < num_cells; cell_id++) {
     if (find(cell_id) != largest_group) {
       continue;
@@ -1266,6 +1274,7 @@ vtkSmartPointer<vtkPolyData> MeshUtils::extract_largest_edge_connected_component
       const vtkIdType old_id = cell_points->GetId(i);
       if (point_map[old_id] < 0) {
         point_map[old_id] = points->InsertNextPoint(mesh->GetPoint(old_id));
+        result->GetPointData()->CopyData(mesh->GetPointData(), old_id, point_map[old_id]);
       }
       new_ids.push_back(point_map[old_id]);
     }
@@ -1278,6 +1287,16 @@ vtkSmartPointer<vtkPolyData> MeshUtils::extract_largest_edge_connected_component
 }
 
 //---------------------------------------------------------------------------
+//! Drop the arrays that do not have one tuple per point (or cell)
+static void remove_mismatched_arrays(vtkDataSetAttributes* attributes, vtkIdType count) {
+  for (int i = attributes->GetNumberOfArrays() - 1; i >= 0; i--) {
+    auto array = attributes->GetAbstractArray(i);
+    if (array && array->GetNumberOfTuples() != count) {
+      attributes->RemoveArray(i);
+    }
+  }
+}
+
 vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData> mesh, bool extract_largest) {
   // Line-only / vertex-only polydata (e.g. contours) has no polygons to repair;
   // the triangulation and cleanup steps below would discard its cells.
@@ -1285,8 +1304,15 @@ vtkSmartPointer<vtkPolyData> MeshUtils::repair_mesh(vtkSmartPointer<vtkPolyData>
     return mesh;
   }
 
+  // An array without a value for every point cannot follow the mesh through the steps below.  They
+  // copy the fields point by point and would read past the end of it, so leave such arrays behind.
+  auto input = vtkSmartPointer<vtkPolyData>::New();
+  input->ShallowCopy(mesh);
+  remove_mismatched_arrays(input->GetPointData(), input->GetNumberOfPoints());
+  remove_mismatched_arrays(input->GetCellData(), input->GetNumberOfCells());
+
   auto triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangle_filter->SetInputData(mesh);
+  triangle_filter->SetInputData(input);
   triangle_filter->PassLinesOff();
   triangle_filter->Update();
 
@@ -1328,6 +1354,91 @@ bool MeshUtils::is_contour(vtkSmartPointer<vtkPolyData> poly_data) {
     return false;
   }
   return poly_data->GetNumberOfLines() > 0;
+}
+
+//---------------------------------------------------------------------------
+void MeshUtils::transfer_point_data(vtkSmartPointer<vtkPolyData> source, vtkSmartPointer<vtkPolyData> target) {
+  if (!source || !target || source->GetNumberOfCells() == 0 || target->GetNumberOfPoints() == 0) {
+    return;
+  }
+
+  auto source_data = source->GetPointData();
+
+  // Only fields that give one value per source point can be interpolated.  Normals are left to the
+  // caller to recompute from the new geometry.
+  std::vector<std::string> names;
+  for (int i = 0; i < source_data->GetNumberOfArrays(); i++) {
+    auto array = source_data->GetArray(i);
+    if (!array || !array->GetName()) {
+      continue;
+    }
+    std::string name = array->GetName();
+    if (name == "Normals" || name == "normals") {
+      continue;
+    }
+    if (array->GetNumberOfTuples() != source->GetNumberOfPoints()) {
+      continue;
+    }
+    names.push_back(name);
+  }
+  if (names.empty()) {
+    return;
+  }
+
+  auto locator = vtkSmartPointer<vtkCellLocator>::New();
+  locator->SetDataSet(source);
+  locator->BuildLocator();
+
+  vtkIdType num_points = target->GetNumberOfPoints();
+
+  // Gather just the fields to carry, so vtkPointData does the type handling and the per-array
+  // interpolation without touching the ones that were skipped
+  auto fields = vtkSmartPointer<vtkPointData>::New();
+  for (const auto& name : names) {
+    fields->AddArray(source_data->GetArray(name.c_str()));
+  }
+
+  auto interpolated = vtkSmartPointer<vtkPointData>::New();
+  interpolated->InterpolateAllocate(fields, num_points);
+  // size the arrays up front: the loop below writes them from several threads at once, so no tuple
+  // may trigger a reallocation
+  interpolated->SetNumberOfTuples(num_points);
+
+  tbb::parallel_for(tbb::blocked_range<vtkIdType>(0, num_points), [&](const tbb::blocked_range<vtkIdType>& range) {
+    auto cell = vtkSmartPointer<vtkGenericCell>::New();
+    auto ids = vtkSmartPointer<vtkIdList>::New();
+    std::vector<double> weights(std::max(3, source->GetMaxCellSize()));
+
+    for (vtkIdType i = range.begin(); i < range.end(); i++) {
+      double point[3];
+      target->GetPoint(i, point);
+
+      double closest[3];
+      vtkIdType cell_id = -1;
+      int sub_id = 0;
+      double dist2 = 0;
+      locator->FindClosestPoint(point, closest, cell, cell_id, sub_id, dist2);
+      if (cell_id < 0) {
+        continue;
+      }
+
+      double pcoords[3];
+      cell->EvaluatePosition(closest, nullptr, sub_id, pcoords, dist2, weights.data());
+
+      ids->Reset();
+      for (vtkIdType p = 0; p < cell->GetNumberOfPoints(); p++) {
+        ids->InsertNextId(cell->GetPointId(p));
+      }
+      interpolated->InterpolatePoint(fields, i, ids, weights.data());
+    }
+  });
+
+  for (const auto& name : names) {
+    auto array = interpolated->GetArray(name.c_str());
+    if (array) {
+      target->GetPointData()->AddArray(array);
+    }
+  }
 }
 
 }  // namespace shapeworks

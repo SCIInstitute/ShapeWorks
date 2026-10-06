@@ -6,6 +6,10 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
+#include <vtkFloatArray.h>
+
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 
 #include "../Testing.h"
@@ -441,6 +445,167 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   // and higher modes should contain very little
   ASSERT_GT(values[values.size() - 1], 750.0);
   ASSERT_LT(values[values.size() - 2], 10);
+}
+
+//---------------------------------------------------------------------------
+//! Give every mesh a scalar field and optimize with it as an attribute
+static ProjectHandle prep_mesh_scalar_project() {
+  ProjectHandle project = std::make_shared<Project>();
+  if (!project->load("optimize.swproj")) {
+    return nullptr;
+  }
+
+  for (auto& subject : project->get_subjects()) {
+    std::vector<std::string> filenames;
+    for (const auto& filename : subject->get_groomed_filenames()) {
+      Mesh mesh = MeshUtils::threadSafeReadMesh(filename);
+
+      // deliberately a float field: that is how scalars usually arrive on a mesh
+      auto height = vtkSmartPointer<vtkFloatArray>::New();
+      height->SetName("height");
+      height->SetNumberOfValues(mesh.numPoints());
+      for (int i = 0; i < mesh.numPoints(); i++) {
+        height->SetValue(i, mesh.getPoint(i)[2]);
+      }
+      mesh.setField("height", height, Mesh::Point);
+
+      // .ply cannot carry fields, so keep the copy with the field in a format that can
+      auto name = StringUtils::getBaseFilenameWithoutExtension(filename) + "_scalars.vtk";
+      mesh.write(name);
+      filenames.push_back(name);
+    }
+    subject->set_original_filenames(filenames);
+    subject->set_groomed_filenames(filenames);
+  }
+  project->update_subjects();
+
+  return project;
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_scalars_test) {
+  prep_temp("/optimize/mesh_use_normals", "mesh_scalars");
+
+  auto project = prep_mesh_scalar_project();
+  ASSERT_TRUE(project != nullptr);
+
+  OptimizeParameters params(project);
+  params.set_field_attributes({"height"});
+  params.set_field_attribute_weights({1.0});
+  params.set_number_of_particles({32});
+  params.set_optimization_iterations(20);
+
+  Optimize app;
+  ASSERT_TRUE(params.set_up_optimize(&app));
+
+  // a scalar attribute is matched through the mesh-based correspondence path
+  ASSERT_TRUE(app.GetUseMeshBasedAttributes());
+  ASSERT_EQ(app.GetAttributesPerDomain()[0], 1);
+
+  ASSERT_TRUE(app.Run());
+
+  auto points = app.GetLocalPoints();
+  ASSERT_EQ(points.size(), 4);
+  for (const auto& shape : points) {
+    ASSERT_EQ(shape.size(), 32);
+  }
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_scalars_missing_field_test) {
+  prep_temp("/optimize/mesh_use_normals", "mesh_scalars_missing_field");
+
+  auto project = prep_mesh_scalar_project();
+  ASSERT_TRUE(project != nullptr);
+
+  OptimizeParameters params(project);
+  params.set_field_attributes({"not_a_field"});
+  params.set_field_attribute_weights({1.0});
+  params.set_number_of_particles({32});
+
+  // a field the meshes don't carry has to be reported, not interpolated as garbage
+  Optimize app;
+  ASSERT_THROW(params.set_up_optimize(&app), std::invalid_argument);
+}
+
+//---------------------------------------------------------------------------
+//! Optimize spheres that carry a patch field at a different place on each shape.  Returns the spread
+//! across the shapes of the field under each particle, averaged over the particles, or -1 on failure.
+static double run_mesh_patch_optimization(const std::string& name, bool use_field) {
+  prep_temp("/optimize/mesh_use_normals", name);
+
+  ProjectHandle project = std::make_shared<Project>();
+  if (!project->load("optimize.swproj")) {
+    return -1.0;
+  }
+
+  const double degrees = std::acos(-1.0) / 180.0;
+  const double width = 25.0 * degrees;
+
+  std::vector<Mesh> meshes;
+  for (auto& subject : project->get_subjects()) {
+    Mesh mesh = MeshUtils::threadSafeReadMesh(subject->get_groomed_filenames()[0]);
+
+    // the spheres are centered on the origin: move the patch around them from shape to shape
+    const double angle = (-30.0 + 20.0 * meshes.size()) * degrees;
+    const Eigen::Vector3d patch_center(std::sin(angle), 0.0, std::cos(angle));
+
+    auto patch = vtkSmartPointer<vtkFloatArray>::New();
+    patch->SetName("patch");
+    patch->SetNumberOfValues(mesh.numPoints());
+    for (int i = 0; i < mesh.numPoints(); i++) {
+      auto point = mesh.getPoint(i);
+      const Eigen::Vector3d direction = Eigen::Vector3d(point[0], point[1], point[2]).normalized();
+      const double separation = std::acos(std::clamp(direction.dot(patch_center), -1.0, 1.0));
+      patch->SetValue(i, std::exp(-0.5 * (separation / width) * (separation / width)));
+    }
+    mesh.setField("patch", patch, Mesh::Point);
+
+    std::string filename = "sphere_patch_" + std::to_string(meshes.size()) + ".vtk";
+    mesh.write(filename);
+    subject->set_original_filenames({filename});
+    subject->set_groomed_filenames({filename});
+    meshes.push_back(mesh);
+  }
+  project->update_subjects();
+
+  OptimizeParameters params(project);
+  if (use_field) {
+    params.set_field_attributes({"patch"});
+    params.set_field_attribute_weights({100.0});
+  }
+  params.set_use_normals({false});
+  params.set_number_of_particles({32});
+
+  Optimize app;
+  if (!params.set_up_optimize(&app) || !app.Run()) {
+    return -1.0;
+  }
+
+  auto points = app.GetLocalPoints();
+  const size_t num_particles = points[0].size();
+  double total = 0.0;
+  for (size_t j = 0; j < num_particles; j++) {
+    Eigen::VectorXd values(points.size());
+    for (size_t shape = 0; shape < points.size(); shape++) {
+      values[shape] = meshes[shape].getFieldValue("patch", meshes[shape].closestPointId(points[shape][j]));
+    }
+    total += std::sqrt((values.array() - values.mean()).square().mean());
+  }
+  return total / num_particles;
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_scalars_follow_field_test) {
+  // a sphere says nothing about where the patch is, so only the field can line the particles up on it
+  const double without_field = run_mesh_patch_optimization("mesh_scalars_patch_off", false);
+  const double with_field = run_mesh_patch_optimization("mesh_scalars_patch_on", true);
+  std::cerr << "Spread of the field under a particle: " << without_field << " without the attribute, "
+            << with_field << " with it\n";
+
+  ASSERT_GT(without_field, 0.0);
+  ASSERT_GE(with_field, 0.0);
+  ASSERT_LT(with_field, 0.5 * without_field);
 }
 
 //---------------------------------------------------------------------------

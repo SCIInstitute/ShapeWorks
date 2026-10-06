@@ -264,6 +264,8 @@ class Viewer {
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 
   bool arrows_visible_ = false;
+  //! whether the particles are colored by the feature map (false when the shape has no values for it)
+  bool glyphs_show_feature_ = false;
 
   ColorSchemes color_schemes_;
   int scheme_ = 0;

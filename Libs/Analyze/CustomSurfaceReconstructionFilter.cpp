@@ -437,6 +437,25 @@ int CustomSurfaceReconstructionFilter::RequestData(
     vtkDebugMacro( << "Created output volume of dimensions: ("
                    << dim[0] << ", " << dim[1] << ", " << dim[2] << ")" );
 
+    // The sample spacing is a fixed length, so data in units where the shape spans a large
+    // number of them (microns, say) asks for a volume that cannot be allocated.  Refuse it
+    // here: the allocation below throws std::bad_alloc, and this filter runs on a thread pool
+    // where that would take the whole application down.
+    const double MAX_VOXELS = 2e8;
+    double voxels = static_cast<double>( dim[0] ) * dim[1] * dim[2];
+    if ( dim[0] < 2 || dim[1] < 2 || dim[2] < 2 || voxels > MAX_VOXELS )
+    {
+      vtkErrorMacro( << "Cannot reconstruct a surface from these points: a sample spacing of "
+                     << this->SampleSpacing << " over a bounding box of "
+                     << ( bottomright[0] - topleft[0] ) << " x " << ( bottomright[1] - topleft[1] )
+                     << " x " << ( bottomright[2] - topleft[2] ) << " needs a volume of "
+                     << dim[0] << " x " << dim[1] << " x " << dim[2] << " voxels.  Check that the "
+                     << "sample spacing suits the units the data is in." );
+      output->SetExtent( 0, -1, 0, -1, 0, -1 );
+      delete [] surfacePoints;
+      return 1;
+    }
+
     // initialise the output volume
     outInfo->Set( vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                   0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1 );

@@ -5,6 +5,7 @@
 #include <StringUtils.h>
 #include <vtkPointData.h>
 
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <memory>
 
@@ -336,6 +337,48 @@ void Project::set_default_landmark_colors() {
 }
 
 //---------------------------------------------------------------------------
+//! Read the names of the point data arrays carried by the given meshes, in order and without repeats
+static std::vector<std::string> read_mesh_scalar_names(const std::vector<std::string>& filenames,
+                                                       const std::vector<DomainType>& domain_types) {
+  std::vector<std::string> names;
+
+  for (size_t d = 0; d < domain_types.size(); d++) {
+    if (domain_types[d] != DomainType::Mesh) {
+      continue;
+    }
+    if (filenames.size() <= d) {
+      continue;
+    }
+    auto filename = filenames[d];
+    if (!ShapeWorksUtils::file_exists(filename)) {
+      continue;
+    }
+    try {
+      auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
+      if (!poly_data) {
+        continue;
+      }
+      vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+      for (vtkIdType i = 0; i < num_arrays; i++) {
+        std::string array_name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
+        // ignore "normals" and "Normals" arrays
+        if (array_name == "normals" || array_name == "Normals") {
+          continue;
+        }
+        // domains often carry the same field, and it is one choice to the user either way
+        if (std::find(names.begin(), names.end(), array_name) == names.end()) {
+          names.push_back(array_name);
+        }
+      }
+    } catch (std::exception& e) {
+      SW_ERROR("Unable to read features from mesh: {}", filename);
+    }
+  }
+
+  return names;
+}
+
+//---------------------------------------------------------------------------
 void Project::determine_feature_names() {
   if (subjects_.empty()) {
     return;
@@ -351,32 +394,12 @@ void Project::determine_feature_names() {
   }
   image_names_ = feature_names_;
 
-  std::vector<std::string> mesh_scalars;
+  auto mesh_scalars = read_mesh_scalar_names(subject->get_original_filenames(), get_original_domain_types());
 
-  for (int d = 0; d < get_original_domain_types().size(); d++) {
-    if (get_original_domain_types()[d] == DomainType::Mesh) {
-      if (subject->get_original_filenames().size() > d) {
-        auto filename = subject->get_original_filenames()[d];
-        if (ShapeWorksUtils::file_exists(filename)) {
-          try {
-            auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
-            if (poly_data) {
-              vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-              for (vtkIdType i = 0; i < num_arrays; i++) {
-                std::string array_name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
-                // ignore "normals" and "Normals" arrays
-                if (array_name == "normals" || array_name == "Normals") {
-                  continue;
-                }
-                mesh_scalars.push_back(StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i)));
-              }
-            }
-          } catch (std::exception& e) {
-            SW_ERROR("Unable to read features from mesh: {}", filename);
-          }
-        }
-      }
-    }
+  mesh_scalar_names_ = mesh_scalars;
+  if (mesh_scalar_names_.empty()) {
+    // a project loaded with only groomed meshes still has scalars to offer
+    mesh_scalar_names_ = read_mesh_scalar_names(subject->get_groomed_filenames(), get_groomed_domain_types());
   }
 
   // combine
@@ -482,6 +505,9 @@ std::string Project::get_next_landmark_color(int domain_id) {
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_feature_names() { return feature_names_; }
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_mesh_scalar_names() { return mesh_scalar_names_; }
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_image_names() { return image_names_; }

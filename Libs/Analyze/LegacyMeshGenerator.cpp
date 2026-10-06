@@ -103,6 +103,13 @@ vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh(const Eigen::VectorX
 {
   // copy shape points into point set
   int numPoints = shape.size() / 3;
+
+  // a handful of points has no surface to reconstruct, and the bounding box of a degenerate
+  // set drives the sampling volume below to nonsense
+  if (numPoints < 4) {
+    return vtkSmartPointer<vtkPolyData>(nullptr);
+  }
+
   this->points->SetNumberOfPoints(numPoints);
   unsigned int k = 0;
   for (unsigned int i = 0; i < numPoints; i++) {

@@ -1726,7 +1726,8 @@ ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
       auto scalars = ShapeScalarJob::predict_scalars(session_, QString::fromStdString(feature_map_),
                                                      points.get_combined_global_particles());
       shape->set_point_features(feature_map_, scalars);
-    } else {
+    } else if (computed_scalars_.size() > 0) {
+      // a shape-only mode has no scalars: the model says nothing about the feature away from the mean
       shape->set_point_features(feature_map_, computed_scalars_);
     }
   }
