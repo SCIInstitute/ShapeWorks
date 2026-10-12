@@ -1,3 +1,4 @@
+#include <igl/boundary_loop.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
 #include <vtkDoubleArray.h>
@@ -1192,6 +1193,121 @@ TEST(MeshTests, boundaryLoopExtractor) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
   Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
   Mesh loop = MeshUtils::extract_boundary_loop(mesh);
+  ASSERT_TRUE(loop == ground_truth);
+}
+
+// Returns a copy of the mesh with the faces around the given vertex removed, leaving a hole
+static Mesh punch_hole(const Mesh& mesh, int center) {
+  Eigen::MatrixXd V = mesh.points();
+  Eigen::MatrixXi F = mesh.faces();
+  Eigen::MatrixXi F2(F.rows(), 3);
+  int count = 0;
+  for (int f = 0; f < F.rows(); f++) {
+    if (F(f, 0) != center && F(f, 1) != center && F(f, 2) != center) {
+      F2.row(count++) = F.row(f);
+    }
+  }
+  F2.conservativeResize(count, 3);
+  return Mesh(V, F2);
+}
+
+static double max_edge_length(const Mesh& mesh) {
+  Eigen::MatrixXd V = mesh.points();
+  Eigen::MatrixXi F = mesh.faces();
+  double max_length = 0.0;
+  for (int f = 0; f < F.rows(); f++) {
+    for (int i = 0; i < 3; i++) {
+      max_length = std::max(max_length, (V.row(F(f, i)) - V.row(F(f, (i + 1) % 3))).norm());
+    }
+  }
+  return max_length;
+}
+
+// A mesh that already has a boundary loop (e.g. a bone cropped at the shaft) must not have that loop dragged
+// onto the shared boundary (issue #2610)
+TEST(MeshTests, sharedBoundaryExtractorMultipleLoops) {
+  Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
+  Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
+  double tol = 0.001;
+
+  Eigen::MatrixXd V = left.points();
+  Eigen::MatrixXi F = left.faces();
+  Eigen::VectorXd sqrD;
+  Eigen::VectorXi I;
+  Eigen::MatrixXd C;
+  igl::point_mesh_squared_distance(V, right.points(), right.faces(), sqrD, I, C);
+
+  // The lowest indexed vertex anywhere near the shared surface. A hole whose rim has a lower indexed vertex
+  // is returned by igl::boundary_loop ahead of the loop left by removing the shared surface.
+  int first_near = V.rows();
+  for (int i = 0; i < V.rows(); i++) {
+    if (sqrD(i) <= tol) {
+      first_near = i;
+      break;
+    }
+  }
+
+  // Find a face far from the shared surface with a vertex below first_near, and punch a hole next to it
+  int center = -1;
+  for (int f = 0; f < F.rows() && center < 0; f++) {
+    for (int i = 0; i < 3; i++) {
+      int rim = F(f, i);
+      int candidate = F(f, (i + 1) % 3);
+      if (rim < first_near && sqrD(rim) > 0.25 * sqrD.maxCoeff() && sqrD(candidate) > 0.25 * sqrD.maxCoeff()) {
+        center = candidate;
+        break;
+      }
+    }
+  }
+  ASSERT_GE(center, 0);
+
+  Mesh left_open = punch_hole(left, center);
+  std::array<Mesh, 3> output = MeshUtils::shared_boundary_extractor(left_open, right, tol);
+
+  // snapping only moves vertices a short distance, so no edge should end up spanning the mesh
+  ASSERT_LT(max_edge_length(output[0]), 3.0 * max_edge_length(left_open));
+}
+
+// With more than one boundary loop, the longest should be extracted rather than an arbitrary one
+TEST(MeshTests, boundaryLoopExtractorMultipleLoops) {
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+
+  // punch a hole in the interior of the mesh
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  std::vector<std::vector<int>> loops;
+  for (int center = 0; center < mesh.numPoints(); center++) {
+    Mesh holed = punch_hole(mesh, center);
+    V = holed.points();
+    F = holed.faces();
+    loops.clear();
+    igl::boundary_loop(F, loops);
+    if (loops.size() == 2) {
+      break;
+    }
+  }
+  ASSERT_EQ(loops.size(), 2);
+
+  // igl::boundary_loop returns the loop with the lowest indexed vertex first, so swap vertex 0 with a vertex on
+  // the rim of the hole to make sure the hole is returned ahead of the outer loop
+  const int rim = loops[0].size() < loops[1].size() ? loops[0][0] : loops[1][0];
+  V.row(0).swap(V.row(rim));
+  for (int f = 0; f < F.rows(); f++) {
+    for (int i = 0; i < 3; i++) {
+      if (F(f, i) == 0) {
+        F(f, i) = rim;
+      } else if (F(f, i) == rim) {
+        F(f, i) = 0;
+      }
+    }
+  }
+  loops.clear();
+  igl::boundary_loop(F, loops);
+  ASSERT_EQ(loops.size(), 2);
+  ASSERT_LT(loops[0].size(), loops[1].size());
+
+  Mesh loop = MeshUtils::extract_boundary_loop(Mesh(V, F));
   ASSERT_TRUE(loop == ground_truth);
 }
 
