@@ -83,7 +83,7 @@ pycparser==2.23
 pyct==0.5.0
 pydantic==2.11.9
 pydantic-core==2.33.2
-pygments==2.19.2
+pygments==2.20.0
 pyparsing==3.2.4
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
