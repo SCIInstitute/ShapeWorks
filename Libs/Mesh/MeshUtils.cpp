@@ -313,7 +313,25 @@ Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
     throw std::runtime_error("Expected at least one boundary loop in the mesh");
   }
 
-  auto loop = loops[0];  // copy so we can rotate it to a canonical start vertex
+  // A mesh may have more than one boundary loop (e.g. a hole in the shared surface). igl::boundary_loop
+  // returns them in arbitrary order, so use the longest one.
+  size_t longest = 0;
+  if (loops.size() > 1) {
+    double longest_length = -1.0;
+    for (size_t i = 0; i < loops.size(); i++) {
+      double length = 0.0;
+      for (size_t j = 0; j < loops[i].size(); j++) {
+        length += (V.row(loops[i][j]) - V.row(loops[i][(j + 1) % loops[i].size()])).norm();
+      }
+      if (length > longest_length) {
+        longest_length = length;
+        longest = i;
+      }
+    }
+    SW_WARN("Mesh has {} boundary loops, extracting the longest", loops.size());
+  }
+
+  auto loop = loops[longest];  // copy so we can rotate it to a canonical start vertex
 
   // Rotate the loop so it always starts at a canonical vertex (the one with the
   // largest Y coordinate; lexicographic tiebreakers on Z then X). igl::boundary_loop
@@ -377,9 +395,9 @@ Mesh MeshUtils::extract_boundary_loop(Mesh mesh) {
  */
 
 //---------------------------------------------------------------------------
-static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const std::vector<int>& faces,
-                                                                        const Eigen::MatrixXd& src_V,
-                                                                        const Eigen::MatrixXi& src_F) {
+// Also returns the list mapping each output vertex to its index in src_V
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::VectorXi> rem_into_eigen_mesh(
+    const std::vector<int>& faces, const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F) {
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
   const std::unordered_set<int> faces_set(faces.begin(), faces.end());
@@ -393,9 +411,10 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi> rem_into_eigen_mesh(const st
   }
 
   Eigen::VectorXi mapping;
-  igl::remove_unreferenced(src_V, F2, V, F, mapping);
+  Eigen::VectorXi new_to_old;
+  igl::remove_unreferenced(src_V, F2, V, F, mapping, new_to_old);
 
-  return std::make_tuple(V, F);
+  return std::make_tuple(V, F, new_to_old);
 }
 
 //---------------------------------------------------------------------------
@@ -425,18 +444,20 @@ static bool is_empty(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) { retur
 //---------------------------------------------------------------------------
 // Identifies faces from the source mesh that lie within tolerance distance of the other mesh surface.
 // Uses spatial queries to determine which faces are "shared" between the two meshes.
-// Returns both the shared faces as one mesh and the remaining non-shared faces as another mesh.
-static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi> find_shared_surface(
-    const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& other_V,
-    const Eigen::MatrixXi& other_F, double tol = 1e-3) {
+// Returns both the shared faces as one mesh and the remaining non-shared faces as another mesh, along with the
+// seam vertices: the vertices of the remaining mesh that were also used by a shared face.
+static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::MatrixXi, std::vector<int>>
+find_shared_surface(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F, const Eigen::MatrixXd& other_V,
+                    const Eigen::MatrixXi& other_F, double tol = 1e-3) {
   Eigen::MatrixXd out_V;
   Eigen::MatrixXi out_F;
   Eigen::MatrixXd rem_V;
   Eigen::MatrixXi rem_F;
+  std::vector<int> seam;
 
   // If either mesh is empty, there can be no shared surface
   if (is_empty(src_V, src_F) || is_empty(other_V, other_F)) {
-    return std::make_tuple(out_V, out_F, src_V, src_F);
+    return std::make_tuple(out_V, out_F, src_V, src_F, seam);
   }
 
   igl::AABB<Eigen::MatrixXd, 3> tree;
@@ -470,36 +491,56 @@ static std::tuple<Eigen::MatrixXd, Eigen::MatrixXi, Eigen::MatrixXd, Eigen::Matr
   }
 
   std::tie(out_V, out_F) = shared_into_eigen_mesh(shared_faces, src_V, src_F);
-  std::tie(rem_V, rem_F) = rem_into_eigen_mesh(shared_faces, src_V, src_F);
-  return std::make_tuple(out_V, out_F, rem_V, rem_F);
+  Eigen::VectorXi rem_to_src;
+  std::tie(rem_V, rem_F, rem_to_src) = rem_into_eigen_mesh(shared_faces, src_V, src_F);
+
+  std::vector<bool> in_shared(src_V.rows(), false);
+  for (const auto& f : shared_faces) {
+    for (int i = 0; i < 3; i++) {
+      in_shared[src_F(f, i)] = true;
+    }
+  }
+  for (int i = 0; i < rem_to_src.size(); i++) {
+    if (in_shared[rem_to_src(i)]) {
+      seam.push_back(i);
+    }
+  }
+
+  return std::make_tuple(out_V, out_F, rem_V, rem_F, seam);
 }
 
 //---------------------------------------------------------------------------
-// Snaps boundary vertices of the source mesh to the closest points on the shared mesh boundary.
+// Snaps the seam vertices of the source mesh to the closest points on the shared mesh boundary.
 // This ensures the boundaries are geometrically aligned, which is typically needed for mesh
 // stitching or boolean operations.
-// Returns a copy of the source mesh with modified boundary vertex positions.
+// Only the seam vertices (those left on the boundary by removing the shared surface) are moved, so any other
+// boundary loops of the source mesh (e.g. a cropped bone shaft) are left untouched. All boundary loops of the
+// shared mesh are considered, since the shared surface may have holes or consist of several patches.
+// Returns a copy of the source mesh with modified seam vertex positions.
 static void snap_boundary_to_mesh(const Eigen::MatrixXd& src_V, const Eigen::MatrixXi& src_F,
-                                  const Eigen::MatrixXd& shared_V, const Eigen::MatrixXi& shared_F,
-                                  Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
-  std::vector<std::vector<int> > src_loops, shared_loops;
-  igl::boundary_loop(src_F, src_loops);
+                                  const std::vector<int>& seam, const Eigen::MatrixXd& shared_V,
+                                  const Eigen::MatrixXi& shared_F, Eigen::MatrixXd& out_V, Eigen::MatrixXi& out_F) {
+  std::vector<std::vector<int> > shared_loops;
   igl::boundary_loop(shared_F, shared_loops);
 
-  if (src_loops.size() < 1 || shared_loops.size() < 1) {
-    SW_DEBUG("src_loops size: {}, shared_loops size: {}", src_loops.size(), shared_loops.size());
-    throw std::runtime_error("Expected at least one boundary loop in each mesh");
+  if (shared_loops.size() < 1) {
+    throw std::runtime_error("Expected at least one boundary loop in the shared surface");
   }
 
-  const auto& src_loop = src_loops[0];
-  const auto& shared_loop = shared_loops[0];
+  size_t num_edges = 0;
+  for (const auto& shared_loop : shared_loops) {
+    num_edges += shared_loop.size();
+  }
 
   Eigen::MatrixXi shared_F_boundary;
-  shared_F_boundary.resize(shared_loop.size(), 3);
-  for (int i = 0; i < shared_loop.size(); i++) {
-    const int v0 = shared_loop[i];
-    const int v1 = shared_loop[(i + 1) % shared_loop.size()];
-    shared_F_boundary.row(i) = Eigen::Vector3i{v0, v1, v1};
+  shared_F_boundary.resize(num_edges, 3);
+  int next_idx = 0;
+  for (const auto& shared_loop : shared_loops) {
+    for (int i = 0; i < shared_loop.size(); i++) {
+      const int v0 = shared_loop[i];
+      const int v1 = shared_loop[(i + 1) % shared_loop.size()];
+      shared_F_boundary.row(next_idx++) = Eigen::Vector3i{v0, v1, v1};
+    }
   }
 
   out_V = src_V;
@@ -508,15 +549,15 @@ static void snap_boundary_to_mesh(const Eigen::MatrixXd& src_V, const Eigen::Mat
   igl::AABB<Eigen::MatrixXd, 3> tree;
   tree.init(shared_V, shared_F_boundary);
 
-  for (int i = 0; i < src_loop.size(); i++) {
+  for (const auto& v : seam) {
     Eigen::VectorXd sqrD;
     Eigen::VectorXi I;
     Eigen::MatrixXd C;
     Eigen::MatrixXd P(1, 3);
-    P.row(0) = src_V.row(src_loop[i]);
+    P.row(0) = src_V.row(v);
     tree.squared_distance(shared_V, shared_F_boundary, P, sqrD, I, C);
 
-    out_V.row(src_loop[i]) = C.row(0);
+    out_V.row(v) = C.row(0);
   }
 }
 
@@ -538,8 +579,9 @@ std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, con
 
   Eigen::MatrixXd shared_V_l, shared_V_r, rem_V_l, rem_V_r;
   Eigen::MatrixXi shared_F_l, shared_F_r, rem_F_l, rem_F_r;
-  std::tie(shared_V_l, shared_F_l, rem_V_l, rem_F_l) = find_shared_surface(V_l, F_l, V_r, F_r, tol);
-  std::tie(shared_V_r, shared_F_r, rem_V_r, rem_F_r) = find_shared_surface(V_r, F_r, V_l, F_l, tol);
+  std::vector<int> seam_l;
+  std::tie(shared_V_l, shared_F_l, rem_V_l, rem_F_l, seam_l) = find_shared_surface(V_l, F_l, V_r, F_r, tol);
+  std::tie(shared_V_r, shared_F_r, rem_V_r, rem_F_r, std::ignore) = find_shared_surface(V_r, F_r, V_l, F_l, tol);
 
   if (is_empty(shared_V_l, shared_F_l) || is_empty(shared_V_r, shared_F_r) || is_empty(rem_V_l, rem_F_l) ||
       is_empty(rem_V_r, rem_F_r)) {
@@ -551,7 +593,7 @@ std::array<Mesh, 3> MeshUtils::shared_boundary_extractor(const Mesh& mesh_l, con
   Eigen::MatrixXd bridge_V;
   Eigen::MatrixXi bridge_F;
 
-  snap_boundary_to_mesh(rem_V_l, rem_F_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
+  snap_boundary_to_mesh(rem_V_l, rem_F_l, seam_l, shared_V_r, shared_F_r, bridge_V, bridge_F);
 
   Mesh out_l(bridge_V, bridge_F);
   Mesh out_r(rem_V_r, rem_F_r);
