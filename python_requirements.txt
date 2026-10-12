@@ -932,7 +932,7 @@ websocket-client==1.8.0
     # via
     #   -r requirements.in
     #   jupyter-server
-werkzeug==3.1.6
+werkzeug==3.1.9
     # via
     #   -r requirements.in
     #   flask
