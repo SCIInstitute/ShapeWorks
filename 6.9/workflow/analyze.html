@@ -4889,6 +4889,7 @@
 <p><em>A reconstructed mesh written by <code>--output_meshes</code>, coloured by the pull <code>distance</code> field. The groomed meshes written alongside carry the <code>disagreement</code> field, which also shows where the reconstruction fails to cover the groomed surface. Load either in Studio and select the field from the scalar dropdown.</em>
 <img alt="Correspondence quality distance field" src="../img/workflow/correspondence_quality.png" /></p>
 <p>Note that this measures the correspondence model against the <em>groomed</em> meshes, so it reflects both optimization quality and any grooming problems upstream of it.</p>
+<p>Cutting planes and free-form constraints are honored. The optimizer never places particles in the region a constraint cuts away, so that region is left out of every statistic, reads as zero in the output fields, and is excluded from the bounding box used for normalization. The template mesh is also clipped before warping, as Studio does, so the cut-away part is not extrapolated into each reconstruction.</p>
 <h3 id="python-api">Python API</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sw</span>
 
