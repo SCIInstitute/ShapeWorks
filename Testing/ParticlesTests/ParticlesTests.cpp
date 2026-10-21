@@ -4,11 +4,14 @@
 #include <vector>
 
 #include "CorrespondenceEvaluation.h"
+#include "Libs/Optimize/Constraints/Constraints.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Mesh/Mesh.h"
 #include "ParticleNormalEvaluation.h"
 #include "ParticleShapeStatistics.h"
 #include "ParticleSystemEvaluation.h"
+#include "Project/Project.h"
+#include "Project/Subject.h"
 #include "ReconstructSurface.h"
 #include "ShapeEvaluation.h"
 #include "Testing.h"
@@ -534,4 +537,82 @@ TEST(CorrespondenceEvaluationTests, disagreementAggregatesExcludeTheTemplate) {
   ASSERT_NEAR(report.agg_disagreement_raw.mean, 2.0, 1e-9);
   ASSERT_NEAR(report.agg_disagreement_norm.max, 0.3, 1e-9);
   ASSERT_NEAR(report.agg_push_raw.mean, 1.0, 1e-9);
+}
+
+//---------------------------------------------------------------------------
+// What a cutting plane removes was never given particles, so a reconstruction that is wrong only there
+// is not wrong at all (#2673).
+TEST(CorrespondenceEvaluationTests, cutAwayRegionIsNotScored) {
+  const int n = 21;  // puts a column of vertices at x = 0.5, on the plane
+  Mesh groomed = make_grid_mesh(n);
+
+  // lift everything left of the plane well off the groomed surface
+  Mesh reconstructed = make_grid_mesh(n);
+  auto poly_data = reconstructed.getVTKMesh();
+  for (vtkIdType v = 0; v < poly_data->GetNumberOfPoints(); v++) {
+    double p[3];
+    poly_data->GetPoint(v, p);
+    if (p[0] < 0.5 - 1e-9) {
+      p[2] += 1.0;
+      poly_data->GetPoints()->SetPoint(v, p);
+    }
+  }
+  poly_data->Modified();
+
+  const auto method = CorrespondenceEvaluation::DistanceMethod::PointToCell;
+  auto unconstrained = CorrespondenceEvaluation::evaluate_reconstruction(poly_data, groomed, method);
+  ASSERT_GT(unconstrained.max_dist, 0.9);
+  ASSERT_GT(unconstrained.disagreement.mean, 0.1);
+
+  // plane x = 0.5 with its normal along +x, so the right half is kept
+  Constraints constraints;
+  vnl_vector<double> a(3), b(3), c(3);
+  a[0] = 0.5, a[1] = 0.0, a[2] = 0.0;
+  b[0] = 0.5, b[1] = 1.0, b[2] = 0.0;
+  c[0] = 0.5, c[1] = 0.0, c[2] = 1.0;
+  constraints.addPlane(a, b, c);
+
+  vtkSmartPointer<vtkDataArray> pull;
+  vtkSmartPointer<vtkDataArray> disagreement;
+  vtkSmartPointer<vtkDataArray> push;
+  auto row = CorrespondenceEvaluation::evaluate_reconstruction(poly_data, groomed, method, &pull, &disagreement, &push,
+                                                               &constraints);
+
+  ASSERT_NEAR(row.max_dist, 0.0, 1e-9);
+  ASSERT_NEAR(row.push.max, 0.0, 1e-9);
+  ASSERT_NEAR(row.disagreement.max, 0.0, 1e-9);
+
+  // normalized by the kept half of the unit square
+  ASSERT_NEAR(row.bbox_diag, std::sqrt(1.25), 1e-6);
+
+  // the fields still cover every vertex, reading zero where the plane cut
+  ASSERT_EQ(pull->GetNumberOfTuples(), poly_data->GetNumberOfPoints());
+  ASSERT_EQ(disagreement->GetNumberOfTuples(), static_cast<vtkIdType>(groomed.numPoints()));
+  for (vtkIdType v = 0; v < pull->GetNumberOfTuples(); v++) {
+    ASSERT_NEAR(pull->GetTuple1(v), 0.0, 1e-9);
+  }
+  for (vtkIdType v = 0; v < disagreement->GetNumberOfTuples(); v++) {
+    ASSERT_NEAR(disagreement->GetTuple1(v), 0.0, 1e-9);
+  }
+}
+
+//---------------------------------------------------------------------------
+// Five ellipsoids that agree above a z = 0 cutting plane and differ wildly below it, optimized with
+// the plane.  See Testing/data/correspondence_quality_constraints/make_dataset.py.
+TEST(CorrespondenceEvaluationTests, projectCuttingPlanesAreHonored) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/correspondence_quality_constraints",
+                                  "correspondence_quality_constraints");
+
+  auto project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("project.swproj"));
+  auto report = CorrespondenceEvaluation::evaluate(project);
+  ASSERT_EQ(report.num_evaluated, 4);
+  ASSERT_LT(report.agg_disagreement_norm.max, 0.01);
+
+  // without the planes the bottom halves are scored, and they disagree by several percent
+  for (auto& subject : project->get_subjects()) {
+    subject->set_constraints_filenames({});
+  }
+  auto unconstrained = CorrespondenceEvaluation::evaluate(project);
+  ASSERT_GT(unconstrained.agg_disagreement_norm.mean, 0.03);
 }

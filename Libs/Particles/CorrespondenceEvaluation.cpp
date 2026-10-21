@@ -4,6 +4,7 @@
 #include <Logging.h>
 #include <Mesh/Mesh.h>
 #include <Mesh/MeshWarper.h>
+#include <Optimize/Constraints/Constraints.h>
 #include <Particles/ParticleFile.h>
 #include <Project/Project.h>
 #include <Project/Subject.h>
@@ -11,6 +12,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkIdList.h>
 #include <vtkMath.h>
+#include <vtkPointData.h>
 #include <vtkPolyData.h>
 
 #include <boost/filesystem.hpp>
@@ -135,6 +137,41 @@ CorrespondenceDistanceStats weighted_stats(const std::vector<double>& values, st
 }  // namespace
 
 //---------------------------------------------------------------------------
+std::vector<bool> CorrespondenceEvaluation::kept_by_constraints(vtkPolyData* poly_data, Constraints* constraints) {
+  std::vector<bool> kept(poly_data->GetNumberOfPoints(), true);
+  if (!constraints || !constraints->hasConstraints()) {
+    return kept;
+  }
+
+  for (auto& plane : constraints->getPlaneConstraints()) {
+    for (vtkIdType v = 0; v < poly_data->GetNumberOfPoints(); v++) {
+      double p[3];
+      poly_data->GetPoint(v, p);
+      if (kept[v] && plane.isViolated(Eigen::Vector3d(p[0], p[1], p[2]))) {
+        kept[v] = false;
+      }
+    }
+  }
+
+  auto& ffc = constraints->getFreeformConstraint();
+  if (ffc.isSet()) {
+    // paint a shallow copy, so the caller's mesh does not pick up an ffc_paint array
+    auto copy = vtkSmartPointer<vtkPolyData>::New();
+    copy->ShallowCopy(poly_data);
+    ffc.applyToPolyData(copy);
+    auto paint = copy->GetPointData()->GetArray("ffc_paint");
+    if (paint) {
+      for (vtkIdType v = 0; v < copy->GetNumberOfPoints(); v++) {
+        if (paint->GetTuple1(v) != 1.0) {
+          kept[v] = false;
+        }
+      }
+    }
+  }
+  return kept;
+}
+
+//---------------------------------------------------------------------------
 CorrespondenceQualityStats CorrespondenceEvaluation::summarize(std::vector<double> values) {
   CorrespondenceQualityStats s;
   if (values.empty()) return s;
@@ -151,7 +188,7 @@ CorrespondenceQualityStats CorrespondenceEvaluation::summarize(std::vector<doubl
 CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
     vtkSmartPointer<vtkPolyData> reconstructed, const Mesh& groomed, DistanceMethod method,
     vtkSmartPointer<vtkDataArray>* out_distance, vtkSmartPointer<vtkDataArray>* out_disagreement,
-    vtkSmartPointer<vtkDataArray>* out_push) {
+    vtkSmartPointer<vtkDataArray>* out_push, Constraints* constraints) {
   CorrespondenceQualityRow row;
   if (!reconstructed || reconstructed->GetNumberOfPoints() == 0) {
     return row;
@@ -172,30 +209,63 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
     return row;
   }
 
-  std::vector<double> values(n);
+  // what the constraints cut away was never given particles, so it is no part of the shape being
+  // scored; those vertices read as zero and are left out of every statistic
+  auto groomed_poly_data = groomed.getVTKMesh();
+  const vtkIdType num_groomed = groomed_poly_data->GetNumberOfPoints();
+  const auto recon_kept = kept_by_constraints(reconstructed, constraints);
+  const auto groomed_kept = kept_by_constraints(groomed_poly_data, constraints);
+
+  std::vector<double> values;
+  values.reserve(n);
   double sum = 0.0;
   double maxv = 0.0;
   for (int k = 0; k < n; ++k) {
+    if (!recon_kept[k]) {
+      field->SetTuple1(k, 0.0);
+      continue;
+    }
     const double v = std::fabs(field->GetTuple1(k));
-    values[k] = v;
+    values.push_back(v);
     sum += v;
     if (v > maxv) maxv = v;
   }
 
-  const size_t mid = values.size() / 2;
-  std::nth_element(values.begin(), values.begin() + mid, values.end());
-  const double median = values[mid];
+  if (!values.empty()) {
+    const size_t mid = values.size() / 2;
+    std::nth_element(values.begin(), values.begin() + mid, values.end());
+    const double median = values[mid];
 
-  const size_t p99_idx = std::min(values.size() - 1, static_cast<size_t>(0.99 * values.size()));
-  std::nth_element(values.begin(), values.begin() + p99_idx, values.end());
+    const size_t p99_idx = std::min(values.size() - 1, static_cast<size_t>(0.99 * values.size()));
+    std::nth_element(values.begin(), values.begin() + p99_idx, values.end());
 
-  row.mean_dist = sum / n;
-  row.median_dist = median;
-  row.p99_dist = values[p99_idx];
-  row.max_dist = maxv;
+    row.mean_dist = sum / values.size();
+    row.median_dist = median;
+    row.p99_dist = values[p99_idx];
+    row.max_dist = maxv;
+  }
 
-  const auto bbox = groomed.boundingBox();
-  row.bbox_diag = (bbox.max - bbox.min).GetNorm();
+  // the bounding box of the part of the groomed surface being scored
+  double bbox_min[3] = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
+                        std::numeric_limits<double>::max()};
+  double bbox_max[3] = {std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(),
+                        std::numeric_limits<double>::lowest()};
+  bool any_groomed_kept = false;
+  for (vtkIdType v = 0; v < num_groomed; v++) {
+    if (!groomed_kept[v]) {
+      continue;
+    }
+    any_groomed_kept = true;
+    double p[3];
+    groomed_poly_data->GetPoint(v, p);
+    for (int i = 0; i < 3; i++) {
+      bbox_min[i] = std::min(bbox_min[i], p[i]);
+      bbox_max[i] = std::max(bbox_max[i], p[i]);
+    }
+  }
+  if (any_groomed_kept) {
+    row.bbox_diag = std::sqrt(vtkMath::Distance2BetweenPoints(bbox_min, bbox_max));
+  }
   if (row.bbox_diag > 0.0) {
     row.norm_mean = row.mean_dist / row.bbox_diag;
     row.norm_median = row.median_dist / row.bbox_diag;
@@ -212,21 +282,25 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
   // groomed cell that reconstructed vertex is nearest (or onto that vertex, point-to-point).  There is no
   // check that the two surfaces face the same way, because a fold in the reconstruction has reversed
   // normals and is exactly what the pull term is there to catch.
-  auto groomed_poly_data = groomed.getVTKMesh();
-  const vtkIdType num_groomed = groomed_poly_data->GetNumberOfPoints();
   std::vector<double> push_values(num_groomed);
   std::vector<double> disagreement_values(num_groomed);
   for (vtkIdType v = 0; v < num_groomed; v++) {
+    if (!groomed_kept[v]) {
+      push->SetTuple1(v, 0.0);
+    }
     push_values[v] = std::fabs(push->GetTuple1(v));
     disagreement_values[v] = push_values[v];
   }
 
   auto corners = vtkSmartPointer<vtkIdList>::New();
   for (int k = 0; k < n; ++k) {
+    if (!recon_kept[k]) {
+      continue;
+    }
     const double pull = std::fabs(field->GetTuple1(k));
     const auto target = static_cast<vtkIdType>(nearest->GetTuple1(k));
     if (distance_method == Mesh::DistanceMethod::PointToPoint) {
-      if (target >= 0 && target < num_groomed) {
+      if (target >= 0 && target < num_groomed && groomed_kept[target]) {
         disagreement_values[target] = std::max(disagreement_values[target], pull);
       }
       continue;
@@ -237,13 +311,26 @@ CorrespondenceQualityRow CorrespondenceEvaluation::evaluate_reconstruction(
     groomed_poly_data->GetCellPoints(target, corners);
     for (vtkIdType c = 0; c < corners->GetNumberOfIds(); c++) {
       const vtkIdType corner = corners->GetId(c);
-      disagreement_values[corner] = std::max(disagreement_values[corner], pull);
+      if (groomed_kept[corner]) {
+        disagreement_values[corner] = std::max(disagreement_values[corner], pull);
+      }
     }
   }
 
-  const auto areas = vertex_areas(groomed_poly_data);
-  row.push = weighted_stats(push_values, areas, row.bbox_diag);
-  row.disagreement = weighted_stats(disagreement_values, areas, row.bbox_diag);
+  // a vertex that was cut away stands for no area, so it carries no weight
+  auto areas = vertex_areas(groomed_poly_data);
+  std::vector<double> kept_push;
+  std::vector<double> kept_disagreement;
+  std::vector<double> kept_areas;
+  for (vtkIdType v = 0; v < num_groomed; v++) {
+    if (groomed_kept[v]) {
+      kept_push.push_back(push_values[v]);
+      kept_disagreement.push_back(disagreement_values[v]);
+      kept_areas.push_back(areas[v]);
+    }
+  }
+  row.push = weighted_stats(kept_push, kept_areas, row.bbox_diag);
+  row.disagreement = weighted_stats(kept_disagreement, kept_areas, row.bbox_diag);
 
   if (out_distance) {
     field->SetName("distance");
@@ -321,14 +408,17 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
   std::vector<std::string> name_per_subject;
   std::vector<std::vector<Eigen::MatrixXd>> particles_per_subject_domain;
   std::vector<std::vector<std::string>> groomed_per_subject_domain;
+  std::vector<std::vector<Constraints>> constraints_per_subject_domain;
 
   for (auto& subj : subjects) {
     auto particle_files = subj->get_local_particle_filenames();
     auto groomed_files = subj->get_groomed_filenames();
+    auto constraint_files = subj->get_constraints_filenames();
 
     bool complete = true;
     std::vector<Eigen::MatrixXd> subj_particles;
     std::vector<std::string> subj_groomed;
+    std::vector<Constraints> subj_constraints(num_domains);
     subj_particles.reserve(num_domains);
     subj_groomed.reserve(num_domains);
 
@@ -347,12 +437,23 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
         break;
       }
       subj_groomed.push_back(groomed_files[d]);
+      if (d < static_cast<int>(constraint_files.size()) && !constraint_files[d].empty()) {
+        try {
+          subj_constraints[d].read(constraint_files[d]);
+        } catch (const std::exception& e) {
+          SW_LOG("Skipping subject '{}' domain {}: constraints load failed: {}", subj->get_display_name(), d,
+                 e.what());
+          complete = false;
+          break;
+        }
+      }
     }
 
     if (!complete) continue;
     name_per_subject.push_back(subj->get_display_name());
     particles_per_subject_domain.push_back(std::move(subj_particles));
     groomed_per_subject_domain.push_back(std::move(subj_groomed));
+    constraints_per_subject_domain.push_back(std::move(subj_constraints));
   }
 
   const int num_subjects = static_cast<int>(name_per_subject.size());
@@ -410,7 +511,10 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
   for (int domain = 0; domain < num_domains; ++domain) {
     SW_LOG("=== Domain {} ===", domain);
 
+    // clipped the way Studio clips its warp reference, so the cut-away part, which has no particles to
+    // steer it, is not extrapolated into every reconstruction
     Mesh template_mesh = load_groomed_as_mesh(groomed_per_subject_domain[template_idx][domain]);
+    constraints_per_subject_domain[template_idx][domain].clipMesh(template_mesh);
     MeshWarper warper;
     warper.set_warp_method(WarpMethod::Biharmonic);
     warper.set_reference_mesh(template_mesh.getVTKMesh(), particles_per_subject_domain[template_idx][domain]);
@@ -430,8 +534,9 @@ CorrespondenceQualityReport CorrespondenceEvaluation::evaluate(ProjectHandle pro
       vtkSmartPointer<vtkDataArray> field;
       vtkSmartPointer<vtkDataArray> disagreement;
       vtkSmartPointer<vtkDataArray> push;
-      CorrespondenceQualityRow row =
-          evaluate_reconstruction(reconstructed, groomed_mesh, method, &field, &disagreement, &push);
+      CorrespondenceQualityRow row = evaluate_reconstruction(reconstructed, groomed_mesh, method, &field,
+                                                             &disagreement, &push,
+                                                             &constraints_per_subject_domain[i][domain]);
       if (!field) continue;
 
       row.subject = name_per_subject[i];
