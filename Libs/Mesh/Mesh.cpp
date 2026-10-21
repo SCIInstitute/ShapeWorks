@@ -490,7 +490,19 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
 
   numVertices = std::max<int>(numVertices, 1);
 
-  remesh->SetForceManifold(true);
+  // ACVD's ForceManifold treats clusters on an open boundary as non-manifold and keeps splitting
+  // them, piling extra vertices and sliver triangles along the boundary (e.g. a mesh clipped by a
+  // cutting plane ends up with more vertices than requested). Only force manifold on closed meshes.
+  auto boundary_edges = vtkSmartPointer<vtkFeatureEdges>::New();
+  boundary_edges->SetInputData(this->poly_data_);
+  boundary_edges->BoundaryEdgesOn();
+  boundary_edges->FeatureEdgesOff();
+  boundary_edges->NonManifoldEdgesOff();
+  boundary_edges->ManifoldEdgesOff();
+  boundary_edges->Update();
+  bool is_closed = boundary_edges->GetOutput()->GetNumberOfCells() == 0;
+
+  remesh->SetForceManifold(is_closed);
   remesh->SetInput(surf);
   remesh->SetFileLoadSaveOption(0);
   remesh->SetConsoleOutput(0);
