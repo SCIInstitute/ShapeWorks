@@ -108,8 +108,10 @@ void CorrespondenceQualityJob::run() {
       Mesh groomed_mesh(groomed_poly_data);
       vtkSmartPointer<vtkDataArray> distance;
       vtkSmartPointer<vtkDataArray> disagreement;
+      // leave out whatever the sample's cutting planes and free-form constraint cut away
+      auto& constraints = shape->get_constraints(d);
       auto row = CorrespondenceEvaluation::evaluate_reconstruction(reconstructed_poly_data, groomed_mesh, method_,
-                                                                   &distance, &disagreement);
+                                                                   &distance, &disagreement, nullptr, &constraints);
       if (!distance || !disagreement) {
         per_particle.insert(per_particle.end(), particles.size(), 0.0);  // keep later domains aligned
         continue;
@@ -148,9 +150,13 @@ void CorrespondenceQualityJob::run() {
       locator->SetDataSet(particle_poly_data);
       locator->BuildLocator();
 
+      const auto groomed_kept = CorrespondenceEvaluation::kept_by_constraints(groomed_poly_data, &constraints);
       std::vector<double> sums(particles.size(), 0.0);
       std::vector<int> counts(particles.size(), 0);
       for (vtkIdType v = 0; v < groomed_poly_data->GetNumberOfPoints(); v++) {
+        if (!groomed_kept[v]) {
+          continue;  // cut away by the constraints, so no part of any particle's neighbourhood
+        }
         double vertex[3];
         groomed_poly_data->GetPoint(v, vertex);
         vtkIdType id = locator->FindClosestPoint(vertex);

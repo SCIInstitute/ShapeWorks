@@ -58,6 +58,8 @@ The command prints a summary — mean, median, p95 and max of the per-subject me
 
 Note that this measures the correspondence model against the *groomed* meshes, so it reflects both optimization quality and any grooming problems upstream of it.
 
+Cutting planes and free-form constraints are honored. The optimizer never places particles in the region a constraint cuts away, so that region is left out of every statistic, reads as zero in the output fields, and is excluded from the bounding box used for normalization. The template mesh is also clipped before warping, as Studio does, so the cut-away part is not extrapolated into each reconstruction.
+
 ### Python API
 
 ```python

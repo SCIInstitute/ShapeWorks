@@ -12,6 +12,7 @@ class vtkPolyData;
 
 namespace shapeworks {
 
+class Constraints;
 class Mesh;
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
@@ -100,6 +101,10 @@ struct CorrespondenceQualityReport {
  * only surface that can show a gap.  Distances are also normalized by each
  * subject's bounding-box diagonal so the metric is scale-invariant.
  *
+ * Cutting planes and free-form constraints are honored: whatever they cut away
+ * from a subject is left out of every statistic, because the optimizer never
+ * placed particles there.
+ *
  * The template row itself is included in `rows` (with is_template=true) but
  * excluded from aggregate statistics — its reconstruction is near-identity
  * and would skew small cohorts.
@@ -139,12 +144,22 @@ class CorrespondenceEvaluation {
   //! color by, since a gap in the reconstruction has no reconstructed surface
   //! to show it on.
   //!
+  //! If \p constraints is given, vertices of either surface that its cutting planes or free-form
+  //! constraint cut away are left out of the statistics, read as zero in the output fields, and the
+  //! bounding box diagonal is taken over the part of the groomed surface that remains.
+  //!
   //! Returns a default-constructed row if \p reconstructed is null or empty.
   static CorrespondenceQualityRow evaluate_reconstruction(vtkSmartPointer<vtkPolyData> reconstructed,
                                                           const Mesh& groomed, DistanceMethod method,
                                                           vtkSmartPointer<vtkDataArray>* out_distance = nullptr,
                                                           vtkSmartPointer<vtkDataArray>* out_disagreement = nullptr,
-                                                          vtkSmartPointer<vtkDataArray>* out_push = nullptr);
+                                                          vtkSmartPointer<vtkDataArray>* out_push = nullptr,
+                                                          Constraints* constraints = nullptr);
+
+  //! Which vertices of \p poly_data the constraints keep, matching Constraints::clipMesh: the positive
+  //! side of every cutting plane and the painted-in part of the free-form constraint.  Every vertex is
+  //! kept when \p constraints is null or empty.
+  static std::vector<bool> kept_by_constraints(vtkPolyData* poly_data, Constraints* constraints);
 
   //! Summary statistics (mean/median/p95/max) over a set of values.
   static CorrespondenceQualityStats summarize(std::vector<double> values);

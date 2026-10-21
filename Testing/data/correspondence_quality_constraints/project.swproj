@@ -1,0 +1,79 @@
+{
+    "data": [
+        {
+            "name": "ellipsoid_0",
+            "notes": "",
+            "shape_1": "meshes/ellipsoid_0.vtk",
+            "constraints_1": "constraints/ellipsoid_0_constraints.json",
+            "groomed_1": "meshes/ellipsoid_0.vtk",
+            "local_particles_1": "project_particles/ellipsoid_0_local.particles",
+            "world_particles_1": "project_particles/ellipsoid_0_world.particles",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "ellipsoid_1",
+            "notes": "",
+            "shape_1": "meshes/ellipsoid_1.vtk",
+            "constraints_1": "constraints/ellipsoid_1_constraints.json",
+            "groomed_1": "meshes/ellipsoid_1.vtk",
+            "local_particles_1": "project_particles/ellipsoid_1_local.particles",
+            "world_particles_1": "project_particles/ellipsoid_1_world.particles",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "ellipsoid_2",
+            "notes": "",
+            "shape_1": "meshes/ellipsoid_2.vtk",
+            "constraints_1": "constraints/ellipsoid_2_constraints.json",
+            "groomed_1": "meshes/ellipsoid_2.vtk",
+            "local_particles_1": "project_particles/ellipsoid_2_local.particles",
+            "world_particles_1": "project_particles/ellipsoid_2_world.particles",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "ellipsoid_3",
+            "notes": "",
+            "shape_1": "meshes/ellipsoid_3.vtk",
+            "constraints_1": "constraints/ellipsoid_3_constraints.json",
+            "groomed_1": "meshes/ellipsoid_3.vtk",
+            "local_particles_1": "project_particles/ellipsoid_3_local.particles",
+            "world_particles_1": "project_particles/ellipsoid_3_world.particles",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "ellipsoid_4",
+            "notes": "",
+            "shape_1": "meshes/ellipsoid_4.vtk",
+            "constraints_1": "constraints/ellipsoid_4_constraints.json",
+            "groomed_1": "meshes/ellipsoid_4.vtk",
+            "local_particles_1": "project_particles/ellipsoid_4_local.particles",
+            "world_particles_1": "project_particles/ellipsoid_4_world.particles",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        }
+    ],
+    "groom": {
+        "1": {}
+    },
+    "optimize": {
+        "checkpointing_interval": "0",
+        "ending_regularization": "10.000000",
+        "initial_relative_weighting": "0.050000",
+        "iterations_per_split": "300",
+        "multiscale": "false",
+        "number_of_particles": "64",
+        "optimization_iterations": "300",
+        "procrustes": "false",
+        "relative_weighting": "1.000000",
+        "starting_regularization": "500.000000",
+        "use_geodesic_distance": "false",
+        "use_normals": "0",
+        "verbosity": "0"
+    },
+    "studio": {},
+    "project": {
+        "version": "2"
+    },
+    "analysis": {},
+    "deepssm": {},
+    "landmarks": []
+}
