@@ -356,6 +356,16 @@ TEST(MeshTests, remeshPercentTest2) {
   ASSERT_TRUE(femur == ground_truth);
 }
 
+// Remeshing an open (clipped) mesh should hit the requested vertex count instead of piling extra
+// vertices along the open boundary (#2672)
+TEST(MeshTests, remeshPercentOpenMeshTest) {
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}), makeVector({0.0, 0.0, 1.0})));
+  auto num_points = femur.numPoints();
+  femur.remeshPercent(0.40, 1.0);
+  ASSERT_NEAR(femur.numPoints(), num_points * 0.40, num_points * 0.02);
+}
+
 TEST(MeshTests, smoothTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.smooth(10, 0.01);
