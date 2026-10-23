@@ -36,6 +36,11 @@ import urllib.parse
 import urllib.request
 import zipfile
 
+try:
+    import certifi
+except ImportError:
+    certifi = None
+
 INDEX_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasets.json")
 
 _CHUNK = 1024 * 256
@@ -51,6 +56,7 @@ _TRANSIENT = (urllib.error.URLError, http.client.HTTPException, ssl.SSLError,
 _RETRY_STATUS = (408, 425, 429, 500, 502, 503, 504)
 
 _index_cache = None
+_ssl_context = None
 _reported = [0.0]
 
 
@@ -97,6 +103,22 @@ def _progress(name, done, total):
     sys.stdout.flush()
 
 
+def _context():
+    """TLS context trusting both the system roots and certifi's.
+
+    A fresh Windows install holds only a few roots and fetches the rest on demand,
+    which happens only when Windows itself verifies a connection. OpenSSL reads the
+    store as it stands, so it can miss the root our server chains to. certifi
+    supplies it.
+    """
+    global _ssl_context
+    if _ssl_context is None:
+        _ssl_context = ssl.create_default_context()
+        if certifi is not None:
+            _ssl_context.load_verify_locations(cafile=certifi.where())
+    return _ssl_context
+
+
 def _size(path):
     return os.path.getsize(path) if os.path.exists(path) else 0
 
@@ -131,7 +153,7 @@ def _stream(url, destination, name, total, tag):
             # splice two different downloads together.
             request.add_header("If-Range", tag)
 
-    with urllib.request.urlopen(request, timeout=_TIMEOUT) as response:
+    with urllib.request.urlopen(request, timeout=_TIMEOUT, context=_context()) as response:
         tag = response.headers.get("ETag") or tag
         length = int(response.headers.get("Content-Length") or 0)
         if response.getcode() != 206:
