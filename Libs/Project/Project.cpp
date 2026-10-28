@@ -1,6 +1,7 @@
 #include <Logging.h>
 #include <Mesh/MeshUtils.h>
 #include <Project.h>
+#include <ShapeworksUtils.h>
 #include <StringUtils.h>
 #include <vtkPointData.h>
 
@@ -91,17 +92,27 @@ void Project::set_project_path(const std::string& new_pathname) {
   auto old_path = fs::path(project_path_);
   auto new_path = fs::path(new_pathname);
 
+  // Re-anchor one path to the new project location.  Returns the path unchanged if it can't be,
+  // so that a single awkward path doesn't fail the whole save.
+  auto rebase = [&](std::string path) {
+    if (!ShapeWorksUtils::path_exists(path)) {
+      return path;
+    }
+    // replace \ with / in path
+    path = StringUtils::replace_string(path, "\\", "/");
+    try {
+      auto canonical = fs::canonical(path, old_path);
+      return fs::relative(canonical, new_path).string();
+    } catch (std::exception& e) {
+      SW_WARN("Unable to update path \"{}\" for new project location: {}", path, e.what());
+      return path;
+    }
+  };
+
   auto fixup = [&](StringList paths) {
     StringList new_paths;
-    for (auto path : paths) {
-      if (fs::exists(path)) {
-        // replace \ with / in path
-        path = StringUtils::replace_string(path, "\\", "/");
-        auto canonical = fs::canonical(path, old_path);
-        new_paths.push_back(fs::relative(canonical, new_path).string());
-      } else {
-        new_paths.push_back(path);
-      }
+    for (auto& path : paths) {
+      new_paths.push_back(rebase(path));
     }
     return new_paths;
   };
@@ -117,11 +128,7 @@ void Project::set_project_path(const std::string& new_pathname) {
     auto features = subject->get_feature_filenames();
     project::types::StringMap new_features;
     for (auto const& x : features) {
-      auto path = x.second;
-      // replace \ with / in path
-      path = StringUtils::replace_string(path, "\\", "/");
-      auto canonical = fs::canonical(path, old_path);
-      new_features[x.first] = fs::relative(canonical, new_path).string();
+      new_features[x.first] = rebase(x.second);
     }
     subject->set_feature_filenames(new_features);
   }
@@ -350,7 +357,7 @@ void Project::determine_feature_names() {
     if (get_original_domain_types()[d] == DomainType::Mesh) {
       if (subject->get_original_filenames().size() > d) {
         auto filename = subject->get_original_filenames()[d];
-        if (fs::exists(filename)) {
+        if (ShapeWorksUtils::file_exists(filename)) {
           try {
             auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
             if (poly_data) {

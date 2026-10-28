@@ -55,7 +55,14 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
   int num_components = image_data->GetNumberOfScalarComponents();
 
   QImage image(width, height, QImage::Format_ARGB32);
-  QRgb* rgb_ptr = reinterpret_cast<QRgb*>(image.bits()) + width * (height - 1);
+  if (image.isNull()) {  // the allocation can fail outright for a very large export
+    SW_ERROR("Unable to allocate a {}x{} image", width, height);
+    return QImage();
+  }
+
+  // qsizetype, not int: a tiled export can exceed the two gigapixels at which this index overflows
+  const qsizetype row_length = width;
+  QRgb* rgb_ptr = reinterpret_cast<QRgb*>(image.bits()) + row_length * (height - 1);
   unsigned char* colors_ptr = reinterpret_cast<unsigned char*>(image_data->GetScalarPointer());
 
   // Loop over the vtkImageData contents.
@@ -70,7 +77,7 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
       colors_ptr += num_components;
     }
 
-    rgb_ptr -= width * 2;
+    rgb_ptr -= row_length * 2;
   }
 
   return image;

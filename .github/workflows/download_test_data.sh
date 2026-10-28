@@ -18,17 +18,19 @@ if [ "$PLATFORM" == "windows" ]; then
     choco install wget --no-progress
 fi
 
-# Tiny test data downloads
+# Tiny test data. A failed attempt leaves a partial file behind, so retry on whether the
+# archive is complete rather than on whether it exists, and let wget resume it.
+cd /tmp
 for run in {1..5}; do
-    if [ ! -f /tmp/tiny_test_cache.tar.gz ] ; then
-	cd /tmp
-	wget https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
-	sleep 1
+    if tar -tzf /tmp/tiny_test_cache.tar.gz > /dev/null 2>&1 ; then
+	break
     fi
+    wget --continue --tries=3 --timeout=60 https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
+    sleep 1
 done
 
-# Decompress if successful
-if [ -f /tmp/tiny_test_cache.tar.gz ] ; then
+# Only extract a complete archive: a half-extracted cache sends the use cases to the web.
+if tar -tzf /tmp/tiny_test_cache.tar.gz > /dev/null 2>&1 ; then
     cd $BASE/Examples/Python
     tar -xzvf /tmp/tiny_test_cache.tar.gz
     rm /tmp/tiny_test_cache.tar.gz

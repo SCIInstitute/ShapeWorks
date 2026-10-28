@@ -19,6 +19,7 @@
 // vtk
 #include <Applications/Configuration.h>
 #include <Interface/ShapeWorksStudioApp.h>
+#include <ShapeworksUtils.h>
 #include <Utils/PlatformUtils.h>
 #include <Logging.h>
 #include <QVTKOpenGLNativeWidget.h>
@@ -83,6 +84,8 @@ int main(int argc, char** argv) {
 
   TIME_SCOPE("ShapeWorksStudio");
   try {
+    ShapeWorksUtils::initialize_path_handling();
+
 #ifdef Q_OS_MACOS
     // Prevent cursor crashes on Apple Silicon
     qputenv("QT_MAC_DISABLE_NATIVE_CURSORS", "1");

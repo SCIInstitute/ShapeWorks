@@ -5,6 +5,7 @@
 #include <Particles/ParticleSystemEvaluation.h>
 #include <Project/ProjectUtils.h>
 #include <Shape.h>
+#include <ShapeworksUtils.h>
 #include <Utils/StringUtils.h>
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
@@ -912,7 +913,7 @@ void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransfo
 
 //---------------------------------------------------------------------------
 void Shape::load_feature_from_scalar_file(std::string filename, std::string feature_name) {
-  if (!boost::filesystem::exists(filename)) {
+  if (!ShapeWorksUtils::file_exists(filename)) {
     return;
   }
 

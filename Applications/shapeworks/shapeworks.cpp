@@ -6,11 +6,14 @@
 #include "Executable.h"
 #include "Commands.h"
 #include <Profiling.h>
+#include <ShapeworksUtils.h>
 
 using namespace shapeworks;
 
 int main(int argc, char *argv[])
 {
+  ShapeWorksUtils::initialize_path_handling();
+
   Executable shapeworks;
 
   // Image Commands

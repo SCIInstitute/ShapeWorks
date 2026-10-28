@@ -59,6 +59,8 @@ namespace fs = boost::filesystem;
 using namespace shapeworks;
 
 PYBIND11_MODULE(shapeworks_py, m) {
+  ShapeWorksUtils::initialize_path_handling();
+
   m.doc() = "ShapeWorks Python API";
 
   m.attr("Pi") = std::atan(1.0) * 4.0;
@@ -992,6 +994,8 @@ PYBIND11_MODULE(shapeworks_py, m) {
           "rotate using axis by angle (in degrees)", "angle"_a, "axis"_a)
 
       .def("fillHoles", &Mesh::fillHoles, "finds holes in a mesh and closes them", "hole_size"_a = 1000)
+
+      .def("clean", &Mesh::clean, "merges duplicate points, removes unused points, and removes duplicated faces")
 
       .def("probeVolume", &Mesh::probeVolume, "samples image data values at point locations specified by image",
            "image"_a)

@@ -1,6 +1,9 @@
+#include <igl/boundary_loop.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
+#include <vtkSphereSource.h>
+#include <vtksys/SystemTools.hxx>
 
 #include <chrono>
 #include <fstream>
@@ -11,6 +14,7 @@
 #include "MeshWarper.h"
 #include "ParticleSystem.h"
 #include "ParticleSystemEvaluation.h"
+#include "ShapeworksUtils.h"
 #include "Testing.h"
 
 using namespace shapeworks;
@@ -352,6 +356,16 @@ TEST(MeshTests, remeshPercentTest2) {
   ASSERT_TRUE(femur == ground_truth);
 }
 
+// Remeshing an open (clipped) mesh should hit the requested vertex count instead of piling extra
+// vertices along the open boundary (#2672)
+TEST(MeshTests, remeshPercentOpenMeshTest) {
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
+  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}), makeVector({0.0, 0.0, 1.0})));
+  auto num_points = femur.numPoints();
+  femur.remeshPercent(0.40, 1.0);
+  ASSERT_NEAR(femur.numPoints(), num_points * 0.40, num_points * 0.02);
+}
+
 TEST(MeshTests, smoothTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.smooth(10, 0.01);
@@ -406,6 +420,31 @@ TEST(MeshTests, fillHolesTest) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fillholes.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
+}
+
+TEST(MeshTests, cleanDuplicateFacesTest) {
+  // closed tetrahedron
+  Eigen::MatrixXd points(5, 3);
+  points << 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.5, 0.2;
+  Eigen::MatrixXi tet(4, 3);
+  tet << 0, 2, 1, 0, 1, 3, 1, 2, 3, 0, 3, 2;
+
+  // a doubled fin triangle hanging off edge (0,1) is removed entirely, along with its tip point
+  Eigen::MatrixXi fin(6, 3);
+  fin << tet, Eigen::RowVector3i(0, 1, 4), Eigen::RowVector3i(1, 4, 0);
+  Mesh fin_mesh(points, fin);
+  fin_mesh.clean();
+  ASSERT_EQ(fin_mesh.numFaces(), 4);
+  ASSERT_EQ(fin_mesh.numPoints(), 4);
+  ASSERT_FALSE(fin_mesh.detectNonManifold());
+
+  // a duplicate of a real surface face keeps one copy rather than opening a hole
+  Eigen::MatrixXi dup(5, 3);
+  dup << tet, Eigen::RowVector3i(1, 0, 2);
+  Mesh dup_mesh(points.topRows(4), dup);
+  dup_mesh.clean();
+  ASSERT_EQ(dup_mesh.numFaces(), 4);
+  ASSERT_EQ(dup_mesh.numPoints(), 4);
 }
 
 TEST(MeshTests, probeVolumeTest) {
@@ -997,6 +1036,28 @@ TEST(MeshTests, findReferenceMeshTest) {
   ASSERT_EQ(ref, 2);
 }
 
+TEST(MeshTests, findReferenceMeshSubsetTest) {
+  // more meshes than the default subset size, with outliers at the lowest indices
+  const int num_meshes = 100;
+  const int num_outliers = 10;
+  std::vector<Mesh> meshes;
+  for (int i = 0; i < num_meshes; i++) {
+    auto sphere = vtkSmartPointer<vtkSphereSource>::New();
+    sphere->SetRadius(i < num_outliers ? 100.0 + 10.0 * i : 10.0);
+    sphere->SetThetaResolution(16);
+    sphere->SetPhiResolution(16);
+    sphere->Update();
+    meshes.push_back(Mesh(sphere->GetOutput()));
+  }
+
+  // the reference must come from the compared subset, never an outlier
+  int ref = MeshUtils::findReferenceMesh(meshes);
+  ASSERT_GE(ref, num_outliers);
+
+  ref = MeshUtils::findReferenceMesh(meshes, 20);
+  ASSERT_GE(ref, num_outliers);
+}
+
 TEST(MeshTests, addMesh) {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
@@ -1036,6 +1097,121 @@ TEST(MeshTests, boundaryLoopExtractor) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
   Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
   Mesh loop = MeshUtils::extract_boundary_loop(mesh);
+  ASSERT_TRUE(loop == ground_truth);
+}
+
+// Returns a copy of the mesh with the faces around the given vertex removed, leaving a hole
+static Mesh punch_hole(const Mesh& mesh, int center) {
+  Eigen::MatrixXd V = mesh.points();
+  Eigen::MatrixXi F = mesh.faces();
+  Eigen::MatrixXi F2(F.rows(), 3);
+  int count = 0;
+  for (int f = 0; f < F.rows(); f++) {
+    if (F(f, 0) != center && F(f, 1) != center && F(f, 2) != center) {
+      F2.row(count++) = F.row(f);
+    }
+  }
+  F2.conservativeResize(count, 3);
+  return Mesh(V, F2);
+}
+
+static double max_edge_length(const Mesh& mesh) {
+  Eigen::MatrixXd V = mesh.points();
+  Eigen::MatrixXi F = mesh.faces();
+  double max_length = 0.0;
+  for (int f = 0; f < F.rows(); f++) {
+    for (int i = 0; i < 3; i++) {
+      max_length = std::max(max_length, (V.row(F(f, i)) - V.row(F(f, (i + 1) % 3))).norm());
+    }
+  }
+  return max_length;
+}
+
+// A mesh that already has a boundary loop (e.g. a bone cropped at the shaft) must not have that loop dragged
+// onto the shared boundary (issue #2610)
+TEST(MeshTests, sharedBoundaryExtractorMultipleLoops) {
+  Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
+  Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
+  double tol = 0.001;
+
+  Eigen::MatrixXd V = left.points();
+  Eigen::MatrixXi F = left.faces();
+  Eigen::VectorXd sqrD;
+  Eigen::VectorXi I;
+  Eigen::MatrixXd C;
+  igl::point_mesh_squared_distance(V, right.points(), right.faces(), sqrD, I, C);
+
+  // The lowest indexed vertex anywhere near the shared surface. A hole whose rim has a lower indexed vertex
+  // is returned by igl::boundary_loop ahead of the loop left by removing the shared surface.
+  int first_near = V.rows();
+  for (int i = 0; i < V.rows(); i++) {
+    if (sqrD(i) <= tol) {
+      first_near = i;
+      break;
+    }
+  }
+
+  // Find a face far from the shared surface with a vertex below first_near, and punch a hole next to it
+  int center = -1;
+  for (int f = 0; f < F.rows() && center < 0; f++) {
+    for (int i = 0; i < 3; i++) {
+      int rim = F(f, i);
+      int candidate = F(f, (i + 1) % 3);
+      if (rim < first_near && sqrD(rim) > 0.25 * sqrD.maxCoeff() && sqrD(candidate) > 0.25 * sqrD.maxCoeff()) {
+        center = candidate;
+        break;
+      }
+    }
+  }
+  ASSERT_GE(center, 0);
+
+  Mesh left_open = punch_hole(left, center);
+  std::array<Mesh, 3> output = MeshUtils::shared_boundary_extractor(left_open, right, tol);
+
+  // snapping only moves vertices a short distance, so no edge should end up spanning the mesh
+  ASSERT_LT(max_edge_length(output[0]), 3.0 * max_edge_length(left_open));
+}
+
+// With more than one boundary loop, the longest should be extracted rather than an arbitrary one
+TEST(MeshTests, boundaryLoopExtractorMultipleLoops) {
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+
+  // punch a hole in the interior of the mesh
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+  std::vector<std::vector<int>> loops;
+  for (int center = 0; center < mesh.numPoints(); center++) {
+    Mesh holed = punch_hole(mesh, center);
+    V = holed.points();
+    F = holed.faces();
+    loops.clear();
+    igl::boundary_loop(F, loops);
+    if (loops.size() == 2) {
+      break;
+    }
+  }
+  ASSERT_EQ(loops.size(), 2);
+
+  // igl::boundary_loop returns the loop with the lowest indexed vertex first, so swap vertex 0 with a vertex on
+  // the rim of the hole to make sure the hole is returned ahead of the outer loop
+  const int rim = loops[0].size() < loops[1].size() ? loops[0][0] : loops[1][0];
+  V.row(0).swap(V.row(rim));
+  for (int f = 0; f < F.rows(); f++) {
+    for (int i = 0; i < 3; i++) {
+      if (F(f, i) == 0) {
+        F(f, i) = rim;
+      } else if (F(f, i) == rim) {
+        F(f, i) = 0;
+      }
+    }
+  }
+  loops.clear();
+  igl::boundary_loop(F, loops);
+  ASSERT_EQ(loops.size(), 2);
+  ASSERT_LT(loops[0].size(), loops[1].size());
+
+  Mesh loop = MeshUtils::extract_boundary_loop(Mesh(V, F));
   ASSERT_TRUE(loop == ground_truth);
 }
 
@@ -1162,4 +1338,39 @@ TEST(MeshTests, extractLargestComponentSingleComponentTest) {
   // (even though VTK may reorder vertices internally)
   ASSERT_EQ(femur.numPoints(), original_points);
   ASSERT_EQ(femur.numFaces(), original_faces);
+}
+
+TEST(MeshTests, nonAsciiPathTest) {
+  // Mesh's existence check has to agree with the reader underneath it about which paths are
+  // readable.  On Windows boost::filesystem did not, and meshes that VTK opened without trouble
+  // were rejected as missing before the reader ever saw them. (#2648)
+  auto dir = TestUtils::Instance().get_output_dir("non_ascii_path_test");
+  std::string unicode_dir = dir + "/Ünïcode Dätä";
+  ASSERT_TRUE(vtksys::SystemTools::MakeDirectory(unicode_dir));
+
+  std::string path = unicode_dir + "/mesh.vtk";
+  Mesh(std::string(TEST_DATA_DIR) + "/femur.vtk").write(path);
+
+  ASSERT_TRUE(ShapeWorksUtils::file_exists(path));
+  ASSERT_NO_THROW(Mesh mesh(path));
+}
+
+TEST(MeshTests, longPathTest) {
+  // Paths beyond MAX_PATH need the \\?\ prefix on Windows.  The STL reader applies it; the
+  // existence check in front of it did not. (#2648)  This uses .stl deliberately: VTK's legacy .vtk
+  // reader stats the file without the prefix first, so it can't open such a path on Windows at all.
+  auto dir = TestUtils::Instance().get_output_dir("long_path_test");
+
+  std::string deep = dir;
+  while (deep.size() < 300) {
+    deep += "/a_directory_with_a_deliberately_long_name";
+  }
+  ASSERT_TRUE(vtksys::SystemTools::MakeDirectory(deep));
+
+  std::string path = deep + "/mesh.stl";
+  ASSERT_GT(path.size(), 260u);
+  Mesh(std::string(TEST_DATA_DIR) + "/femur.vtk").write(path);
+
+  ASSERT_TRUE(ShapeWorksUtils::file_exists(path));
+  ASSERT_NO_THROW(Mesh mesh(path));
 }
