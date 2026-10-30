@@ -489,6 +489,17 @@ std::string PythonWorker::get_user_site_packages() {
 }
 
 //---------------------------------------------------------------------------
+std::string PythonWorker::deepssm_unsupported_reason() {
+#if defined(__APPLE__) && defined(__x86_64__)
+  // The last Intel macOS torch (2.2) was built against numpy 1.x and can't
+  // exchange arrays with the bundled numpy 2.x, so DeepSSM would fail later.
+  return "DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds that work with ShapeWorks' bundled Python. Please use an Apple Silicon Mac, Windows, or Linux for DeepSSM.";
+#else
+  return "";
+#endif
+}
+
+//---------------------------------------------------------------------------
 bool PythonWorker::is_torch_available(int timeout_ms) {
 #ifdef SHAPEWORKS_BUNDLED_PYTHON
   std::string python_home = find_bundled_python_home();
@@ -540,6 +551,12 @@ bool PythonWorker::is_torch_available(int timeout_ms) {
 
 //---------------------------------------------------------------------------
 bool PythonWorker::install_torch(std::function<void(std::string)> output_callback) {
+  std::string unsupported = deepssm_unsupported_reason();
+  if (!unsupported.empty()) {
+    if (output_callback) output_callback("Error: " + unsupported);
+    return false;
+  }
+
 #ifdef SHAPEWORKS_BUNDLED_PYTHON
   std::string python_home = find_bundled_python_home();
   if (python_home.empty()) {

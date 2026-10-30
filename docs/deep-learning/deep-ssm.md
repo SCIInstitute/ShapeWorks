@@ -7,6 +7,8 @@ DeepSSM is a deep learning framework that estimates statistical representations 
     - Riddhish Bhalodia, Shireen Elhabian, Ladislav Kavan, and Ross Whitaker. DeepSSM: a deep learning framework for statistical shape modeling from raw images. In MICCAI-ShapeMI, pp. 244-257. Springer, Cham, 2018.
     - Riddhish Bhalodia, Anupama Goparaju, Tim Sodergren, Alan Morris, Evgueni Kholmovski, Nassir Marrouche, Joshua Cates, Ross Whitaker, Shireen Elhabian. Deep Learning for End-to-End Atrial Fibrillation Recurrence Estimation. Computing in Cardiology (CinC), 2018.
 
+!!! warning "Not supported on Intel Macs"
+    PyTorch no longer publishes Intel macOS builds that work with ShapeWorks, so DeepSSM runs on Apple Silicon Macs, Windows, and Linux only.
 
 ## What is DeepSSM?
 

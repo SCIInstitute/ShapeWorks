@@ -38,6 +38,15 @@ def _add_user_site_to_path():
         sys.path.insert(0, user_site)
 
 
+_INTEL_MAC_MESSAGE = (
+    "DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds that work with ShapeWorks' bundled Python. Please use an Apple Silicon Mac, Windows, or Linux for DeepSSM."
+)
+
+
+def _is_intel_mac():
+    return platform.system() == "Darwin" and platform.machine() == "x86_64"
+
+
 def is_torch_available():
     """Return True if torch can be imported (after adding the user-site path)."""
     _add_user_site_to_path()
@@ -55,6 +64,11 @@ def ensure_torch():
     ShapeWorks Studio and `shapeworks deepssm` use, via light-the-torch
     (which selects the correct CUDA/CPU wheel for the host).
     """
+    # The last Intel macOS torch (2.2) was built against numpy 1.x and can't
+    # exchange arrays with the bundled numpy 2.x, so DeepSSM would fail later.
+    if _is_intel_mac():
+        raise RuntimeError(_INTEL_MAC_MESSAGE)
+
     if is_torch_available():
         return
 
