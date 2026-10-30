@@ -121,7 +121,7 @@ Section "Uninstall"
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\ShapeWorks\*.*"
 
-  ${unregisterExtension} ".swprojc" "ShapeWorks Project"
+  ${unregisterExtension} ".swproj" "ShapeWorks Project"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\ShapeWorks"
@@ -134,6 +134,14 @@ SectionEnd
 Function .onInit
   ${If} ${RunningX64}
     StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
+    SetRegView 64
+  ${EndIf}
+FunctionEnd
+
+; The installer writes its registry keys in the 64-bit view, so the
+; uninstaller must use the same view to remove them.
+Function un.onInit
+  ${If} ${RunningX64}
     SetRegView 64
   ${EndIf}
 FunctionEnd
