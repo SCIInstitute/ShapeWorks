@@ -10,8 +10,10 @@ embedded interpreter is not in the call stack) get the same behavior.
 import importlib
 import os
 import platform
+import shutil
 import subprocess
 import sys
+import tempfile
 
 # Must match PythonWorker::python_api_version in Libs/Application/Job/PythonWorker.h.
 # Bump alongside SW_MAJOR_VERSION / SW_MINOR_VERSION per docs/dev/release-checklist.
@@ -62,10 +64,18 @@ def ensure_torch():
     print(f"Installing PyTorch to {user_site}")
     print("This may take several minutes...")
 
-    subprocess.check_call([
-        sys.executable, "-m", "light_the_torch", "install",
-        "--target", user_site, "torch",
-    ])
+    # pip unpacks the whole install (~7 GB with CUDA) into TMPDIR before moving
+    # it into --target, which overflows a small /tmp. Use a temp dir next to
+    # the target instead, so it's on the same disk.
+    pip_tmp = tempfile.mkdtemp(prefix="pip-tmp-", dir=os.path.dirname(user_site))
+    env = dict(os.environ, TMPDIR=pip_tmp, TEMP=pip_tmp, TMP=pip_tmp)
+    try:
+        subprocess.check_call([
+            sys.executable, "-m", "light_the_torch", "install",
+            "--target", user_site, "torch",
+        ], env=env)
+    finally:
+        shutil.rmtree(pip_tmp, ignore_errors=True)
 
     importlib.invalidate_caches()
     if user_site not in sys.path:
@@ -75,6 +85,7 @@ def ensure_torch():
         import torch  # noqa: F401
         print("PyTorch installed successfully.")
     except ImportError as e:
+        # light-the-torch can exit 0 even when pip fails (e.g. disk full)
         raise RuntimeError(
-            f"PyTorch install completed but cannot be imported: {e}"
+            f"PyTorch installation failed; see the pip output above. ({e})"
         ) from e
