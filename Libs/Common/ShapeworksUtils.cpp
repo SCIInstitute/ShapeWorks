@@ -34,8 +34,11 @@ void ShapeWorksUtils::initialize_path_handling() {
   // into boost::filesystem::path, which by default comes from the global locale rather than being
   // UTF-8.  The rest of ShapeWorks (Qt, VTK, ITK) speaks UTF-8, so without this a path holding
   // non-ASCII characters is mangled on the way in and no longer resolves.  On POSIX no conversion
-  // takes place and this only affects the wide-string accessors.
+  // takes place, so skip it there: imbue() first builds boost's default locale from the
+  // environment, which throws (and aborts at startup) when LANG names a locale that isn't installed.
+#ifdef _WIN32
   boost::filesystem::path::imbue(std::locale(std::locale(), new boost::nowide::utf8_codecvt<wchar_t>));
+#endif
 }
 
 //-----------------------------------------------------------------------------
