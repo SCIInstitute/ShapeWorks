@@ -4,6 +4,10 @@ using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 void run_deepssm_test(const std::string& name) {
+#if defined(__APPLE__) && defined(__x86_64__)
+  // DeepSSM is unsupported on Intel Macs (see PythonWorker::deepssm_unsupported_reason)
+  GTEST_SKIP() << "DeepSSM is not supported on Intel Macs";
+#endif
   setupenv(std::string(TEST_DATA_DIR) + "/../DeepSSMTests");
 
   std::string command = "bash " + name;

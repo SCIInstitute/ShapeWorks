@@ -875,6 +875,12 @@ void DeepSSMTool::restore_defaults() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_tool(DeepSSMJob::JobType job_type) {
+  std::string unsupported = PythonWorker::deepssm_unsupported_reason();
+  if (!unsupported.empty()) {
+    QMessageBox::warning(this, "DeepSSM Not Supported", QString::fromStdString(unsupported));
+    return;
+  }
+
   // Check if PyTorch is available; if not, offer to install it
   if (!PythonWorker::is_torch_available()) {
     auto reply = QMessageBox::question(this, "PyTorch Required",

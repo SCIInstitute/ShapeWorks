@@ -592,6 +592,12 @@ bool DeepSSMCommand::execute(const optparse::Values& options, SharedCommandData&
   ProjectHandle project = std::make_shared<Project>();
   project->load(project_file);
 
+  std::string unsupported = PythonWorker::deepssm_unsupported_reason();
+  if (!unsupported.empty()) {
+    std::cerr << "Error: " << unsupported << "\n";
+    return false;
+  }
+
   // Check if PyTorch is available; install if needed
   if (!PythonWorker::is_torch_available()) {
     std::cout << "PyTorch is not installed. Installing via light-the-torch...\n";
