@@ -491,6 +491,14 @@ file(MAKE_DIRECTORY "${_swpython_dir}")
 if(APPLE)
   file(WRITE "${_swpython_dir}/swpython"
 [=[#!/bin/bash
+# Keep in sync with CMAKE_OSX_DEPLOYMENT_TARGET: older macOS fails with cryptic
+# symbol errors (e.g. numpy's Accelerate build) instead of a clear message.
+SW_MIN_MACOS=14
+_sw_os="$(sw_vers -productVersion 2>/dev/null)"
+if [ -n "${_sw_os}" ] && [ "${_sw_os%%.*}" -lt "${SW_MIN_MACOS}" ]; then
+  echo "ShapeWorks requires macOS ${SW_MIN_MACOS} or later. This Mac is running macOS ${_sw_os}." >&2
+  exit 1
+fi
 LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/ShapeWorksStudio.app/Contents/Resources/Python"
 PATH="${LOC}:${PATH}"

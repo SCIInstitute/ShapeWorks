@@ -111,6 +111,11 @@ This installs to your per-user ShapeWorks site-packages and persists across sess
 
 ## Installing ShapeWorks on Mac
 
+!!! important "Requires macOS 14 (Sonoma) or later"
+    ShapeWorks 6.8 supports macOS 14 or later on both Apple Silicon and Intel
+    Macs. The installer will not install on older versions of macOS. To check
+    your version, choose **Apple menu > About This Mac**.
+
 Please make sure that you download the [latest ShapeWorks binary release](https://github.com/SCIInstitute/ShapeWorks/releases/latest), or up-to-date development builds from the master branch for [Mac](https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac) *(remember these are in-progress development builds, not official releases).*
 
 1. Install the ShapeWorks `.pkg` file by double-clicking it. It installs into

@@ -15,6 +15,11 @@
 #include <boost/nowide/utf8_codecvt.hpp>
 #include <locale>
 
+#ifdef __APPLE__
+#include <Availability.h>
+#include <sys/sysctl.h>
+#endif
+
 namespace shapeworks {
 
 unsigned ShapeWorksUtils::rng_seed_ = std::chrono::system_clock::now().time_since_epoch().count();
@@ -25,6 +30,25 @@ std::unique_ptr<tbb::global_control> ShapeWorksUtils::tbb_global_control_;
 void ShapeWorksUtils::set_rng_seed(const unsigned seed) {
   rng_seed_ = seed;
   mt_.seed(rng_seed_);
+}
+
+//-----------------------------------------------------------------------------
+std::string ShapeWorksUtils::check_minimum_os_version() {
+#if defined(__APPLE__) && defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+  // e.g. 140000 for a build targeting macOS 14.0
+  const int required_major = __MAC_OS_X_VERSION_MIN_REQUIRED / 10000;
+  char version[32] = {};
+  size_t size = sizeof(version);
+  if (sysctlbyname("kern.osproductversion", version, &size, nullptr, 0) != 0) {
+    return "";  // can't tell, so don't block
+  }
+  int major = std::atoi(version);
+  if (major > 0 && major < required_major) {
+    return "ShapeWorks requires macOS " + std::to_string(required_major) + " or later. This Mac is running macOS " +
+           std::string(version) + ".";
+  }
+#endif
+  return "";
 }
 
 //-----------------------------------------------------------------------------
