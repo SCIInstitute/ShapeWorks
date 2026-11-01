@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Installer wrapper for the ShapeWorks component package (see package.sh).
+     MIN_MACOS and HOST_ARCHS are filled in by package.sh. -->
+<installer-gui-script minSpecVersion="2">
+  <title>ShapeWorks</title>
+  <options customize="never" require-scripts="false" hostArchitectures="HOST_ARCHS"/>
+  <installation-check script="check_os()"/>
+  <script><![CDATA[
+function check_os() {
+  if (system.compareVersions(system.version.ProductVersion, 'MIN_MACOS') < 0) {
+    my.result.type = 'Fatal';
+    my.result.title = 'macOS MIN_MACOS or later is required';
+    my.result.message = 'ShapeWorks requires macOS MIN_MACOS or later. This Mac is running macOS ' +
+      system.version.ProductVersion + '.';
+    return false;
+  }
+  return true;
+}
+  ]]></script>
+  <choices-outline>
+    <line choice="default">
+      <line choice="edu.utah.sci.shapeworks"/>
+    </line>
+  </choices-outline>
+  <choice id="default"/>
+  <choice id="edu.utah.sci.shapeworks" visible="false">
+    <pkg-ref id="edu.utah.sci.shapeworks"/>
+  </choice>
+  <pkg-ref id="edu.utah.sci.shapeworks">ShapeWorks-component.pkg</pkg-ref>
+</installer-gui-script>

@@ -6,7 +6,7 @@ the underlying c++ code, for which we need to call the source paths to the
 binaries. This step should be common for any use of a function in ShapeWorks.
 __This requires the full ShapeWorks to be correctly built/downloaded!__'
 
-For users: Please make sure you have run "source install_shapeworks.sh" (once) and "conda activate shapeworks" (each time).
+For users: Run this script with the swpython that ships with ShapeWorks, e.g. "swpython RunUseCase.py ellipsoid".
 
 For developers: Please make sure you have run "source ./devenv.sh <SOURCE_DIR> <BUILD_DIR>"
 """
@@ -42,8 +42,7 @@ if __name__ == '__main__':
 
     except ImportError as error:
         print("\nError: Unable to import ShapeWorks executables, Python module, or dependencies\n")
-        print(
-            "Users: Please make sure you have run \"source install_shapeworks.sh\" (once) and \"conda activate shapeworks\" (each time)")
+        print("Users: Please run this script with the swpython that ships with ShapeWorks, e.g. \"swpython RunUseCase.py ellipsoid\"")
         print("\tSee http://sciinstitute.github.io/ShapeWorks/users/install.html for more information")
         print("\nDevelopers: Please make sure you have run \"source ./devenv.sh <SOURCE_DIR> <BUILD_DIR>\"")
 

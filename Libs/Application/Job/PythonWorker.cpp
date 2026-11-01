@@ -15,6 +15,7 @@ using namespace pybind11::literals;  // to bring in the `_a` literal
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QProcess>
+#include <QTemporaryDir>
 #include <QThread>
 #include <iostream>
 
@@ -488,7 +489,18 @@ std::string PythonWorker::get_user_site_packages() {
 }
 
 //---------------------------------------------------------------------------
-bool PythonWorker::is_torch_available() {
+std::string PythonWorker::deepssm_unsupported_reason() {
+#if defined(__APPLE__) && defined(__x86_64__)
+  // The last Intel macOS torch (2.2) was built against numpy 1.x and can't
+  // exchange arrays with the bundled numpy 2.x, so DeepSSM would fail later.
+  return "DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds that work with ShapeWorks' bundled Python. Please use an Apple Silicon Mac, Windows, or Linux for DeepSSM.";
+#else
+  return "";
+#endif
+}
+
+//---------------------------------------------------------------------------
+bool PythonWorker::is_torch_available(int timeout_ms) {
 #ifdef SHAPEWORKS_BUNDLED_PYTHON
   std::string python_home = find_bundled_python_home();
   if (python_home.empty()) {
@@ -530,7 +542,7 @@ bool PythonWorker::is_torch_available() {
 #endif
   proc.setProcessEnvironment(env);
   proc.start(python_exe, {"-c", "import torch"});
-  proc.waitForFinished(10000);
+  proc.waitForFinished(timeout_ms);
   return proc.exitCode() == 0;
 #else
   return true;  // conda workflow — assume torch is available
@@ -539,6 +551,12 @@ bool PythonWorker::is_torch_available() {
 
 //---------------------------------------------------------------------------
 bool PythonWorker::install_torch(std::function<void(std::string)> output_callback) {
+  std::string unsupported = deepssm_unsupported_reason();
+  if (!unsupported.empty()) {
+    if (output_callback) output_callback("Error: " + unsupported);
+    return false;
+  }
+
 #ifdef SHAPEWORKS_BUNDLED_PYTHON
   std::string python_home = find_bundled_python_home();
   if (python_home.empty()) {
@@ -564,9 +582,23 @@ bool PythonWorker::install_torch(std::function<void(std::string)> output_callbac
     output_callback("This may take several minutes...");
   }
 
+  // pip unpacks the whole install (~7 GB with CUDA) into TMPDIR before moving it
+  // into --target, which overflows a small /tmp. Use a temp dir next to the
+  // target instead, so it's on the same disk.
+  QTemporaryDir pip_tmp(QFileInfo(QString::fromStdString(user_sp)).absolutePath() + "/pip-tmp-XXXXXX");
+  if (!pip_tmp.isValid()) {
+    if (output_callback) output_callback("Error: could not create temp directory: " + pip_tmp.errorString().toStdString());
+    return false;
+  }
+
   // Use light-the-torch to install the correct PyTorch variant
   QProcess proc;
   proc.setProcessChannelMode(QProcess::MergedChannels);
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  env.insert("TMPDIR", pip_tmp.path());
+  env.insert("TEMP", pip_tmp.path());
+  env.insert("TMP", pip_tmp.path());
+  proc.setProcessEnvironment(env);
 
   // Connect output to callback
   if (output_callback) {
@@ -594,6 +626,13 @@ bool PythonWorker::install_torch(std::function<void(std::string)> output_callbac
         output_callback(stderr_output.toStdString());
       }
     }
+    return false;
+  }
+
+  // light-the-torch can exit 0 even when pip fails (e.g. disk full), so check
+  // that torch actually imports. A first import of a fresh install can be slow.
+  if (!is_torch_available(120000)) {
+    if (output_callback) output_callback("Error: PyTorch installation failed; see the pip output above.");
     return false;
   }
 

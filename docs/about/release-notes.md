@@ -12,6 +12,10 @@
     * New `swpython` and `swpip` wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a **ShapeWorks Prompt** Start Menu shortcut that puts these on `PATH`.
     * PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via `light-the-torch`, into a per-user directory that survives reinstalls.
 
+  * **Platform support**
+    * macOS 14 (Sonoma) or later is now required (6.7 supported macOS 12). The installer, Studio, the `shapeworks` CLI and `swpython` refuse older macOS with a clear message.
+    * DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds compatible with the bundled Python. Studio, the CLI and `ensure_torch()` say so instead of failing partway through.
+
   * **ShapeWorks Back-end**
     * Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)
     * New `correspondence-quality` command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies (#2612)

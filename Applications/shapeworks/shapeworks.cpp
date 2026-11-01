@@ -3,6 +3,7 @@
  */
 
 #include <exception>
+#include <iostream>
 #include "Executable.h"
 #include "Commands.h"
 #include <Profiling.h>
@@ -12,6 +13,12 @@ using namespace shapeworks;
 
 int main(int argc, char *argv[])
 {
+  std::string os_error = ShapeWorksUtils::check_minimum_os_version();
+  if (!os_error.empty()) {
+    std::cerr << os_error << "\n";
+    return 1;
+  }
+
   ShapeWorksUtils::initialize_path_handling();
 
   Executable shapeworks;

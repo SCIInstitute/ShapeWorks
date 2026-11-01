@@ -112,6 +112,13 @@ int main(int argc, char** argv) {
     SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     OverrideQApplication app(argc, argv);
+
+    std::string os_error = ShapeWorksUtils::check_minimum_os_version();
+    if (!os_error.empty()) {
+      SW_ERROR("{}", os_error);
+      QMessageBox::critical(nullptr, "ShapeWorks Studio", QString::fromStdString(os_error));
+      return 1;
+    }
     if (PlatformUtils::is_windows()) {
       app.setStyle(QStyleFactory::create("Fusion"));
     }

@@ -31,6 +31,10 @@ class ShapeWorksUtils {
   /// generates random number
   static unsigned get_random_number() { return mt_(); }
 
+  //! Returns an error message if this OS is older than ShapeWorks supports, or "" if it's fine.
+  //! On macOS the floor is the deployment target the build was compiled for.
+  static std::string check_minimum_os_version();
+
   //! Configure process-wide filesystem path handling.  Call this once at startup, before any path
   //! is constructed from a narrow string.
   static void initialize_path_handling();

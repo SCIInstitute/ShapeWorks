@@ -237,7 +237,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cp ${ROOT}/docs/users/Mac_README.txt ${VERSION}/README.txt
     pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
     plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
-    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg --scripts ${ROOT}/Support/osxscripts
+    PKG_TMP=$(mktemp -d)
+    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${PKG_TMP}/ShapeWorks-component.pkg --scripts ${ROOT}/Support/osxscripts || exit 1
+
+    # Wrap it in a distribution package so the Installer refuses older macOS
+    # with a clear message instead of installing something that won't run.
+    MIN_MACOS=${MACOSX_DEPLOYMENT_TARGET:-14.0}
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        HOST_ARCHS="arm64"
+    else
+        HOST_ARCHS="x86_64,arm64"
+    fi
+    sed -e "s/MIN_MACOS/${MIN_MACOS}/g" -e "s/HOST_ARCHS/${HOST_ARCHS}/g" \
+        ${ROOT}/Support/osx_distribution.xml > ${PKG_TMP}/distribution.xml
+    productbuild --distribution ${PKG_TMP}/distribution.xml --package-path ${PKG_TMP} ${ROOT}/artifacts/${VERSION}.pkg || exit 1
+    rm -rf ${PKG_TMP}
 fi
 
 cd $ROOT
