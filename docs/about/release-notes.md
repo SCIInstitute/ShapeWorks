@@ -1,6 +1,29 @@
 # Release Notes
 
 
+## ShapeWorks 6.9.0
+
+### What is new?
+
+  * **ShapeWorks Back-end**
+    * `correspondence-quality` reports mean, median, 99th percentile and max distance per subject; p99 measures the worst part of a surface without following a single stray vertex the way max does. Distances are measured in both directions — pull, from the reconstruction to the groomed surface, and push, from the groomed surface to the reconstruction — and combined into an area-weighted disagreement on the groomed mesh, so tears and missing surface that pull alone cannot see are caught; the original pull statistics are still reported (#2612)
+
+  * **ShapeWorks Front-end**
+    * New *Correspondence Quality* panel in the Analyze pane: scores every sample by reconstructing it from its local particles through Studio's own mesh warper — the same reconstruction shown in the viewer, using your chosen template and warp method — and measuring how far that reconstruction and the sample's groomed mesh disagree in both directions, then ranking by and coloring the groomed surface with that disagreement
+    * *Show distance on surface* colors each sample's surface and particles by the per-vertex distance, so a bad region can be located and not just detected
+    * Samples can be sorted by mean, median, p99 or max distance, or by how localized the error is, which surfaces swapped-correspondence cases whose mean distance still looks healthy; *Sort samples in view* applies the same ranking to the All Samples grid so the challenging shapes come up first, and clicking a row shows that sample on its own, or returns to all samples if it is already showing
+    * The quality chart plots the ranked metric together with the tail of the distribution on a log axis, with median and p95 marked, so a small badly reconstructed patch stays visible even when it barely moves the mean
+    * Result tables can be right-clicked to copy their contents to the clipboard as CSV, with the header row and proper quoting of values containing a comma or a quote
+
+### Fixes
+  * Fix the Particle Area Analysis and Shape/Scalar Correlation progress bars never moving: the job's fractional progress was truncated to an integer before being scaled to a percentage
+  * Fix box plots showing an auto-assigned palette color rather than the color they were given, which made the plot color appear to change between runs
+  * Fix the lightbox not refitting its shared camera when the tile layout changes, which left samples small and off-centre after switching to the All Samples view until *Autoview* was pressed
+
+### Platform Updates
+  * JKQTPlotter is pinned to a tag rather than a moving branch, and updated to skip minor tick labels that would collide with a neighbouring label on a log axis
+
+
 ## ShapeWorks 6.8.0
 
 ![](../img/about/release6.8.png)
@@ -12,9 +35,13 @@
     * New `swpython` and `swpip` wrappers run scripts against the bundled Python and install additional packages into a persistent per-user site-packages directory. Windows installs add a **ShapeWorks Prompt** Start Menu shortcut that puts these on `PATH`.
     * PyTorch installs on demand the first time DeepSSM runs (~3 GB, one-time) via `light-the-torch`, into a per-user directory that survives reinstalls.
 
+  * **Platform support**
+    * macOS 14 (Sonoma) or later is now required (6.7 supported macOS 12). The installer, Studio, the `shapeworks` CLI and `swpython` refuse older macOS with a clear message.
+    * DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds compatible with the bundled Python. Studio, the CLI and `ensure_torch()` say so instead of failing partway through.
+
   * **ShapeWorks Back-end**
     * Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)
-    * New `correspondence-quality` command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies. Reports mean, median, 99th percentile and max distance per subject; p99 measures the worst part of a surface without following a single stray vertex the way max does. Distances are measured in both directions — pull, from the reconstruction to the groomed surface, and push, from the groomed surface to the reconstruction — and combined into an area-weighted disagreement on the groomed mesh, so tears and missing surface that pull alone cannot see are caught; the original pull statistics are still reported (#2612)
+    * New `correspondence-quality` command and Python API that scores each subject by reconstructing its surface from its local particles and measuring distance back to the groomed mesh, normalized by bounding-box diagonal for comparison across anatomies (#2612)
     * Large-cohort optimization speedups: the per-iteration correspondence update drops an O(P·N²) identity multiply during initialization and uses a symmetric eigensolver instead of a single-threaded general SVD, restoring multi-core use on large cohorts with no change to the result (#2574)
     * Geodesic remeshing fixes: `geodesic_remesh_percent` is now interpreted correctly as a percentage, geodesics are actually enabled on the remeshed surface (previously it silently fell back to Euclidean distances), and per-particle face lookups are cached against the query point (#2556)
     * Contours are detected by cell type rather than by inspecting the first cell, and polyline cells with more than two points are split into segments, so single-polyline contours load and optimize instead of crashing (#2377, #2457)
@@ -34,11 +61,6 @@
     * File → Export → Export All Meshes writes the reconstructed mesh for every subject in the project (#2281)
     * The glyph-size slider and auto-sizing now scale to the shape's largest dimension instead of a fixed world-unit range, so very small or very large shapes get usable glyph sizes (#2459)
     * Cutting-plane table edits to center and normal now take effect (#2567)
-    * New *Correspondence Quality* panel in the Analyze pane: scores every sample by reconstructing it from its local particles through Studio's own mesh warper — the same reconstruction shown in the viewer, using your chosen template and warp method — and measuring how far that reconstruction and the sample's groomed mesh disagree in both directions, then ranking by and coloring the groomed surface with that disagreement
-    * *Show distance on surface* colors each sample's surface and particles by the per-vertex distance, so a bad region can be located and not just detected
-    * Samples can be sorted by mean, median, p99 or max distance, or by how localized the error is, which surfaces swapped-correspondence cases whose mean distance still looks healthy; *Sort samples in view* applies the same ranking to the All Samples grid so the challenging shapes come up first, and clicking a row shows that sample on its own, or returns to all samples if it is already showing
-    * The quality chart plots the ranked metric together with the tail of the distribution on a log axis, with median and p95 marked, so a small badly reconstructed patch stays visible even when it barely moves the mean
-    * Result tables can be right-clicked to copy their contents to the clipboard as CSV, with the header row and proper quoting of values containing a comma or a quote
 
 ### Fixes
   * Fix DeepSSM jobs reporting success after failing: a job that died during training logged "Training complete", chained into testing, and exited zero. Failures now stop the run and exit non-zero, and the CLI no longer hangs waiting on a failed job (#2621)
@@ -51,14 +73,10 @@
   * Fix initial landmarks and cutting-plane points rendering at near-zero size before optimization (#2276, #2595)
   * Clear particle filenames when optimization fails, so saving the project no longer persists paths to files that were never written and the project reloads cleanly (#2455)
   * Fix an intermittent race condition in debug instrumentation (#2530)
-  * Fix the Particle Area Analysis and Shape/Scalar Correlation progress bars never moving: the job's fractional progress was truncated to an integer before being scaled to a percentage
-  * Fix box plots showing an auto-assigned palette color rather than the color they were given, which made the plot color appear to change between runs
-  * Fix the lightbox not refitting its shared camera when the tile layout changes, which left samples small and off-centre after switching to the All Samples view until *Autoview* was pressed
 
 ### Platform Updates
   * Bundled Python 3.12 (see above); VTK 9.5.0, ITK 5.4.4 and Qt 5.15.4 are unchanged from 6.7.0
   * GitHub Actions updated to Node 20 runtimes (#1909)
-  * JKQTPlotter is pinned to a tag rather than a moving branch, and updated to skip minor tick labels that would collide with a neighbouring label on a log axis
 
 
 
