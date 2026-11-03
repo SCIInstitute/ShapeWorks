@@ -7255,6 +7255,13 @@
 </ul>
 </li>
 <li>
+<p><strong>Platform support</strong></p>
+<ul>
+<li>macOS 14 (Sonoma) or later is now required (6.7 supported macOS 12). The installer, Studio, the <code>shapeworks</code> CLI and <code>swpython</code> refuse older macOS with a clear message.</li>
+<li>DeepSSM is not supported on Intel Macs: PyTorch no longer publishes Intel macOS builds compatible with the bundled Python. Studio, the CLI and <code>ensure_torch()</code> say so instead of failing partway through.</li>
+</ul>
+</li>
+<li>
 <p><strong>ShapeWorks Back-end</strong></p>
 <ul>
 <li>Registration-based particle initialization as an alternative to particle splitting: particles are spread over a single reference shape and carried onto every other shape by deformable registration (rigid → affine → SyN over distance transforms), so each shape starts optimization already holding a full set of corresponding particles (#2374)</li>

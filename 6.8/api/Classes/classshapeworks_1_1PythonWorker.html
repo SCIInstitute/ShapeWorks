@@ -4738,6 +4738,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-deepssm_unsupported_reason" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function deepssm_unsupported_reason
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-is_torch_available" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4917,8 +4928,12 @@
 <td><strong><a href="classshapeworks_1_1PythonWorker.html#function-abort-job">abort_job</a></strong>()</td>
 </tr>
 <tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-deepssm-unsupported-reason">deepssm_unsupported_reason</a></strong>()<br>Returns why DeepSSM can't run on this platform, or "" if it can.</td>
+</tr>
+<tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-is-torch-available">is_torch_available</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1PythonWorker.html#function-is-torch-available">is_torch_available</a></strong>(int timeout_ms =10000)</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -5008,8 +5023,14 @@
 <h3 id="function-abort_job">function abort_job</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">abort_job</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-deepssm_unsupported_reason">function deepssm_unsupported_reason</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">deepssm_unsupported_reason</span><span class="p">()</span>
+</code></pre></div>
+<p>Returns why DeepSSM can't run on this platform, or "" if it can. </p>
 <h3 id="function-is_torch_available">function is_torch_available</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_torch_available</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_torch_available</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">timeout_ms</span><span class="w"> </span><span class="o">=</span><span class="mi">10000</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Check if PyTorch is available in the bundled Python. Returns true if torch can be imported successfully. </p>
 <h3 id="function-install_torch">function install_torch</h3>
@@ -5027,7 +5048,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.8&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-08-18 at 05:07:09 +0000</p>
+<p>Updated on 2026-11-03 at 20:56:15 +0000</p>
 
 
 
