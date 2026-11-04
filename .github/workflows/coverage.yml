@@ -1,0 +1,148 @@
+name: Linux Coverage
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 0'
+
+env:
+  BUILD_TYPE: Debug
+  SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
+  CACHE_HOST: ${{ secrets.SSH_HOST }}
+  CCACHE_DIR: /github/home/.ccache
+  CCACHE_MAXSIZE: "500M"
+  CCACHE_COMPRESS: "true"
+
+permissions:
+  contents: write   # to push to the coverage-history branch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+
+    runs-on: ubuntu-latest
+    container: akenmorris/manylinux-build-box-sw67
+
+    steps:
+
+    - name: Free some space
+      run: cd /__t ; rm -rf CodeQL go PyPy Python Ruby
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Workaround for permission issue
+      run: git config --global --add safe.directory /__w/ShapeWorks/ShapeWorks
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+    - name: Conda Installs
+      shell: bash -l {0}
+      run: .github/workflows/gha_conda.sh
+
+    - name: Install coverage tools
+      shell: bash -l {0}
+      run: conda activate shapeworks && pip install gcovr==8.8 coverage==7.17.1
+
+    # Shares the dependency cache with the Linux Debug build
+    - name: Restore Dependencies Cache
+      id: cache-deps-restore
+      uses: actions/cache/restore@v4
+      with:
+        path: /github/home/install
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
+
+    - name: Build Dependencies
+      shell: bash -l {0}
+      run: .github/workflows/gha_deps.sh
+
+    - name: Save Dependencies Cache
+      if: steps.cache-deps-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: /github/home/install
+        key: ${{ runner.os }}-deps-debug-${{ hashFiles('.github/workflows/Dockerfile', '.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
+
+    - name: cmake
+      shell: bash -l {0}
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DSW_ENABLE_COVERAGE=ON -DITK_DIR=$HOME/install/lib/cmake/ITK-5.4 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.5 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON ..
+
+    - name: Restore ccache
+      uses: actions/cache/restore@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-coverage-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-coverage-
+
+    - name: make
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make -j2
+
+    - name: Save ccache
+      if: always()
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: /github/home/.ccache
+        key: ${{ runner.os }}-ccache-coverage-${{ github.sha }}
+
+    - name: make install
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && make install
+
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+
+    # Cleans counters, runs ctest, and writes reports (even if some tests fail)
+    - name: Run tests with coverage
+      id: coverage
+      shell: bash -l {0}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && SW_COVERAGE_CTEST_ARGS=-VV make coverage
+
+    - name: Upload coverage report
+      if: ${{ !cancelled() && steps.coverage.conclusion != 'skipped' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: build/coverage
+        retention-days: 90
+
+    # Adds this run to history.csv / README.md on the coverage-history branch (master only)
+    - name: Coverage history
+      if: ${{ !cancelled() && steps.coverage.conclusion != 'skipped' }}
+      shell: bash -l {0}
+      env:
+        APPEND: ${{ github.ref == 'refs/heads/master' && '--append' || '' }}
+      run: |
+        if git fetch origin +refs/heads/coverage-history:refs/remotes/origin/coverage-history; then
+          git worktree add --detach history origin/coverage-history
+        else
+          git worktree add --detach history
+          git -C history checkout --orphan coverage-history
+          git -C history rm -rfq .
+        fi
+        conda activate shapeworks
+        python .github/workflows/coverage_history.py \
+          --summary build/coverage/summary.json \
+          --history-dir history \
+          --commit "$GITHUB_SHA" \
+          --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+          --repo-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+          --summary-out "$GITHUB_STEP_SUMMARY" \
+          $APPEND
+        if [ -n "$APPEND" ] && [ -n "$(git -C history status --porcelain)" ]; then
+          cd history
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history.csv README.md
+          git commit -q -m "Coverage for ${GITHUB_SHA::10}"
+          git push origin HEAD:coverage-history
+        fi
