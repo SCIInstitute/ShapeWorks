@@ -3850,6 +3850,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#measuring-test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Test Coverage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Test Coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weekly-coverage-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly coverage runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4607,6 +4635,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#measuring-test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measuring Test Coverage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Measuring Test Coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weekly-coverage-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weekly coverage runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4666,6 +4722,26 @@ Shell scripts should be added to Testing/shapeworksTests</p>
 }
 </code></pre></div>
 <p>Testing data should be placed in Testing/data.</p>
+<h2 id="measuring-test-coverage">Measuring Test Coverage</h2>
+<p>Coverage is measured for the C++ code in <code>Libs/</code>, <code>Applications/</code> and <code>Studio/</code> (with gcovr) and for the Python packages in <code>Python/</code> (with coverage.py). C++ code reached from the Python tests through the Python bindings is counted too. Use a separate build directory, since the instrumented build is unoptimized.</p>
+<div class="highlight"><pre><span></span><code>pip install gcovr coverage
+mkdir build-coverage &amp;&amp; cd build-coverage
+cmake -DSW_ENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug &lt;usual options&gt; ..
+ninja                    # or make
+source ../devenv.sh ./bin
+ninja coverage
+</code></pre></div>
+<p><code>ninja coverage</code> resets earlier results, runs <code>ctest</code>, and writes the reports. Reports are still written when some tests fail, but the target then exits with an error. Open <code>coverage/index.html</code> for a summary of both, with totals and coverage per library and Python package; it links to the detailed reports in <code>coverage/cpp/</code> and <code>coverage/python/</code>. The same summary is printed at the end of the run and saved as <code>coverage/summary.json</code>.</p>
+<p>To run only some tests, pass <code>ctest</code> arguments in <code>SW_COVERAGE_CTEST_ARGS</code>, e.g. <code>SW_COVERAGE_CTEST_ARGS="-R Mesh" ninja coverage</code>. <code>ninja coverage_clean</code> and <code>ninja coverage_report</code> run the first and last steps on their own, if you prefer to run the tests yourself.</p>
+<p>Python coverage works by placing a <code>sitecustomize.py</code> on <code>PYTHONPATH</code> during the test run, which starts coverage.py in every Python process the tests launch.</p>
+<p>On macOS, Xcode's <code>llvm-cov gcov</code> is used to read the C++ data. Set <code>SW_GCOV_EXECUTABLE</code> to use a different <code>gcov</code> command.</p>
+<h3 id="weekly-coverage-runs">Weekly coverage runs</h3>
+<p>The <a href="https://github.com/SCIInstitute/ShapeWorks/actions/workflows/coverage.yml">Linux Coverage</a> GitHub Action runs every week and can also be started by hand. Each run:</p>
+<ul>
+<li>shows the totals and the change since the previous run in the run summary,</li>
+<li>attaches the full HTML reports as the <code>coverage-report</code> artifact (kept for 90 days),</li>
+<li>on <code>master</code>, adds a row to <code>history.csv</code> on the <a href="https://github.com/SCIInstitute/ShapeWorks/tree/coverage-history"><code>coverage-history</code></a> branch, whose README shows trend charts and recent runs.</li>
+</ul>
 
 
 
