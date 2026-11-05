@@ -30,6 +30,8 @@ option(USE_PCH "Use pre-compiled headers" OFF)
 
 option(USE_ORIGIN_RPATH "Use $ORIGIN in rpath, for deployment" OFF)
 
+option(SW_ENABLE_COVERAGE "Instrument ShapeWorks code for test coverage (gcc/clang)" OFF)
+
 SET(GA_MEASUREMENT_ID "" CACHE STRING "Google Analytics Measurement ID")
 SET(GA_API_SECRET "" CACHE STRING "Google Analytics API Secret")
 
@@ -204,6 +206,12 @@ SET(PYBIND11_PYTHON_VERSION 3.12)
 find_package(pybind11 2.5.0 REQUIRED)
 
 add_subdirectory(ExternalLibs)
+
+# After ExternalLibs so only ShapeWorks code is instrumented
+if(SW_ENABLE_COVERAGE)
+  include(Coverage)
+endif()
+
 add_subdirectory(Libs)
 add_subdirectory(Applications)
 add_subdirectory(Studio)
