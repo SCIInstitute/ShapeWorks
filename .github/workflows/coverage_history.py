@@ -87,7 +87,7 @@ def chart(rows, key, title):
         f'    title "{title}"',
         f"    x-axis [{labels}]",
         '    y-axis "%" 0 --> 100',
-        f"    line [{values}]",
+        f"    bar [{values}]",
         "```",
         "",
     ]
