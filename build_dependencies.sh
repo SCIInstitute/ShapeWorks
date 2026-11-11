@@ -30,7 +30,7 @@ JKQTPLOTTER_VER="v2026.08.24-tick-labels"
 OpenVDB_VER="v9.1.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
-ACVD_VER="63f28ba6f1bddaa62c70d641ff477b88afce2889" # This library isn't using tagged version
+ACVD_VER="d56ee75fd51c67f5b8835f2edf8588fb293a9ea2" # This library isn't using tagged version
 
 #WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
 WIN_CFLAGS="-FS /Zi /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
