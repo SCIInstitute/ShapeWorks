@@ -954,7 +954,7 @@ PYBIND11_MODULE(shapeworks_py, m) {
 
       .def("smoothSinc", &Mesh::smoothSinc, "applies windowed sinc smoothing", "iterations"_a = 0, "passband"_a = 0.0)
 
-      .def("remesh", &Mesh::remesh,
+      .def("remesh", static_cast<Mesh& (Mesh::*)(int, double)>(&Mesh::remesh),
            "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and "
            "adaptivity",
            "numVertices"_a, "adaptivity"_a)

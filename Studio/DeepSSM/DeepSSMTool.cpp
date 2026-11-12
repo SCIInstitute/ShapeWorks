@@ -387,6 +387,8 @@ void DeepSSMTool::handle_thread_complete() {
     session_->reload_particles();
 
     if (succeeded) {
+      // save so the completed step isn't lost if a later step is interrupted
+      session_->trigger_save();
       if (ui_->run_all->isChecked()) {
         if (current_tool_ == DeepSSMJob::JobType::DeepSSM_PrepType) {
           run_tool(DeepSSMJob::JobType::DeepSSM_AugmentationType);

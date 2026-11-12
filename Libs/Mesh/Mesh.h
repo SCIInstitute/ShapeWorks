@@ -82,6 +82,11 @@ class Mesh {
   /// applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity
   Mesh& remesh(int numVertices, double adaptivity = 1.0);
 
+  /// remesh with an explicit ForceManifold setting. ForceManifold should be on for closed surfaces;
+  /// on open surfaces it piles vertices along the boundary. Callers that repair the mesh before
+  /// remeshing should decide this from the mesh before repair, since repair can open a closed mesh.
+  Mesh& remesh(int numVertices, double adaptivity, bool forceManifold);
+
   /// applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity
   Mesh& remeshPercent(double percentage, double adaptivity = 1.0);
 

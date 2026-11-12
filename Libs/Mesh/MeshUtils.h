@@ -78,6 +78,12 @@ class MeshUtils {
   /// Return true if the mesh contains any (near) zero-area triangle
   static bool has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh);
 
+  /// Return true if the mesh contains any cell that is not a 3-point cell (e.g. empty cells)
+  static bool has_non_triangle_cells(vtkSmartPointer<vtkPolyData> mesh);
+
+  /// Return true if the mesh has no boundary edges
+  static bool is_closed(vtkSmartPointer<vtkPolyData> mesh);
+
   /// Recreate mesh, dropping deleted cells
   static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 

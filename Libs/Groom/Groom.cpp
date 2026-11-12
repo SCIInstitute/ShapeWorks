@@ -16,6 +16,7 @@
 #include <vtkPointSet.h>
 
 #include <boost/filesystem.hpp>
+#include <mutex>
 #include <vector>
 
 using namespace shapeworks;
@@ -57,57 +58,77 @@ bool Groom::run() {
 
   std::atomic<bool> success = true;
 
+  // A failing subject must not throw out of the parallel loop: that cancels the TBB task group, and
+  // VTK filters (TBB SMP backend) running for other subjects inherit the cancellation, silently skip
+  // work and return empty/garbage meshes, which then crash later steps. Collect errors instead and
+  // report them once the loop has finished.
+  std::mutex error_mutex;
+  std::vector<std::string> errors;
+
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
-      for (int domain = 0; domain < project_->get_number_of_domains_per_subject(); domain++) {
-        if (abort_) {
-          success = false;
-          continue;
-        }
-
-        auto domain_name = project_->get_domain_names()[domain];
-        // skip "shared_surface" and "shared_boundary"
-        bool is_shared_boundary = domain_name.find("shared_surface_") != std::string::npos ||
-                                  domain_name.find("shared_boundary_") != std::string::npos;
-        if (is_shared_boundary) {
-          SW_DEBUG("Skipping shared boundary domain '{}' during grooming", domain_name);
-          continue;
-        }
-
-        if (subjects[i]->is_fixed()) {
-          continue;
-        }
-
-        if (subjects[i]->is_excluded()) {
-          // clear groomed filenames
-          subjects[i]->set_groomed_filenames(std::vector<std::string>());
-          return;
-        }
-
-        bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
-        bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
-        bool is_contour = project_->get_original_domain_types()[domain] == DomainType::Contour;
-
-        if (is_image) {
-          if (!image_pipeline(subjects[i], domain)) {
+      try {
+        for (int domain = 0; domain < project_->get_number_of_domains_per_subject(); domain++) {
+          if (abort_) {
             success = false;
+            continue;
+          }
+
+          auto domain_name = project_->get_domain_names()[domain];
+          // skip "shared_surface" and "shared_boundary"
+          bool is_shared_boundary = domain_name.find("shared_surface_") != std::string::npos ||
+                                    domain_name.find("shared_boundary_") != std::string::npos;
+          if (is_shared_boundary) {
+            SW_DEBUG("Skipping shared boundary domain '{}' during grooming", domain_name);
+            continue;
+          }
+
+          if (subjects[i]->is_fixed()) {
+            continue;
+          }
+
+          if (subjects[i]->is_excluded()) {
+            // clear groomed filenames and skip the rest of this subject; 'return' here would leave the
+            // TBB range body and skip any remaining subjects in the same chunk
+            subjects[i]->set_groomed_filenames(std::vector<std::string>());
+            break;
+          }
+
+          bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
+          bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
+          bool is_contour = project_->get_original_domain_types()[domain] == DomainType::Contour;
+
+          if (is_image) {
+            if (!image_pipeline(subjects[i], domain)) {
+              success = false;
+            }
+          }
+
+          if (is_mesh) {
+            if (!mesh_pipeline(subjects[i], domain)) {
+              success = false;
+            }
+          }
+
+          if (is_contour) {
+            if (!contour_pipeline(subjects[i], domain)) {
+              success = false;
+            }
           }
         }
-
-        if (is_mesh) {
-          if (!mesh_pipeline(subjects[i], domain)) {
-            success = false;
-          }
-        }
-
-        if (is_contour) {
-          if (!contour_pipeline(subjects[i], domain)) {
-            success = false;
-          }
-        }
+      } catch (const std::exception& e) {
+        success = false;
+        std::scoped_lock lock(error_mutex);
+        errors.push_back(fmt::format("{}: {}", subjects[i]->get_display_name(), e.what()));
+        SW_ERROR("Grooming failed for subject '{}': {}", subjects[i]->get_display_name(), e.what());
       }
     }
   });
+
+  if (!errors.empty()) {
+    throw std::runtime_error(fmt::format("Grooming failed for {} subject(s). First error: {}", errors.size(),
+                                         errors.front()));
+  }
 
   if (success && !run_shared_boundaries()) {
     success = false;
@@ -399,6 +420,10 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
   // Repair mesh: triangulate, clean, fix non-manifold, remove zero-area triangles
   // Skip extract-largest-component for shared boundary domains to avoid removing fragments at the cut surface
   bool extract_largest = !params.is_shared_boundary_domain();
+  // Decide ForceManifold for remeshing from the mesh as given: repair can open a closed mesh (it
+  // removes degenerate triangles), and remeshing a closed surface without ForceManifold can produce
+  // non-manifold output.
+  const bool input_closed = MeshUtils::is_closed(mesh.getVTKMesh());
   mesh = Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh(), extract_largest));
 
   if (params.get_fill_mesh_holes_tool()) {
@@ -420,7 +445,7 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
     }
     num_vertices = std::max<int>(num_vertices, 25);
     double gradation = clamp<double>(params.get_remesh_gradation(), 0.0, 2.0);
-    mesh.remesh(num_vertices, gradation);
+    mesh.remesh(num_vertices, gradation, input_closed);
     check_and_fix_mesh(mesh, "remesh", filename);
     increment_progress();
   }
