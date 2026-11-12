@@ -443,10 +443,14 @@ TEST(MeshTests, removeZeroAreaDegenerateTest) {
   ASSERT_FALSE(MeshUtils::has_non_triangle_cells(poly_data));
   ASSERT_EQ(MeshUtils::remove_zero_area_triangles(poly_data)->GetNumberOfCells(), 1);
 
+  // Use a new polydata: the one above has already built its cell map, which would not see a cell
+  // appended to its cell array and would be read out of bounds
   polys->InsertNextCell(0, good);  // an empty cell, as ACVD can produce
-  poly_data->SetPolys(polys);
-  ASSERT_TRUE(MeshUtils::has_non_triangle_cells(poly_data));
-  ASSERT_EQ(MeshUtils::remove_zero_area_triangles(poly_data)->GetNumberOfCells(), 1);
+  auto with_empty_cell = vtkSmartPointer<vtkPolyData>::New();
+  with_empty_cell->SetPoints(points);
+  with_empty_cell->SetPolys(polys);
+  ASSERT_TRUE(MeshUtils::has_non_triangle_cells(with_empty_cell));
+  ASSERT_EQ(MeshUtils::remove_zero_area_triangles(with_empty_cell)->GetNumberOfCells(), 1);
 }
 
 TEST(MeshTests, fieldGradientFloatTest) {
