@@ -420,9 +420,10 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
   // Repair mesh: triangulate, clean, fix non-manifold, remove zero-area triangles
   // Skip extract-largest-component for shared boundary domains to avoid removing fragments at the cut surface
   bool extract_largest = !params.is_shared_boundary_domain();
-  // Decide ForceManifold for remeshing from the mesh as given: repair can open a closed mesh (it
-  // removes degenerate triangles), and remeshing a closed surface without ForceManifold can produce
-  // non-manifold output.
+  // Remesh with ForceManifold if the mesh was closed before repair (repair can open a closed mesh by
+  // removing degenerate triangles) or is closed when remeshed (fill holes can close an open mesh).
+  // Remeshing a closed surface without ForceManifold can produce non-manifold output; only meshes
+  // that are genuinely open are remeshed without it (#2672).
   const bool input_closed = MeshUtils::is_closed(mesh.getVTKMesh());
   mesh = Mesh(MeshUtils::repair_mesh(mesh.getVTKMesh(), extract_largest));
 
@@ -445,7 +446,8 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params, const std::str
     }
     num_vertices = std::max<int>(num_vertices, 25);
     double gradation = clamp<double>(params.get_remesh_gradation(), 0.0, 2.0);
-    mesh.remesh(num_vertices, gradation, input_closed);
+    const bool force_manifold = input_closed || MeshUtils::is_closed(mesh.getVTKMesh());
+    mesh.remesh(num_vertices, gradation, force_manifold);
     check_and_fix_mesh(mesh, "remesh", filename);
     increment_progress();
   }
