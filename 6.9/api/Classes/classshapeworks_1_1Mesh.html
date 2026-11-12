@@ -4815,6 +4815,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-remesh_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function remesh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-remeshpercent" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5714,6 +5725,10 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-remesh">remesh</a></strong>(int numVertices, double adaptivity, bool forceManifold)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-remeshpercent">remeshPercent</a></strong>(double percentage, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity</td>
 </tr>
 <tr>
@@ -6214,6 +6229,14 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity </p>
+<h3 id="function-remesh_1">function remesh</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remesh</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numVertices</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">forceManifold</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>remesh with an explicit ForceManifold setting. ForceManifold should be on for closed surfaces; on open surfaces it piles vertices along the boundary. Callers that repair the mesh before remeshing should decide this from the mesh before repair, since repair can open a closed mesh. </p>
 <h3 id="function-remeshpercent">function remeshPercent</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">remeshPercent</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">percentage</span><span class="p">,</span>
@@ -6621,7 +6644,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-12 at 06:32:54 +0000</p>
+<p>Updated on 2026-11-12 at 15:57:44 +0000</p>
 
 
 

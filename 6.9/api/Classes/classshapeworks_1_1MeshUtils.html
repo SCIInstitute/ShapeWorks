@@ -4732,6 +4732,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-has_non_triangle_cells" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function has_non_triangle_cells
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-is_closed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function is_closed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-recreate_mesh" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4915,6 +4937,14 @@
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-has-zero-area-triangles">has_zero_area_triangles</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Return true if the mesh contains any (near) zero-area triangle.</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-has-non-triangle-cells">has_non_triangle_cells</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Return true if the mesh contains any cell that is not a 3-point cell (e.g. empty cells)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1MeshUtils.html#function-is-closed">is_closed</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Return true if the mesh has no boundary edges.</td>
+</tr>
+<tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1MeshUtils.html#function-recreate-mesh">recreate_mesh</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; mesh)<br>Recreate mesh, dropping deleted cells.</td>
 </tr>
@@ -5072,6 +5102,18 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Return true if the mesh contains any (near) zero-area triangle. </p>
+<h3 id="function-has_non_triangle_cells">function has_non_triangle_cells</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">has_non_triangle_cells</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return true if the mesh contains any cell that is not a 3-point cell (e.g. empty cells) </p>
+<h3 id="function-is_closed">function is_closed</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_closed</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Return true if the mesh has no boundary edges. </p>
 <h3 id="function-recreate_mesh">function recreate_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">recreate_mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
@@ -5118,7 +5160,7 @@
 </code></pre></div>
 <p>Used as an auxiliary function for vector field visualizations. </p>
 <hr />
-<p>Updated on 2026-11-12 at 06:32:54 +0000</p>
+<p>Updated on 2026-11-12 at 15:57:44 +0000</p>
 
 
 
