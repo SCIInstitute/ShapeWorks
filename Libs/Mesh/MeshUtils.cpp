@@ -33,6 +33,10 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkTriangle.h>
+#include <vtkMath.h>
+#include <vtkFeatureEdges.h>
+
+#include <algorithm>
 #include <vtkXMLPolyDataWriter.h>
 
 #include <iostream>
@@ -1064,6 +1068,21 @@ vtkSmartPointer<vtkPolyData> MeshUtils::clean_mesh(vtkSmartPointer<vtkPolyData> 
 }
 
 //---------------------------------------------------------------------------
+namespace {
+// A triangle is degenerate when it is (numerically) collinear: area <= 1e-10 * longest_edge^2,
+// i.e. its height is below ~2e-10 of its longest edge. The test is local and scale-free. An earlier
+// version compared against 1e-6 * the largest triangle in the mesh, which deleted small but valid
+// triangles in meshes with widely varying triangle sizes and opened closed meshes.
+bool is_degenerate_triangle(const double p0[3], const double p1[3], const double p2[3]) {
+  const double RELATIVE_EPSILON = 1e-10;
+  const double ABSOLUTE_FLOOR = 1e-30;
+  double longest_sq = std::max({vtkMath::Distance2BetweenPoints(p0, p1), vtkMath::Distance2BetweenPoints(p1, p2),
+                                vtkMath::Distance2BetweenPoints(p2, p0)});
+  return vtkTriangle::TriangleArea(p0, p1, p2) <= std::max(RELATIVE_EPSILON * longest_sq, ABSOLUTE_FLOOR);
+}
+}  // namespace
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshUtils::remove_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
   // Create a new polydata to store the filtered triangles
   auto filtered_mesh = vtkSmartPointer<vtkPolyData>::New();
@@ -1078,28 +1097,7 @@ vtkSmartPointer<vtkPolyData> MeshUtils::remove_zero_area_triangles(vtkSmartPoint
   // Iterate through all cells
   auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
 
-  // First pass: find max area to establish scale
-  double max_area = 0.0;
-  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
-    mesh->GetCellPoints(cellId, cell_point_ids);
-    if (cell_point_ids->GetNumberOfIds() == 3) {
-      double p0[3], p1[3], p2[3];
-      points->GetPoint(cell_point_ids->GetId(0), p0);
-      points->GetPoint(cell_point_ids->GetId(1), p1);
-      points->GetPoint(cell_point_ids->GetId(2), p2);
-      double area = vtkTriangle::TriangleArea(p0, p1, p2);
-      if (area > max_area) {
-        max_area = area;
-      }
-    }
-  }
-
-  // Use relative epsilon based on max area, with absolute floor
-  const double RELATIVE_EPSILON = 1e-6;
-  const double ABSOLUTE_FLOOR = 1e-15;
-  const double epsilon = std::max(max_area * RELATIVE_EPSILON, ABSOLUTE_FLOOR);
-
-  // Second pass: filter triangles
+  // Filter triangles
   for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
     mesh->GetCellPoints(cellId, cell_point_ids);
 
@@ -1111,10 +1109,7 @@ vtkSmartPointer<vtkPolyData> MeshUtils::remove_zero_area_triangles(vtkSmartPoint
       points->GetPoint(cell_point_ids->GetId(1), p1);
       points->GetPoint(cell_point_ids->GetId(2), p2);
 
-      // Calculate the area of the triangle using VTK's built-in function
-      double area = vtkTriangle::TriangleArea(p0, p1, p2);
-
-      if (area > epsilon) {
+      if (!is_degenerate_triangle(p0, p1, p2)) {
         // Add this triangle to the new cell array
         new_triangles->InsertNextCell(cell_point_ids);
       }
@@ -1138,9 +1133,9 @@ vtkSmartPointer<vtkPolyData> MeshUtils::remove_zero_area_triangles(vtkSmartPoint
 
 //---------------------------------------------------------------------------
 bool MeshUtils::has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
-  // Uses the same relative epsilon as remove_zero_area_triangles(), so this returns
-  // true exactly when that function would drop a triangle. Callers can guard on it to
-  // skip the (point-renumbering) cleanup on well-formed meshes.
+  // Uses the same test as remove_zero_area_triangles(), so this returns true exactly when that
+  // function would drop a triangle. Callers can guard on it to skip the (point-renumbering)
+  // cleanup on well-formed meshes.
   vtkSmartPointer<vtkPoints> points = mesh->GetPoints();
   if (!points) {
     return false;
@@ -1148,8 +1143,7 @@ bool MeshUtils::has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
 
   auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
 
-  // First pass: find max area to establish scale
-  double max_area = 0.0;
+  // Does any triangle fail the degeneracy test?
   for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
     mesh->GetCellPoints(cellId, cell_point_ids);
     if (cell_point_ids->GetNumberOfIds() == 3) {
@@ -1157,28 +1151,44 @@ bool MeshUtils::has_zero_area_triangles(vtkSmartPointer<vtkPolyData> mesh) {
       points->GetPoint(cell_point_ids->GetId(0), p0);
       points->GetPoint(cell_point_ids->GetId(1), p1);
       points->GetPoint(cell_point_ids->GetId(2), p2);
-      max_area = std::max(max_area, vtkTriangle::TriangleArea(p0, p1, p2));
-    }
-  }
-
-  const double RELATIVE_EPSILON = 1e-6;
-  const double ABSOLUTE_FLOOR = 1e-15;
-  const double epsilon = std::max(max_area * RELATIVE_EPSILON, ABSOLUTE_FLOOR);
-
-  // Second pass: does any triangle fall at or below the threshold?
-  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
-    mesh->GetCellPoints(cellId, cell_point_ids);
-    if (cell_point_ids->GetNumberOfIds() == 3) {
-      double p0[3], p1[3], p2[3];
-      points->GetPoint(cell_point_ids->GetId(0), p0);
-      points->GetPoint(cell_point_ids->GetId(1), p1);
-      points->GetPoint(cell_point_ids->GetId(2), p2);
-      if (vtkTriangle::TriangleArea(p0, p1, p2) <= epsilon) {
+      if (is_degenerate_triangle(p0, p1, p2)) {
         return true;
       }
     }
   }
 
+  return false;
+}
+
+//---------------------------------------------------------------------------
+bool MeshUtils::is_closed(vtkSmartPointer<vtkPolyData> mesh) {
+  // geometry only: vtkFeatureEdges copies point data, which reads out of bounds on a field that
+  // doesn't have one value per point
+  auto geometry = vtkSmartPointer<vtkPolyData>::New();
+  geometry->SetPoints(mesh->GetPoints());
+  geometry->SetPolys(mesh->GetPolys());
+  auto boundary_edges = vtkSmartPointer<vtkFeatureEdges>::New();
+  boundary_edges->SetInputData(geometry);
+  boundary_edges->BoundaryEdgesOn();
+  boundary_edges->FeatureEdgesOff();
+  boundary_edges->NonManifoldEdgesOff();
+  boundary_edges->ManifoldEdgesOff();
+  boundary_edges->Update();
+  return boundary_edges->GetOutput()->GetNumberOfCells() == 0;
+}
+
+//---------------------------------------------------------------------------
+bool MeshUtils::has_non_triangle_cells(vtkSmartPointer<vtkPolyData> mesh) {
+  // ACVD can emit empty (type 0) cells, especially when ForceManifold is off. vtkOrientPolyData
+  // (used by computeNormals) crashes on them, so remesh output must be checked for anything that is
+  // not a 3-point cell, not only for zero-area triangles.
+  auto cell_point_ids = vtkSmartPointer<vtkIdList>::New();
+  for (vtkIdType cellId = 0; cellId < mesh->GetNumberOfCells(); cellId++) {
+    mesh->GetCellPoints(cellId, cell_point_ids);
+    if (cell_point_ids->GetNumberOfIds() != 3) {
+      return true;
+    }
+  }
   return false;
 }
 

@@ -464,6 +464,13 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 }
 
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
+  // ACVD's ForceManifold treats clusters on an open boundary as non-manifold and keeps splitting
+  // them, piling extra vertices and sliver triangles along the boundary (e.g. a mesh clipped by a
+  // cutting plane ends up with more vertices than requested). Only force manifold on closed meshes.
+  return remesh(numVertices, adaptivity, MeshUtils::is_closed(this->poly_data_));
+}
+
+Mesh& Mesh::remesh(int numVertices, double adaptivity, bool forceManifold) {
   TIME_SCOPE("Mesh::remesh");
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
@@ -490,24 +497,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
 
   numVertices = std::max<int>(numVertices, 1);
 
-  // ACVD's ForceManifold treats clusters on an open boundary as non-manifold and keeps splitting
-  // them, piling extra vertices and sliver triangles along the boundary (e.g. a mesh clipped by a
-  // cutting plane ends up with more vertices than requested). Only force manifold on closed meshes.
-  // geometry only: vtkFeatureEdges copies point data, which reads out of bounds on a field that
-  // doesn't have one value per point
-  auto geometry = vtkSmartPointer<vtkPolyData>::New();
-  geometry->SetPoints(this->poly_data_->GetPoints());
-  geometry->SetPolys(this->poly_data_->GetPolys());
-  auto boundary_edges = vtkSmartPointer<vtkFeatureEdges>::New();
-  boundary_edges->SetInputData(geometry);
-  boundary_edges->BoundaryEdgesOn();
-  boundary_edges->FeatureEdgesOff();
-  boundary_edges->NonManifoldEdgesOff();
-  boundary_edges->ManifoldEdgesOff();
-  boundary_edges->Update();
-  bool is_closed = boundary_edges->GetOutput()->GetNumberOfCells() == 0;
-
-  remesh->SetForceManifold(is_closed);
+  remesh->SetForceManifold(forceManifold);
   remesh->SetInput(surf);
   remesh->SetFileLoadSaveOption(0);
   remesh->SetConsoleOutput(0);
@@ -522,11 +512,11 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
 
   this->poly_data_ = remesh->GetOutput();
 
-  // ACVD remeshing can produce zero-area (degenerate) triangles. These must be
-  // removed before computing normals: vtkPolyDataNormals with AutoOrientNormals
-  // runs vtkOrientPolyData, which segfaults on degenerate geometry. Only rebuild when
-  // such a triangle is present, so well-formed remesh output is left untouched.
-  if (MeshUtils::has_zero_area_triangles(this->poly_data_)) {
+  // ACVD remeshing can produce zero-area (degenerate) triangles and empty (type 0) cells. These
+  // must be removed before computing normals: vtkPolyDataNormals with AutoOrientNormals runs
+  // vtkOrientPolyData, which segfaults on degenerate geometry. Only rebuild when such a cell is
+  // present, so well-formed remesh output is left untouched.
+  if (MeshUtils::has_zero_area_triangles(this->poly_data_) || MeshUtils::has_non_triangle_cells(this->poly_data_)) {
     this->poly_data_ = MeshUtils::remove_zero_area_triangles(this->poly_data_);
   }
 
