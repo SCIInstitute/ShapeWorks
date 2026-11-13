@@ -54,7 +54,9 @@ static json create_line_chart(const std::string& title, const std::string& y_lab
 
 //---------------------------------------------------------------------------
 static json create_charts(ParticleShapeStatistics* stats, int max_evaluation_modes) {
-  json charts = {create_line_chart("Compactness", "Explained Variance", stats->get_compactness())};
+  // note: brace-initializing with a single json element yields an object (not an array) on MSVC
+  json charts = json::array();
+  charts.push_back(create_line_chart("Compactness", "Explained Variance", stats->get_compactness()));
 
   // generalization and specificity are expensive for large numbers of subjects, so they can be limited or skipped
   if (max_evaluation_modes != 0) {
