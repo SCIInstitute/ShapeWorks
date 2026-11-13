@@ -1,4 +1,5 @@
 #include <vtkDataArray.h>
+#include <vtkSphereSource.h>
 
 #include <string>
 #include <vector>
@@ -134,6 +135,47 @@ TEST(ParticlesTests, full_specificity)
   ASSERT_NEAR(specificity(2), 0.3229973053223541, 1e-12);
   ASSERT_NEAR(specificity(6), 0.39771651693953047, 1e-12);
   ASSERT_NEAR(specificity(13), 0.48489052096120988, 1e-12);
+}
+
+// Particles on spheres of varying radius, each subject with its own sphere mesh
+static ParticleSystemEvaluation sphere_particle_system() {
+  const int num_subjects = 10;
+  const int num_particles = 64;
+  Eigen::MatrixXd matrix(num_particles * 3, num_subjects);
+  std::vector<Mesh> meshes;
+  for (int s = 0; s < num_subjects; s++) {
+    const double radius = 20.0 + s + 0.3 * (s % 3);
+    for (int k = 0; k < num_particles; k++) {
+      const double theta = 0.4 + 2.3 * k / num_particles;
+      const double phi = 0.7 * k;
+      const double r = radius * (1.0 + 0.02 * std::sin(3.0 * k + s));
+      matrix(3 * k + 0, s) = r * std::sin(theta) * std::cos(phi);
+      matrix(3 * k + 1, s) = r * std::sin(theta) * std::sin(phi);
+      matrix(3 * k + 2, s) = r * std::cos(theta);
+    }
+    auto sphere = vtkSmartPointer<vtkSphereSource>::New();
+    sphere->SetRadius(radius);
+    sphere->SetThetaResolution(32);
+    sphere->SetPhiResolution(32);
+    sphere->Update();
+    meshes.emplace_back(sphere->GetOutput());
+  }
+  ParticleSystemEvaluation particle_system(matrix);
+  particle_system.set_meshes(meshes);
+  return particle_system;
+}
+
+// With one mode, compute_specificity draws the same samples as the first entry of compute_full_specificity
+TEST(ParticlesTests, specificity_matches_full)
+{
+  ParticleSystemEvaluation particle_system = sphere_particle_system();
+  for (bool surface_distance_mode : {false, true}) {
+    const double specificity = ShapeEvaluation::compute_specificity(particle_system, 1, "", surface_distance_mode);
+    const Eigen::VectorXd full =
+        ShapeEvaluation::compute_full_specificity(particle_system, nullptr, nullptr, surface_distance_mode);
+    ASSERT_GT(specificity, 0.0);
+    ASSERT_NEAR(specificity, full(0), 1e-12) << "surface_distance_mode = " << surface_distance_mode;
+  }
 }
 
 TEST(ParticlesTests, reconstructsurfaceTestRBFS)
