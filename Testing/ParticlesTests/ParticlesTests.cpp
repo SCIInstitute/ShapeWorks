@@ -137,6 +137,31 @@ TEST(ParticlesTests, full_specificity)
   ASSERT_NEAR(specificity(13), 0.48489052096120988, 1e-12);
 }
 
+// Limiting the number of modes returns the leading entries of the full curves
+TEST(ParticlesTests, evaluation_max_modes)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd generalization = ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation);
+  const Eigen::VectorXd specificity = ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation);
+
+  const Eigen::VectorXd limited_generalization =
+      ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 3);
+  const Eigen::VectorXd limited_specificity =
+      ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation, nullptr, nullptr, false, 3);
+  ASSERT_EQ(limited_generalization.size(), 3);
+  ASSERT_EQ(limited_specificity.size(), 3);
+  for (int i = 0; i < 3; i++) {
+    ASSERT_DOUBLE_EQ(limited_generalization(i), generalization(i));
+    ASSERT_DOUBLE_EQ(limited_specificity(i), specificity(i));
+  }
+
+  // zero modes skips the computation, and more modes than exist returns all of them
+  ASSERT_EQ(ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 0).size(), 0);
+  ASSERT_EQ(ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation, nullptr, nullptr, false, 0).size(), 0);
+  ASSERT_EQ(ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 100).size(),
+            generalization.size());
+}
+
 // Particles on spheres of varying radius, each subject with its own sphere mesh
 static ParticleSystemEvaluation sphere_particle_system() {
   const int num_subjects = 10;

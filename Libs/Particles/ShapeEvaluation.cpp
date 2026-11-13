@@ -223,17 +223,17 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
 Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSystemEvaluation& particle_system,
                                                              std::function<void(float)> progress_callback,
                                                              std::function<bool()> check_abort,
-                                                             bool surface_distance_mode) {
+                                                             bool surface_distance_mode, int max_modes) {
   TIME_SCOPE("ShapeEvaluation::compute_full_generalization");
   const long n = particle_system.num_samples();  // number of samples
   const long d = particle_system.num_dims();     // number of dimensions (e.g. number of particles * 3)
   const Eigen::MatrixXd& p = particle_system.get_matrix();
 
-  if (n <= 1) {
+  // number of modes to evaluate
+  const long num_modes = (max_modes >= 0 && max_modes < n - 1) ? max_modes : n - 1;
+  if (num_modes < 1) {
     return {};
   }
-
-  Eigen::VectorXd generalizations(n - 1);
 
   const int num_values = particle_system.get_num_values_per_particle();
   const long num_particles = d / num_values;
@@ -244,7 +244,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
   }
 
   // dists(mode - 1, leave) is the error reconstructing left-out shape `leave` from `mode` modes
-  Eigen::MatrixXd dists(n - 1, n);
+  Eigen::MatrixXd dists(num_modes, n);
 
   CallerThreadCallbacks callbacks(progress_callback, check_abort, n);
 
@@ -272,7 +272,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
     const Eigen::Map<const RowMajorMatrix> ytest_reshaped(y_test.data(), num_particles, num_values);
     const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), num_particles, num_values);
 
-    for (long mode = 1; mode < n; mode++) {
+    for (long mode = 1; mode <= num_modes; mode++) {
       if (callbacks.aborted()) {
         return;
       }
@@ -306,14 +306,12 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
   }
 
   // sum in order so the result does not depend on scheduling
-  Eigen::VectorXd total_dists = Eigen::VectorXd::Zero(n - 1);
+  Eigen::VectorXd total_dists = Eigen::VectorXd::Zero(num_modes);
   for (long leave = 0; leave < n; leave++) {
     total_dists += dists.col(leave);
   }
 
-  generalizations = total_dists / n;
-
-  return generalizations;
+  return total_dists / n;
 }
 
 //---------------------------------------------------------------------------
@@ -422,14 +420,19 @@ double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& part
 Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEvaluation& particle_system,
                                                           std::function<void(float)> progress_callback,
                                                           std::function<bool()> check_abort,
-                                                          bool surface_distance_mode) {
+                                                          bool surface_distance_mode, int max_modes) {
   TIME_SCOPE("ShapeEvaluation::compute_full_specificity");
   const long n = particle_system.num_samples();
   const long d = particle_system.num_dims();
   const int num_values = particle_system.get_num_values_per_particle();
   const int num_particles = d / num_values;
 
-  Eigen::VectorXd specificities(n - 1);
+  // number of modes to evaluate
+  const long max_num_modes = (max_modes >= 0 && max_modes < n - 1) ? max_modes : n - 1;
+  if (max_num_modes < 1) {
+    return {};
+  }
+  Eigen::VectorXd specificities(max_num_modes);
 
   // PCA calculations
   const Eigen::MatrixXd& pts_models = particle_system.get_matrix();
@@ -448,9 +451,9 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
 
   CallerThreadCallbacks callbacks(nullptr, check_abort, 0);
 
-  for (int num_modes = 1; num_modes < n; num_modes++) {
+  for (int num_modes = 1; num_modes <= max_num_modes; num_modes++) {
     if (progress_callback) {
-      progress_callback(static_cast<float>(num_modes) / static_cast<float>(n));
+      progress_callback(static_cast<float>(num_modes) / static_cast<float>(max_num_modes + 1));
     }
 
     const int num_samples = 1000;
