@@ -102,6 +102,40 @@ TEST(ParticlesTests, specificity)
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 
+// Expected values were computed before evaluation was parallelized (#2693)
+TEST(ParticlesTests, full_compactness)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd compactness = ShapeEvaluation::compute_full_compactness(ParticleSystemEvaluation);
+  ASSERT_EQ(compactness.size(), 14);
+  ASSERT_NEAR(compactness(0), 0.99178682878009183, 1e-12);
+  ASSERT_NEAR(compactness(4), 0.99681064257564056, 1e-12);
+  ASSERT_NEAR(compactness(12), 0.99977528747591948, 1e-12);
+  ASSERT_NEAR(compactness(13), 1.0, 1e-12);
+}
+
+TEST(ParticlesTests, full_generalization)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd generalization = ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation);
+  ASSERT_EQ(generalization.size(), 14);
+  ASSERT_NEAR(generalization(0), 0.19815116412998685, 1e-12);
+  ASSERT_NEAR(generalization(2), 0.18118537312877342, 1e-12);
+  ASSERT_NEAR(generalization(6), 0.17722251399884467, 1e-12);
+  ASSERT_NEAR(generalization(13), 0.17560060220595625, 1e-12);
+}
+
+TEST(ParticlesTests, full_specificity)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd specificity = ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation);
+  ASSERT_EQ(specificity.size(), 14);
+  ASSERT_NEAR(specificity(0), 0.25152233696336695, 1e-12);
+  ASSERT_NEAR(specificity(2), 0.3229973053223541, 1e-12);
+  ASSERT_NEAR(specificity(6), 0.39771651693953047, 1e-12);
+  ASSERT_NEAR(specificity(13), 0.48489052096120988, 1e-12);
+}
+
 TEST(ParticlesTests, reconstructsurfaceTestRBFS)
 {
   ReconstructSurface<RBFSSparseTransform> reconstructor(denseFile, sparseFile, goodPointsFile);
