@@ -32,5 +32,5 @@ for title in ['Generalization', 'Specificity']:
     if limited[title] != full[title][:1]: sys.exit(title + ' was not limited to one mode')
 if list(skipped) != ['Compactness']: sys.exit('evaluation was not skipped')
 "
-python -c "$script"
+python3 -c "$script"
 if [[ $? != 0 ]]; then exit -1; fi
