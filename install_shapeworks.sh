@@ -140,6 +140,12 @@ function install_conda() {
 	CONDA_PACKAGES+=(zlib=1.2.13 patchelf=0.17.2)
     fi
 
+    # mac (only): libcxx 23.1.5 builds _1 and later drop the legacy
+    # __vector_base_common symbol that conda-forge's spdlog 1.10.0 needs
+    if [[ "$(uname)" == "Darwin" ]]; then
+	CONDA_PACKAGES+=("libcxx=23.1.5=*_0")
+    fi
+
     if [[ $OSTYPE == msys* || $OSTYPE == cygwin* ]]; then
 	CONDA_PACKAGES+=(zlib)
     fi
