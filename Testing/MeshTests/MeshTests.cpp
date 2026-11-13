@@ -1,10 +1,14 @@
 #include <igl/boundary_loop.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <vtkCellArray.h>
+#include <vtkClipClosedSurface.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
+#include <vtkPlane.h>
+#include <vtkPlaneCollection.h>
 #include <vtkPoints.h>
 #include <vtkSphereSource.h>
+#include <vtkTriangleFilter.h>
 #include <vtksys/SystemTools.hxx>
 
 #include <chrono>
@@ -367,6 +371,86 @@ TEST(MeshTests, remeshPercentOpenMeshTest) {
   auto num_points = femur.numPoints();
   femur.remeshPercent(0.40, 1.0);
   ASSERT_NEAR(femur.numPoints(), num_points * 0.40, num_points * 0.02);
+}
+
+// ellipsoid_01.vtk clipped by a capped plane just above one of its vertices: the cap is a fan of large
+// triangles and the cut leaves thin slivers along the rim, as a cropped bone mesh does
+static vtkSmartPointer<vtkPolyData> clipped_ellipsoid(double offset) {
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
+  auto poly_data = ellipsoid.getVTKMesh();
+  double z_cut = 0.0, best = 1e30;
+  for (vtkIdType i = 0; i < poly_data->GetNumberOfPoints(); i++) {
+    double z = poly_data->GetPoint(i)[2];
+    if (std::abs(z - 3.0) < best) {
+      best = std::abs(z - 3.0);
+      z_cut = z;
+    }
+  }
+  auto plane = vtkSmartPointer<vtkPlane>::New();
+  plane->SetOrigin(0, 0, z_cut + offset);
+  plane->SetNormal(0, 0, -1);
+  auto planes = vtkSmartPointer<vtkPlaneCollection>::New();
+  planes->AddItem(plane);
+  auto clip = vtkSmartPointer<vtkClipClosedSurface>::New();
+  clip->SetInputData(poly_data);
+  clip->SetClippingPlanes(planes);
+  clip->GenerateFacesOn();
+  auto triangles = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangles->SetInputConnection(clip->GetOutputPort());
+  triangles->Update();
+  return triangles->GetOutput();
+}
+
+// Repairing a closed mesh with large and small (but valid) triangles keeps it closed. The zero-area
+// cutoff used to be relative to the largest triangle, so the rim triangles of a capped cut were
+// deleted and the mesh opened (#2690).
+TEST(MeshTests, repairKeepsClippedMeshClosedTest) {
+  auto clipped = clipped_ellipsoid(1e-4);
+  ASSERT_TRUE(MeshUtils::is_closed(clipped));
+  auto repaired = MeshUtils::repair_mesh(clipped);
+  ASSERT_TRUE(MeshUtils::is_closed(repaired));
+  ASSERT_EQ(repaired->GetNumberOfCells(), clipped->GetNumberOfCells());
+}
+
+// The zero-area test is per triangle: a tiny but well-shaped triangle is kept, so a closed mesh
+// stays closed (it used to be compared against the largest triangle in the mesh, #2690)
+TEST(MeshTests, removeZeroAreaKeepsSmallTrianglesTest) {
+  Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
+  auto poly_data = MeshUtils::clean_mesh(ellipsoid.getVTKMesh());
+  ASSERT_FALSE(MeshUtils::has_zero_area_triangles(poly_data));
+  auto filtered = MeshUtils::remove_zero_area_triangles(poly_data);
+  ASSERT_EQ(filtered->GetNumberOfCells(), poly_data->GetNumberOfCells());
+  ASSERT_TRUE(MeshUtils::is_closed(filtered));
+}
+
+// Collinear triangles and non-triangle (e.g. empty) cells are found and removed
+TEST(MeshTests, removeZeroAreaDegenerateTest) {
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint(0, 0, 0);
+  points->InsertNextPoint(1, 0, 0);
+  points->InsertNextPoint(0, 1, 0);
+  points->InsertNextPoint(2, 0, 0);  // collinear with points 0 and 1
+  auto polys = vtkSmartPointer<vtkCellArray>::New();
+  vtkIdType good[3] = {0, 1, 2};
+  vtkIdType collinear[3] = {0, 1, 3};
+  polys->InsertNextCell(3, good);
+  polys->InsertNextCell(3, collinear);
+  auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+  poly_data->SetPoints(points);
+  poly_data->SetPolys(polys);
+
+  ASSERT_TRUE(MeshUtils::has_zero_area_triangles(poly_data));
+  ASSERT_FALSE(MeshUtils::has_non_triangle_cells(poly_data));
+  ASSERT_EQ(MeshUtils::remove_zero_area_triangles(poly_data)->GetNumberOfCells(), 1);
+
+  // Use a new polydata: the one above has already built its cell map, which would not see a cell
+  // appended to its cell array and would be read out of bounds
+  polys->InsertNextCell(0, good);  // an empty cell, as ACVD can produce
+  auto with_empty_cell = vtkSmartPointer<vtkPolyData>::New();
+  with_empty_cell->SetPoints(points);
+  with_empty_cell->SetPolys(polys);
+  ASSERT_TRUE(MeshUtils::has_non_triangle_cells(with_empty_cell));
+  ASSERT_EQ(MeshUtils::remove_zero_area_triangles(with_empty_cell)->GetNumberOfCells(), 1);
 }
 
 TEST(MeshTests, fieldGradientFloatTest) {
