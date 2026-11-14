@@ -13,4 +13,4 @@ for a,b in zip(lhs, rhs):
     if abs(a-b) > 1e-1:
         sys.exit(1)
 "
-python -c "$script" "$truth" "$result"
+python3 -c "$script" "$truth" "$result"

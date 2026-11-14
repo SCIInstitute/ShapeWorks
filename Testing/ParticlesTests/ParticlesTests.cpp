@@ -1,4 +1,5 @@
 #include <vtkDataArray.h>
+#include <vtkSphereSource.h>
 
 #include <string>
 #include <vector>
@@ -100,6 +101,108 @@ TEST(ParticlesTests, specificity)
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
   const double specificity = ShapeEvaluation::compute_specificity(ParticleSystemEvaluation, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
+}
+
+// Expected values were computed before evaluation was parallelized (#2693)
+TEST(ParticlesTests, full_compactness)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd compactness = ShapeEvaluation::compute_full_compactness(ParticleSystemEvaluation);
+  ASSERT_EQ(compactness.size(), 14);
+  ASSERT_NEAR(compactness(0), 0.99178682878009183, 1e-12);
+  ASSERT_NEAR(compactness(4), 0.99681064257564056, 1e-12);
+  ASSERT_NEAR(compactness(12), 0.99977528747591948, 1e-12);
+  ASSERT_NEAR(compactness(13), 1.0, 1e-12);
+}
+
+TEST(ParticlesTests, full_generalization)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd generalization = ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation);
+  ASSERT_EQ(generalization.size(), 14);
+  ASSERT_NEAR(generalization(0), 0.19815116412998685, 1e-12);
+  ASSERT_NEAR(generalization(2), 0.18118537312877342, 1e-12);
+  ASSERT_NEAR(generalization(6), 0.17722251399884467, 1e-12);
+  // the last leave-one-out mode is a null-space direction whose SVD vector differs by platform
+  ASSERT_NEAR(generalization(13), 0.17560060220595625, 1e-3);
+}
+
+TEST(ParticlesTests, full_specificity)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd specificity = ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation);
+  ASSERT_EQ(specificity.size(), 14);
+  ASSERT_NEAR(specificity(0), 0.25152233696336695, 1e-12);
+  ASSERT_NEAR(specificity(2), 0.3229973053223541, 1e-12);
+  ASSERT_NEAR(specificity(6), 0.39771651693953047, 1e-12);
+  // the sign of the smallest singular vector differs by platform, changing the samples drawn for it
+  ASSERT_NEAR(specificity(13), 0.48489052096120988, 1e-3);
+}
+
+// Limiting the number of modes returns the leading entries of the full curves
+TEST(ParticlesTests, evaluation_max_modes)
+{
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const Eigen::VectorXd generalization = ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation);
+  const Eigen::VectorXd specificity = ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation);
+
+  const Eigen::VectorXd limited_generalization =
+      ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 3);
+  const Eigen::VectorXd limited_specificity =
+      ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation, nullptr, nullptr, false, 3);
+  ASSERT_EQ(limited_generalization.size(), 3);
+  ASSERT_EQ(limited_specificity.size(), 3);
+  for (int i = 0; i < 3; i++) {
+    ASSERT_DOUBLE_EQ(limited_generalization(i), generalization(i));
+    ASSERT_DOUBLE_EQ(limited_specificity(i), specificity(i));
+  }
+
+  // zero modes skips the computation, and more modes than exist returns all of them
+  ASSERT_EQ(ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 0).size(), 0);
+  ASSERT_EQ(ShapeEvaluation::compute_full_specificity(ParticleSystemEvaluation, nullptr, nullptr, false, 0).size(), 0);
+  ASSERT_EQ(ShapeEvaluation::compute_full_generalization(ParticleSystemEvaluation, nullptr, nullptr, false, 100).size(),
+            generalization.size());
+}
+
+// Particles on spheres of varying radius, each subject with its own sphere mesh
+static ParticleSystemEvaluation sphere_particle_system() {
+  const int num_subjects = 10;
+  const int num_particles = 64;
+  Eigen::MatrixXd matrix(num_particles * 3, num_subjects);
+  std::vector<Mesh> meshes;
+  for (int s = 0; s < num_subjects; s++) {
+    const double radius = 20.0 + s + 0.3 * (s % 3);
+    for (int k = 0; k < num_particles; k++) {
+      const double theta = 0.4 + 2.3 * k / num_particles;
+      const double phi = 0.7 * k;
+      const double r = radius * (1.0 + 0.02 * std::sin(3.0 * k + s));
+      matrix(3 * k + 0, s) = r * std::sin(theta) * std::cos(phi);
+      matrix(3 * k + 1, s) = r * std::sin(theta) * std::sin(phi);
+      matrix(3 * k + 2, s) = r * std::cos(theta);
+    }
+    auto sphere = vtkSmartPointer<vtkSphereSource>::New();
+    sphere->SetRadius(radius);
+    sphere->SetThetaResolution(32);
+    sphere->SetPhiResolution(32);
+    sphere->Update();
+    meshes.emplace_back(sphere->GetOutput());
+  }
+  ParticleSystemEvaluation particle_system(matrix);
+  particle_system.set_meshes(meshes);
+  return particle_system;
+}
+
+// With one mode, compute_specificity draws the same samples as the first entry of compute_full_specificity
+TEST(ParticlesTests, specificity_matches_full)
+{
+  ParticleSystemEvaluation particle_system = sphere_particle_system();
+  for (bool surface_distance_mode : {false, true}) {
+    const double specificity = ShapeEvaluation::compute_specificity(particle_system, 1, "", surface_distance_mode);
+    const Eigen::VectorXd full =
+        ShapeEvaluation::compute_full_specificity(particle_system, nullptr, nullptr, surface_distance_mode);
+    ASSERT_GT(specificity, 0.0);
+    ASSERT_NEAR(specificity, full(0), 1e-12) << "surface_distance_mode = " << surface_distance_mode;
+  }
 }
 
 TEST(ParticlesTests, reconstructsurfaceTestRBFS)

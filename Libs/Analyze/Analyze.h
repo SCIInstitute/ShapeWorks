@@ -27,6 +27,10 @@ class Analyze {
   /// Run offline analysis, saving results to outfile
   void run_offline_analysis(std::string outfile, float range, float steps);
 
+  /// Limit the generalization and specificity charts of the offline analysis to the first max_modes modes.
+  /// A negative value computes all modes, and zero skips them.
+  void set_max_evaluation_modes(int max_modes) { max_evaluation_modes_ = max_modes; }
+
   /// Return the list of shapes
   ShapeList get_shapes();
 
@@ -91,6 +95,7 @@ class Analyze {
 
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
+  int max_evaluation_modes_ = -1;
 
   std::string selected_group_;
   std::string group1_;

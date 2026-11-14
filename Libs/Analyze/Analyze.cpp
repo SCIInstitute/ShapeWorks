@@ -36,37 +36,35 @@ static json get_eigen_vectors(ParticleShapeStatistics* stats) {
 }
 
 //---------------------------------------------------------------------------
-static json create_charts(ParticleShapeStatistics* stats) {
-  std::vector<int> x(stats->get_num_modes());
+static json create_line_chart(const std::string& title, const std::string& y_label, const Eigen::VectorXd& y) {
+  std::vector<int> x(y.size());
   for (int i = 0; i < x.size(); i++) {
     x[i] = i + 1;
   }
 
-  json compactness;
-  compactness["title"] = "Compactness";
-  compactness["type"] = "line";
-  compactness["x_label"] = "Number of Modes";
-  compactness["y_label"] = "Explained Variance";
-  compactness["x"] = x;
-  compactness["y"] = stats->get_compactness();
+  json chart;
+  chart["title"] = title;
+  chart["type"] = "line";
+  chart["x_label"] = "Number of Modes";
+  chart["y_label"] = y_label;
+  chart["x"] = x;
+  chart["y"] = y;
+  return chart;
+}
 
-  json generalization;
-  generalization["title"] = "Generalization";
-  generalization["type"] = "line";
-  generalization["x_label"] = "Number of Modes";
-  generalization["y_label"] = "Generalization";
-  generalization["x"] = x;
-  generalization["y"] = stats->get_generalization();
+//---------------------------------------------------------------------------
+static json create_charts(ParticleShapeStatistics* stats, int max_evaluation_modes) {
+  // note: brace-initializing with a single json element yields an object (not an array) on MSVC
+  json charts = json::array();
+  charts.push_back(create_line_chart("Compactness", "Explained Variance", stats->get_compactness()));
 
-  json specificity;
-  specificity["title"] = "Specificity";
-  specificity["type"] = "line";
-  specificity["x_label"] = "Number of Modes";
-  specificity["y_label"] = "Specificity";
-  specificity["x"] = x;
-  specificity["y"] = stats->get_specificity();
-
-  json charts = {compactness, generalization, specificity};
+  // generalization and specificity are expensive for large numbers of subjects, so they can be limited or skipped
+  if (max_evaluation_modes != 0) {
+    charts.push_back(create_line_chart("Generalization", "Generalization",
+                                       stats->get_generalization(nullptr, nullptr, max_evaluation_modes)));
+    charts.push_back(create_line_chart("Specificity", "Specificity",
+                                       stats->get_specificity(nullptr, nullptr, max_evaluation_modes)));
+  }
   return charts;
 }
 
@@ -294,7 +292,7 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   }
   j["eigen_values"] = eigen_values;
   j["modes"] = modes;
-  j["charts"] = create_charts(&stats_);
+  j["charts"] = create_charts(&stats_, max_evaluation_modes_);
 
   std::vector<json> shapes;
   for (int i = 0; i < shapes_.size(); i++) {

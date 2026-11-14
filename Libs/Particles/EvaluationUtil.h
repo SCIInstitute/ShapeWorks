@@ -2,6 +2,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -30,6 +31,21 @@ struct MultiVariateNormalRandom
   Eigen::MatrixXd operator()()
   {
     return mean + transform * Eigen::VectorXd{mean.size()}.unaryExpr([&](double x) { return dist(gen); });
+  }
+
+  //! Draw `count` samples as columns. This draws the same random numbers in the same order as `count` calls to
+  //! operator(), but uses a single sparse product. For a diagonal covariance the transform is a scaled permutation,
+  //! so skipping its exact zeros gives the same values as the dense product, much faster.
+  Eigen::MatrixXd sample(int count)
+  {
+    Eigen::MatrixXd z(mean.size(), count);
+    for (int i = 0; i < count; i++) {
+      for (Eigen::Index j = 0; j < mean.size(); j++) {
+        z(j, i) = dist(gen);
+      }
+    }
+    const Eigen::SparseMatrix<double> sparse_transform = transform.sparseView();
+    return (sparse_transform * z).colwise() + mean;
   }
 
 };

@@ -122,10 +122,13 @@ class ParticleShapeStatistics {
   static int simple_linear_regression(const std::vector<double>& y, const std::vector<double>& x, double& a, double& b);
 
   Eigen::VectorXd get_compactness(const std::function<void(float)>& progress_callback = nullptr) const;
+  //! Specificity for 1 to max_modes modes (all modes if max_modes < 0)
   Eigen::VectorXd get_specificity(const std::function<void(float)>& progress_callback = nullptr,
-                                  const std::function<bool()>& check_abort = nullptr) const;
+                                  const std::function<bool()>& check_abort = nullptr, int max_modes = -1) const;
+  //! Generalization for 1 to max_modes modes (all modes if max_modes < 0)
   Eigen::VectorXd get_generalization(const std::function<void(float)>& progress_callback = nullptr,
-                                     const std::function<bool(void)>& check_abort = nullptr) const;
+                                     const std::function<bool(void)>& check_abort = nullptr,
+                                     int max_modes = -1) const;
 
   Eigen::MatrixXd get_group1_matrix() const;
   Eigen::MatrixXd get_group2_matrix() const;
