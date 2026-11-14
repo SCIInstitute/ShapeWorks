@@ -695,20 +695,22 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<voi
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback,
-                                                         const std::function<bool(void)>& check_abort) const {
+                                                         const std::function<bool(void)>& check_abort,
+                                                         int max_modes) const {
   auto ps = ParticleSystemEvaluation(matrix_);
   ps.set_meshes(meshes_);
   return shapeworks::ShapeEvaluation::compute_full_specificity(ps, progress_callback, check_abort,
-                                                               particle_to_surface_mode_);
+                                                               particle_to_surface_mode_, max_modes);
 }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback,
-                                                            const std::function<bool(void)>& check_abort) const {
+                                                            const std::function<bool(void)>& check_abort,
+                                                            int max_modes) const {
   auto ps = ParticleSystemEvaluation(matrix_);
   ps.set_meshes(meshes_);
   return shapeworks::ShapeEvaluation::compute_full_generalization(ps, progress_callback, check_abort,
-                                                                  particle_to_surface_mode_);
+                                                                  particle_to_surface_mode_, max_modes);
 }
 
 //---------------------------------------------------------------------------

@@ -39,6 +39,9 @@ void define_python_analyze(py::module_ m) {
              return Mesh(mesh_group.meshes()[0]->get_poly_data());
            })
       .def("run_offline_analysis", &Analyze::run_offline_analysis)
+      .def("set_max_evaluation_modes", &Analyze::set_max_evaluation_modes,
+           "Limit generalization and specificity to the first max_modes modes (negative for all, zero to skip)",
+           "max_modes"_a)
       .def("get_shapes", &Analyze::get_shapes)
       .def("get_num_modes", &Analyze::get_num_modes)
       .def("get_mean_shape_points",

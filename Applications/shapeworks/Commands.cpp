@@ -231,6 +231,11 @@ void AnalyzeCommand::buildParser() {
       "Standard deviation range for PCA [default: 3.0].");
   parser.add_option("--steps").action("store").type("int").set_default(21).help(
       "Number of steps to use for PCA [default: 21].");
+  parser.add_option("--skip_evaluation").action("store_true").set_default(false).help(
+      "Skip the generalization and specificity charts, which are slow for large numbers of subjects "
+      "[default: false].");
+  parser.add_option("--evaluation_modes").action("store").type("int").set_default(-1).help(
+      "Number of modes to compute generalization and specificity for [default: all].");
 
   Command::buildParser();
 }
@@ -240,6 +245,8 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
   const std::string& outputFile(static_cast<std::string>(options.get("output")));
   const float range = static_cast<float>(options.get("range"));
   const int steps = static_cast<int>(options.get("steps"));
+  const bool skip_evaluation = static_cast<bool>(options.get("skip_evaluation"));
+  const int evaluation_modes = static_cast<int>(options.get("evaluation_modes"));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
@@ -267,6 +274,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
     project->load(filename);
 
     Analyze analyze(project);
+    analyze.set_max_evaluation_modes(skip_evaluation ? 0 : evaluation_modes);
 
     boost::filesystem::path dir(oldBasePath);
     boost::filesystem::path file(outputFile);
