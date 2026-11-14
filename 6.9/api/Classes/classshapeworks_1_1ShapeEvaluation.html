@@ -4663,7 +4663,7 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-compute-full-generalization">compute_full_generalization</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; particle_system, std::function&lt; void(float)&gt; progress_callback =nullptr, std::function&lt; bool()&gt; check_abort =nullptr, bool surface_distance_mode =false)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-compute-full-generalization">compute_full_generalization</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; particle_system, std::function&lt; void(float)&gt; progress_callback =nullptr, std::function&lt; bool()&gt; check_abort =nullptr, bool surface_distance_mode =false, int max_modes =-1)<br>Generalization for 1 to max_modes modes (all modes if max_modes &lt; 0)</td>
 </tr>
 <tr>
 <td>double</td>
@@ -4671,7 +4671,7 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-compute-full-specificity">compute_full_specificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; particle_system, std::function&lt; void(float)&gt; progress_callback =nullptr, std::function&lt; bool()&gt; check_abort =nullptr, bool surface_distance_mode =false)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-compute-full-specificity">compute_full_specificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; particle_system, std::function&lt; void(float)&gt; progress_callback =nullptr, std::function&lt; bool()&gt; check_abort =nullptr, bool surface_distance_mode =false, int max_modes =-1)<br>Specificity for 1 to max_modes modes (all modes if max_modes &lt; 0)</td>
 </tr>
 </tbody>
 </table>
@@ -4705,9 +4705,11 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span>
 </code></pre></div>
+<p>Generalization for 1 to max_modes modes (all modes if max_modes &lt; 0) </p>
 <h3 id="function-compute_specificity">function compute_specificity</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">compute_specificity</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
@@ -4721,11 +4723,13 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particle_system</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span>
 </code></pre></div>
+<p>Specificity for 1 to max_modes modes (all modes if max_modes &lt; 0) </p>
 <hr />
-<p>Updated on 2026-11-13 at 02:10:59 +0000</p>
+<p>Updated on 2026-11-14 at 06:48:59 +0000</p>
 
 
 

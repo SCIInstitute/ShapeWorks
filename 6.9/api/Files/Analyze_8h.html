@@ -4616,6 +4616,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_offline_analysis</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outfile</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">range</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">steps</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_max_evaluation_modes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">max_evaluation_modes_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max_modes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_subjects</span><span class="p">();</span>
@@ -4668,6 +4670,7 @@
 
 <span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">stats_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">max_evaluation_modes_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">selected_group_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group1_</span><span class="p">;</span>
@@ -4676,7 +4679,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-13 at 02:11:00 +0000</p>
+<p>Updated on 2026-11-14 at 06:48:59 +0000</p>
 
 
 

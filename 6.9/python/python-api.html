@@ -4377,6 +4377,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Analyze.set_max_evaluation_modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_max_evaluation_modes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -10497,6 +10508,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Analyze.set_max_evaluation_modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_max_evaluation_modes
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -16515,6 +16537,29 @@
     <div class="doc doc-contents ">
 
         <p>run_offline_analysis(self: shapeworks_py.Analyze, arg0: str, arg1: typing.SupportsFloat, arg2: typing.SupportsFloat) -&gt; None</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="shapeworks_py.Analyze.set_max_evaluation_modes" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_max_evaluation_modes</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>set_max_evaluation_modes(self: shapeworks_py.Analyze, max_modes: typing.SupportsInt) -&gt; None</p>
+<p>Limit generalization and specificity to the first max_modes modes (negative for all, zero to skip)</p>
 
 
     </div>
@@ -26546,7 +26591,7 @@ Overloaded function.</p>
 
     <div class="doc doc-contents ">
 
-        <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: collections.abc.Callable[[typing.SupportsFloat], None] = None, check_abort: collections.abc.Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; typing.Annotated[numpy.typing.NDArray[numpy.float64], "[m, 1]"]</p>
+        <p>ComputeFullGeneralization(particleSystem: shapeworks_py.ParticleSystem, progress_callback: collections.abc.Callable[[typing.SupportsFloat], None] = None, check_abort: collections.abc.Callable[[], bool] = None, surface_distance_mode: bool = False, max_modes: typing.SupportsInt = -1) -&gt; typing.Annotated[numpy.typing.NDArray[numpy.float64], "[m, 1]"]</p>
 <p>Computes the generalization measure for a particle system, all modes</p>
 
 
@@ -26569,7 +26614,7 @@ Overloaded function.</p>
 
     <div class="doc doc-contents ">
 
-        <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: collections.abc.Callable[[typing.SupportsFloat], None] = None, check_abort: collections.abc.Callable[[], bool] = None, surface_distance_mode: bool = False) -&gt; typing.Annotated[numpy.typing.NDArray[numpy.float64], "[m, 1]"]</p>
+        <p>ComputeFullSpecificity(particleSystem: shapeworks_py.ParticleSystem, progress_callback: collections.abc.Callable[[typing.SupportsFloat], None] = None, check_abort: collections.abc.Callable[[], bool] = None, surface_distance_mode: bool = False, max_modes: typing.SupportsInt = -1) -&gt; typing.Annotated[numpy.typing.NDArray[numpy.float64], "[m, 1]"]</p>
 <p>Computes the specificity measure for a particle system, all modes</p>
 
 
@@ -27795,7 +27840,7 @@ Overloaded function.</p>
 
     <div class="doc doc-contents ">
 
-        <p>seed(seed: typing.SupportsInt = 1794535883407098) -&gt; None</p>
+        <p>seed(seed: typing.SupportsInt = 1794638980620949) -&gt; None</p>
 <p>sets the seed for random number generation (internal use)</p>
 
 

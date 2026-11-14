@@ -4606,6 +4606,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_max_evaluation_modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function set_max_evaluation_modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_shapes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4853,6 +4864,10 @@
 <td><strong><a href="classshapeworks_1_1Analyze.html#function-run-offline-analysis">run_offline_analysis</a></strong>(std::string outfile, float range, float steps)<br>Run offline analysis, saving results to outfile.</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-set-max-evaluation-modes">set_max_evaluation_modes</a></strong>(int max_modes)</td>
+</tr>
+<tr>
 <td>ShapeList</td>
 <td><strong><a href="classshapeworks_1_1Analyze.html#function-get-shapes">get_shapes</a></strong>()<br>Return the list of shapes.</td>
 </tr>
@@ -4964,6 +4979,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Run offline analysis, saving results to outfile. </p>
+<h3 id="function-set_max_evaluation_modes">function set_max_evaluation_modes</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_max_evaluation_modes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Limit the generalization and specificity charts of the offline analysis to the first max_modes modes. A negative value computes all modes, and zero skips them. </p>
 <h3 id="function-get_shapes">function get_shapes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
 </code></pre></div>
@@ -5047,7 +5068,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-13 at 02:10:58 +0000</p>
+<p>Updated on 2026-11-14 at 06:48:58 +0000</p>
 
 
 

@@ -4577,6 +4577,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-sample" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function sample
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4685,6 +4696,10 @@
 <td>Eigen::MatrixXd</td>
 <td><strong><a href="structshapeworks_1_1MultiVariateNormalRandom.html#function-operator()">operator()</a></strong>()</td>
 </tr>
+<tr>
+<td>Eigen::MatrixXd</td>
+<td><strong><a href="structshapeworks_1_1MultiVariateNormalRandom.html#function-sample">sample</a></strong>(int count)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -4729,6 +4744,12 @@
 <h3 id="function-operator">function operator()</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="k">operator</span><span class="p">()()</span>
 </code></pre></div>
+<h3 id="function-sample">function sample</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Draw <code>count</code> samples as columns. This draws the same random numbers in the same order as <code>count</code> calls to operator(), but uses a single sparse product. For a diagonal covariance the transform is a scaled permutation, so skipping its exact zeros gives the same values as the dense product, much faster. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-mean">variable mean</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">mean</span><span class="p">;</span>
@@ -4743,7 +4764,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">boost</span><span class="o">::</span><span class="n">normal_distribution</span><span class="w"> </span><span class="n">dist</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-13 at 02:10:59 +0000</p>
+<p>Updated on 2026-11-14 at 06:48:59 +0000</p>
 
 
 

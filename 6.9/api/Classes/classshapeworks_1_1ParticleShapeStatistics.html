@@ -5334,11 +5334,11 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool()&gt; &amp; check_abort =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool()&gt; &amp; check_abort =nullptr, int max_modes =-1) const<br>Specificity for 1 to max_modes modes (all modes if max_modes &lt; 0)</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool(void)&gt; &amp; check_abort =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr, const std::function&lt; bool(void)&gt; &amp; check_abort =nullptr, int max_modes =-1) const<br>Generalization for 1 to max_modes modes (all modes if max_modes &lt; 0)</td>
 </tr>
 <tr>
 <td>Eigen::MatrixXd</td>
@@ -5569,15 +5569,19 @@
 <h3 id="function-get_specificity">function get_specificity</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_specificity</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
+<p>Specificity for 1 to max_modes modes (all modes if max_modes &lt; 0) </p>
 <h3 id="function-get_generalization">function get_generalization</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_generalization</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">check_abort</span><span class="w"> </span><span class="o">=</span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max_modes</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
+<p>Generalization for 1 to max_modes modes (all modes if max_modes &lt; 0) </p>
 <h3 id="function-get_group1_matrix">function get_group1_matrix</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_group1_matrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -5622,7 +5626,7 @@
 </code></pre></div>
 <p>Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a &amp; b. Returns 0 on success and -1 on fail.*/ </p>
 <hr />
-<p>Updated on 2026-11-13 at 02:10:59 +0000</p>
+<p>Updated on 2026-11-14 at 06:48:59 +0000</p>
 
 
 
