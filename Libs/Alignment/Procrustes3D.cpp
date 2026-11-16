@@ -244,26 +244,27 @@ void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, Tr
 
 //---------------------------------------------------------------------------
 Procrustes3D::RealType Procrustes3D::ComputeSumOfSquares(ShapeListType& shapes) {
-  ShapeListIteratorType shapeIt1, shapeIt2;
-  ShapeIteratorType pointIt1, pointIt2;
+  // Sum of squared distances between all pairs of shapes, normalized by (number of shapes * number
+  // of points). Computed per point as sum_ij |xi - xj|^2 = 2N sum_i |xi - mean|^2, which is O(N)
+  // instead of O(N^2) over shapes.
+  if (shapes.empty() || shapes[0].empty()) {
+    return 0.0;
+  }
+  const size_t num_shapes = shapes.size();
+  const size_t num_points = shapes[0].size();
 
   RealType sum = 0.0;
-
-  for (shapeIt1 = shapes.begin(); shapeIt1 != shapes.end(); shapeIt1++) {
-    for (shapeIt2 = shapes.begin(); shapeIt2 != shapes.end(); shapeIt2++) {
-      ShapeType& shape1 = (*shapeIt1);
-      ShapeType& shape2 = (*shapeIt2);
-
-      pointIt1 = shape1.begin();
-      pointIt2 = shape2.begin();
-      while (pointIt1 != shape1.end() && pointIt2 != shape2.end()) {
-        sum += ((*pointIt1) - (*pointIt2)).squared_magnitude();
-        pointIt1++;
-        pointIt2++;
-      }
+  for (size_t k = 0; k < num_points; k++) {
+    PointType mean(0.0);
+    for (size_t i = 0; i < num_shapes; i++) {
+      mean += shapes[i][k];
+    }
+    mean /= static_cast<RealType>(num_shapes);
+    for (size_t i = 0; i < num_shapes; i++) {
+      sum += (shapes[i][k] - mean).squared_magnitude();
     }
   }
-  return sum / static_cast<RealType>(shapes.size() * shapes[0].size());
+  return 2.0 * static_cast<RealType>(num_shapes) * sum / static_cast<RealType>(num_shapes * num_points);
 }
 
 //---------------------------------------------------------------------------

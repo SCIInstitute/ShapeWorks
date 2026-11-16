@@ -1,10 +1,13 @@
 #include <vtkDataArray.h>
 #include <vtkSphereSource.h>
 
+#include <cmath>
+#include <random>
 #include <string>
 #include <vector>
 
 #include "CorrespondenceEvaluation.h"
+#include "Libs/Alignment/Procrustes3D.h"
 #include "Libs/Optimize/Constraints/Constraints.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Mesh/Mesh.h"
@@ -718,4 +721,53 @@ TEST(CorrespondenceEvaluationTests, projectCuttingPlanesAreHonored) {
   }
   auto unconstrained = CorrespondenceEvaluation::evaluate(project);
   ASSERT_GT(unconstrained.agg_disagreement_norm.mean, 0.03);
+}
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, procrustes_sum_of_squares_test) {
+  // ComputeSumOfSquares must equal the all-pairs sum of squared distances it replaces (#2699)
+  std::mt19937 rng(42);
+  std::normal_distribution<double> dist(0.0, 10.0);
+  Procrustes3D::ShapeListType shapes(20, Procrustes3D::ShapeType(50));
+  for (auto& shape : shapes) {
+    for (auto& point : shape) {
+      point = Procrustes3D::PointType(dist(rng), dist(rng), dist(rng));
+    }
+  }
+  double all_pairs = 0.0;
+  for (const auto& a : shapes) {
+    for (const auto& b : shapes) {
+      for (size_t k = 0; k < a.size(); k++) {
+        all_pairs += (a[k] - b[k]).squared_magnitude();
+      }
+    }
+  }
+  all_pairs /= static_cast<double>(shapes.size() * shapes[0].size());
+  ASSERT_NEAR(Procrustes3D::ComputeSumOfSquares(shapes), all_pairs, 1e-9 * all_pairs);
+}
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, procrustes_align_shapes_test) {
+  // rotated and translated copies of one shape are brought back into register
+  std::mt19937 rng(7);
+  std::normal_distribution<double> dist(0.0, 10.0);
+  Procrustes3D::ShapeType base(40);
+  for (auto& point : base) {
+    point = Procrustes3D::PointType(dist(rng), dist(rng), dist(rng));
+  }
+  Procrustes3D::ShapeListType shapes;
+  for (int i = 0; i < 6; i++) {
+    const double angle = 0.3 * i;
+    const double c = std::cos(angle), s = std::sin(angle);
+    Procrustes3D::ShapeType shape;
+    for (const auto& p : base) {
+      shape.push_back(Procrustes3D::PointType(c * p[0] - s * p[1] + 5.0 * i, s * p[0] + c * p[1] - 2.0 * i, p[2] + i));
+    }
+    shapes.push_back(shape);
+  }
+  Procrustes3D procrustes(false, true);
+  Procrustes3D::SimilarityTransformListType transforms;
+  procrustes.AlignShapes(transforms, shapes);
+  ASSERT_EQ(transforms.size(), shapes.size());
+  ASSERT_LT(Procrustes3D::ComputeSumOfSquares(shapes), 1e-8);
 }
