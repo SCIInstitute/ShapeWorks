@@ -167,14 +167,15 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     // subsequent multiply, which is a no-op costing O(P·N²) per iteration.
     m_PointsUpdate->update(points_minus_mean);
   } else {
-    vnl_matrix_type gramMat = points_minus_mean.transpose() * points_minus_mean;
+    // gramMat = Yᵀ Y, computed with Eigen (multithreaded, vectorized); VNL's matrix product is a
+    // naive single-threaded loop and was most of the time spent here.
+    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    Eigen::Map<RowMatrixXd> Y_map(points_minus_mean.data_block(), num_dims, num_samples);
+    Eigen::MatrixXd gramMat = Y_map.transpose() * Y_map;
 
-    // gramMat = Yᵀ Y is symmetric positive-semidefinite, so a self-adjoint
-    // eigensolver yields the same eigenpairs as a general SVD but much faster,
-    // and it parallelizes the surrounding dense algebra through Eigen. gramMat is
-    // symmetric, so the row-major VNL buffer maps to an identical Eigen matrix.
-    Eigen::Map<Eigen::MatrixXd> gram_map(gramMat.data_block(), num_samples, num_samples);
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gram_map);
+    // gramMat is symmetric positive-semidefinite, so a self-adjoint eigensolver
+    // yields the same eigenpairs as a general SVD but much faster.
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gramMat);
     const Eigen::VectorXd& eigvals = eig.eigenvalues();
     const Eigen::MatrixXd& UG = eig.eigenvectors();
 
@@ -183,12 +184,10 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     for (unsigned int i = 0; i < num_samples; ++i) W(i) = eigvals(i);
 
     // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ  (symmetric).
-    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     Eigen::ArrayXd invLambda = (eigvals.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
     Eigen::MatrixXd pinv = UG * invLambda.matrix().asDiagonal() * UG.transpose();
 
     // update = Y · pinvMat  (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹).
-    Eigen::Map<RowMatrixXd> Y_map(points_minus_mean.data_block(), num_dims, num_samples);
     RowMatrixXd update_eigen;
     update_eigen.noalias() = Y_map * pinv;
 
