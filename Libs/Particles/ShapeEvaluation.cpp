@@ -6,11 +6,19 @@
 
 #include <Eigen/Core>
 #include <Eigen/SVD>
+#include <algorithm>
 #include <atomic>
 #include <fstream>
 #include <thread>
 
 #include "EvaluationUtil.h"
+
+namespace {
+// The number of PCA modes is at most min(n - 1, d): centering n samples leaves n - 1 independent
+// directions, and there are only d dimensions (3 x particles). With more samples than dimensions
+// the SVDs below return only d singular vectors (#2703).
+long available_modes(long n, long d) { return std::min(n - 1, d); }
+}  // namespace
 
 using RowMajorMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
@@ -84,7 +92,7 @@ void build_cell_locators(const std::vector<Mesh>& meshes) {
 double ShapeEvaluation::compute_compactness(const ParticleSystemEvaluation& particle_system, const int num_modes,
                                             const std::string& save_to) {
   const int n = particle_system.num_samples();
-  if (num_modes > n - 1) {
+  if (num_modes > available_modes(n, particle_system.num_dims())) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   Eigen::VectorXd cumsum = ShapeEvaluation::compute_full_compactness(particle_system);
@@ -104,7 +112,7 @@ Eigen::VectorXd ShapeEvaluation::compute_full_compactness(const ParticleSystemEv
   TIME_SCOPE("ShapeEvaluation::compute_full_compactness");
   const int n = particle_system.num_samples();
   const int d = particle_system.num_dims();
-  const int num_modes = n - 1;  // the number of modes is one less than the number of samples
+  const int num_modes = available_modes(n, d);
 
   if (num_modes < 1) {
     return Eigen::VectorXd();
@@ -137,7 +145,7 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
   const long d = particle_system.num_dims();
   const Eigen::MatrixXd& p = particle_system.get_matrix();
 
-  if (num_modes > n - 1) {
+  if (num_modes > available_modes(n, d)) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   // Keep track of the reconstructions so we can visualize them later
@@ -230,7 +238,8 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
   const Eigen::MatrixXd& p = particle_system.get_matrix();
 
   // number of modes to evaluate
-  const long num_modes = (max_modes >= 0 && max_modes < n - 1) ? max_modes : n - 1;
+  const long limit = available_modes(n, d);
+  const long num_modes = (max_modes >= 0 && max_modes < limit) ? max_modes : limit;
   if (num_modes < 1) {
     return {};
   }
@@ -323,7 +332,7 @@ double ShapeEvaluation::compute_specificity(const ParticleSystemEvaluation& part
   int num_values = particle_system.get_num_values_per_particle();
   const auto& meshes = particle_system.get_meshes();
 
-  if (num_modes > n - 1) {
+  if (num_modes > available_modes(n, d)) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   if (surface_distance_mode && static_cast<long>(meshes.size()) != n) {
@@ -428,7 +437,8 @@ Eigen::VectorXd ShapeEvaluation::compute_full_specificity(const ParticleSystemEv
   const int num_particles = d / num_values;
 
   // number of modes to evaluate
-  const long max_num_modes = (max_modes >= 0 && max_modes < n - 1) ? max_modes : n - 1;
+  const long limit = available_modes(n, d);
+  const long max_num_modes = (max_modes >= 0 && max_modes < limit) ? max_modes : limit;
   if (max_num_modes < 1) {
     return {};
   }

@@ -771,3 +771,20 @@ TEST(ParticlesTests, procrustes_align_shapes_test) {
   ASSERT_EQ(transforms.size(), shapes.size());
   ASSERT_LT(Procrustes3D::ComputeSumOfSquares(shapes), 1e-8);
 }
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, evaluation_more_shapes_than_dimensions_test) {
+  // 30 shapes with 3 particles each: there are only 9 modes, not 29 (#2703)
+  std::mt19937 rng(3);
+  std::normal_distribution<double> dist(0.0, 1.0);
+  Eigen::MatrixXd matrix(9, 30);
+  for (int i = 0; i < matrix.size(); i++) {
+    matrix(i) = dist(rng);
+  }
+  ParticleSystemEvaluation particles(matrix);
+  ASSERT_EQ(ShapeEvaluation::compute_full_compactness(particles).size(), 9);
+  ASSERT_EQ(ShapeEvaluation::compute_full_generalization(particles).size(), 9);
+  ASSERT_EQ(ShapeEvaluation::compute_full_specificity(particles).size(), 9);
+  ASSERT_NEAR(ShapeEvaluation::compute_compactness(particles, 9), 1.0, 1e-9);
+  ASSERT_THROW(ShapeEvaluation::compute_compactness(particles, 10), std::invalid_argument);
+}
