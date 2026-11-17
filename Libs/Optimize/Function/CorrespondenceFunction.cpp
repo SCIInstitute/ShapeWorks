@@ -1,6 +1,8 @@
 
 #include "CorrespondenceFunction.h"
 
+#include "EntropyUpdate.h"
+
 #include <math.h>
 
 #include <Logging.h>
@@ -190,42 +192,18 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     // which is a no-op costing O(P·N²) per iteration.
     Q = points_minus_mean;
   } else {
-    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    // Q = Y (YᵀY/(N-1) + αI)⁻¹ (thesis eq. 2.35), from the N x N Gram matrix or, when there are more
+    // shapes than dimensions, the d x d covariance (#2705)
+    Eigen::Map<RowMatrixType> points_minus_mean_map(points_minus_mean.data_block(), points_minus_mean.rows(),
+                                                    points_minus_mean.cols());
+    RowMatrixType Q_eigen;
+    Eigen::VectorXd eigvals;
+    ComputeEntropyUpdate(points_minus_mean_map, m_MinimumVariance, Q_eigen, eigvals);
 
-    TIME_START("correspondence::gramMat");
-
-    // Create Eigen maps that point to the VNL data
-    Eigen::Map<RowMatrixXd> points_minus_mean_map(points_minus_mean.data_block(), points_minus_mean.rows(),
-                                                  points_minus_mean.cols());
-
-    // gramMat = Yᵀ Y is symmetric positive-semidefinite.
-    Eigen::MatrixXd gramMat_eigen = points_minus_mean_map.transpose() * points_minus_mean_map;
-
-    TIME_STOP("correspondence::gramMat");
-
-    TIME_START("correspondence::svd");
-    // The Gram matrix is symmetric positive-semidefinite, so a self-adjoint
-    // eigensolver yields the same eigenpairs as a general SVD but much faster,
-    // and it parallelizes the surrounding dense algebra through Eigen.
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gramMat_eigen);
-    const Eigen::VectorXd& eigvals = eig.eigenvalues();
-    const Eigen::MatrixXd& UG = eig.eigenvectors();
-    TIME_STOP("correspondence::svd");
-
-    // Energy term uses the eigenvalues (== singular values of the Gram matrix).
+    // Energy term uses the eigenvalues of the Gram matrix.
     W = vnl_diag_matrix<double>(num_samples);
     for (int i = 0; i < num_samples; ++i) W(i) = eigvals(i);
 
-    // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ  (symmetric).
-    Eigen::ArrayXd invLambda = (eigvals.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
-
-    TIME_START("correspondence::pinvMat");
-    Eigen::MatrixXd pinv = UG * invLambda.matrix().asDiagonal() * UG.transpose();
-    TIME_STOP("correspondence::pinvMat");
-
-    // Q = Y · pinvMat  (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹).
-    RowMatrixXd Q_eigen;
-    Q_eigen.noalias() = points_minus_mean_map * pinv;
     Q.set_size(num_dims, num_samples);
     std::memcpy(Q.data_block(), Q_eigen.data(), Q_eigen.size() * sizeof(double));
   }
