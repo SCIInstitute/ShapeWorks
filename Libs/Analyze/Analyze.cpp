@@ -7,6 +7,7 @@
 #include <Particles/ParticleNormalEvaluation.h>
 #include <StringUtils.h>
 
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <nlohmann/json.hpp>
 
@@ -181,8 +182,10 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
+  // eigenvalues are in increasing order; use the largest get_num_modes() of them
   std::vector<double> eigen_vals;
-  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+  const int num_eigen_values = static_cast<int>(stats_.get_eigen_values().size());
+  for (int i = num_eigen_values - 1; i >= num_eigen_values - get_num_modes(); i--) {
     eigen_vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(eigen_vals.begin(), eigen_vals.end(), 0.0);
@@ -327,7 +330,15 @@ void Analyze::run_offline_analysis(std::string outfile, float range, float steps
 ShapeList Analyze::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
-int Analyze::get_num_modes() { return shapes_.size() - 1; }
+int Analyze::get_num_modes() {
+  // There are at most min(N - 1, 3 x particles) modes; with more shapes than particle coordinates
+  // there are fewer eigenvectors than shapes (#2703).
+  if (!compute_stats()) {
+    return 0;
+  }
+  const int available = static_cast<int>(stats_.get_eigen_values().size());
+  return std::max(0, std::min(static_cast<int>(shapes_.size()) - 1, available));
+}
 
 //---------------------------------------------------------------------------
 Particles Analyze::get_mean_shape_points() {
@@ -377,8 +388,12 @@ Particles Analyze::get_shape_points(int mode, double value) {
   if (!compute_stats() || stats_.get_eigen_vectors().size() <= 1) {
     return Particles();
   }
-  if (mode + 2 > stats_.get_eigen_values().size()) {
-    mode = stats_.get_eigen_values().size() - 2;
+  const int num_modes = get_num_modes();
+  if (num_modes < 1) {
+    return Particles();
+  }
+  if (mode >= num_modes) {
+    mode = num_modes - 1;
   }
 
   unsigned int m = stats_.get_eigen_vectors().cols() - (mode + 1);
@@ -388,7 +403,8 @@ Particles Analyze::get_shape_points(int mode, double value) {
   double lambda = sqrt(stats_.get_eigen_values()[m]);
 
   std::vector<double> vals;
-  for (int i = stats_.get_eigen_values().size() - 1; i > 0; i--) {
+  const int num_eigen_values = static_cast<int>(stats_.get_eigen_values().size());
+  for (int i = num_eigen_values - 1; i >= num_eigen_values - num_modes; i--) {
     vals.push_back(stats_.get_eigen_values()[i]);
   }
   double sum = std::accumulate(vals.begin(), vals.end(), 0.0);

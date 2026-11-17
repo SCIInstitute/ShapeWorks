@@ -9,6 +9,8 @@
 #include "Profiling.h"
 #include "ShapeEvaluation.h"
 
+#include <algorithm>
+
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
@@ -636,7 +638,10 @@ int ParticleShapeStatistics::compute_modes() {
 }
 
 //---------------------------------------------------------------------------
-int ParticleShapeStatistics::get_num_modes() const { return num_samples_ - 1; }
+int ParticleShapeStatistics::get_num_modes() const {
+  // at most one mode per dimension, and one fewer than the number of samples
+  return std::min(static_cast<int>(num_samples_) - 1, static_cast<int>(num_dimensions_));
+}
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::principal_component_projections() {
