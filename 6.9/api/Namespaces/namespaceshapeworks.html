@@ -5051,6 +5051,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#using-rowmatrixtype" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        using RowMatrixType
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#typedef-projecthandle" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6850,6 +6861,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-computeentropyupdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function ComputeEntropyUpdate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-itkeventmacro" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8100,6 +8122,10 @@
 <td><strong><a href="namespaceshapeworks.html#using-imagetype">ImageType</a></strong></td>
 </tr>
 <tr>
+<td>using Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-rowmatrixtype">RowMatrixType</a></strong></td>
+</tr>
+<tr>
 <td>typedef std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1Project.html">Project</a> &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#typedef-projecthandle">ProjectHandle</a></strong></td>
 </tr>
@@ -8759,6 +8785,10 @@
 <td><strong><a href="namespaceshapeworks.html#function-operator&lt;&lt;">operator&lt;&lt;</a></strong>(std::ostream &amp; os, const <a href="../Classes/classshapeworks_1_1Mesh.html">Mesh</a> &amp; mesh)<br>stream insertion operators for <a href="">Mesh</a></td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="namespaceshapeworks.html#function-computeentropyupdate">ComputeEntropyUpdate</a></strong>(const Eigen::Ref&lt; const RowMatrixType &gt; &amp; Y, double alpha, RowMatrixType &amp; update, Eigen::VectorXd &amp; eigenvalues, int force_dual =-1)</td>
+</tr>
+<tr>
 <td></td>
 <td><strong><a href="namespaceshapeworks.html#function-itkeventmacro">itkEventMacro</a></strong>(ParticleDomainAddEvent , <a href="../Classes/classshapeworks_1_1ParticleEvent.html">ParticleEvent</a> )</td>
 </tr>
@@ -9352,6 +9382,9 @@
 </code></pre></div>
 <h3 id="using-imagetype">using ImageType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="using-rowmatrixtype">using RowMatrixType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">RowMatrixType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">RowMajor</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-projecthandle">typedef ProjectHandle</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectHandle</span><span class="p">;</span>
@@ -10319,6 +10352,16 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>stream insertion operators for <a href="">Mesh</a></p>
+<h3 id="function-computeentropyupdate">function ComputeEntropyUpdate</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeEntropyUpdate</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Ref</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">RowMatrixType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Y</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span>
+<span class="w">    </span><span class="n">RowMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">update</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">eigenvalues</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">force_dual</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Correspondence (entropy) update for the mean-centered shape matrix Y (d x N): update = Y (YᵀY/(N-1) + αI)⁻¹, and the N eigenvalues of YᵀY in increasing order. When N &gt; d this is computed from the d x d covariance instead, using Y (YᵀY/(N-1) + αI)⁻¹ = (YYᵀ/(N-1) + αI)⁻¹ Y, so the cost no longer grows as N³ (#2705). force_dual: -1 chooses automatically, 0 always uses the N x N form, 1 the d x d form. </p>
 <h3 id="function-itkeventmacro">function itkEventMacro</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itkEventMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ParticleDomainAddEvent</span><span class="w"> </span><span class="p">,</span>
@@ -10486,7 +10529,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2026-11-17 at 02:14:14 +0000</p>
+<p>Updated on 2026-11-17 at 23:17:00 +0000</p>
 
 
 
