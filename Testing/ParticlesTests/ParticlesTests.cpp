@@ -8,6 +8,7 @@
 
 #include "CorrespondenceEvaluation.h"
 #include "Libs/Alignment/Procrustes3D.h"
+#include "Libs/Optimize/Function/EntropyUpdate.h"
 #include "Libs/Optimize/Constraints/Constraints.h"
 #include "Libs/Optimize/Domain/Surface.h"
 #include "Mesh/Mesh.h"
@@ -787,4 +788,33 @@ TEST(ParticlesTests, evaluation_more_shapes_than_dimensions_test) {
   ASSERT_EQ(ShapeEvaluation::compute_full_specificity(particles).size(), 9);
   ASSERT_NEAR(ShapeEvaluation::compute_compactness(particles, 9), 1.0, 1e-9);
   ASSERT_THROW(ShapeEvaluation::compute_compactness(particles, 10), std::invalid_argument);
+}
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, correspondence_dual_form_test) {
+  // The d x d covariance form of the correspondence update (used by both LegacyCorrespondenceFunction and
+  // CorrespondenceFunction) must match the N x N Gram form, for more shapes than dimensions and fewer (#2705)
+  std::mt19937 rng(11);
+  std::normal_distribution<double> dist(0.0, 5.0);
+  const double alpha = 0.5;
+  for (auto [d, n] : {std::pair<int, int>{9, 30}, std::pair<int, int>{30, 9}}) {
+    RowMatrixType y(d, n);
+    for (int i = 0; i < y.size(); i++) {
+      y.data()[i] = dist(rng);
+    }
+    y.colwise() -= y.rowwise().mean();
+
+    RowMatrixType update_gram, update_dual, update_auto;
+    Eigen::VectorXd eig_gram, eig_dual, eig_auto;
+    ComputeEntropyUpdate(y, alpha, update_gram, eig_gram, 0);
+    ComputeEntropyUpdate(y, alpha, update_dual, eig_dual, 1);
+    ComputeEntropyUpdate(y, alpha, update_auto, eig_auto);
+
+    ASSERT_EQ(eig_gram.size(), n);
+    ASSERT_EQ(eig_dual.size(), n);
+    const double scale = update_gram.cwiseAbs().maxCoeff();
+    EXPECT_LT((update_gram - update_dual).cwiseAbs().maxCoeff(), 1e-9 * scale) << "d=" << d << " n=" << n;
+    EXPECT_LT((update_gram - update_auto).cwiseAbs().maxCoeff(), 1e-9 * scale) << "d=" << d << " n=" << n;
+    EXPECT_LT((eig_gram - eig_dual).cwiseAbs().maxCoeff(), 1e-9 * eig_gram.cwiseAbs().maxCoeff()) << "d=" << d << " n=" << n;
+  }
 }

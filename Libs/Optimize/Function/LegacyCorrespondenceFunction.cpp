@@ -1,6 +1,8 @@
 
 #include "LegacyCorrespondenceFunction.h"
 
+#include "EntropyUpdate.h"
+
 #include <cstring>
 #include <string>
 
@@ -167,29 +169,14 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     // subsequent multiply, which is a no-op costing O(P·N²) per iteration.
     m_PointsUpdate->update(points_minus_mean);
   } else {
-    // gramMat = Yᵀ Y, computed with Eigen (multithreaded, vectorized); VNL's matrix product is a
-    // naive single-threaded loop and was most of the time spent here.
-    using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    Eigen::Map<RowMatrixXd> Y_map(points_minus_mean.data_block(), num_dims, num_samples);
-    Eigen::MatrixXd gramMat = Y_map.transpose() * Y_map;
+    Eigen::Map<RowMatrixType> Y_map(points_minus_mean.data_block(), num_dims, num_samples);
+    RowMatrixType update_eigen;
+    Eigen::VectorXd eigvals;
+    ComputeEntropyUpdate(Y_map, m_MinimumVariance, update_eigen, eigvals);
 
-    // gramMat is symmetric positive-semidefinite, so a self-adjoint eigensolver
-    // yields the same eigenpairs as a general SVD but much faster.
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gramMat);
-    const Eigen::VectorXd& eigvals = eig.eigenvalues();
-    const Eigen::MatrixXd& UG = eig.eigenvectors();
-
-    // Energy term uses the eigenvalues (== singular values of the Gram matrix).
+    // Energy term uses the eigenvalues of the Gram matrix.
     W = vnl_diag_matrix<double>(num_samples);
     for (unsigned int i = 0; i < num_samples; ++i) W(i) = eigvals(i);
-
-    // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ  (symmetric).
-    Eigen::ArrayXd invLambda = (eigvals.array() / (double)(num_samples - 1) + m_MinimumVariance).inverse();
-    Eigen::MatrixXd pinv = UG * invLambda.matrix().asDiagonal() * UG.transpose();
-
-    // update = Y · pinvMat  (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹).
-    RowMatrixXd update_eigen;
-    update_eigen.noalias() = Y_map * pinv;
 
     vnl_matrix_type update(num_dims, num_samples);
     std::memcpy(update.data_block(), update_eigen.data(), update_eigen.size() * sizeof(double));
