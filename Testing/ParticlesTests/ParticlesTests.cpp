@@ -1,8 +1,10 @@
 #include <vtkDataArray.h>
 #include <vtkSphereSource.h>
 
+#include <Eigen/SVD>
 #include <cmath>
 #include <random>
+#include <tuple>
 #include <string>
 #include <vector>
 
@@ -788,6 +790,62 @@ TEST(ParticlesTests, evaluation_more_shapes_than_dimensions_test) {
   ASSERT_EQ(ShapeEvaluation::compute_full_specificity(particles).size(), 9);
   ASSERT_NEAR(ShapeEvaluation::compute_compactness(particles, 9), 1.0, 1e-9);
   ASSERT_THROW(ShapeEvaluation::compute_compactness(particles, 10), std::invalid_argument);
+}
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, generalization_scatter_downdate_test) {
+  // With more shapes than dimensions, generalization uses a rank-one downdate of the d x d scatter matrix
+  // per left-out shape (#2707). It must match an SVD of the left-out data, for more shapes than dimensions
+  // and fewer.
+  std::mt19937 rng(5);
+  std::normal_distribution<double> dist(0.0, 1.0);
+  enum Kind { distinct, flat, repeated };
+  for (auto [d, n, kind] : {std::tuple<int, int, Kind>{12, 40, distinct}, std::tuple<int, int, Kind>{30, 9, distinct},
+                            std::tuple<int, int, Kind>{12, 40, flat}, std::tuple<int, int, Kind>{12, 40, repeated}}) {
+    Eigen::MatrixXd matrix(d, n);
+    for (int i = 0; i < d; i++) {
+      // decreasing variance per dimension so the modes are distinct
+      for (int j = 0; j < n; j++) {
+        matrix(i, j) = 10.0 + dist(rng) * (d - i);
+      }
+      if (kind == flat && i % 3 == 2) {
+        // planar shapes: zero variance in z
+        matrix.row(i).setConstant(1.0);
+      }
+    }
+    if (kind == repeated) {
+      // orthogonal centered rows with pairs of equal norms: the scatter matrix has repeated eigenvalues
+      Eigen::MatrixXd centered = (matrix.colwise() - matrix.rowwise().mean()).transpose();
+      const Eigen::MatrixXd q = Eigen::HouseholderQR<Eigen::MatrixXd>(centered).householderQ() *
+                                Eigen::MatrixXd::Identity(n, d);
+      for (int i = 0; i < d; i++) {
+        matrix.row(i) = 10.0 + (q.col(i) * (1.0 + i / 2)).transpose().array();
+      }
+    }
+    const long num_modes = std::min(n - 1, d);
+    Eigen::VectorXd expected = Eigen::VectorXd::Zero(num_modes);
+    for (int leave = 0; leave < n; leave++) {
+      Eigen::MatrixXd y(d, n - 1);
+      y.leftCols(leave) = matrix.leftCols(leave);
+      y.rightCols(n - leave - 1) = matrix.rightCols(n - leave - 1);
+      const Eigen::VectorXd mu = y.rowwise().mean();
+      y.colwise() -= mu;
+      Eigen::BDCSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeThinU);
+      for (int mode = 1; mode <= num_modes; mode++) {
+        const auto u = svd.matrixU().leftCols(mode);
+        const Eigen::VectorXd rec = mu + u * (u.transpose() * (matrix.col(leave) - mu));
+        const Eigen::MatrixXd diff = (rec - matrix.col(leave)).reshaped(3, d / 3);
+        expected(mode - 1) += diff.colwise().norm().sum() / (d / 3) / n;
+      }
+    }
+    ParticleSystemEvaluation particles(matrix);
+    const Eigen::VectorXd generalization = ShapeEvaluation::compute_full_generalization(particles);
+    ASSERT_EQ(generalization.size(), num_modes);
+    for (int mode = 0; mode < num_modes; mode++) {
+      ASSERT_NEAR(generalization(mode), expected(mode), 1e-9 * expected(0));
+    }
+    ASSERT_NEAR(ShapeEvaluation::compute_generalization(particles, 3), expected(2), 1e-9 * expected(0));
+  }
 }
 
 //---------------------------------------------------------------------------
