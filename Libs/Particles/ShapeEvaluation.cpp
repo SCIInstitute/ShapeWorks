@@ -5,10 +5,13 @@
 #include <tbb/parallel_for.h>
 
 #include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 #include <Eigen/SVD>
 #include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <fstream>
+#include <limits>
 #include <thread>
 
 #include "EvaluationUtil.h"
@@ -25,6 +28,208 @@ using RowMajorMatrix = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eig
 namespace shapeworks {
 
 namespace {
+
+//! Mean and leading principal directions of the shapes with one shape left out, for generalization.
+//!
+//! With more shapes than dimensions, leaving out one shape is a rank-one downdate of the d x d scatter matrix,
+//! S' = S - n/(n-1) y y^T (y is the left-out shape minus the mean). S = V E V^T is decomposed once; in that basis
+//! S' is diagonal plus rank one, whose eigenvalues are the roots of a secular equation and whose eigenvectors are
+//! explicit, as in LAPACK's divide and conquer eigensolver (dlaed2/dlaed4/dlaed3). Each left-out shape then costs
+//! O(d^2) plus O(d^2 k) to form k modes, instead of an SVD of the d x (n-1) data (#2707). Otherwise the SVD is used.
+class LeaveOneOutBasis {
+ public:
+  explicit LeaveOneOutBasis(const Eigen::MatrixXd& p) : p_(p), n_(p.cols()), d_(p.rows()) {
+    use_downdate_ = n_ - 1 > d_;
+    if (use_downdate_) {
+      mean_ = p.rowwise().mean();
+      const Eigen::MatrixXd centered = p.colwise() - mean_;
+      Eigen::MatrixXd scatter = Eigen::MatrixXd::Zero(d_, d_);
+      scatter.selfadjointView<Eigen::Lower>().rankUpdate(centered);
+      Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen(scatter);
+      // Work with the negated problem -S' = -S + rho y y^T, a rank-one update with rho > 0, whose eigenvalues in
+      // increasing order are the eigenvalues of S' in decreasing order. Store -E increasing and V to match.
+      neg_values_ = -eigen.eigenvalues().reverse();
+      vectors_ = eigen.eigenvectors().rowwise().reverse();
+    }
+  }
+
+  //! Mean `mu` and the first (at most) `num_modes` principal directions `u` of all shapes but `leave`
+  void compute(long leave, long num_modes, Eigen::VectorXd& mu, Eigen::MatrixXd& u) const {
+    if (use_downdate_) {
+      compute_downdate(leave, std::min(num_modes, d_), mu, u);
+      return;
+    }
+    Eigen::MatrixXd y(d_, n_ - 1);
+    y.leftCols(leave) = p_.leftCols(leave);
+    y.rightCols(n_ - leave - 1) = p_.rightCols(n_ - leave - 1);
+    mu = y.rowwise().mean();
+    y.colwise() -= mu;
+    // Only the thin U (at most n-1 left singular vectors) is ever used
+    Eigen::BDCSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeThinU);
+    u = svd.matrixU().leftCols(std::min(num_modes, static_cast<long>(svd.matrixU().cols())));
+  }
+
+ private:
+  struct Rotation {
+    long i, j;
+    double c, s;
+  };
+
+  void compute_downdate(long leave, long k, Eigen::VectorXd& mu, Eigen::MatrixXd& u) const {
+    const Eigen::VectorXd y = p_.col(leave) - mean_;
+    mu = mean_ - y / static_cast<double>(n_ - 1);
+
+    // -S' = V (D + rho z z^T) V^T with D = neg_values_ increasing, z unit
+    Eigen::VectorXd z = vectors_.transpose() * y;
+    const double z_norm = z.norm();
+    if (z_norm == 0.0 || k == 0) {
+      u = vectors_.leftCols(k);
+      return;
+    }
+    z /= z_norm;
+    const double rho = static_cast<double>(n_) / static_cast<double>(n_ - 1) * z_norm * z_norm;
+    Eigen::VectorXd dv = neg_values_;
+
+    // Deflation (dlaed2): components with negligible z keep their eigenpair, and nearly equal values are rotated
+    // so one of them has zero z. `rotations` are applied in the V basis, `secular` lists the remaining indices.
+    const double eps = std::numeric_limits<double>::epsilon();
+    const double tol = 8.0 * eps * std::max(dv.cwiseAbs().maxCoeff(), rho);
+    std::vector<Rotation> rotations;
+    std::vector<long> secular;
+    std::vector<long> deflated;
+    long prev = -1;
+    for (long j = 0; j < d_; j++) {
+      if (rho * std::abs(z(j)) <= tol) {
+        deflated.push_back(j);
+        continue;
+      }
+      if (prev >= 0) {
+        const double tau = std::hypot(z(prev), z(j));
+        const double c = z(j) / tau;
+        const double s = -z(prev) / tau;
+        if (std::abs((dv(j) - dv(prev)) * c * s) <= tol) {
+          z(j) = tau;
+          z(prev) = 0.0;
+          rotations.push_back({prev, j, c, s});
+          const double t = dv(prev) * c * c + dv(j) * s * s;
+          dv(j) = dv(prev) * s * s + dv(j) * c * c;
+          dv(prev) = t;
+          deflated.push_back(prev);
+          prev = j;
+          continue;
+        }
+        secular.push_back(prev);
+      }
+      prev = j;
+    }
+    if (prev >= 0) {
+      secular.push_back(prev);
+    }
+
+    // Roots of 1 + rho sum z_j^2 / (d_j - lambda) = 0 (dlaed4, here by bisection). Root i lies between d_i and
+    // d_{i+1} (above d_K for the last) and is kept as an offset `delta` from the nearer of the two, so that
+    // differences lambda - d_j stay accurate.
+    const long m = static_cast<long>(secular.size());
+    Eigen::VectorXd d(m), w(m);
+    for (long i = 0; i < m; i++) {
+      d(i) = dv(secular[i]);
+      w(i) = z(secular[i]);
+    }
+    std::vector<long> origin(m);
+    Eigen::VectorXd delta(m);
+    Eigen::VectorXd shifted(m);
+    auto secular_value = [&](double offset) {
+      double sum = 0.0;
+      for (long j = 0; j < m; j++) {
+        sum += w(j) * w(j) / (shifted(j) - offset);
+      }
+      return 1.0 + rho * sum;
+    };
+    for (long i = 0; i < m; i++) {
+      const bool last = i == m - 1;
+      const double gap = last ? rho : d(i + 1) - d(i);
+      shifted = d.array() - d(i);
+      double lo, hi;
+      if (last || secular_value(gap / 2.0) >= 0.0) {
+        origin[i] = i;
+        lo = 0.0;
+        hi = last ? gap : gap / 2.0;
+      } else {
+        origin[i] = i + 1;
+        shifted = d.array() - d(i + 1);
+        lo = -gap / 2.0;
+        hi = 0.0;
+      }
+      for (int iteration = 0; iteration < 200; iteration++) {
+        const double mid = 0.5 * (lo + hi);
+        if (mid <= lo || mid >= hi) {
+          break;
+        }
+        (secular_value(mid) < 0.0 ? lo : hi) = mid;
+      }
+      delta(i) = 0.5 * (lo + hi);
+    }
+    // lambda_j - d_i, accurately
+    auto root_minus_pole = [&](long j, long i) { return (d(origin[j]) - d(i)) + delta(j); };
+
+    // Recompute z from the roots so the eigenvectors are orthogonal (Gu and Eisenstat, dlaed3)
+    Eigen::VectorXd zhat(m);
+    for (long i = 0; i < m; i++) {
+      double prod = root_minus_pole(i, i) / rho;
+      for (long j = 0; j < m; j++) {
+        if (j != i) {
+          prod *= root_minus_pole(j, i) / (d(j) - d(i));
+        }
+      }
+      zhat(i) = std::copysign(std::sqrt(std::max(prod, 0.0)), w(i));
+    }
+
+    // Eigenvalues of -S' increasing (= S' decreasing) with their eigenvectors in the deflated basis
+    std::vector<std::pair<double, long>> order;  // (value, index), index < m is a root, otherwise deflated
+    for (long i = 0; i < m; i++) {
+      order.emplace_back(d(origin[i]) + delta(i), i);
+    }
+    for (size_t i = 0; i < deflated.size(); i++) {
+      order.emplace_back(dv(deflated[i]), m + static_cast<long>(i));
+    }
+    std::sort(order.begin(), order.end());
+
+    Eigen::MatrixXd q = Eigen::MatrixXd::Zero(d_, k);
+    for (long col = 0; col < k; col++) {
+      const long index = order[col].second;
+      if (index >= m) {
+        q(deflated[index - m], col) = 1.0;
+        continue;
+      }
+      Eigen::VectorXd v(m);
+      for (long j = 0; j < m; j++) {
+        v(j) = zhat(j) / -root_minus_pole(index, j);
+      }
+      v.normalize();
+      for (long j = 0; j < m; j++) {
+        q(secular[j], col) = v(j);
+      }
+    }
+    // undo the deflation rotations, last first, to get coefficients in the V basis
+    for (auto it = rotations.rbegin(); it != rotations.rend(); ++it) {
+      for (long col = 0; col < k; col++) {
+        const double a = q(it->i, col);
+        const double b = q(it->j, col);
+        q(it->i, col) = it->c * a - it->s * b;
+        q(it->j, col) = it->s * a + it->c * b;
+      }
+    }
+    u.noalias() = vectors_ * q;
+  }
+
+  const Eigen::MatrixXd& p_;
+  const long n_;
+  const long d_;
+  bool use_downdate_ = false;
+  Eigen::VectorXd mean_;
+  Eigen::VectorXd neg_values_;
+  Eigen::MatrixXd vectors_;
+};
 
 //! Lets parallel workers honor the progress and abort callbacks while only ever invoking them on the calling
 //! thread. The callbacks may be Python callables, which need the GIL that the calling thread holds, so calling them
@@ -162,23 +367,19 @@ double ShapeEvaluation::compute_generalization(const ParticleSystemEvaluation& p
   std::vector<double> dists(n);
   reconstructions.resize(n);
 
+  const LeaveOneOutBasis basis(p);
+
   // leave one out, each left-out shape is independent
   parallel_for_index(n, [&](long leave) {
-    // Create a new matrix, `y` excluding the column to be left out, `leave`
-    Eigen::MatrixXd y(d, n - 1);
-    y.leftCols(leave) = p.leftCols(leave);
-    y.rightCols(n - leave - 1) = p.rightCols(n - leave - 1);
-
-    // Compute the mean of each row and centralize the data
-    const Eigen::VectorXd mu = y.rowwise().mean();
-    y.colwise() -= mu;
+    // Mean and principal directions of all shapes except `leave`
+    Eigen::VectorXd mu;
+    Eigen::MatrixXd u;
+    basis.compute(leave, num_modes, mu, u);
     // Define the test vector as the column that was left out (`leave`) of `p`
     const Eigen::VectorXd y_test = p.col(leave);
 
-    // SVD of the centralized data. Only the thin U (the first n-1 left singular vectors) can be used.
-    Eigen::BDCSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeThinU);
-    // `epsi` contains the first `num_modes` columns of matrix `U` (leading singular vectors).
-    const auto epsi = svd.matrixU().leftCols(num_modes);
+    // `epsi` contains the first `num_modes` principal directions
+    const auto epsi = u.leftCols(num_modes);
     // Project the centralized test vector onto the leading singular vectors and map it back
     const Eigen::VectorXd betas = epsi.transpose() * (y_test - mu);
     const Eigen::VectorXd rec = epsi * betas + mu;
@@ -257,22 +458,17 @@ Eigen::VectorXd ShapeEvaluation::compute_full_generalization(const ParticleSyste
 
   CallerThreadCallbacks callbacks(progress_callback, check_abort, n);
 
+  const LeaveOneOutBasis basis(p);
+
   // leave one out, each left-out shape is independent
   parallel_for_index(n, [&](long leave) {
     if (callbacks.aborted()) {
       return;
     }
-    Eigen::MatrixXd y(d, n - 1);
-    y.leftCols(leave) = p.leftCols(leave);
-    y.rightCols(n - leave - 1) = p.rightCols(n - leave - 1);
-
-    const Eigen::VectorXd mu = y.rowwise().mean();
-    y.colwise() -= mu;
+    Eigen::VectorXd mu;
+    Eigen::MatrixXd u;
+    basis.compute(leave, num_modes, mu, u);
     const Eigen::VectorXd y_test = p.col(leave);
-
-    // Only the thin U (at most n-1 left singular vectors) is ever used
-    Eigen::BDCSVD<Eigen::MatrixXd> svd(y, Eigen::ComputeThinU);
-    const Eigen::MatrixXd& u = svd.matrixU();
 
     // Project onto all modes once, then grow the reconstruction one mode at a time
     const Eigen::VectorXd betas = u.transpose() * (y_test - mu);
