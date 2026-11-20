@@ -221,6 +221,8 @@ function install_conda() {
           pushd $CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu
           install_name_tool -change /opt/homebrew/opt/libomp/lib/libomp.dylib @rpath/libomp.dylib pybind.cpython-312-darwin.so
           install_name_tool -add_rpath @loader_path/../../../ pybind.cpython-312-darwin.so
+          # install_name_tool invalidates the signature; unsigned code is killed on load on Apple Silicon
+          codesign --force --sign - pybind.cpython-312-darwin.so
           popd
           ln -sf "$CONDA_PREFIX/lib/libomp.dylib" "$CONDA_PREFIX/lib/python3.12/site-packages/open3d/cpu/../../../libomp.dylib"
         fi
