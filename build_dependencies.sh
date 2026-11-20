@@ -143,14 +143,37 @@ at_least_required_version()
   fi
 }
 
+# clone_repo <dir> <git clone args...>
+# Clones into <dir> (relative to the current directory) and cd's into it.
+# An existing clone is reused. Network failures are retried, and the script
+# exits if the clone still fails so the real error isn't buried.
+clone_repo()
+{
+  local dir=$1
+  shift
+  if [[ ! -d "${dir}/.git" ]]; then
+    local attempt
+    for attempt in 1 2 3; do
+      rm -rf "${dir}"
+      git clone "$@" "${dir}" && break
+      if [[ $attempt == 3 ]]; then
+        echo "## ERROR: failed to clone ${dir} after ${attempt} attempts"
+        exit 1
+      fi
+      echo "## clone of ${dir} failed (attempt ${attempt}), retrying in 30s..."
+      sleep 30
+    done
+  fi
+  cd "${dir}" || exit 1
+}
+
 build_vtk()
 {
   echo ""
   echo "## Building vtk..."
-  cd ${BUILD_DIR}
-  git clone https://gitlab.kitware.com/vtk/vtk.git
-  cd vtk
-  git checkout -f tags/${VTK_VER}
+  cd ${BUILD_DIR} || exit 1
+  clone_repo vtk https://gitlab.kitware.com/vtk/vtk.git
+  git checkout -f tags/${VTK_VER} || exit 1
   patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.5.patch
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -180,10 +203,9 @@ build_itk()
 {
   echo ""
   echo "## Building itk..."
-  cd ${BUILD_DIR}
-  git clone https://github.com/InsightSoftwareConsortium/ITK.git
-  cd ITK
-  git checkout -f tags/${ITK_VER}
+  cd ${BUILD_DIR} || exit 1
+  clone_repo ITK https://github.com/InsightSoftwareConsortium/ITK.git
+  git checkout -f tags/${ITK_VER} || exit 1
 
   # replace <fp.h> with <math.h> in Modules/ThirdParty/PNG/src/itkpng/pngpriv.h
   if [ "$(uname)" == "Darwin" ]; then
@@ -215,12 +237,11 @@ build_xlnt()
 {
   echo ""
   echo "## Building Xlnt..."
-  cd ${BUILD_DIR}
-  git clone https://github.com/tfussell/xlnt.git
-  cd xlnt
-  git checkout -f ${XLNT_VER}
-  git submodule init
-  git submodule update
+  cd ${BUILD_DIR} || exit 1
+  clone_repo xlnt https://github.com/tfussell/xlnt.git
+  git checkout -f ${XLNT_VER} || exit 1
+  git submodule init || exit 1
+  git submodule update || exit 1
 
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
@@ -254,9 +275,8 @@ build_jkqtplotter()
 {
   echo ""
   echo "## Building JKQTPlotter..."
-  cd ${BUILD_DIR}
-  git clone --depth 1 --branch ${JKQTPLOTTER_VER} https://github.com/akenmorris/JKQtPlotter.git jkqtplotter
-  cd jkqtplotter
+  cd ${BUILD_DIR} || exit 1
+  clone_repo jkqtplotter --depth 1 --branch ${JKQTPLOTTER_VER} https://github.com/akenmorris/JKQtPlotter.git
   # fix compile on windows
   sed -i '1s/^/#include <stdexcept>\n/' lib/jkqtcommon/jkqtpdebuggingtools.h
 
@@ -281,10 +301,9 @@ build_openvdb()
 {
   echo ""
   echo "## Building OpenVDB..."
-  cd ${BUILD_DIR}
-  git clone https://github.com/AcademySoftwareFoundation/openvdb.git
-  cd openvdb
-  git checkout ${OpenVDB_VER}
+  cd ${BUILD_DIR} || exit 1
+  clone_repo openvdb https://github.com/AcademySoftwareFoundation/openvdb.git
+  git checkout ${OpenVDB_VER} || exit 1
 
   # patch for Clang 17
   patch -p1 < ${SCRIPT_DIR}/Support/openvdb-9.1.0.patch
@@ -314,10 +333,9 @@ build_igl()
 {
   echo " "
   echo "## Building Libigl..."
-  cd ${INSTALL_DIR}
-  git clone https://github.com/libigl/libigl.git
-  cd libigl
-  git checkout -f tags/${libigl_VER}
+  cd ${INSTALL_DIR} || exit 1
+  clone_repo libigl https://github.com/libigl/libigl.git
+  git checkout -f tags/${libigl_VER} || exit 1
 
   LIBIGL_DIR=${INSTALL_DIR}/libigl/cmake
 }
@@ -326,10 +344,9 @@ build_geometry_central()
 {
   echo " "
   echo "## Building Geometry central..."
-  cd ${BUILD_DIR}
-  git clone --recursive https://github.com/nmwsharp/geometry-central.git
-  cd geometry-central
-  git checkout -f ${geometry_central_VER}
+  cd ${BUILD_DIR} || exit 1
+  clone_repo geometry-central --recursive https://github.com/nmwsharp/geometry-central.git
+  git checkout -f ${geometry_central_VER} || exit 1
   mkdir build
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
@@ -359,11 +376,10 @@ build_acvd()
 {
   echo ""
   echo "## Building ACVD..."
-  cd ${BUILD_DIR}
+  cd ${BUILD_DIR} || exit 1
   #git clone https://github.com/valette/ACVD.git acvd
-  git clone https://github.com/akenmorris/ACVD.git acvd
-  cd acvd
-  git checkout -f ${ACVD_VER}
+  clone_repo acvd https://github.com/akenmorris/ACVD.git
+  git checkout -f ${ACVD_VER} || exit 1
 
   # silence a bunch of output
   sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkCurvatureMeasure.cxx
