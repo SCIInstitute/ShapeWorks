@@ -126,14 +126,21 @@ class NetworkAnalysis:
                 (num_pts, timepoints, num_subjects, len(activities)));  # particles,time,subjects,activity
 
             activity = 0
+            subjects = project.get_subjects()
             for s in range(num_subjects):
                 features = analyze.get_subject_features(s, self.target_feature)
+                if features.size != num_pts:
+                    raise ValueError(
+                        f"Subject '{subjects[s].get_display_name()}' has {features.size} values for feature "
+                        f"'{self.target_feature}', expected {num_pts} (one per particle). Check that this "
+                        f"subject's mesh has a point data array named '{self.target_feature}'.")
                 # reshape into a matrix
                 features = features.reshape(-1, 1)
                 all_data[:, :, s, activity] = features
 
-            # find all particles that are always non-zero
-            particles = np.where(np.all((np.all((~np.any((all_data == 0), axis=1)), axis=1)), axis=1))[0]
+            # analyze only particles whose values vary across subjects (zero-variance particles
+            # produce undefined test statistics)
+            particles = np.where(np.ptp(all_data[:, 0, :, 0], axis=1) > 0)[0]
 
         # #### fe model dataset - each subject has particle values for four activites ####
         elif flag_model == 'fedata':
@@ -305,10 +312,10 @@ class NetworkAnalysis:
         np.random.seed(0)
 
         # 1D SPM (nonparametric) mapped back onto the mean cam shape
-        snpm = spm1d.stats.nonparam.ttest2(
-            np.transpose(all_data[:, :, np.where(grouprs == 0)[0], :].reshape(num_pts, len(np.where(grouprs == 0)[0]))),
-            np.transpose(all_data[:, :, np.where(grouprs == 1)[0], :].reshape(num_pts, len(np.where(grouprs == 1)[0]))))
-        
+        # t-test data restricted to analyzed particles: (particles, subjects)
+        ttest_data = all_data[particles, 0, :, 0]
+        snpm = spm1d.stats.nonparam.ttest2(ttest_data[:, grouprs == 0].T, ttest_data[:, grouprs == 1].T)
+
         alpha = 0.05
         # Specified alpha must be greater than or equal to (1/nPermTotal)=0.33333
         if (alpha < 1/n_iter):
@@ -412,12 +419,8 @@ class NetworkAnalysis:
                     else:
                         perms[it, :] = np.random.permutation(ns)
 
-                    snpm_perms = spm1d.stats.nonparam.ttest2(np.transpose(
-                        all_data[:, :, perms[it, np.where(grouprs == 0)[0]], :].reshape(num_pts, len(
-                            np.where(grouprs == 0)[0]))),
-                                                             np.transpose(
-                                                                 all_data[:, :, perms[it, np.where(grouprs == 1)[0]],
-                                                                 :].reshape(num_pts, len(np.where(grouprs == 1)[0]))))
+                    snpm_perms = spm1d.stats.nonparam.ttest2(ttest_data[:, perms[it, grouprs == 0]].T,
+                                                             ttest_data[:, perms[it, grouprs == 1]].T)
 
                     F_perms[:, :, :, it] = snpm_perms.z.reshape(len(particles), timepoints, len(ftests))
 
@@ -576,11 +579,7 @@ class NetworkAnalysis:
                 (len(particles), timepoints, len(ftests)))
 
         elif flag_analysis == 'ttest':  # t-test analysis
-            snpm = spm1d.stats.nonparam.ttest2(np.transpose(
-                all_data[:, :, np.where(grouprs == 0)[0], :].reshape(num_pts, len(np.where(grouprs == 0)[0]))),
-                                               np.transpose(
-                                                   all_data[:, :, np.where(grouprs == 1)[0], :].reshape(num_pts, len(
-                                                       np.where(grouprs == 1)[0]))))
+            snpm = spm1d.stats.nonparam.ttest2(ttest_data[:, grouprs == 0].T, ttest_data[:, grouprs == 1].T)
             fvalues = snpm.z.reshape(len(particles), timepoints, len(ftests))
 
         # start network-based analysis
@@ -873,31 +872,31 @@ class NetworkAnalysis:
                 for comparison in fdesc:
                     if analysis == '1D':
                         pointsdata = np.concatenate(
-                            [mean_shape, particle_fvalues_1d[:, :, :].reshape(len(particles), 1)], axis=1)
+                            [mean_shape, particle_fvalues_1d[:, :, :].reshape(num_pts, 1)], axis=1)
                     elif analysis == 'network':
                         pointsdata = np.concatenate(
-                            [mean_shape, particle_fvalues_size[:, :, :].reshape(len(particles), 1)], axis=1)
+                            [mean_shape, particle_fvalues_size[:, :, :].reshape(num_pts, 1)], axis=1)
                     np.savetxt(result_path + 'Points_' + analysis + comparison + '_' + str(num_pts) + '.txt',
                                pointsdata, delimiter='\t', header='\t'.join(headers), comments='')
 
 
             g0data = np.concatenate(
-                [mean_shape, np.mean(all_data[:, :, group == 0, :], axis=2).reshape(len(particles), 1)], axis=1)
+                [mean_shape, np.mean(all_data[:, :, group == 0, :], axis=2).reshape(num_pts, 1)], axis=1)
             np.savetxt(result_path + 'G0_' + str(num_pts) + '.txt', g0data, delimiter='\t', header='\t'.join(headers),
                        comments='')
 
             g1data = np.concatenate(
-                [mean_shape, np.mean(all_data[:, :, group == 1, :], axis=2).reshape(len(particles), 1)], axis=1)
+                [mean_shape, np.mean(all_data[:, :, group == 1, :], axis=2).reshape(num_pts, 1)], axis=1)
             np.savetxt(result_path + 'G1_' + str(num_pts) + '.txt', g1data, delimiter='\t', header='\t'.join(headers),
                        comments='')
 
             diffdata = np.concatenate(
-                [mean_shape, np.mean(all_data[:, :, group == 0, :], axis=2).reshape(len(particles), 1) -
-                 np.mean(all_data[:, :, group == 1, :], axis=2).reshape(len(particles), 1)], axis=1)
+                [mean_shape, np.mean(all_data[:, :, group == 0, :], axis=2).reshape(num_pts, 1) -
+                 np.mean(all_data[:, :, group == 1, :], axis=2).reshape(num_pts, 1)], axis=1)
             np.savetxt(result_path + 'Diff_' + str(num_pts) + '.txt', diffdata, delimiter='\t',
                        header='\t'.join(headers), comments='')
 
-            stddata = np.concatenate([mean_shape, np.std(all_data, axis=2).reshape(len(particles), 1)], axis=1)
+            stddata = np.concatenate([mean_shape, np.std(all_data, axis=2).reshape(num_pts, 1)], axis=1)
             np.savetxt(result_path + 'StDev_' + str(num_pts) + '.txt', stddata, delimiter='\t',
                        header='\t'.join(headers), comments='')
 
