@@ -18,11 +18,9 @@ else
     conda activate shapeworks
     export INSTALL_DIR="$DEP_PATH"
     export BUILD_DIR=$HOME/build
-    export FILE="/tmp/${DEP_FILE}"
     if [[ "$PLATFORM" == "windows" ]]; then
       export INSTALL_DIR="C:\deps"
       export BUILD_DIR="/c/bdeps"
-      export FILE="${DEP_FILE}"
     fi
 
     NPROCS=4

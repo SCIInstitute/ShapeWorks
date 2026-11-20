@@ -28,7 +28,6 @@ env:
   BUILD_TYPE: Release
   MACOSX_DEPLOYMENT_TARGET: "14.0"
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
-  CACHE_HOST: ${{ secrets.SSH_HOST }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
   CCACHE_DIR: /Users/runner/.ccache
