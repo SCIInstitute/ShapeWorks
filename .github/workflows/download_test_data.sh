@@ -25,7 +25,7 @@ for run in {1..5}; do
     if tar -tzf /tmp/tiny_test_cache.tar.gz > /dev/null 2>&1 ; then
 	break
     fi
-    wget --continue --tries=3 --timeout=60 https://www.sci.utah.edu/~shapeworks/doc-resources/zips/tiny_test_cache.tar.gz || true
+    wget --continue --tries=3 --timeout=60 https://github.com/SCIInstitute/ShapeWorks/releases/download/ci-assets/tiny_test_cache.tar.gz || true
     sleep 1
 done
 

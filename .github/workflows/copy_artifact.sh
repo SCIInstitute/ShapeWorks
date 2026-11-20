@@ -16,12 +16,12 @@ if [[ "$PLATFORM" == "windows" ]]; then
     echo "Installing rsync for Windows/msys2"
 
     # These were the original URLs, but they keep changing and it's time consuming to keep up
-    # So I have just combined them in this windows_rsync.tar.gz that I'm hosting myself
+    # So I have just combined them in this windows_rsync.tar.gz, hosted on the ci-assets release
     
     # https://repo.msys2.org/msys/x86_64/rsync-3.2.3-1-x86_64.pkg.tar.zst
     # https://repo.msys2.org/msys/x86_64/libzstd-1.5.2-1-x86_64.pkg.tar.zst
     # https://repo.msys2.org/msys/x86_64/libxxhash-0.8.1-1-x86_64.pkg.tar.zst
-    curl.exe --output windows_rsync.tar.gz http://www.sci.utah.edu/~amorris/windows_rsync.tar.gz
+    curl.exe -fL --output windows_rsync.tar.gz https://github.com/SCIInstitute/ShapeWorks/releases/download/ci-assets/windows_rsync.tar.gz
 
     tar -xzvf windows_rsync.tar.gz
     
