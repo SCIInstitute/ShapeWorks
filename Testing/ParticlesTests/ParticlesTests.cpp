@@ -876,3 +876,40 @@ TEST(ParticlesTests, correspondence_dual_form_test) {
     EXPECT_LT((eig_gram - eig_dual).cwiseAbs().maxCoeff(), 1e-9 * eig_gram.cwiseAbs().maxCoeff()) << "d=" << d << " n=" << n;
   }
 }
+
+//---------------------------------------------------------------------------
+TEST(ParticlesTests, correspondence_cholesky_test) {
+  // The update is a Cholesky solve and only eigenvalues are computed (#2711). Compare with an explicit
+  // inverse and a full eigendecomposition, for both forms, more shapes than dimensions and fewer.
+  std::mt19937 rng(13);
+  std::normal_distribution<double> dist(0.0, 5.0);
+  for (double alpha : {0.5, 1e-6}) {
+    for (auto [d, n] : {std::pair<int, int>{9, 30}, std::pair<int, int>{30, 9}}) {
+      RowMatrixType y(d, n);
+      for (int i = 0; i < y.size(); i++) {
+        y.data()[i] = dist(rng);
+      }
+      y.colwise() -= y.rowwise().mean();
+
+      Eigen::MatrixXd gram = y.transpose() * y;
+      Eigen::MatrixXd system = gram / (n - 1);
+      system.diagonal().array() += alpha;
+      const Eigen::MatrixXd expected = y * system.inverse();
+      const Eigen::VectorXd expected_eig = Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>(gram).eigenvalues();
+
+      for (int form : {0, 1}) {
+        RowMatrixType update;
+        Eigen::VectorXd eig;
+        ComputeEntropyUpdate(y, alpha, update, eig, form);
+        ASSERT_EQ(eig.size(), n);
+        // the accuracy of any solve is limited by the condition number of the system
+        const double condition = (expected_eig.maxCoeff() / (n - 1) + alpha) / alpha;
+        EXPECT_LT((update - expected).cwiseAbs().maxCoeff(),
+                  std::max(1e-10, 1e-13 * condition) * expected.cwiseAbs().maxCoeff())
+            << "alpha=" << alpha << " d=" << d << " n=" << n << " form=" << form;
+        EXPECT_LT((eig - expected_eig).cwiseAbs().maxCoeff(), 1e-9 * expected_eig.cwiseAbs().maxCoeff())
+            << "alpha=" << alpha << " d=" << d << " n=" << n << " form=" << form;
+      }
+    }
+  }
+}
