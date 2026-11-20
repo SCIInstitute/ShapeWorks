@@ -16,7 +16,6 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
-  CACHE_HOST: ${{ secrets.SSH_HOST }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
 
@@ -83,7 +82,7 @@ jobs:
     - name: Get NSIS
       working-directory: ${{runner.workspace}}
       run: |
-        curl -o nsis.zip https://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
+        curl -fL -o nsis.zip https://github.com/SCIInstitute/ShapeWorks/releases/download/ci-assets/NSISPortable_3.04.zip
         Expand-Archive -LiteralPath nsis.zip -DestinationPath .
           
     - name: Conda Installs
