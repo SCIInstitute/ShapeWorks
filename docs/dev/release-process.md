@@ -20,19 +20,12 @@ SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.
 
 * Confirm the API version is set correctly in the following files
 
-TODO - This should be automated from a single place
+The C++ side and the `swpython`/`swpip` wrappers derive it from `SHAPEWORKS_MAJOR/MINOR_VERSION`. CMake fails if the Python side doesn't match:
 
-- `Libs/Application/Job/PythonWorker.h`
-
-```
-  constexpr static const char* python_api_version = "6.5";
-```
-
-- `Python/shapeworks/shapeworks/utils.py`
+- `Python/shapeworks/shapeworks/api_version.py`
 
 ```
-def get_api_version():
-    return "6.5"
+API_VERSION = "6.5"
 ```
 
 - `install_shapeworks.sh` 
