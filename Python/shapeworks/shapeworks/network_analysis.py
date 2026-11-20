@@ -18,7 +18,38 @@ import os, sys
 import shapeworks as sw
 np.random.seed(0)
 
-# open3d is imported lazily when needed (not available on all platforms)
+
+def compute_particle_triangles(surface, points, min_vertices_per_point=10):
+    """Triangulate particles over a surface mesh.
+
+    Each surface vertex is labeled with its nearest particle, partitioning the surface into
+    discrete Voronoi regions. Every surface triangle whose three vertices belong to three
+    different particles becomes a particle triangle, so particles are connected when their
+    regions meet on the surface.
+    """
+    triangle_filter = vtk.vtkTriangleFilter()
+    triangle_filter.SetInputData(surface)
+    triangle_filter.Update()
+    mesh = triangle_filter.GetOutput()
+
+    # refine the surface until it is fine enough to resolve the regions
+    for _ in range(4):
+        if mesh.GetNumberOfPoints() >= min_vertices_per_point * len(points):
+            break
+        subdivide = vtk.vtkLinearSubdivisionFilter()
+        subdivide.SetInputData(mesh)
+        subdivide.SetNumberOfSubdivisions(1)
+        subdivide.Update()
+        mesh = subdivide.GetOutput()
+
+    vertices = vtk_to_numpy(mesh.GetPoints().GetData())
+    faces = vtk_to_numpy(mesh.GetPolys().GetConnectivityArray()).reshape(-1, 3)
+
+    labels = scipy.spatial.cKDTree(points).query(vertices)[1]
+    face_labels = labels[faces]
+    distinct = ((face_labels[:, 0] != face_labels[:, 1]) & (face_labels[:, 1] != face_labels[:, 2]) &
+                (face_labels[:, 0] != face_labels[:, 2]))
+    return np.unique(np.sort(face_labels[distinct], axis=1), axis=0)
 
 
 class NetworkAnalysis:
@@ -86,16 +117,6 @@ class NetworkAnalysis:
         return mesh_points, mesh_normals, mean_shape, surface
 
     def run(self):
-        # Import open3d here (lazy import - not available on all platforms)
-        try:
-            import open3d as o3d
-        except ImportError:
-            raise ImportError(
-                "open3d is required for network analysis but is not installed. "
-                "This feature may not be available on your platform/Python version. "
-                "Try: pip install open3d-cpu (Linux) or pip install open3d (macOS/Windows)"
-            )
-
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()
@@ -359,18 +380,7 @@ class NetworkAnalysis:
         # In[15]:
 
         # generate connectivity between particles
-        pcd = o3d.geometry.PointCloud()
-        pcd.points = o3d.utility.Vector3dVector(mean_shape[particles, :])
-        pcd.normals = o3d.utility.Vector3dVector(mesh_normals[pts_index, :])
-
-        distances = pcd.compute_nearest_neighbor_distance()
-        avg_dist = np.mean(distances)
-        radius = avg_dist * 1.5
-
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd,
-                                                                               o3d.utility.DoubleVector(
-                                                                                   [radius, radius * 2]))
-        tris = np.asarray(mesh.triangles)
+        tris = compute_particle_triangles(surface, mean_shape[particles, :])
 
         # In[16]:
 
