@@ -161,10 +161,10 @@ Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new M
   // load data from the project
   update_shapes();
 
-  // compute stats
-  compute_stats();
-
-  initialize_mesh_warper();
+  // compute stats, and the mesh warper only when there are particles to warp
+  if (compute_stats()) {
+    initialize_mesh_warper();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -570,6 +570,11 @@ bool Analyze::compute_stats() {
       SW_ERROR("Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
+  }
+
+  if (point_size == 0) {
+    SW_WARN("No particles");
+    return false;
   }
 
   stats_.import_points(points, group_ids);

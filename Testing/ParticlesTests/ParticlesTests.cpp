@@ -75,6 +75,16 @@ TEST(ParticlesTests, pca)
   ASSERT_LE((pcaVec.block<3,2>(0,0) - ground_truth).norm(), 1E-4);
 }
 
+TEST(ParticlesTests, pca_no_particles)
+{
+  // shapes without particles (e.g. an unoptimized project) must not crash
+  std::vector<Eigen::VectorXd> points(5, Eigen::VectorXd());
+  ParticleShapeStatistics stats;
+  stats.import_points(points, {});
+  ASSERT_EQ(stats.compute_modes(), 1);
+  ASSERT_TRUE(stats.get_eigen_values().empty());
+}
+
 TEST(ParticlesTests, compactness)
 {
   ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
