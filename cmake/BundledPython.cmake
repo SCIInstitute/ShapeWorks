@@ -257,9 +257,8 @@ if(WIN32)
 "@echo off
 set \"PYTHONHOME=${BUNDLED_PYTHON_ROOT}\"
 rem Build dir for shapeworks_py + per-user site-packages for on-demand torch
-rem / swpip installs. Version segment must match python_api_version in
-rem PythonWorker.h.
-set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin;%LOCALAPPDATA%\\ShapeWorks\\6.8\\site-packages\"
+rem / swpip installs.
+set \"PYTHONPATH=${CMAKE_BINARY_DIR}/bin;%LOCALAPPDATA%\\ShapeWorks\\${SHAPEWORKS_PYTHON_API_VERSION}\\site-packages\"
 set \"PATH=${CMAKE_BINARY_DIR}/bin;%PATH%\"
 if not defined MPLBACKEND set \"MPLBACKEND=Agg\"
 \"${BUNDLED_PYTHON_EXECUTABLE}\" %*
@@ -271,11 +270,11 @@ else()
 export PYTHONHOME='${BUNDLED_PYTHON_ROOT}'
 # Build dir for shapeworks_py + per-user site-packages for on-demand torch /
 # swpip installs. The per-user path is platform-dependent so derive it at
-# runtime. Version segment must match python_api_version in PythonWorker.h.
+# runtime.
 if [ \"\$(uname)\" = \"Darwin\" ]; then
-  _sw_user_site=\"\$HOME/Library/Application Support/ShapeWorks/6.8/site-packages\"
+  _sw_user_site=\"\$HOME/Library/Application Support/ShapeWorks/${SHAPEWORKS_PYTHON_API_VERSION}/site-packages\"
 else
-  _sw_user_site=\"\$HOME/.local/share/ShapeWorks/6.8/site-packages\"
+  _sw_user_site=\"\$HOME/.local/share/ShapeWorks/${SHAPEWORKS_PYTHON_API_VERSION}/site-packages\"
 fi
 export PYTHONPATH=\"${CMAKE_BINARY_DIR}/bin:\$_sw_user_site\"
 export PATH='${CMAKE_BINARY_DIR}/bin':\"\$PATH\"
