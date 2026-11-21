@@ -587,6 +587,13 @@ int ParticleShapeStatistics::compute_modes() {
   TIME_SCOPE("ParticleShapeStatistics::compute_modes");
   SW_DEBUG("computing PCA modes");
 
+  if (points_minus_mean_.size() == 0) {
+    eigenvalues_.clear();
+    eigenvectors_.resize(0, 0);
+    percent_variance_by_mode_.clear();
+    return 1;
+  }
+
   // Use SVD to compute PCA. For X = U * S * V^T:
   // - The covariance matrix X^T * X / (n-1) has eigenvalues S^2 / (n-1) and eigenvectors V
   // - The old code computed eigenvectors_ = X * V = U * S
