@@ -6,6 +6,7 @@ import glob
 import shutil
 import zipfile
 import shapeworks as sw
+from shapeworks.api_version import API_VERSION
 
 # Global shapeworks logger object (e.g. attached to Studio)
 sw_logger = None
@@ -172,7 +173,7 @@ def compute_line_indices(n, is_closed=True):
 
 
 def get_api_version():
-    return "6.8"
+    return API_VERSION
 
 
 def set_sw_logger(log_object):

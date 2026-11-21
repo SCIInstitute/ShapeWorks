@@ -68,9 +68,6 @@ REM install pytorch using light-the-torch
 REM Use python -m to ensure we use the conda env's light_the_torch
 call python -m light_the_torch install torch==2.8.0 torchaudio==2.8.0 torchvision==0.23.0 || goto :error
 
-REM different versions of open3d for different OSes, so we install it manually here
-call pip install open3d==0.19.0 || goto :error
-
 call pip install Python/DataAugmentationUtilsPackage.tar.gz || goto :error
 call pip install Python/DatasetUtilsPackage.tar.gz || goto :error
 call pip install Python/MONAILabelPackage.tar.gz || goto :error

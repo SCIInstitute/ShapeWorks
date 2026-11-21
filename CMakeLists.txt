@@ -9,6 +9,16 @@ SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
 SET(SHAPEWORKS_VERSION_STRING "6.8.0")
 SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
+# Python API version: names the per-user site-packages dir and must match the Python package
+set(SHAPEWORKS_PYTHON_API_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}")
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/Python/shapeworks/shapeworks/api_version.py" _py_api_line
+     REGEX "^API_VERSION = ")
+if (NOT _py_api_line STREQUAL "API_VERSION = \"${SHAPEWORKS_PYTHON_API_VERSION}\"")
+  message(FATAL_ERROR "Python/shapeworks/shapeworks/api_version.py (${_py_api_line}) does not match "
+                      "SHAPEWORKS_MAJOR/MINOR_VERSION (${SHAPEWORKS_PYTHON_API_VERSION})")
+endif()
+add_compile_definitions(SHAPEWORKS_PYTHON_API_VERSION="${SHAPEWORKS_PYTHON_API_VERSION}")
+
 # First, check that files were checked out properly using git-lfs
 file(MD5 "${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd" HASH)
 if (NOT "${HASH}" STREQUAL "bb94438a695c749b264180019abbbb97")

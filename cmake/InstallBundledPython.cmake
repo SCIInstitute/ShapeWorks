@@ -157,7 +157,7 @@ install(CODE "
 # can find the shapeworks CLI via shutil.which.
 set(_swpython_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpython")
 file(MAKE_DIRECTORY "${_swpython_dir}")
-file(WRITE "${_swpython_dir}/swpython.bat"
+set(_wrapper_content
 [=[@echo off
 set "LOC=%~dp0"
 set "PYTHONHOME=%LOC%..\lib\python"
@@ -165,11 +165,12 @@ set "PATH=%LOC%;%PATH%"
 rem Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-
 rem installed PyTorch and swpip-installed packages are importable from any
 rem `swpython script.py`, not only after `from shapeworks import ensure_torch`.
-rem Version segment "6.8" must match python_api_version in PythonWorker.h.
-set "PYTHONPATH=%LOCALAPPDATA%\ShapeWorks\6.8\site-packages"
+set "PYTHONPATH=%LOCALAPPDATA%\ShapeWorks\@SHAPEWORKS_PYTHON_API_VERSION@\site-packages"
 if not defined MPLBACKEND set "MPLBACKEND=Agg"
 "%PYTHONHOME%\python.exe" %*
 ]=])
+string(CONFIGURE "${_wrapper_content}" _wrapper_content @ONLY)
+file(WRITE "${_swpython_dir}/swpython.bat" "${_wrapper_content}")
 install(PROGRAMS "${_swpython_dir}/swpython.bat" DESTINATION bin)
 
 # swpip.bat — pip wrapper that delegates to swpython.bat -m shapeworks.swpip
@@ -489,7 +490,7 @@ set(_swpython_dir "${CMAKE_BINARY_DIR}/_bundled_python/swpython")
 file(MAKE_DIRECTORY "${_swpython_dir}")
 
 if(APPLE)
-  file(WRITE "${_swpython_dir}/swpython"
+  set(_wrapper_content
 [=[#!/bin/bash
 # Keep in sync with CMAKE_OSX_DEPLOYMENT_TARGET: older macOS fails with cryptic
 # symbol errors (e.g. numpy's Accelerate build) instead of a clear message.
@@ -509,12 +510,13 @@ PATH="${LOC}:${PATH}"
 MPLBACKEND="${MPLBACKEND:-Agg}"
 # Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-installed
 # PyTorch and swpip-installed packages are importable from any `swpython
-# script.py`, not only after `from shapeworks import ensure_torch`. Version
-# segment "6.8" must match python_api_version in PythonWorker.h.
-PYTHONPATH="${HOME}/Library/Application Support/ShapeWorks/6.8/site-packages"
+# script.py`, not only after `from shapeworks import ensure_torch`.
+PYTHONPATH="${HOME}/Library/Application Support/ShapeWorks/@SHAPEWORKS_PYTHON_API_VERSION@/site-packages"
 export PYTHONHOME PATH MPLBACKEND PYTHONPATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
+  string(CONFIGURE "${_wrapper_content}" _wrapper_content @ONLY)
+  file(WRITE "${_swpython_dir}/swpython" "${_wrapper_content}")
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
 
 elseif(WIN32)
@@ -538,7 +540,7 @@ else()
   # extension imports.
   # Also prepend the bundle bin/ to PATH so `shutil.which("shapeworks")`
   # in use case scripts finds the CLI sitting next to the wrapper.
-  file(WRITE "${_swpython_dir}/swpython"
+  set(_wrapper_content
 [=[#!/bin/bash
 LOC="`dirname "$0"`"
 PYTHONHOME="${LOC}/../lib/python"
@@ -547,12 +549,13 @@ PATH="${LOC}:${PATH}"
 MPLBACKEND="${MPLBACKEND:-Agg}"
 # Put the per-user ShapeWorks site-packages on PYTHONPATH so on-demand-installed
 # PyTorch and swpip-installed packages are importable from any `swpython
-# script.py`, not only after `from shapeworks import ensure_torch`. Version
-# segment "6.8" must match python_api_version in PythonWorker.h.
-PYTHONPATH="${HOME}/.local/share/ShapeWorks/6.8/site-packages"
+# script.py`, not only after `from shapeworks import ensure_torch`.
+PYTHONPATH="${HOME}/.local/share/ShapeWorks/@SHAPEWORKS_PYTHON_API_VERSION@/site-packages"
 export PYTHONHOME LD_LIBRARY_PATH PATH MPLBACKEND PYTHONPATH
 exec "${PYTHONHOME}/bin/python3" "$@"
 ]=])
+  string(CONFIGURE "${_wrapper_content}" _wrapper_content @ONLY)
+  file(WRITE "${_swpython_dir}/swpython" "${_wrapper_content}")
   install(PROGRAMS "${_swpython_dir}/swpython" DESTINATION bin)
 endif()
 

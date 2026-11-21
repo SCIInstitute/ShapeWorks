@@ -15,9 +15,7 @@ import subprocess
 import sys
 import tempfile
 
-# Must match PythonWorker::python_api_version in Libs/Application/Job/PythonWorker.h.
-# Bump alongside SW_MAJOR_VERSION / SW_MINOR_VERSION per docs/dev/release-checklist.
-_API_VERSION = "6.8"
+from .api_version import API_VERSION as _API_VERSION
 
 
 def _user_site_packages():
