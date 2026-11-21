@@ -10361,7 +10361,7 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">force_dual</span><span class="w"> </span><span class="o">=</span><span class="mi">-1</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Correspondence (entropy) update for the mean-centered shape matrix Y (d x N): update = Y (YᵀY/(N-1) + αI)⁻¹, and the N eigenvalues of YᵀY in increasing order. When N &gt; d this is computed from the d x d covariance instead, using Y (YᵀY/(N-1) + αI)⁻¹ = (YYᵀ/(N-1) + αI)⁻¹ Y, so the cost no longer grows as N³ (#2705). force_dual: -1 chooses automatically, 0 always uses the N x N form, 1 the d x d form. </p>
+<p>Correspondence (entropy) update for the mean-centered shape matrix Y (d x N): update = Y (YᵀY/(N-1) + αI)⁻¹, and the N eigenvalues of YᵀY in increasing order. When N &gt; d this is computed from the d x d covariance instead, using Y (YᵀY/(N-1) + αI)⁻¹ = (YYᵀ/(N-1) + αI)⁻¹ Y, so the cost no longer grows as N³ (#2705). Only eigenvalues are computed; the update is a Cholesky solve (#2711). force_dual: -1 chooses automatically, 0 always uses the N x N form, 1 the d x d form. </p>
 <h3 id="function-itkeventmacro">function itkEventMacro</h3>
 <div class="highlight"><pre><span></span><code><span class="n">itkEventMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ParticleDomainAddEvent</span><span class="w"> </span><span class="p">,</span>
@@ -10529,7 +10529,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2026-11-20 at 17:28:41 +0000</p>
+<p>Updated on 2026-11-21 at 02:31:46 +0000</p>
 
 
 
