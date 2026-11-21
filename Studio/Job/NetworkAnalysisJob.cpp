@@ -29,6 +29,7 @@ void NetworkAnalysisJob::run() {
   py::type network_analysis_class = sw.attr("NetworkAnalysis");
   py::object network_analysis = network_analysis_class(project_);
   network_analysis.attr("set_target_group")(target_group_);
+  network_analysis.attr("set_target_group_values")(target_group_value1_, target_group_value2_);
   network_analysis.attr("set_target_feature")(target_feature_);
   network_analysis.attr("set_pvalue_of_interest")(pvalue_of_interest_);
   network_analysis.attr("set_pvalue_threshold")(pvalue_threshold_);
@@ -65,6 +66,12 @@ Eigen::VectorXd NetworkAnalysisJob::get_tvalues() { return tvalues_; }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd NetworkAnalysisJob::get_spm_values() { return spm_values_; }
+
+//---------------------------------------------------------------------------
+void NetworkAnalysisJob::set_target_group_values(std::string value1, std::string value2) {
+  target_group_value1_ = value1;
+  target_group_value2_ = value2;
+}
 
 //---------------------------------------------------------------------------
 void NetworkAnalysisJob::set_pvalue_of_interest(double pvalue_of_interest) { pvalue_of_interest_ = pvalue_of_interest; }
