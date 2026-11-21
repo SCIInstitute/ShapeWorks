@@ -4,6 +4,7 @@ import pandas as pd
 
 import trimesh
 import itertools
+import math
 import scipy
 import spm1d
 import vtk
@@ -120,6 +121,8 @@ class NetworkAnalysis:
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()
+        if num_pts == 0:
+            raise ValueError("Project has no particles. Run Optimize before network analysis.")
         activities = self.activities
         flag_model = self.flag_model
         flag_analysis = self.flag_analysis
@@ -141,6 +144,12 @@ class NetworkAnalysis:
                 group[group == group_values[i]] = i
             group = group.astype(int)
             group.mean()
+
+            group_sizes = [int(np.sum(group == i)) for i in range(len(group_values))]
+            if len(group_values) < 2 or min(group_sizes[:2]) < 2:
+                raise ValueError(
+                    f"Too few subjects for network analysis: group '{target_group}' has sizes "
+                    f"{dict(zip(group_values, group_sizes))}. Two groups with at least 2 subjects each are required.")
 
 
             all_data = np.ndarray(
@@ -338,6 +347,18 @@ class NetworkAnalysis:
         snpm = spm1d.stats.nonparam.ttest2(ttest_data[:, grouprs == 0].T, ttest_data[:, grouprs == 1].T)
 
         alpha = 0.05
+        # the group sizes limit the permutations, and so the smallest p-value that can be resolved
+        max_permutations = snpm.nPermUnique
+        required_permutations = max(10, math.ceil(1 / min(alpha, self.pvalue_of_interest)))
+        if max_permutations < required_permutations:
+            raise ValueError(
+                f"Too few subjects for network analysis: group sizes {group_sizes[0]} and {group_sizes[1]} allow only "
+                f"{max_permutations} permutations (smallest p-value {1 / max_permutations:.3g}), but at least "
+                f"{required_permutations} are required.")
+        if n_iter > max_permutations:
+            sw_message(f"Reducing permutations from {n_iter} to {max_permutations}, the maximum for these group sizes")
+            n_iter = max_permutations
+
         # Specified alpha must be greater than or equal to (1/nPermTotal)=0.33333
         if (alpha < 1/n_iter):
             alpha = 1/n_iter
