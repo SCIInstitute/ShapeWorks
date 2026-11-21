@@ -12,43 +12,47 @@ void ComputeEntropyUpdate(const Eigen::Ref<const RowMatrixType>& Y, double alpha
   const double scale = 1.0 / static_cast<double>(n - 1);
   const bool dual = force_dual >= 0 ? force_dual == 1 : n > d;
 
-  if (!dual) {
-    // gramMat = Yᵀ Y (N x N) is symmetric positive-semidefinite, so a self-adjoint eigensolver yields
-    // the same eigenpairs as a general SVD but much faster.
-    TIME_START("correspondence::gramMat");
-    Eigen::MatrixXd gram = Y.transpose() * Y;
-    TIME_STOP("correspondence::gramMat");
+  // gram = YᵀY (N x N), or the d x d covariance YYᵀ when N > d. Both share their nonzero eigenvalues and give the
+  // same update: Y (YᵀY/(N-1) + αI)⁻¹ = (YYᵀ/(N-1) + αI)⁻¹ Y (#2705)
+  TIME_START("correspondence::gramMat");
+  Eigen::MatrixXd gram = dual ? Eigen::MatrixXd(Y * Y.transpose()) : Eigen::MatrixXd(Y.transpose() * Y);
+  TIME_STOP("correspondence::gramMat");
 
-    TIME_START("correspondence::svd");
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gram);
-    TIME_STOP("correspondence::svd");
-    eigenvalues = eig.eigenvalues();
+  // The energy only needs the eigenvalues, so skip the eigenvectors, which are most of the cost (#2711)
+  TIME_START("correspondence::svd");
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(gram, Eigen::EigenvaluesOnly);
+  TIME_STOP("correspondence::svd");
 
-    // pinvMat = UG · diag(1 / (λ/(N-1) + α)) · UGᵀ (symmetric)
-    TIME_START("correspondence::pinvMat");
-    Eigen::ArrayXd inv = (eigenvalues.array() * scale + alpha).inverse();
-    Eigen::MatrixXd pinv = eig.eigenvectors() * inv.matrix().asDiagonal() * eig.eigenvectors().transpose();
-    TIME_STOP("correspondence::pinvMat");
+  // gram/(N-1) + αI is positive definite for α > 0, so the update is a Cholesky solve
+  TIME_START("correspondence::pinvMat");
+  Eigen::MatrixXd system = gram * scale;
+  system.diagonal().array() += alpha;
+  Eigen::LLT<Eigen::MatrixXd> llt(system);
+  TIME_STOP("correspondence::pinvMat");
 
-    // update = Y · pinvMat (thesis eq. 2.35: gradient is Y × (YᵀY + αI)⁻¹)
-    update.noalias() = Y * pinv;
+  if (llt.info() == Eigen::Success) {
+    if (dual) {
+      update.noalias() = llt.solve(Y);
+    } else {
+      // update = Y · system⁻¹ = (system⁻¹ Yᵀ)ᵀ, since system is symmetric
+      update.noalias() = llt.solve(Y.transpose()).transpose();
+    }
   } else {
-    // Same update from the d x d covariance: Y (YᵀY/(N-1) + αI)⁻¹ = (YYᵀ/(N-1) + αI)⁻¹ Y
-    TIME_START("correspondence::gramMat");
-    Eigen::MatrixXd cov = Y * Y.transpose();
-    TIME_STOP("correspondence::gramMat");
+    // not numerically positive definite (α too small): fall back to the eigendecomposition
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> full(gram);
+    Eigen::ArrayXd inv = (full.eigenvalues().array() * scale + alpha).inverse();
+    Eigen::MatrixXd inverse = full.eigenvectors() * inv.matrix().asDiagonal() * full.eigenvectors().transpose();
+    if (dual) {
+      update.noalias() = inverse * Y;
+    } else {
+      update.noalias() = Y * inverse;
+    }
+  }
 
-    TIME_START("correspondence::svd");
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
-    TIME_STOP("correspondence::svd");
-
-    TIME_START("correspondence::pinvMat");
-    Eigen::ArrayXd inv = (eig.eigenvalues().array() * scale + alpha).inverse();
-    Eigen::MatrixXd cov_inv = eig.eigenvectors() * inv.matrix().asDiagonal() * eig.eigenvectors().transpose();
-    TIME_STOP("correspondence::pinvMat");
-    update.noalias() = cov_inv * Y;
-
-    // YᵀY and YYᵀ share their nonzero eigenvalues; the rest are zero
+  if (!dual) {
+    eigenvalues = eig.eigenvalues();
+  } else {
+    // YᵀY has the d eigenvalues of YYᵀ and N-d zeros
     eigenvalues = Eigen::VectorXd::Zero(n);
     if (n >= d) {
       eigenvalues.tail(d) = eig.eigenvalues();
