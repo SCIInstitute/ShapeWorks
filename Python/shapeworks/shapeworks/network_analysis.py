@@ -129,15 +129,16 @@ class NetworkAnalysis:
         activities = self.activities
         num_subjects = analyze.get_num_subjects()
         timepoints = self.timepoints
+        if flag_model == 'cortthick' and self.target_group not in project.get_group_names():
+            raise ValueError(f"Group '{self.target_group}' not found in this project. "
+                             f"Available groups: {project.get_group_names()}")
         mesh_points, mesh_normals, mean_shape, surface = self.compute_mean_shape()
 
         # #### scalar thickness dataset - each subject has particle values for a single timepoint and no activities ####
         if flag_model == 'cortthick':
 
             target_group = self.target_group
-            print(f"Groups available in this project = {project.get_group_names()}")
             group_values = project.get_group_values(target_group)
-            print(f"Group values: {group_values})")
             group = map(lambda x: x.get_group_value(target_group), project.get_subjects())
             group = np.array(list(group))
             for i in range(len(group_values)):
@@ -150,14 +151,23 @@ class NetworkAnalysis:
                 raise ValueError(
                     f"Too few subjects for network analysis: group '{target_group}' has sizes "
                     f"{dict(zip(group_values, group_sizes))}. Two groups with at least 2 subjects each are required.")
-
+            sizes_text = ", ".join(f"{v}: {n}" for v, n in zip(group_values, group_sizes))
+            sw_message(f"Network analysis of feature '{self.target_feature}' across group '{target_group}' "
+                       f"({sizes_text} subjects), {num_pts} particles")
+            sw_message(f"Settings: {self.num_iterations} permutations, p-value of interest {self.pvalue_of_interest}, "
+                       f"p-value threshold {self.pvalue_threshold}")
+            if len(group_values) > 2:
+                sw_message(f"Warning: group '{target_group}' has {len(group_values)} values, "
+                           f"comparing only '{group_values[0]}' and '{group_values[1]}'")
 
             all_data = np.ndarray(
                 (num_pts, timepoints, num_subjects, len(activities)));  # particles,time,subjects,activity
 
             activity = 0
             subjects = project.get_subjects()
+            sw_message(f"Loading feature values for {num_subjects} subjects")
             for s in range(num_subjects):
+                sw_progress(0.1 * s / num_subjects, "Loading feature values")
                 features = analyze.get_subject_features(s, self.target_feature)
                 if features.size != num_pts:
                     raise ValueError(
@@ -171,6 +181,12 @@ class NetworkAnalysis:
             # analyze only particles whose values vary across subjects (zero-variance particles
             # produce undefined test statistics)
             particles = np.where(np.ptp(all_data[:, 0, :, 0], axis=1) > 0)[0]
+            if len(particles) == 0:
+                raise ValueError(f"Feature '{self.target_feature}' has no variation across subjects at any particle, "
+                                 "so there is nothing to test.")
+            if len(particles) < num_pts:
+                sw_message(f"Excluding {num_pts - len(particles)} of {num_pts} particles with no variation "
+                           "across subjects")
 
         # #### fe model dataset - each subject has particle values for four activites ####
         elif flag_model == 'fedata':
@@ -362,6 +378,8 @@ class NetworkAnalysis:
         # Specified alpha must be greater than or equal to (1/nPermTotal)=0.33333
         if (alpha < 1/n_iter):
             alpha = 1/n_iter
+        sw_message(f"Running per-particle permutation test on {len(particles)} particles")
+        sw_progress(0.1, "Running per-particle test")
         snpmi = snpm.inference(alpha, two_tailed=True, iterations=n_iter, force_iterations=True)  # assume one-sided
 
         Z = snpmi.z  # flattened test statistic  (i.e., t value) over only non-zero-variance nodes
@@ -401,6 +419,7 @@ class NetworkAnalysis:
         # In[15]:
 
         # generate connectivity between particles
+        sw_message("Building particle connectivity")
         tris = compute_particle_triangles(surface, mean_shape[particles, :])
 
         # In[16]:
@@ -444,7 +463,10 @@ class NetworkAnalysis:
                             (len(particles), timepoints, len(ftests)))
 
             elif flag_analysis == 'ttest':  # t-test
+                sw_message(f"Running {n_iter} permutations")
                 for it in range(n_iter):
+                    if it % max(1, n_iter // 100) == 0:
+                        sw_progress(0.15 + 0.45 * it / n_iter, "Running permutations")
                     if it == 0:
                         perms[it, :] = range(ns)
                     else:
@@ -480,7 +502,10 @@ class NetworkAnalysis:
                 # for each analysis
                 for f in range(len(ftests)):
                     print('Ftest: ', f, ',P value:', poi)
+                    sw_message("Computing the cluster size threshold from the permutations")
                     for it in range(n_iter):
+                        if it % max(1, n_iter // 100) == 0:
+                            sw_progress(0.6 + 0.35 * it / n_iter, "Computing cluster threshold")
                         if it % 1000 == 0:
                             print(it)
                         cnum = 1
@@ -614,6 +639,9 @@ class NetworkAnalysis:
             fvalues = snpm.z.reshape(len(particles), timepoints, len(ftests))
 
         # start network-based analysis
+        sw_message("Finding significant clusters")
+        sw_progress(0.95, "Finding significant clusters")
+        num_significant_clusters = 0
         components = [None] * timepoints
         for poi in pthresh:
             if flag_analysis == 'anova':  # anova analysis
@@ -745,6 +773,7 @@ class NetworkAnalysis:
                 for component in connectedcomps.keys():
                     complen = connectedcomps[component]['size']
                     if complen >= int(fclust_size[f, pthresh.index(poi)]):
+                        num_significant_clusters += 1
                         print('    Cluster of', complen, 'nodes from time', connectedcomps[component]['starttime'],
                               'to', connectedcomps[component]['endtime'], ', pval =',
                               1 - scipy.stats.percentileofscore(lc_it[f, pthresh.index(poi), :], complen) / 100)
@@ -937,6 +966,14 @@ class NetworkAnalysis:
             print('Traditional SPM: ', traddf['Data'][0], ', Correspondence Network: ', clustdf_size['Data'][0],
                   'with min size:',
                   fclust_size[f, pthresh.index(poi)].astype(int))
+            min_cluster_size = int(fclust_size[f, pthresh.index(poi)])
+            sw_message(f"Per-particle result: {traddf['Data'][0]} of {num_pts} particles significant "
+                       f"(critical t = {float(tradzstar):.3f})")
+            if num_significant_clusters > 0:
+                sw_message(f"Network result: {clustdf_size['Data'][0]} of {num_pts} particles significant in "
+                           f"{num_significant_clusters} cluster(s) (minimum cluster size {min_cluster_size})")
+            else:
+                sw_message(f"Network result: no clusters reached the minimum cluster size of {min_cluster_size}")
 
         # In[21]:
 
