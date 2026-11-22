@@ -67,6 +67,7 @@ class NetworkAnalysis:
         self.pvalue_of_interest = 0.05
         self.pvalue_threshold = 0.05
         self.num_iterations = 10000
+        self.target_group_values = None
 
     def set_run_1dspm(self, run_1dspm):
         self.flag_run_1dspm = run_1dspm
@@ -83,6 +84,10 @@ class NetworkAnalysis:
 
     def set_target_group(self, target_group):
         self.target_group = target_group
+
+    def set_target_group_values(self, value1, value2):
+        """Select the two group values to compare (required when the group has more than two values)"""
+        self.target_group_values = [value1, value2]
 
     def set_model_type(self, model_type):
         self.flag_model = model_type
@@ -139,12 +144,22 @@ class NetworkAnalysis:
 
             target_group = self.target_group
             group_values = project.get_group_values(target_group)
-            group = map(lambda x: x.get_group_value(target_group), project.get_subjects())
-            group = np.array(list(group))
-            for i in range(len(group_values)):
-                group[group == group_values[i]] = i
-            group = group.astype(int)
-            group.mean()
+            if self.target_group_values is not None:
+                selected_values = sorted(self.target_group_values)
+                unknown = [v for v in selected_values if v not in group_values]
+                if unknown or selected_values[0] == selected_values[1]:
+                    raise ValueError(f"Network analysis needs two different values of group '{target_group}', "
+                                     f"but got {self.target_group_values}. Available values: {group_values}")
+                group_values = selected_values
+            elif len(group_values) > 2:
+                raise ValueError(f"Group '{target_group}' has {len(group_values)} values: {group_values}. "
+                                 "Select the two to compare.")
+
+            # analyze only the subjects in the two compared groups
+            subject_values = [x.get_group_value(target_group) for x in project.get_subjects()]
+            selected_subjects = [s for s, v in enumerate(subject_values) if v in group_values]
+            group = np.array([group_values.index(subject_values[s]) for s in selected_subjects], dtype=int)
+            num_subjects = len(selected_subjects)
 
             group_sizes = [int(np.sum(group == i)) for i in range(len(group_values))]
             if len(group_values) < 2 or min(group_sizes[:2]) < 2:
@@ -156,9 +171,6 @@ class NetworkAnalysis:
                        f"({sizes_text} subjects), {num_pts} particles")
             sw_message(f"Settings: {self.num_iterations} permutations, p-value of interest {self.pvalue_of_interest}, "
                        f"p-value threshold {self.pvalue_threshold}")
-            if len(group_values) > 2:
-                sw_message(f"Warning: group '{target_group}' has {len(group_values)} values, "
-                           f"comparing only '{group_values[0]}' and '{group_values[1]}'")
 
             all_data = np.ndarray(
                 (num_pts, timepoints, num_subjects, len(activities)));  # particles,time,subjects,activity
@@ -166,8 +178,8 @@ class NetworkAnalysis:
             activity = 0
             subjects = project.get_subjects()
             sw_message(f"Loading feature values for {num_subjects} subjects")
-            for s in range(num_subjects):
-                sw_progress(0.1 * s / num_subjects, "Loading feature values")
+            for index, s in enumerate(selected_subjects):
+                sw_progress(0.1 * index / num_subjects, "Loading feature values")
                 features = analyze.get_subject_features(s, self.target_feature)
                 if features.size != num_pts:
                     raise ValueError(
@@ -176,7 +188,7 @@ class NetworkAnalysis:
                         f"subject's mesh has a point data array named '{self.target_feature}'.")
                 # reshape into a matrix
                 features = features.reshape(-1, 1)
-                all_data[:, :, s, activity] = features
+                all_data[:, :, index, activity] = features
 
             # analyze only particles whose values vary across subjects (zero-variance particles
             # produce undefined test statistics)
@@ -339,7 +351,7 @@ class NetworkAnalysis:
         # number of categories for analysis
         ng = len(np.unique(group))
         na = len(activities)
-        ns = len(subjects)
+        ns = len(group)
 
         if os.path.exists(result_path) is not True:
             os.mkdir(result_path)
@@ -803,7 +815,7 @@ class NetworkAnalysis:
 
         # In[19]:
 
-        poi = 0.05  # p-value of interest
+        poi = pthresh[0]
         # save data to data frame
         if flag_model == 'spatiotemporal':  # temporal anova analysis
             clustdf_size = pd.DataFrame({

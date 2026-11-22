@@ -562,6 +562,8 @@ void AnalysisTool::network_analysis_clicked() {
   network_analysis_job_ =
       QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_combo->currentText().toStdString(),
                                                  ui_->network_feature->currentText().toStdString());
+  network_analysis_job_->set_target_group_values(ui_->group_left->currentText().toStdString(),
+                                                 ui_->group_right->currentText().toStdString());
   network_analysis_job_->set_pvalue_of_interest(ui_->network_pvalue_of_interest->text().toDouble());
   network_analysis_job_->set_pvalue_threshold(ui_->network_pvalue_threshold->text().toDouble());
   network_analysis_job_->set_num_iterations(ui_->network_iterations->text().toInt());
