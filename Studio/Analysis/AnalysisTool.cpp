@@ -2321,7 +2321,9 @@ void AnalysisTool::handle_network_analysis_progress(int progress) {
 
 void AnalysisTool::handle_network_analysis_complete() {
   handle_network_analysis_progress(100);
-  SW_LOG("Network analysis complete");
+  if (!network_analysis_job_->is_failed()) {
+    SW_LOG("Network analysis complete");
+  }
   enable_actions(true);
   Q_EMIT progress(100);
   Q_EMIT update_view();
