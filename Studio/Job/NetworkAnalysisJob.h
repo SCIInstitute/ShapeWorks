@@ -13,6 +13,8 @@ class NetworkAnalysisJob : public Job {
   void run() override;
   QString name() override;
 
+  //! Set the two group values to compare
+  void set_target_group_values(std::string value1, std::string value2);
   void set_pvalue_of_interest(double pvalue_of_interest);
   void set_pvalue_threshold(double pvalue_threshold);
   void set_num_iterations(int num_iterations);
@@ -26,6 +28,8 @@ class NetworkAnalysisJob : public Job {
   Eigen::VectorXd tvalues_;
   Eigen::VectorXd spm_values_;
   std::string target_group_;
+  std::string target_group_value1_;
+  std::string target_group_value2_;
   std::string target_feature_;
 
   double pvalue_of_interest_ = 0;
