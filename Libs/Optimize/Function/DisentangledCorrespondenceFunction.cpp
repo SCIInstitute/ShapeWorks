@@ -245,47 +245,33 @@ DisentangledCorrespondenceFunction::VectorType DisentangledCorrespondenceFunctio
   unsigned int particle_idx = VDimension * idx;
 
   // Energy computation across time cohort
-  vnl_matrix_type Xi_time_cohort(3,1,0.0);
-  Xi_time_cohort(0,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx, 0);
-  Xi_time_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+1, 0);
-  Xi_time_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+2, 0);
-  vnl_matrix_type tmp1_time(3, 3, 0.0);
+  // This runs for every particle on every iteration, so use fixed-size matrices to avoid heap allocation.
+  Eigen::Vector3d xi_time;
+  xi_time(0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx, 0);
+  xi_time(1) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+1, 0);
+  xi_time(2) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+2, 0);
+  Eigen::Matrix3d inv_cov_time;
   if (this->m_UseMeanEnergy) {
-    tmp1_time.set_identity();
+    inv_cov_time.setIdentity();
   } else {
-    Eigen::MatrixXd region = m_InverseCovMatrices_time_cohort->at(cur_time_point).block(particle_idx, particle_idx, 3, 3);
-    // convert to vnl
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
-        tmp1_time(i, j) = region(i, j);
-      }
-    }
+    inv_cov_time = m_InverseCovMatrices_time_cohort->at(cur_time_point).block<3, 3>(particle_idx, particle_idx);
   }
-  vnl_matrix_type tmp_time = Xi_time_cohort.transpose()*tmp1_time;
-  tmp_time *= Xi_time_cohort;
+  const double energy_time = xi_time.dot(inv_cov_time * xi_time);
 
   // Energy computation across shape cohort
-  vnl_matrix_type Xi_shape_cohort(3,1,0.0);
-  Xi_shape_cohort(0,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx, 0);
-  Xi_shape_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+1, 0);
-  Xi_shape_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+2, 0);
-  vnl_matrix_type tmp1_shape(3, 3, 0.0);
+  Eigen::Vector3d xi_shape;
+  xi_shape(0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx, 0);
+  xi_shape(1) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+1, 0);
+  xi_shape(2) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+2, 0);
+  // Preserves existing behavior: outside mean-energy mode, the shape cohort term has always been zero.
+  Eigen::Matrix3d inv_cov_shape = Eigen::Matrix3d::Zero();
   if (this->m_UseMeanEnergy) {
-    tmp1_shape.set_identity();
-  } else {
-    Eigen::MatrixXd region = m_InverseCovMatrices_shape_cohort->at(cur_sub).block(particle_idx, particle_idx, 3, 3);
-    // convert to vnl
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
-        tmp1_time(i, j) = region(i, j);
-      }
-    }
+    inv_cov_shape.setIdentity();
   }
-  vnl_matrix_type tmp_shape = Xi_shape_cohort.transpose()*tmp1_shape;
-  tmp_shape *= Xi_shape_cohort;
+  const double energy_shape = xi_shape.dot(inv_cov_shape * xi_shape);
 
   // Net Energy
-  energy = tmp_time(0,0) + tmp_shape(0, 0); 
+  energy = energy_time + energy_shape;
 
   // Net Gradient
   for (unsigned int i = 0; i< VDimension; i++)
