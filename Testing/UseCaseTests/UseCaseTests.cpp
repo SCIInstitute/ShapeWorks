@@ -60,7 +60,13 @@ TEST(UseCaseTests, left_atrium) { run_test("left_atrium"); }
 TEST(UseCaseTests, femur_cut) { run_test("femur_cut"); }
 
 //---------------------------------------------------------------------------
-TEST(UseCaseTests, deep_ssm) { run_test("deep_ssm"); }
+TEST(UseCaseTests, deep_ssm) {
+#if defined(__APPLE__) && defined(__x86_64__)
+  // DeepSSM is unsupported on Intel Macs (see PythonWorker::deepssm_unsupported_reason)
+  GTEST_SKIP() << "DeepSSM is not supported on Intel Macs";
+#endif
+  run_test("deep_ssm");
+}
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, supershapes_1mode_contour) { run_test("supershapes_1mode_contour"); }

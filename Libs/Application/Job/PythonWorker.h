@@ -40,9 +40,12 @@ class PythonWorker : public QObject {
 
   void abort_job();
 
+  //! Returns why DeepSSM can't run on this platform, or "" if it can.
+  static std::string deepssm_unsupported_reason();
+
   //! Check if PyTorch is available in the bundled Python.
   //! Returns true if torch can be imported successfully.
-  static bool is_torch_available();
+  static bool is_torch_available(int timeout_ms = 10000);
 
   //! Install PyTorch via light-the-torch into the user site-packages directory.
   //! The output_callback receives lines of output from the install process.
