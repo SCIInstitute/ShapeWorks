@@ -3,6 +3,8 @@
 #include "Testing.h"
 
 #include <Groom/Groom.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
 #include <Project/Project.h>
 #include <vtkCellArray.h>
 #include <vtkClipClosedSurface.h>
