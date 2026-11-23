@@ -1,6 +1,31 @@
 # Release Notes
 
 
+## ShapeWorks 6.8.1
+
+Patch release with fixes for network analysis, Analyze, and grooming.
+
+### Fixed
+
+  * **Network Analysis**
+    * Network analysis no longer needs open3d, which was missing from the bundled Python (#2716)
+    * Fixed the failure on features with zero values, and report subjects that are missing the selected feature (#2709)
+    * Clear messages for a project with no particles, too few subjects, an unknown group, or a feature with no variation (#2720, #2722)
+    * Fixed the crash with a p-value threshold other than 0.05, and use only the two selected group values (#2724)
+  * **Analyze**
+    * Fixed a crash on projects with no particles (#2718)
+    * Fixed a crash when there are more shapes than particle coordinates (#2703)
+  * **Groom**
+    * Fixed remesh failures and crashes on closed meshes, and a remesh memory leak (#2688, #2690). Some remeshed surfaces may differ slightly from 6.8.0.
+  * **Python**
+    * `swpip` now installs into the per-user package directory (#2716)
+
+### Known issues
+
+  * Network analysis does not use the p-value threshold setting for its cluster cutoff.
+  * Network analysis uses N-1 rather than N-2 degrees of freedom for its cluster-forming threshold, and compares a one-sided cutoff against |t|.
+  * Shapes marked as excluded may still be included in network analysis.
+
 ## ShapeWorks 6.8.0
 
 ![](../img/about/release6.8.png)

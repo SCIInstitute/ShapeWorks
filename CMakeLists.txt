@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.20)
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 8 CACHE INTERNAL "Minor version number" FORCE)
-SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.8.0")
+SET(SHAPEWORKS_PATCH_VERSION 1 CACHE INTERNAL "Patch version number" FORCE)
+SET(SHAPEWORKS_VERSION_STRING "6.8.1")
 SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
 # Python API version: names the per-user site-packages dir and must match the Python package
