@@ -153,7 +153,7 @@ jobs:
       
     - name: make test
       shell: bash -l {0}
-      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -j4 --output-on-failure
 
     - uses: actions/upload-artifact@v4
       with:
