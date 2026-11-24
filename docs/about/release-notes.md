@@ -20,12 +20,6 @@ Patch release with fixes for network analysis, Analyze, and grooming.
   * **Python**
     * `swpip` now installs into the per-user package directory (#2716)
 
-### Known issues
-
-  * Network analysis does not use the p-value threshold setting for its cluster cutoff.
-  * Network analysis uses N-1 rather than N-2 degrees of freedom for its cluster-forming threshold, and compares a one-sided cutoff against |t|.
-  * Shapes marked as excluded may still be included in network analysis.
-
 ## ShapeWorks 6.8.0
 
 ![](../img/about/release6.8.png)
