@@ -1,13 +1,6 @@
 name: Linux Build Debug
 
 on:
-  push:
-    branches:
-      - master
-      - release_v*
-    tags:
-    - '*'
-  pull_request:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * 0'
