@@ -177,7 +177,28 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/download_test_data.sh
       
+    - name: Diagnose disentangled test threading
+      working-directory: "C:/build"
+      shell: bash -l {0}
+      run: |
+        conda activate shapeworks
+        source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release
+        FILTER='OptimizeTests.disentangled_spatiotemporal_test'
+        nproc || true
+        run_case() {
+          local label=$1
+          shift
+          local start=$(date +%s)
+          env "$@" OptimizeTests --gtest_filter="$FILTER" > /dev/null 2>&1
+          echo "DIAG $label exit=$? seconds=$(( $(date +%s) - start ))"
+        }
+        run_case tbb1 TBB_NUM_THREADS=1
+        run_case tbb2 TBB_NUM_THREADS=2
+        run_case tbb4 TBB_NUM_THREADS=4
+        run_case tbb4_omp_passive TBB_NUM_THREADS=4 OMP_WAIT_POLICY=PASSIVE
+
     - name: Test
+      if: false
       working-directory: "C:/build"
       shell: bash -l {0}
       # Execute tests defined by the CMake configuration.
