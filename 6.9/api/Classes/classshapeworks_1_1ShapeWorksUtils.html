@@ -4589,6 +4589,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-check_minimum_os_version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function check_minimum_os_version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-initialize_path_handling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4743,6 +4754,10 @@
 <td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-get-random-number">get_random_number</a></strong>()<br>generates random number</td>
 </tr>
 <tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-check-minimum-os-version">check_minimum_os_version</a></strong>()</td>
+</tr>
+<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ShapeWorksUtils.html#function-initialize-path-handling">initialize_path_handling</a></strong>()</td>
 </tr>
@@ -4807,6 +4822,10 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">get_random_number</span><span class="p">()</span>
 </code></pre></div>
 <p>generates random number </p>
+<h3 id="function-check_minimum_os_version">function check_minimum_os_version</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">check_minimum_os_version</span><span class="p">()</span>
+</code></pre></div>
+<p>Returns an error message if this OS is older than ShapeWorks supports, or "" if it's fine. On macOS the floor is the deployment target the build was compiled for. </p>
 <h3 id="function-initialize_path_handling">function initialize_path_handling</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize_path_handling</span><span class="p">()</span>
 </code></pre></div>
@@ -4858,7 +4877,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-22 at 05:25:59 +0000</p>
+<p>Updated on 2026-11-24 at 00:44:54 +0000</p>
 
 
 

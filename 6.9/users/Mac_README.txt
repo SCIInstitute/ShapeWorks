@@ -20,6 +20,8 @@ Welcome to ShapeWorks!
 ShapeWorks 6.8 ships with a complete Python environment built in. There is no
 conda environment to set up.
 
+ShapeWorks requires macOS 14 (Sonoma) or later.
+
 
 1. Install the ShapeWorks .pkg file by double-clicking on the file.
    It installs into /Applications/ShapeWorks/.
