@@ -3974,6 +3974,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Process
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="release-process.html" class="md-nav__link md-nav__link--active">
         
   
@@ -3990,6 +4008,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#patch-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patch releases
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -4520,6 +4568,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#patch-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patch releases
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -4601,7 +4668,28 @@ echo %PATH% &gt; &quot;%USERPROFILE%\.shapeworks\path_6.5.txt&quot;
 <p>When release candidate is final, set the version number in <code>CMakeLists.txt</code> to the final version number</p>
 </li>
 <li>
-<p>Tag the release from the release branch</p>
+<p>Tag and publish the release, in this order</p>
+</li>
+<li>
+<p>Commit the release notes first. The Mac and Linux installers include
+   <code>release-notes.md</code> and the built docs, so changing the notes means rebuilding them.</p>
+</li>
+<li>Tag the release on the release branch with an annotated tag,
+   <code>git tag -a v6.5.0 -m "ShapeWorks 6.5.0"</code>, and push the tag. The installers are named
+   from <code>git describe</code>, so a build of an untagged commit is named like
+   <code>ShapeWorks-v6.5.0-14-g13800e7e7</code> instead of <code>ShapeWorks-v6.5.0</code>.</li>
+<li>Wait for the builds the tag push starts, and take the installers from those runs.
+   GitHub scopes caches to a ref, so the tag build can't use the release branch's caches.
+   If the release changed <code>build_dependencies.sh</code> or <code>install_shapeworks.sh</code>, every
+   platform rebuilds its dependencies, so these builds take much longer than usual.</li>
+<li>Sign and notarize the Mac installers (Intel and Arm64). CI doesn't sign them.</li>
+<li>Build the source archive with the LFS content. GitHub's own source archives only hold
+   LFS pointer files. Run <code>Support/make_source_zip.sh v6.5.0 &lt;output_dir&gt;</code> to create
+   <code>ShapeWorks-v6.5.0-src-with-git-lfs.zip</code>.</li>
+<li>Create the GitHub release from the tag, and upload the installers and the source archive.</li>
+<li>Point the documentation's <code>latest</code> version at the release (see below).</li>
+<li>
+<p>Update <code>version.json</code> on the web server (see below).</p>
 </li>
 <li>
 <p>Merge the release branch back to <code>master</code>.  Fixes and doc updates made during the
@@ -4655,6 +4743,49 @@ the binaries are actually downloadable.  The file lives in the <code>shapeworks-
 <code>StudioUtils::get_platform_string()</code>.  A missing or misspelled key throws a JSON exception that is
 swallowed unless the check was triggered manually, so a typo here fails silently.  Platforms can
 hold different versions if a build is late, which is the reason for the per-platform blocks.</p>
+<h2 id="patch-releases">Patch releases</h2>
+<p>A patch release (e.g. 6.5.1) carries selected fixes from <code>master</code> on top of the previous
+release.</p>
+<ul>
+<li>
+<p>Create the release branch from the previous tag, not from <code>master</code>: <code>git checkout -b release_v6.5.1 v6.5.0</code></p>
+</li>
+<li>
+<p>Cherry-pick the fix PRs' merge commits, oldest first</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git cherry-pick -x -m 1 &lt;merge commit&gt;
+</code></pre></div>
+<p><code>-m 1</code> takes the PR's changes relative to <code>master</code> at the time, and <code>-x</code> records which commit
+each pick came from.  A fix written on top of other work that isn't being backported will
+conflict.  Adapt it to the release branch instead of pulling in more PRs.</p>
+<ul>
+<li>
+<p>Set the patch version in <code>CMakeLists.txt</code>: <code>SHAPEWORKS_PATCH_VERSION</code> and
+  <code>SHAPEWORKS_VERSION_STRING</code></p>
+</li>
+<li>
+<p>Keep the API version at the minor version (<code>API_VERSION = "6.5"</code> in
+  <code>Python/shapeworks/shapeworks/api_version.py</code>).  Users' installed Python packages are tied to it,
+  so a patch release must not change it.  If a picked PR brings in <code>master</code>'s newer API version,
+  set it back.</p>
+</li>
+<li>
+<p>Add a section for the patch release to <code>docs/about/release-notes.md</code></p>
+</li>
+<li>
+<p>Build and run the tests, then push the branch and check that CI passes on every platform</p>
+</li>
+<li>
+<p>Tag and publish the release, following the steps above</p>
+</li>
+<li>
+<p>Merge the release branch back to <code>master</code> with a merge commit, not a squash.  The fixes are
+  already on <code>master</code>, so take <code>master</code>'s side of every conflict except the release notes.  A
+  squash leaves the release unmerged as far as git is concerned, and the next merge-back hits the
+  same conflicts again.</p>
+</li>
+</ul>
 
 
 
