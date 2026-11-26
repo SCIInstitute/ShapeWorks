@@ -60,7 +60,25 @@ SW_MAJOR_VERSION=6.5
 
 * When release candidate is final, set the version number in `CMakeLists.txt` to the final version number
 
-* Tag the release from the release branch
+* Tag and publish the release, in this order
+
+1. Commit the release notes first. The Mac and Linux installers include
+   `release-notes.md` and the built docs, so changing the notes means rebuilding them.
+2. Tag the release on the release branch with an annotated tag,
+   `git tag -a v6.5.0 -m "ShapeWorks 6.5.0"`, and push the tag. The installers are named
+   from `git describe`, so a build of an untagged commit is named like
+   `ShapeWorks-v6.5.0-14-g13800e7e7` instead of `ShapeWorks-v6.5.0`.
+3. Wait for the builds the tag push starts, and take the installers from those runs.
+   GitHub scopes caches to a ref, so the tag build can't use the release branch's caches.
+   If the release changed `build_dependencies.sh` or `install_shapeworks.sh`, every
+   platform rebuilds its dependencies, so these builds take much longer than usual.
+4. Sign and notarize the Mac installers (Intel and Arm64). CI doesn't sign them.
+5. Build the source archive with the LFS content. GitHub's own source archives only hold
+   LFS pointer files. Run `Support/make_source_zip.sh v6.5.0 <output_dir>` to create
+   `ShapeWorks-v6.5.0-src-with-git-lfs.zip`.
+6. Create the GitHub release from the tag, and upload the installers and the source archive.
+7. Point the documentation's `latest` version at the release (see below).
+8. Update `version.json` on the web server (see below).
 
 * Merge the release branch back to `master`.  Fixes and doc updates made during the
   release cycle live on the release branch and come back in this one merge; take
@@ -116,5 +134,41 @@ The three platform keys must be exactly `windows`, `linux` and `macos` — they 
 `StudioUtils::get_platform_string()`.  A missing or misspelled key throws a JSON exception that is
 swallowed unless the check was triggered manually, so a typo here fails silently.  Platforms can
 hold different versions if a build is late, which is the reason for the per-platform blocks.
+
+## Patch releases
+
+A patch release (e.g. 6.5.1) carries selected fixes from `master` on top of the previous
+release.
+
+* Create the release branch from the previous tag, not from `master`: `git checkout -b release_v6.5.1 v6.5.0`
+
+* Cherry-pick the fix PRs' merge commits, oldest first
+
+```
+git cherry-pick -x -m 1 <merge commit>
+```
+
+`-m 1` takes the PR's changes relative to `master` at the time, and `-x` records which commit
+each pick came from.  A fix written on top of other work that isn't being backported will
+conflict.  Adapt it to the release branch instead of pulling in more PRs.
+
+* Set the patch version in `CMakeLists.txt`: `SHAPEWORKS_PATCH_VERSION` and
+  `SHAPEWORKS_VERSION_STRING`
+
+* Keep the API version at the minor version (`API_VERSION = "6.5"` in
+  `Python/shapeworks/shapeworks/api_version.py`).  Users' installed Python packages are tied to it,
+  so a patch release must not change it.  If a picked PR brings in `master`'s newer API version,
+  set it back.
+
+* Add a section for the patch release to `docs/about/release-notes.md`
+
+* Build and run the tests, then push the branch and check that CI passes on every platform
+
+* Tag and publish the release, following the steps above
+
+* Merge the release branch back to `master` with a merge commit, not a squash.  The fixes are
+  already on `master`, so take `master`'s side of every conflict except the release notes.  A
+  squash leaves the release unmerged as far as git is concerned, and the next merge-back hits the
+  same conflicts again.
 
 
