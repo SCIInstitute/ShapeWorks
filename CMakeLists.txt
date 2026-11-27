@@ -104,8 +104,11 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
-  # compile the files within each project in parallel (Visual Studio generator)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
+  # Visual Studio compiles the files within a project one at a time unless told otherwise
+  # (Ninja already runs one compiler per file)
+  if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
+  endif()
 endif(MSVC)
 
 # GUI
