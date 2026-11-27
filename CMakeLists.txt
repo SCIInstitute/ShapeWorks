@@ -104,6 +104,8 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
+  # compile the files within each project in parallel (Visual Studio generator)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
 endif(MSVC)
 
 # GUI
