@@ -15,6 +15,7 @@
 #include "../Testing.h"
 #include "Libs/Optimize/Constraints/PlaneConstraint.h"
 #include "Libs/Optimize/Domain/Surface.h"
+#include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
@@ -1333,6 +1334,22 @@ TEST(OptimizeTests, disentangled_spatiotemporal_test) {
     std::cerr << "Time point " << time_point << " first mode fraction: " << fraction << "\n";
     ASSERT_GT(fraction, 0.95);
   }
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, disentangled_clone_keeps_energy_mode) {
+  // The optimizer evaluates clones, so a clone that drops the mode silently runs mean energy
+  auto function = DisentangledCorrespondenceFunction::New();
+
+  function->UseEntropy();
+  auto entropy_clone = std::dynamic_pointer_cast<DisentangledCorrespondenceFunction>(function->clone());
+  ASSERT_TRUE(entropy_clone);
+  ASSERT_FALSE(entropy_clone->GetUseMeanEnergy());
+
+  function->UseMeanenergy();
+  auto mean_energy_clone = std::dynamic_pointer_cast<DisentangledCorrespondenceFunction>(function->clone());
+  ASSERT_TRUE(mean_energy_clone);
+  ASSERT_TRUE(mean_energy_clone->GetUseMeanEnergy());
 }
 
 //---------------------------------------------------------------------------
