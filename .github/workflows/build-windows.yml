@@ -9,6 +9,12 @@ on:
     - '*'
   pull_request:
   workflow_dispatch:
+    inputs:
+      debug_with_tmate:
+        description: 'Hold the runner open for an SSH session (tmate) if a step fails'
+        type: boolean
+        required: false
+        default: false
   schedule:
     - cron: '0 0 * * 0'
 
@@ -219,7 +225,7 @@ jobs:
             "C:/build/bin/Release/shapeworks.exe" deepssm --name default.swproj --all --aug_processes 1
 
     - name: Setup tmate session on failure
-      if: ${{ failure() }}
+      if: ${{ failure() && inputs.debug_with_tmate }}
       uses: mxschmitt/action-tmate@v3
       timeout-minutes: 30
 
