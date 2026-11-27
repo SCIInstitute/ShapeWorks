@@ -150,14 +150,15 @@ jobs:
       shell: bash -l {0}
       working-directory: "C:/build"
       env:
-        # Debug info lives in each object file (/Z7) so ccache can store it
+        # Debug info lives in each object file (-Z7) so ccache can store it.  Flags use dashes
+        # because Git Bash rewrites a leading /X argument into a Windows path
         # Link-time optimization is reserved for builds that can ship
-        GL_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '/GL' || '' }}
+        GL_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '-GL' || '' }}
         LTCG_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '-LTCG' || '' }}
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -G "Ninja Multi-Config" -DCMAKE_CXX_FLAGS_RELEASE="/Zm500 /Z7 $GL_FLAG /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="/Z7 $GL_FLAG /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$LTCG_FLAG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$LTCG_FLAG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_BUNDLED_PYTHON=ON -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -G "Ninja Multi-Config" -DCMAKE_CXX_FLAGS_RELEASE="-Zm500 -Z7 $GL_FLAG -MD -O2 -Ob3 -DNDEBUG -EHsc" -DCMAKE_C_FLAGS_RELEASE="-Z7 $GL_FLAG -MD -O2 -Ob3 -DNDEBUG -EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$LTCG_FLAG -DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$LTCG_FLAG -DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_BUNDLED_PYTHON=ON -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
 
     - name: Build
       working-directory: "C:/build"
