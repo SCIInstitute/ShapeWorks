@@ -95,6 +95,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
 
   void UseMeanenergy() { m_UseMeanEnergy = true; }
   void UseEntropy() { m_UseMeanEnergy = false; }
+  bool GetUseMeanEnergy() const { return m_UseMeanEnergy; }
 
   /** */
   bool GetHoldMinimumVariance() const { return m_HoldMinimumVariance; }
@@ -114,6 +115,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
 
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
+    copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
