@@ -20,7 +20,16 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
   const unsigned int num_T = m_ShapeMatrix->GetDomainsPerShape(); // Total Number of Time points
   const unsigned int num_dims    = m_ShapeMatrix->rows() / num_T; // (dM X T) / T = dM
   this->Initialize();
-  // computation across time cohort 
+
+  // The loops below already run in parallel with TBB. Keep Eigen from starting
+  // OpenMP threads inside each task, which oversubscribes the CPU.
+  struct ScopedEigenThreads {
+    int previous = Eigen::nbThreads();
+    ScopedEigenThreads() { Eigen::setNbThreads(1); }
+    ~ScopedEigenThreads() { Eigen::setNbThreads(previous); }
+  } scoped_eigen_threads;
+
+  // computation across time cohort
   tbb::parallel_for(tbb::blocked_range<size_t>{0, num_T}, [&](const tbb::blocked_range<size_t>& r)
   {
     // Iterate t = 1....T
