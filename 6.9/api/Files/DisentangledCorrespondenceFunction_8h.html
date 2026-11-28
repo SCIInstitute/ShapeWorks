@@ -4672,6 +4672,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UseMeanenergy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UseEntropy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetUseMeanEnergy</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_UseMeanEnergy</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetHoldMinimumVariance</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetHoldMinimumVariance</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
@@ -4690,6 +4691,7 @@
 
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_CurrentEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_CurrentEnergy</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_HoldMinimumVariance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_HoldMinimumVariance</span><span class="p">;</span>
+<span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_UseMeanEnergy</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_MinimumVarianceDecayConstant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_MinimumVarianceDecayConstant</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_RecomputeCovarianceInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_RecomputeCovarianceInterval</span><span class="p">;</span>
 <span class="w">    </span><span class="n">copy</span><span class="o">-&gt;</span><span class="n">m_Counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
@@ -4789,7 +4791,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2026-11-26 at 17:04:43 +0000</p>
+<p>Updated on 2026-11-28 at 05:45:37 +0000</p>
 
 
 
