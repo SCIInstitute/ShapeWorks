@@ -72,7 +72,9 @@ find_package(OpenVDB MODULE REQUIRED)
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+  # per language, so resource (.rc) compiles on Windows aren't routed through ccache
+  set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -104,8 +106,11 @@ endif()
 if(MSVC)
   # turn on unwind semantics
   SET(CMAKE_CXX_FLAGS "/EHsc")
-  # compile the files within each project in parallel (Visual Studio generator)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
+  # Visual Studio compiles the files within a project one at a time unless told otherwise
+  # (Ninja already runs one compiler per file)
+  if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
+  endif()
 endif(MSVC)
 
 # GUI

@@ -24,6 +24,9 @@ env:
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+  CCACHE_DIR: C:\ccache
+  CCACHE_MAXSIZE: "1500M"
+  CCACHE_COMPRESS: "true"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -114,6 +117,29 @@ jobs:
         path: C:\deps
         key: ${{ runner.os }}-deps-${{ hashFiles('.github/workflows/gha_deps.sh', 'install_shapeworks.sh', 'build_dependencies.sh') }}
       
+    - name: Set up MSVC environment
+      # Ninja needs cl.exe and the SDK on the PATH, which the Visual Studio generator finds itself
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install Ninja and ccache
+      shell: bash
+      run: |
+        mkdir -p /c/tools/bin
+        curl -fsSL -o ninja.zip https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip
+        unzip -o -q ninja.zip -d /c/tools/bin
+        curl -fsSL -o ccache.zip https://github.com/ccache/ccache/releases/download/v4.10.2/ccache-4.10.2-windows-x86_64.zip
+        unzip -o -q -j ccache.zip '*/ccache.exe' -d /c/tools/bin
+        rm ninja.zip ccache.zip
+        echo 'C:\tools\bin' >> $GITHUB_PATH
+
+    - name: Restore ccache
+      uses: actions/cache/restore@v4
+      with:
+        path: C:\ccache
+        key: ${{ runner.os }}-ccache-release-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-release-
+
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
@@ -130,19 +156,34 @@ jobs:
       shell: bash -l {0}
       working-directory: "C:/build"
       env:
+        # Debug info lives in each object file (-Z7) so ccache can store it.  Flags use dashes
+        # because Git Bash rewrites a leading /X argument into a Windows path
         # Link-time optimization is reserved for builds that can ship
-        GL_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '/GL' || '' }}
+        GL_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '-GL' || '' }}
         LTCG_FLAG: ${{ (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release_v') || startsWith(github.ref, 'refs/tags/')) && '-LTCG' || '' }}
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_CXX_FLAGS_RELEASE="-FS /Zm500 /Zi $GL_FLAG /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_C_FLAGS_RELEASE="-FS /Zi $GL_FLAG /MD /O2 /Ob3 /DNDEBUG /EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$LTCG_FLAG /DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$LTCG_FLAG /DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_BUNDLED_PYTHON=ON -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -G "Ninja Multi-Config" -DCMAKE_CXX_FLAGS_RELEASE="-Zm500 -Z7 $GL_FLAG -MD -O2 -Ob3 -DNDEBUG -EHsc" -DCMAKE_C_FLAGS_RELEASE="-Z7 $GL_FLAG -MD -O2 -Ob3 -DNDEBUG -EHsc" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$LTCG_FLAG -DEBUG" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$LTCG_FLAG -DEBUG" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSE_BUNDLED_PYTHON=ON -DITK_DIR="C:\deps\lib\cmake\ITK-5.4" -DVTK_DIR="C:\deps\lib\cmake\vtk-9.5" -DXLNT_DIR="C:\deps" -DLIBIGL_DIR="C:\deps" -DJKQTCommonSharedLib_DIR="C:/deps/lib/cmake/JKQTCommonSharedLib" -DJKQTMathTextSharedLib_DIR="C:/deps/lib/cmake/JKQTMathTextSharedLib" -DJKQTPlotterSharedLib_DIR="C:/deps/lib/cmake/JKQTPlotterSharedLib" -DOpenVDB_DIR="C:\deps\lib\cmake\OpenVDB" -DGEOMETRYCENTRAL_DIR="C:\deps" -DACVD_DIR="C:\deps" -DBuild_Studio=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET
 
     - name: Build
       working-directory: "C:/build"
       shell: bash -l {0}
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE --parallel
+
+    - name: ccache stats
+      if: always()
+      shell: bash
+      run: ccache -s || true
+
+    - name: Save ccache
+      if: always()
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: C:\ccache
+        key: ${{ runner.os }}-ccache-release-${{ github.sha }}
 
     - name: Install Bundled Python Packages
       working-directory: "C:/build"
